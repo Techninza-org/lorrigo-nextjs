@@ -338,8 +338,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-
-
   return (
     <SellerContext.Provider
       value={{
