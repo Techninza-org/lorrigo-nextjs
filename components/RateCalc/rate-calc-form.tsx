@@ -132,7 +132,7 @@ export const RateCalcForm = () => {
         timer = setTimeout(fetchCityState, 500); // Adjust the delay as per your preference
 
         return () => clearTimeout(timer);
-    }, [form, getCityStateFPincode, form.watch("pickupPincode"), form.watch("deliveryPincode")])
+    }, [form.watch("pickupPincode"), form.watch("deliveryPincode")])
 
     return (
         <>

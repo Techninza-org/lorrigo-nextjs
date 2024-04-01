@@ -1,3 +1,5 @@
+"use client"
+
 import {
     Card,
     CardContent,
@@ -8,8 +10,10 @@ import {
 import ActionTooltip from "../action-tooltip"
 import { Activity, IndianRupee, NotebookText, Package } from "lucide-react"
 import { Label } from "../ui/label"
+import { useSellerProvider } from "../providers/SellerProvider"
 
 export const DataAnalysis = () => {
+    const {sellerDashboard}  = useSellerProvider()
     return (
         <div className="grid grid-cols-3 gap-3">
             <div className="max-w-[27rem] grid grid-rows-3 gap-3">
@@ -22,9 +26,9 @@ export const DataAnalysis = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-x-2 ">
                             <div>Today&apos;s Orders:</div>
-                            <div>5</div>
+                            <div>{sellerDashboard?.todayYesterdayAnalysis?.todayOrdersCount}</div>
                             <div>Yestarday&apos;s Orders:</div>
-                            <div>5</div>
+                            <div>{sellerDashboard?.todayYesterdayAnalysis?.yesterdayOrdersCount}</div>
                         </div>
                     </CardContent>
                 </Card>
@@ -38,9 +42,9 @@ export const DataAnalysis = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-x-2 ">
                             <div>Today&apos;s Revenue:</div>
-                            <div>5</div>
+                            <div>{sellerDashboard?.todayYesterdayAnalysis?.todayRevenue}</div>
                             <div>Yestarday&apos;s Revenue:</div>
-                            <div>5</div>
+                            <div>{sellerDashboard?.todayYesterdayAnalysis?.yesterdayRevenue}</div>
                         </div>
                     </CardContent>
                 </Card>
@@ -54,7 +58,7 @@ export const DataAnalysis = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-x-2 ">
                             <div>Average Shipping:</div>
-                            <div>5</div>
+                            <div>{sellerDashboard?.todayYesterdayAnalysis?.todayAverageShippingCost}</div>
                         </div>
                     </CardContent>
                 </Card>
@@ -73,19 +77,19 @@ export const DataAnalysis = () => {
                         </CardHeader>
                         <CardContent className="flex items-center justify-between gap-1">
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                                <span className="p-3">{sellerDashboard.shipmentDetails.totalShipments.length}</span>
                                 <Label>Total Shipments</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                                <span className="p-3">{sellerDashboard.shipmentDetails.pickupPending}</span>
                                 <Label>Pickup Pending</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                                <span className="p-3">{sellerDashboard.shipmentDetails.inTransit}</span>
                                 <Label>In-Transit</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                                <span className="p-3">{sellerDashboard.shipmentDetails.delivered}</span>
                                 <Label>Delivered</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
@@ -109,19 +113,19 @@ export const DataAnalysis = () => {
                         </CardHeader>
                         <CardContent className="flex items-center justify-between gap-1 w-full">
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                            <span className="p-3">{sellerDashboard.NDRDetails.TotalNRD}</span>
                                 <Label>Total NRD</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                            <span className="p-3">{sellerDashboard.NDRDetails.buyerReattempt}</span>
                                 <Label>Your reattempt request</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                            <span className="p-3">{sellerDashboard.NDRDetails.yourReattempt}</span>
                                 <Label>Buyer Reattempt Request</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                            <span className="p-3">{sellerDashboard.NDRDetails.delivered || 0}</span>
                                 <Label>NDR Delivered</Label>
                             </div>
                         </CardContent>
@@ -137,11 +141,11 @@ export const DataAnalysis = () => {
                         </CardHeader>
                         <CardContent className="flex items-center justify-between gap-1 w-full">
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                            <span className="p-3">{sellerDashboard.CODDetails.totalCODLast30Days || 0}</span>
                                 <Label>Total COD (Last 30 Days)</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
+                            <span className="p-3">{sellerDashboard.CODDetails.CODAvailable || 0}</span>
                                 <Label>Cod Available</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">

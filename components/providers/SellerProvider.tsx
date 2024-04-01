@@ -15,6 +15,7 @@ import { useAuth } from "./AuthProvider";
 
 interface SellerContextType {
   seller: SellerType | null;
+  sellerDashboard: any;
   business: string;
   sellerFacilities: any;
   handlebusinessDropdown: (value: string) => void;
@@ -43,6 +44,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const { userToken } = useAuth();
 
   const [seller, setSeller] = useState<SellerType | null>(null);
+  const [sellerDashboard, setSellerDashboard] = useState<any>(null);
   const [sellerFacilities, setSellerFacilities] = useState([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [courierPartners, setCourierPartners] = useState<OrderType>();
@@ -123,9 +125,19 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const getSellerDashboardDetails = async () => {
+    try {
+      const res = await axiosIWAuth.get(`/shipment/dashboard`);
+      setSellerDashboard(res.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   useEffect(() => {
     getHub();
     getAllOrdersByStatus("all");
+    getSellerDashboardDetails()
   }, [userToken]);
 
   const handlebusinessDropdown = (value: string) => {
@@ -307,14 +319,25 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         pincode: Number(pincode)
       });
       const { city, state, valid } = res.data
-      if (!city || !state) return { city: "City", state: "State" }
+      if (!city || !state) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Unable to fetch city and state for the given pincode",
+        })
+        return { city: "City", state: "State" }
+      }
       return { city, state }
     } catch (error) {
-      // Handle errors
-      console.error('Error while fetching city and state:', error);
-      throw error;
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Unable to fetch city and state for the given pincode",
+      })
+      return { city: "", state: "" }
     }
   };
+
 
 
   return (
@@ -335,7 +358,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         handleCreateB2BShipment,
         handleCancelOrder,
         manifestOrder,
-        getCityStateFPincode
+        getCityStateFPincode,
+        sellerDashboard
 
       }}
     >

@@ -78,7 +78,7 @@ export const AddSellerModal = () => {
         timer = setTimeout(fetchCityState, 500);
 
         return () => clearTimeout(timer);
-    }, [form, getCityStateFPincode, form.watch("pincode")])
+    }, [form.watch("pincode")])
 
     const isLoading = form.formState.isSubmitting;
 

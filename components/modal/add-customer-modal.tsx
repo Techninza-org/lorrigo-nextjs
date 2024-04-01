@@ -80,7 +80,7 @@ export const AddCustomerModal = () => {
         timer = setTimeout(fetchCityState, 500); 
 
         return () => clearTimeout(timer);
-    }, [form, getCityStateFPincode, form.watch("pincode")])
+    }, [form.watch("pincode")])
 
     const { formState: { errors, isSubmitting }, reset, handleSubmit } = form;
     const isLoading = isSubmitting;

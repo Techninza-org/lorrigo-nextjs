@@ -99,7 +99,7 @@ export const AddPickupLocationModal = () => {
         timer = setTimeout(fetchCityState, 500); // Adjust the delay as per your preference
 
         return () => clearTimeout(timer);
-    }, [form, getCityStateFPincode, form.watch("pincode"), form.watch("rtoPincode")])
+    }, [form.watch("pincode"), form.watch("rtoPincode")])
 
     const isLoading = form.formState.isSubmitting;
 

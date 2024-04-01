@@ -7,6 +7,7 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import { ModalProvider } from "@/components/providers/ModalProvider";
 import SellerProvider from "@/components/providers/SellerProvider";
 import HubProvider from "@/components/providers/HubProvider";
+import { LoadingProvider } from "@/components/providers/LoadingProvider";
 
 const inter = IBM_Plex_Sans_Condensed({
   subsets: ["cyrillic-ext"],
@@ -26,20 +27,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <SellerProvider>
-            <HubProvider>
-              <Toaster />
-              <ModalProvider />
-              <div className="hidden lg:block">
-                {children}
-              </div>
-              <div className="lg:hidden flex text-center items-center h-full ">
-                <p>The webpage will only be displayed on large devices</p>
-              </div>
-            </HubProvider>
-          </SellerProvider>
-        </AuthProvider>
+        <LoadingProvider>
+          <AuthProvider>
+            <SellerProvider>
+              <HubProvider>
+                <Toaster />
+                <ModalProvider />
+                <div className="hidden lg:block">
+                  {children}
+                </div>
+                <div className="lg:hidden flex text-center items-center h-full ">
+                  <p>The webpage will only be displayed on large devices</p>
+                </div>
+              </HubProvider>
+            </SellerProvider>
+          </AuthProvider>
+        </LoadingProvider>
       </body>
     </html>
   );
