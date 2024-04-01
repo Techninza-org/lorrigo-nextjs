@@ -14,12 +14,17 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import SubmitButton from "../SubmitButton";
 import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 const LoginForm = () => {
   const { handleUserLogin } = useAuth();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const passwordType = isPasswordVisible ? "text" : "password";
+  const PasswordIcon = isPasswordVisible ? EyeOff : Eye;
   return (
     <Card>
       <CardHeader className="space-y-1">
-      <CardTitle className="text-2xl mx-auto"><Image src={'/assets/logogosog.png'} width={130} height={130} alt="logo" /></CardTitle>
+        <CardTitle className="text-2xl mx-auto"><Image src={'/assets/logogosog.png'} width={130} height={130} alt="logo" /></CardTitle>
       </CardHeader>
       <CardContent>
         <form action={handleUserLogin}>
@@ -35,12 +40,16 @@ const LoginForm = () => {
             </div>
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="******"
-              />
+              <div className="flex w-full items-center justify-center border pr-2">
+                <Input
+                  id="password"
+                  name="password"
+                  type={passwordType}
+                  placeholder="******"
+                  className="border-0 focus-visible:ring-0 focus:ring-0 focus:outline-none w-full outline-none focus-visible:outline-none"
+                />
+                <PasswordIcon size={18} onClick={() => setIsPasswordVisible(!isPasswordVisible)} />
+              </div>
             </div>
             <div className="flex justify-end">
               <Link className={buttonVariants({
