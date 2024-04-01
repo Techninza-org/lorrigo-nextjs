@@ -26,7 +26,7 @@ const productDetailsSchema = z.object({
     name: z.string().min(1, "Product name is required"),
     category: z.string().min(1, "Product category is required"),
     hsn_code: z.string().optional(),
-    quantity: z.number().int().positive().min(1, "Product quantity is required"),
+    quantity: z.string().min(1, "Product quantity is required"),
     taxRate: z.string().min(1, "Product tax rate is required"),
     taxableValue: z.string().min(1, "Product taxable value is required"),
 });
@@ -82,7 +82,7 @@ export const B2CForm = () => {
                 name: "",
                 category: "",
                 hsn_code: "",
-                quantity: 0,
+                quantity: "1",
                 taxRate: "",
                 taxableValue: "",
             },
@@ -103,15 +103,16 @@ export const B2CForm = () => {
         }
     }, [isCOD]);
 
+    
     const handleIncrement = () => {
         const currentValue = parseInt(form.watch('productDetails.quantity').toString()) || 0;
-        setValue('productDetails.quantity', currentValue + 1);
+        setValue('productDetails.quantity', (currentValue + 1).toString());
     };
 
     const handleDecrement = () => {
         const currentValue = parseInt(form.watch('productDetails.quantity').toString(), 10) || 0;
         if (currentValue > 0) {
-            setValue('productDetails.quantity', currentValue - 1);
+            setValue('productDetails.quantity', (currentValue - 1).toString());
         }
     };
 

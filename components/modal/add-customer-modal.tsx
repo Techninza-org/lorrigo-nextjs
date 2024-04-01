@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-model-store";
 import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
+import { useEffect } from 'react';
 
 export const customerDetailsSchema = z.object({
     name: z.string().min(1,"Name is required"),
@@ -42,7 +43,7 @@ export const customerDetailsSchema = z.object({
 
 
 export const AddCustomerModal = () => {
-    const { setSellerCustomerForm, sellerCustomerForm } = useSellerProvider() 
+    const { setSellerCustomerForm, sellerCustomerForm, getCityStateFPincode } = useSellerProvider() 
     const { isOpen, onClose, type } = useModal();
     const router = useRouter();
 
@@ -63,6 +64,24 @@ export const AddCustomerModal = () => {
         }
     });
 
+    useEffect(() => {
+        let timer: string | number | NodeJS.Timeout | undefined;
+        console.log(form.watch("pincode").length > 4)
+
+        const fetchCityState = async () => {
+            if (form.watch("pincode").length > 4) {
+                const cityStateRes = await getCityStateFPincode(form.watch("pincode"))
+                form.setValue('city', cityStateRes.city)
+                form.setValue('state', cityStateRes.state)
+            }
+        };
+
+        clearTimeout(timer);
+        timer = setTimeout(fetchCityState, 500); 
+
+        return () => clearTimeout(timer);
+    }, [form, getCityStateFPincode, form.watch("pincode")])
+
     const { formState: { errors, isSubmitting }, reset, handleSubmit } = form;
     const isLoading = isSubmitting;
 
@@ -81,7 +100,7 @@ export const AddCustomerModal = () => {
     }
 
     const handleClose = () => {
-        reset();
+        // reset();
         onClose();
     }
 
