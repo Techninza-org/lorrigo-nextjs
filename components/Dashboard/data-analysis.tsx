@@ -77,19 +77,19 @@ export const DataAnalysis = () => {
                         </CardHeader>
                         <CardContent className="flex items-center justify-between gap-1">
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">{sellerDashboard.shipmentDetails.totalShipments.length}</span>
+                                <span className="p-3">{sellerDashboard?.shipmentDetails?.totalShipments?.length}</span>
                                 <Label>Total Shipments</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">{sellerDashboard.shipmentDetails.pickupPending}</span>
+                                <span className="p-3">{sellerDashboard?.shipmentDetails?.pickupPending}</span>
                                 <Label>Pickup Pending</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">{sellerDashboard.shipmentDetails.inTransit}</span>
+                                <span className="p-3">{sellerDashboard?.shipmentDetails?.inTransit}</span>
                                 <Label>In-Transit</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">{sellerDashboard.shipmentDetails.delivered}</span>
+                                <span className="p-3">{sellerDashboard?.shipmentDetails?.delivered}</span>
                                 <Label>Delivered</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
@@ -113,19 +113,19 @@ export const DataAnalysis = () => {
                         </CardHeader>
                         <CardContent className="flex items-center justify-between gap-1 w-full">
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard.NDRDetails.TotalNRD}</span>
+                            <span className="p-3">{sellerDashboard?.NDRDetails?.TotalNRD}</span>
                                 <Label>Total NRD</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard.NDRDetails.buyerReattempt}</span>
+                            <span className="p-3">{sellerDashboard?.NDRDetails?.buyerReattempt}</span>
                                 <Label>Your reattempt request</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard.NDRDetails.yourReattempt}</span>
+                            <span className="p-3">{sellerDashboard?.NDRDetails?.yourReattempt}</span>
                                 <Label>Buyer Reattempt Request</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard.NDRDetails.delivered || 0}</span>
+                            <span className="p-3">{sellerDashboard?.NDRDetails.delivered || 0}</span>
                                 <Label>NDR Delivered</Label>
                             </div>
                         </CardContent>
@@ -141,11 +141,11 @@ export const DataAnalysis = () => {
                         </CardHeader>
                         <CardContent className="flex items-center justify-between gap-1 w-full">
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard.CODDetails.totalCODLast30Days || 0}</span>
+                            <span className="p-3">{sellerDashboard?.CODDetails?.totalCODLast30Days || 0}</span>
                                 <Label>Total COD (Last 30 Days)</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard.CODDetails.CODAvailable || 0}</span>
+                            <span className="p-3">{sellerDashboard?.CODDetails?.CODAvailable || 0}</span>
                                 <Label>Cod Available</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
