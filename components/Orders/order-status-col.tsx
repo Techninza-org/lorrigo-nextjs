@@ -61,7 +61,7 @@ export const columns: ColumnDef<B2COrderType>[] = [
                 <div className="space-y-1 items-center">
                     <p>Dead wt. 0.5kg</p>
                     <p>{rowData.orderBoxLength} x {rowData.orderBoxWidth} x {rowData.orderBoxHeight} ({rowData.orderSizeUnit})</p>
-                    <p>Vol. weight: {(rowData?.orderBoxLength || 1 * (rowData?.orderBoxWidth || 1) * (rowData?.orderBoxHeight || 1)) / 5000} ({rowData?.orderWeightUnit})</p>
+                    <p>Vol. weight: {Math.ceil(((rowData?.orderBoxLength || 1) * (rowData?.orderBoxWidth || 1) * (rowData?.orderBoxHeight || 1)) / 5000)} ({rowData?.orderWeightUnit})</p>
                 </div>
             )
         }

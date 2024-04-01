@@ -123,5 +123,6 @@ export interface OrderType {
         expectedPickup: string;
         orderWeight: number;
         smartship_carrier_id: number;
+        order_zone: string;
     }[];
 }

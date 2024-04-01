@@ -7,7 +7,6 @@ import axios, { AxiosInstance } from "axios";
 import { customerDetailsSchema } from "@/components/modal/add-customer-modal";
 import { sellerSchema } from "@/components/modal/add-seller-modal";
 
-
 import { useToast } from "@/components/ui/use-toast";
 
 import { OrderType, SellerType } from "@/types/types";

@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         },
         {
             label: "Shipments",
-            href: "/dashboard/shipments"
+            href: "/orders"
         },
         {
             label: "RTO",

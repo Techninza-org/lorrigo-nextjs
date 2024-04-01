@@ -98,6 +98,7 @@ export default function CourierPage() {
                                     <TableRow>
                                         <TableHead className="">Courier Partner</TableHead>
                                         <TableHead>Expected Pickup</TableHead>
+                                        <TableHead>Zone</TableHead>
                                         <TableHead>Charges</TableHead>
                                         <TableHead className="text-right">Action</TableHead>
                                     </TableRow>
@@ -111,6 +112,7 @@ export default function CourierPage() {
                                                     <div>RTO Charges : {formatCurrencyForIndia(partner.charge)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
+                                                <TableCell>{partner.order_zone}</TableCell>
                                                 <TableCell>{formatCurrencyForIndia(partner.charge)}</TableCell>
                                                 <TableCell className="text-right">
                                                     <Button disabled={pending} type="submit" variant={"themeButton"} size={"sm"} onClick={async () => {
