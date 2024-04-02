@@ -193,6 +193,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order created successfully",
           description: "Order has been created successfully",
         });
+        getSellerDashboardDetails();
         router.refresh()
         return true;
       } else {

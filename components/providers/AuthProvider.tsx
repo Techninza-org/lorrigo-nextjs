@@ -33,9 +33,12 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         const userC = getCookie('user')
         if (userC) {
             setUserToken(JSON.parse(userC).token);
+        } else {
+            setUser(null);
+            router.push("/login");
         }
 
-    }, [user]);
+    }, [router, user]);
 
     const axiosConfig = {
         baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
@@ -66,7 +69,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                     description: "Please enter valid details for all fields.",
                 });
             }
-            
+
             const userData = {
                 name,
                 email,

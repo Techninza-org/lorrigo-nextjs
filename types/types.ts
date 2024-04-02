@@ -82,6 +82,7 @@ export interface pickupAddressType {
 export interface B2COrderType {
     _id: string;
     awb?: string;
+    carrierName?: string;
     sellerId: string;
     orderStage?: number;
     orderStages?: {

@@ -33,12 +33,7 @@ export default function RootLayout({
               <HubProvider>
                 <Toaster />
                 <ModalProvider />
-                <div className="hidden lg:block">
                   {children}
-                </div>
-                <div className="lg:hidden flex text-center items-center h-full ">
-                  <p>The webpage will only be displayed on large devices</p>
-                </div>
               </HubProvider>
             </SellerProvider>
           </AuthProvider>

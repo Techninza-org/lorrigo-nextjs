@@ -21,15 +21,31 @@ import {
     FormLabel,
     FormMessage
 } from "@/components/ui/form";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion"
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-model-store";
 import { formatCurrencyForIndia } from '@/lib/utils';
+import { Tag } from 'lucide-react';
 
 const schema = z.object({
-    rechargeAmount: z.number().int().min(500).max(10000)
+    rechargeAmount: z.string().refine(
+        v => {
+            let n = Number(v);
+            return !isNaN(n) && v?.length > 0 && n <= 10000;
+        },
+        { message: "Invalid amount or exceeds maximum recharge amount of 10000" }
+    ),
+    couponCode: z.string().optional()
 });
+
 
 export const RechargeModal = () => {
     const { isOpen, onClose, type, data } = useModal();
@@ -40,11 +56,12 @@ export const RechargeModal = () => {
     const form = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
-            rechargeAmount: 500
+            rechargeAmount: "500",
+            couponCode: ""
         }
     });
 
-    const handleSelect = (amount: number) => {
+    const handleSelect = (amount: string) => {
         form.setValue('rechargeAmount', amount);
     };
 
@@ -68,7 +85,7 @@ export const RechargeModal = () => {
         onClose();
     }
 
-    const PRICE = [500, 1000, 2000, 5000, 10000]
+    const PRICE = ["500", "1000", "2000", "5000", "10000"]
 
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
@@ -117,19 +134,59 @@ export const RechargeModal = () => {
                                             size={'sm'}
                                             onClick={() => handleSelect(amount)}
                                         >
-                                            {formatCurrencyForIndia(amount)}
+                                            {formatCurrencyForIndia(Number(amount))}
                                         </Button>
                                     ))
                                 }
                             </div>
+                            <div className='flex space-x-2 w-full items-center flex-1'>
+                                <FormField
+                                    control={form.control}
+                                    name="couponCode"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full"> {/* Adjusted */}
+                                            <FormControl>
+                                                <Input
+                                                    disabled={isLoading}
+                                                    className="bg-zinc-300/50 flex-1 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 w-full"
+                                                    placeholder="Enter the coupon code"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Tag size={21} className='text-sky-700' />
+                            </div>
+                            <div className='px-3 bg-zinc-300/50 rounded-md'>
+                                <Accordion type="single" collapsible>
+                                    <AccordionItem value="item-1">
+                                        <AccordionTrigger className='py-2 flex justify-between hover:no-underline'>Payable Amount?  <span className='text-right ml-auto pr-1'>{formatCurrencyForIndia(Number(form.watch('rechargeAmount')))}</span></AccordionTrigger>
+                                        <AccordionContent>
+
+                                            <div className="grid grid-cols-2 space-y-1">
+                                                <div>Coupon Applied</div>
+                                                <div className='text-right'>Coupon Applied</div>
+                                                <div>Recharge Amount</div>
+                                                <div className='text-right'>{formatCurrencyForIndia(Number(form.watch('rechargeAmount')))}</div>
+                                            </div>
+
+                                        </AccordionContent>
+                                    </AccordionItem>
+                                </Accordion>
+                            </div>
+
                         </div>
+
                         <DialogFooter className="px-6 py-4">
                             <Button disabled={isLoading} variant={'themeButton'}>
-                                Pay ₹{form.watch('rechargeAmount')}
+                                Pay {formatCurrencyForIndia(Number(form.watch('rechargeAmount')))}
                             </Button>
                         </DialogFooter>
                     </form>
                 </Form>
+
             </DialogContent>
         </Dialog>
     )

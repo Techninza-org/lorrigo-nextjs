@@ -93,6 +93,23 @@ export const columns: ColumnDef<B2COrderType>[] = [
         }
     },
     {
+        header: 'Shipping Details',
+        accessorKey: 'Shipment Details',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <div className="space-y-1 items-center">
+                    <p className="capitalize">{rowData?.carrierName}</p>
+                    <p>AWB #<span className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
+                        {rowData?.awb || "Awaited"}
+                        <Copy className="ml-2 cursor-pointer" size={15} onClick={() => handleCopyText(`${rowData.awb || ""}`)} />
+                    </span>
+                    </p>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Status',
         accessorKey: 'orderStages',
         cell: ({ row }) => {

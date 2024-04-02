@@ -61,7 +61,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             });
 
         }
-    }, [axiosIWAuth, getHub, router, toast])
+    }, [userToken,axiosIWAuth, getHub, router, toast])
 
     return (
         <HubContext.Provider

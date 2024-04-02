@@ -29,6 +29,7 @@ import { useModal } from "@/hooks/use-model-store";
 import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
+import { useToast } from '../ui/use-toast';
 
 export const customerDetailsSchema = z.object({
     name: z.string().min(1,"Name is required"),
@@ -45,8 +46,9 @@ export const customerDetailsSchema = z.object({
 export const AddCustomerModal = () => {
     const { setSellerCustomerForm, sellerCustomerForm, getCityStateFPincode } = useSellerProvider() 
     const { isOpen, onClose, type } = useModal();
-    const router = useRouter();
 
+    const router = useRouter();
+    const { toast } = useToast();
 
     const isModalOpen = isOpen && type === "addCustomer";
 
@@ -91,6 +93,12 @@ export const AddCustomerModal = () => {
                ...sellerCustomerForm,
                 customerForm: values
             })
+            toast({
+                variant: "default",
+                title: "Customer Added",
+                description: "Customer added successfully"
+
+            });
             reset();
             router.refresh();
             onClose();
