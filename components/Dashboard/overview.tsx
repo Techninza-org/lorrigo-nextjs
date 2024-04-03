@@ -18,7 +18,7 @@ export const Overview = () => {
     <div className="lg:flex gap-3 flex-wrap">
 
       {
-        business == "B2B" ? (
+        business == "D2B" ? (
           <Card className="max-w-screen-sm flex-1 shadow-lg">
             <CardHeader>
               <CardTitle>B2B Order</CardTitle>
@@ -38,7 +38,7 @@ export const Overview = () => {
         ) : (
           <Card className="max-w-screen-sm flex-1 shadow-lg">
             <CardHeader>
-              <CardTitle>B2C Order</CardTitle>
+              <CardTitle>D2C Order</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center">

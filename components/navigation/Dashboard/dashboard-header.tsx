@@ -22,10 +22,10 @@ export const DashboardHeader = () => {
             </h2>
             <Select onValueChange={handlebusinessDropdown}>
                 <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="B2C" />
+                    <SelectValue placeholder="D2C" />
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem value="B2C">B2C</SelectItem>
+                    <SelectItem value="D2C">D2C</SelectItem>
                     <SelectItem disabled={true} value="B2B">B2B</SelectItem>
                 </SelectContent>
             </Select>

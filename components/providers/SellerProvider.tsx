@@ -70,7 +70,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       pincode: "",
     }
   });
-  const [business, setbusiness] = useState<string>("B2C");
+  const [business, setbusiness] = useState<string>("D2C");
 
   const { toast } = useToast();
   const router = useRouter()

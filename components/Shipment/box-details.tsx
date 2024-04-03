@@ -93,7 +93,7 @@ export const BoxDetails = ({ form, isLoading }: BoxDetailsProps) => {
                 )}
             />
             <Button type='button' variant={"secondary"}>cm</Button>
-            <FormDescription className="col-span-4 w-full">Length x Breadth x Height should be at-least 15cm.</FormDescription>
+            <FormDescription className="col-span-4 w-full">Length x Breadth x Height <span className='text-red-500'>*</span></FormDescription>
             <div className="col-span-4 flex items-end gap-3 w-full">
                 <FormField
                     control={form.control}
@@ -103,7 +103,7 @@ export const BoxDetails = ({ form, isLoading }: BoxDetailsProps) => {
                             <FormLabel
                                 className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                             >
-                                Weight
+                                Weight <span className='text-red-500'>*</span>
                             </FormLabel>
                             <FormControl>
                                 <div className="flex gap-3 items-center">
@@ -120,7 +120,6 @@ export const BoxDetails = ({ form, isLoading }: BoxDetailsProps) => {
                                 </div>
 
                             </FormControl>
-                            <FormDescription>Package weight should be 0.5kg.</FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}

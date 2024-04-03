@@ -131,7 +131,7 @@ export const AddCustomerModal = () => {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                                Customer Name
+                                                Customer Name <span className='text-red-500'>*</span>
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -151,7 +151,7 @@ export const AddCustomerModal = () => {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                                Contact Number
+                                                Contact Number <span className='text-red-500'>*</span>
                                             </FormLabel>
                                             <FormControl>
                                                 <PhoneInput
@@ -173,7 +173,7 @@ export const AddCustomerModal = () => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                            Address Line 1
+                                            Address Line 1 <span className='text-red-500'>*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -235,7 +235,7 @@ export const AddCustomerModal = () => {
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                                Pincode
+                                                Pincode <span className='text-red-500'>*</span>
                                             </FormLabel>
                                             <FormControl>
                                                 <Input

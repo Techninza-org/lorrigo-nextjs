@@ -134,7 +134,7 @@ export const B2CForm = () => {
                 <div className="grid grid-cols-4 gap-2">
                     <Card className='col-span-3 space-y-3'>
                         <CardHeader>
-                            <CardTitle>Create a new shipment (B2C)</CardTitle>
+                            <CardTitle>Create a new shipment (D2C)</CardTitle>
                             <CardDescription>Order Details</CardDescription>
                         </CardHeader>
                         <OrderDetailForm
@@ -153,7 +153,7 @@ export const B2CForm = () => {
                     <div className='space-y-3'>
                         <Card>
                             <CardHeader>
-                                <CardTitle className='flex items-center'><MapPin className='mr-3' size={20} />Delivery status</CardTitle>
+                                <CardTitle className='flex items-center'><MapPin className='mr-3' size={20} />Delivery Details</CardTitle>
                             </CardHeader>
                             <DeliveryDetailsForm
                                 form={form}

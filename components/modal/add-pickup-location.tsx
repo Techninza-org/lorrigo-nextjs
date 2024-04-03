@@ -33,7 +33,7 @@ import { useEffect } from 'react';
 
 export const pickupAddressFormSchema = z.object({
     facilityName: z.string().min(1, "Facility name is required"),
-    contactPersonName: z.string().optional(),
+    contactPersonName: z.string().min(1, "Contact person name is required"),
     pickupLocContact: z.string().refine(isValidPhoneNumber, { message: "Invalid phone number" }),
     email: z.string().optional(),
     address: z.string().min(1, "Address is required"),
@@ -147,7 +147,7 @@ export const AddPickupLocationModal = () => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                            Facility Name
+                                            Facility Name <span className='text-red-500'>*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -167,7 +167,7 @@ export const AddPickupLocationModal = () => {
                                 render={({ field }) => (
                                     <FormItem className='pt-2'>
                                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                            <div className='flex justify-between'>Contact Person Name<span className='opacity-60'>Optional</span></div>
+                                            Contact Person Name<span className='text-red-500'>*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -187,7 +187,7 @@ export const AddPickupLocationModal = () => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                            Pickup Location Contact
+                                            Pickup Location Contact <span className='text-red-500'>*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <PhoneInput
@@ -228,7 +228,7 @@ export const AddPickupLocationModal = () => {
                                 render={({ field }) => (
                                     <FormItem className='col-span-2'>
                                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                            Address Line
+                                            Address Line <span className='text-red-500'>*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -249,7 +249,7 @@ export const AddPickupLocationModal = () => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                            Pincode
+                                            Pincode <span className='text-red-500'>*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -269,7 +269,7 @@ export const AddPickupLocationModal = () => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                            City
+                                            City <span className='text-red-500'>*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -289,7 +289,7 @@ export const AddPickupLocationModal = () => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                            State
+                                            State <span className='text-red-500'>*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input

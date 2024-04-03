@@ -104,7 +104,7 @@ export const AddSellerModal = () => {
 
 
     return (
-        <Dialog open={isModalOpen} onOpenChange={handleClose}>
+        <Dialog open={isModalOpen}  onOpenChange={handleClose}>
             <DialogContent className="bg-white dark:text-white text-black p-0 overflow-hidden max-w-xl">
                 <DialogHeader className="pt-8 px-6">
                     <DialogTitle className="text-2xl font-bold">
@@ -120,7 +120,7 @@ export const AddSellerModal = () => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                            Seller Name
+                                            Seller Name <span className='text-red-500'>*</span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -221,6 +221,26 @@ export const AddSellerModal = () => {
                                                 </FormItem>
                                             )}
                                         />
+                                          <FormField
+                                            control={form.control}
+                                            name="pincode"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                                        Pincode
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            disabled={isLoading}
+                                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                                            placeholder="Enter the pincode"
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
                                         <FormField
                                             control={form.control}
                                             name="city"
@@ -234,26 +254,6 @@ export const AddSellerModal = () => {
                                                             disabled={isLoading}
                                                             className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                                             placeholder="Enter the city"
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="pincode"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                                        Pincode
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            disabled={isLoading}
-                                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                                            placeholder="Enter the pincode"
                                                             {...field}
                                                         />
                                                     </FormControl>

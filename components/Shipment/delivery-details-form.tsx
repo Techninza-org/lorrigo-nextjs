@@ -35,7 +35,7 @@ export const DeliveryDetailsForm = ({ form, isLoading }: DeliveryDetailsFormProp
                                 <FormLabel
                                     className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                                 >
-                                    Select Facility
+                                    Select Facility <span className='text-red-500'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Select
@@ -68,7 +68,7 @@ export const DeliveryDetailsForm = ({ form, isLoading }: DeliveryDetailsFormProp
                         <UserRoundPlus size={15} className="mr-2" />Add Seller
                     </Button>
                     <Button variant={"secondary"} size={"sm"} className="w-full mt-2 items-center" type="button" onClick={() => onOpen("addCustomer")}>
-                        <CircleUserRound size={15} className="mr-2" />Add Customer
+                        <CircleUserRound size={15} className="mr-2" />Add Customer <span className='text-red-500'>*</span>
                     </Button>
                 </div>
             </div>

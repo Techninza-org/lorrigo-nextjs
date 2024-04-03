@@ -38,7 +38,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                         <FormLabel
                             className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                         >
-                            Order ID/Reference Number
+                            Order ID/Reference Number <span className='text-red-500'>*</span>
                         </FormLabel>
                         <FormControl>
                             <Input
@@ -63,7 +63,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                             <FormLabel
                                 className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                             >
-                                Product Name
+                                Product Name <span className='text-red-500'>*</span>
                             </FormLabel>
                             <FormControl>
                                 <Input
@@ -86,7 +86,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                                 <FormLabel
                                     className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                                 >
-                                    Item Count
+                                    Item Count <span className='text-red-500'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <div className='flex'>
@@ -113,7 +113,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                             <FormLabel
                                 className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                             >
-                                Product Category
+                                Product Category <span className='text-red-500'>*</span>
                             </FormLabel>
                             <FormControl>
                                 <Input
@@ -161,7 +161,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                             <FormLabel
                                 className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                             >
-                                Shipment Value
+                                Shipment Value <span className='text-red-500'>*</span>
                             </FormLabel>
                             <FormControl>
                                 <Input
@@ -184,7 +184,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                             <FormLabel
                                 className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                             >
-                                Tax Rate
+                                Tax Rate <span className='text-red-500'>*</span>
                             </FormLabel>
                             <FormControl>
                                 <Input
@@ -314,9 +314,6 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                                     <Calendar
                                         mode="single"
                                         onSelect={field.onChange}
-                                        disabled={(date) =>
-                                            date <= yesterday
-                                        }
                                         initialFocus
                                     />
                                 </PopoverContent>
@@ -333,7 +330,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                             <FormLabel
                                 className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                             >
-                                Payment Mode
+                                Payment Mode <span className='text-red-500'>*</span>
                             </FormLabel>
                             <Select
                                 disabled={isLoading}

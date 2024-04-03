@@ -36,7 +36,7 @@ const LoginForm = () => {
                 id="email"
                 name="email"
                 type="email"
-                placeholder="company@domain.com"
+                placeholder="Enter your email"
               />
             </div>
             <div className="flex flex-col space-y-1.5">
