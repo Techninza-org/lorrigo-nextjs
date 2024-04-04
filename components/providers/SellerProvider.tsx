@@ -28,7 +28,7 @@ interface SellerContextType {
   getCourierPartners: (orderId: string) => Promise<any>;
   courierPartners: OrderType | undefined;
   handleCreateB2BShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => boolean | Promise<boolean>;
-  handleCancelOrder: (orderId: string) => boolean | Promise<boolean>;
+  handleCancelOrder: (orderId: string, type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
 }
@@ -250,10 +250,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, toast])
 
-  const handleCancelOrder = async (orderId: string) => {
+  const handleCancelOrder = async (orderId: string, type: string) => {
     try {
       const res = await axiosIWAuth.post(`/shipment/cancel`, {
-        orderId: orderId
+        orderId: orderId,
+        type: type
       });
       if (res.data?.valid) {
         toast({

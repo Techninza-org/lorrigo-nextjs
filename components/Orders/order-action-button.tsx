@@ -4,6 +4,15 @@ import React from "react";
 import { Button } from "../ui/button";
 import { B2COrderType } from "@/types/types";
 import { useModal } from "@/hooks/use-model-store";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { MoreHorizontalIcon } from "lucide-react";
+import { CancelOrderDialog } from "./cancel-order-dialog";
 
 type ButtonStyles = {
     [key: string]: string;
@@ -31,26 +40,66 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
 
     if (orderStage === 0) {
         return (
-            <Link href={`/orders/${rowData._id}`}>
-                <Button variant={"themeButton"} size={"sm"} disabled={disabled}>
-                    {text}
-                </Button>
-            </Link>
+            <>
+                <Link href={`/orders/${rowData._id}`}>
+                    <Button variant={"themeButton"} size={"sm"} disabled={disabled}>
+                        {text}
+                    </Button>
+                </Link>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontalIcon className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                        <DropdownMenuItem>Edit Order</DropdownMenuItem>
+                        <OrderCloneButton rowData={rowData} />
+
+                        <DropdownMenuSeparator />
+                        <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </>
+
         );
     }
 
     if (orderStage === 1) {
         return (
-            <Button variant={"themeButton"} size={"sm"} onClick={() => { onOpen("schedulePickup", { order: rowData }) }}
-            >
+            <Button variant={"themeButton"} size={"sm"} onClick={() => { onOpen("schedulePickup", { order: rowData }) }}>
                 {text}
             </Button>
         );
     }
 
+    if (orderStage === -1) {
+        return (
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontalIcon className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                    <DropdownMenuItem>Edit Order</DropdownMenuItem>
+                    <OrderCloneButton rowData={rowData} />
+                </DropdownMenuContent>
+            </DropdownMenu>
+        );
+    }
+
     return (
-        <Button variant={"themeButton"} size={"sm"} disabled={disabled}>
-            {text}
-        </Button>
+        <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
     );
 };
+
+
+export const OrderCloneButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
+    const { onOpen } = useModal();
+    return (
+        <DropdownMenuItem>Clone Order</DropdownMenuItem>
+    );
+}

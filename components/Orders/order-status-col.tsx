@@ -1,22 +1,11 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
-import { Copy, InfoIcon, MoreHorizontal, ShoppingCartIcon } from "lucide-react";
+import { Copy, ShoppingCartIcon } from "lucide-react";
 import { formatDate } from "date-fns";
 import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { CancelOrderDialog } from "./cancel-order-dialog";
 import { OrderButton } from "./order-action-button";
 import { TrackOrder } from "./track-order-button";
 
@@ -120,6 +109,7 @@ export const columns: ColumnDef<B2COrderType>[] = [
                 <div className="space-y-1">
                     <Badge variant={orderStage?.stage == -1 ? "failure" : "success"}>{orderStage?.action}
                     </Badge>
+                  <p>{formatDate(`${orderStage?.stageDateTime}`, 'dd MM yyyy | HH:mm a')}</p>
                 </div>
             )
         }
@@ -133,28 +123,6 @@ export const columns: ColumnDef<B2COrderType>[] = [
                     <OrderButton
                         rowData={rowData}
                     />
-                    <DropdownMenu>
-
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
-                            <DropdownMenuItem>Edit Order</DropdownMenuItem>
-                            <DropdownMenuItem>Add Order Tag</DropdownMenuItem>
-                            <DropdownMenuItem>Clone Order</DropdownMenuItem>
-
-                            {
-                                rowData?.orderStages?.slice(-1)[0]?.stage == 0 || 1 &&
-                                (<>
-                                    <DropdownMenuSeparator />
-                                    <CancelOrderDialog orderId={rowData._id} clientRefId={rowData?.order_reference_id ?? rowData._id} />
-                                </>)
-                            }
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </div>
             )
         }
