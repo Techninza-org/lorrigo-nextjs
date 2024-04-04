@@ -23,7 +23,7 @@ export const dateFormatter = (date: string) => {
   return splittedDate.join("-");
 };
 
-export const getFormattedUpcomingDate = (numberOfDaysToAdd: any) => {
+export const getFormattedUpcomingDate = (numberOfDaysToAdd: number) => {
   const currentDate = new Date();
   const upcomingDate = new Date(currentDate);
   upcomingDate.setDate(upcomingDate.getDate() + numberOfDaysToAdd);

@@ -1,4 +1,4 @@
-import CourierPage from "@/components/Orders/CourierPage";
+import CourierPage from "@/components/Orders/courier-page";
 import { Suspense } from "react";
 
 export default function OrderPage() {

@@ -2,7 +2,6 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
@@ -10,15 +9,11 @@ import {
 import { useModal } from "@/hooks/use-model-store";
 import { cn } from "@/lib/utils";
 import { formatDate } from "date-fns";
-import { Circle } from "lucide-react";
-
 
 export const TrackOrderStatusModal = () => {
     const { isOpen, onClose, type, data } = useModal();
 
     const {order} = data;
-
-    console.log(order?.orderStages)
 
     const isModalOpen = isOpen && type === "trackModal";
 

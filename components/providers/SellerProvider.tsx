@@ -9,20 +9,21 @@ import { sellerSchema } from "@/components/modal/add-seller-modal";
 
 import { useToast } from "@/components/ui/use-toast";
 
-import { OrderType, SellerType } from "@/types/types";
+import { B2COrderType, HubType, OrderType, SellerType } from "@/types/types";
 import { useAuth } from "./AuthProvider";
+import { formDataSchema } from "../Shipment/b2c-form";
 
 interface SellerContextType {
+  sellerDashboard: any; // type: "D2C" | "B2B";
   seller: SellerType | null;
-  sellerDashboard: any;
   business: string;
-  sellerFacilities: any;
+  sellerFacilities: HubType[];
   handlebusinessDropdown: (value: string) => void;
   sellerCustomerForm: sellerCustomerFormType;
   setSellerCustomerForm: React.Dispatch<React.SetStateAction<sellerCustomerFormType>>;
   getHub: () => void;
-  handleCreateOrder: (order: any) => boolean | Promise<boolean>;
-  orders: any[];
+  handleCreateOrder: (order: z.infer<typeof formDataSchema>) => boolean | Promise<boolean>;
+  orders: B2COrderType[];
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
   getCourierPartners: (orderId: string) => Promise<any>;
   courierPartners: OrderType | undefined;
@@ -35,8 +36,8 @@ interface SellerContextType {
 interface sellerCustomerFormType {
   sellerForm: z.infer<typeof sellerSchema>;
   customerForm: z.infer<typeof customerDetailsSchema>;
-
 }
+
 const SellerContext = createContext<SellerContextType | null>(null);
 
 function SellerProvider({ children }: { children: React.ReactNode }) {
@@ -143,7 +144,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     setbusiness(value);
   }
 
-  const handleCreateOrder = useCallback(async (order: any) => {
+  const handleCreateOrder = useCallback(async (order: z.infer<typeof formDataSchema>) => {
     try {
 
       if (!sellerCustomerForm.customerForm.name.length) {

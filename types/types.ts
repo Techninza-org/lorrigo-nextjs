@@ -23,22 +23,18 @@ export type AuthType = {
 
 
 export interface HubType {
-    id?: string;
-    hub_id?: number;
+    _id?: string;
     sellerId?: string;
-    message?: string;
-    code?: number;
-    isSuccess?: boolean;
-    hub_details?: {
-        name: string;
-        pincode: number;
-        city: string;
-        state: string;
-        address1: string;
-        address2?: string;
-        phone: number;
-        delivery_type_id?: number;
-    };
+    name?: string;
+    pincode?: number;
+    city?: string;
+    state?: string;
+    address1?: string;
+    address2?: string;
+    phone?: number;
+    delivery_type_id?: number;
+    hub_id?: number;
+    __v?: number;
 }
 
 export interface ProductDetailsType {
