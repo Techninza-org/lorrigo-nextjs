@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html,body, :root{
-  height: 100%;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -51,4 +47,18 @@ html,body, :root{
     --input: 240 3.7% 15.9%;
     --ring: 346.8 77.2% 49.8%;
   }
+}
+
+html,body, :root{
+  height: 100%;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* For IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
