@@ -145,8 +145,8 @@ export const B2CForm = () => {
                             collectableFeild={collectableFeild}
                         />
                         <CardFooter className='flex-row-reverse'>
-                            <Button type='submit' variant={'themeButton'} >Create Shipment</Button>
-                            <Button variant={'secondary'} type='button' onClick={() => router.push("/dashboard") }>Go to dashboard</Button>
+                            <Button disabled={isLoading} type='submit' variant={'themeButton'} >Create Shipment</Button>
+                            <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => router.push("/dashboard") }>Go to dashboard</Button>
                         </CardFooter>
                     </Card>
 
@@ -168,8 +168,6 @@ export const B2CForm = () => {
                                 form={form}
                                 isLoading={isLoading}
                             />
-                            {/* <CardFooter>
-                            </CardFooter> */}
                         </Card>
                     </div>
                 </div>

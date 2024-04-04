@@ -11,6 +11,7 @@ import ActionTooltip from "../action-tooltip"
 import { Activity, IndianRupee, NotebookText, Package } from "lucide-react"
 import { Label } from "../ui/label"
 import { useSellerProvider } from "../providers/SellerProvider"
+import { formatCurrencyForIndia } from "@/lib/utils"
 
 export const DataAnalysis = () => {
     const {sellerDashboard}  = useSellerProvider()
@@ -42,9 +43,9 @@ export const DataAnalysis = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-x-2 ">
                             <div>Today&apos;s Revenue:</div>
-                            <div>{sellerDashboard?.todayYesterdayAnalysis?.todayRevenue}</div>
+                            <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.todayRevenue)}</div>
                             <div>Yestarday&apos;s Revenue:</div>
-                            <div>{sellerDashboard?.todayYesterdayAnalysis?.yesterdayRevenue}</div>
+                            <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.yesterdayRevenue)}</div>
                         </div>
                     </CardContent>
                 </Card>
@@ -58,7 +59,7 @@ export const DataAnalysis = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-x-2 ">
                             <div>Average Shipping:</div>
-                            <div>{sellerDashboard?.todayYesterdayAnalysis?.todayAverageShippingCost}</div>
+                            <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.todayAverageShippingCost)}</div>
                         </div>
                     </CardContent>
                 </Card>
