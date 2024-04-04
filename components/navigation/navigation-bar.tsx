@@ -49,7 +49,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                             href: "/orders",
                         },
                         {
-                            title: "Setting",
+                            title: "Settings",
                             icon: Settings,
                             href: "/settings",
                         },

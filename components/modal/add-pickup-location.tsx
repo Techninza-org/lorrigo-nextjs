@@ -79,7 +79,6 @@ export const AddPickupLocationModal = () => {
 
     useEffect(() => {
         let timer: string | number | NodeJS.Timeout | undefined;
-        console.log(form.watch("pincode").length > 4)
 
         const fetchCityState = async () => {
             if (form.watch("pincode").length > 4) {

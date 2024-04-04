@@ -100,7 +100,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getAllOrdersByStatus = async (status: string) => {
-    console.log("status", status)
     let url = status === "all" ? `/order?limit=50&page=1` : `/order?limit=50&page=1&status=${status}`
     try {
       const res = await axiosIWAuth.get(url);
