@@ -125,6 +125,9 @@ export const B2CForm = () => {
                     phone: '',
                     address: '',
                     pincode: ''
+                },
+                sellerDetails: {
+                    sellerName: ''
                 }
             });
             if (isSuccess == true) {

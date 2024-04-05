@@ -74,6 +74,16 @@ export interface pickupAddressType {
     __v?: number;
 }
 
+export interface SellerDetailsType{
+    sellerName: string;
+    sellerGSTIN?: string;
+    sellerAddress?: string;
+    isSellerAddressAdded?: boolean;
+    sellerPincode?: string;
+    sellerCity?: string;
+    sellerState?: string;
+    sellerPhone?: number;
+}
 
 export interface B2COrderType {
     _id: string;
@@ -104,6 +114,7 @@ export interface B2COrderType {
     amount2Collect?: number;
     ewaybill?: number;
     customerDetails?: CustomerDetailsType;
+    sellerDetails?: SellerDetailsType;   
     createdAt?: string;
     updatedAt?: string;
     __v?: number;

@@ -27,8 +27,10 @@ import { formDataSchema } from "../Shipment/b2c-form";
 import { OrderDetailForm } from "../Shipment/b2c-order-form";
 import { BoxDetails } from "../Shipment/box-details";
 import { AddCustomerForm, customerDetailsSchema } from "../modal/add-customer-modal";
+import { SellerForm, sellerSchema } from "../modal/add-seller-modal";
+import { Box, MapPin, Package, Undo2 } from "lucide-react";
 
-export const cloneFormSchema = formDataSchema.merge(customerDetailsSchema)
+export const cloneFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema)
 
 
 export function CloneOrderDrawer() {
@@ -72,14 +74,14 @@ export function CloneOrderDrawer() {
             },
             pickupAddress: "",
             sellerDetails: {
-                name: "",
-                gstNo: "",
+                sellerName: "",
+                sellerGSTIN: "",
+                sellerAddress: "",
                 isSellerAddressAdded: false,
-                pincode: "",
-                address: "",
-                phone: "",
-                city: "",
-                state: "",
+                sellerPincode: "",
+                sellerCity: "",
+                sellerState: "",
+                sellerPhone: "",
             },
             customerDetails: {
                 name: "",
@@ -93,6 +95,7 @@ export function CloneOrderDrawer() {
             },
         }
     });
+
 
     useEffect(() => {
         form.setValue('order_reference_id', order?.order_reference_id || '');
@@ -116,15 +119,14 @@ export function CloneOrderDrawer() {
         form.setValue('productDetails.taxableValue', order?.productId?.taxable_value || "");
         form.setValue('pickupAddress', order?.pickupAddress._id || "");
 
-        // form.setValue('sellerDetails.name', order?.sellerId?.name || "");
-        // form.setValue('sellerDetails.gstNo', order?.sellerId?.gstNo || "");
-        // form.setValue('sellerDetails.isSellerAddressAdded', order?.sellerId?.isSellerAddressAdded || false);
-        // form.setValue('sellerDetails.pincode', order?.sellerId?.pincode || "");
-        // form.setValue('sellerDetails.address', order?.sellerId?.address || "");
-        // form.setValue('sellerDetails.country', order?.sellerId?.country || "");
-        // form.setValue('sellerDetails.phone', order?.sellerId?.phone || "");
-        // form.setValue('sellerDetails.city', order?.sellerId?.city || "");
-        // form.setValue('sellerDetails.state', order?.sellerId?.state || "");
+        form.setValue('sellerDetails.sellerName', order?.sellerDetails?.sellerName || "");
+        form.setValue('sellerDetails.sellerGSTIN', order?.sellerDetails?.sellerGSTIN || "");
+        form.setValue('sellerDetails.isSellerAddressAdded', order?.sellerDetails?.isSellerAddressAdded || false);
+        form.setValue('sellerDetails.sellerPincode', order?.sellerDetails?.sellerPincode || "");
+        form.setValue('sellerDetails.sellerAddress', order?.sellerDetails?.sellerAddress || "");
+        form.setValue('sellerDetails.sellerPhone', order?.sellerDetails?.sellerPhone?.toString() || "");
+        form.setValue('sellerDetails.sellerCity', order?.sellerDetails?.sellerCity || "");
+        form.setValue('sellerDetails.sellerState', order?.sellerDetails?.sellerState || "");
 
         form.setValue('customerDetails.name', order?.customerDetails?.name || "");
         form.setValue('customerDetails.phone', order?.customerDetails?.phone || "");
@@ -165,10 +167,10 @@ export function CloneOrderDrawer() {
 
     const onSubmit = async (values: z.infer<typeof cloneFormSchema>) => {
         try {
-            console.log(values);
+            console.log(values, 'values')
             const isSuccess = await handleCreateOrder(values)
             if (isSuccess == true) {
-                form.reset();
+                // form.reset();
                 router.refresh()
                 handleClose()
             }
@@ -181,78 +183,112 @@ export function CloneOrderDrawer() {
     return (
         <Drawer open={isModalOpen} direction="right" onClose={handleClose}>
 
-            <DrawerContent className="bg-white flex flex-col rounded-t-[10px] h-full mt-24 fixed bottom-0 left-80">
+            <DrawerContent className="rounded-t-[10px] h-full fixed bottom-0 left-80">
                 <DrawerHeader>
                     <DrawerTitle className="flex items-center space-x-2">
+                        <Button size={"icon"} variant={"secondary"} onClick={handleClose}>
+                            <Undo2 size={20} />
+                        </Button>
                         <span>Clone Order</span>
                         <span className="font-medium underline underline-offset-4 text-blue-800">
                             #{order?.order_reference_id}
                         </span>
                     </DrawerTitle>
-                    <DrawerDescription>This action cannot be undone.</DrawerDescription>
+                    {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
                 </DrawerHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                        <div className="grid grid-cols-5">
-                            <div className="col-span-3">
-                                <OrderDetailForm
-                                    form={form}
-                                    isLoading={isLoading}
-                                    handleDecrement={handleDecrement}
-                                    handleIncrement={handleIncrement}
-                                    collectableFeild={collectableFeild}
-                                />
-                            </div>
+                        <div className="grid grid-cols-5 gap-2">
+                            <div className="col-span-3 space-y-2">
+                                <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
+                                    <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
+                                        <Package className='mr-3' size={20} />Order Details
+                                    </h4>
+                                    <OrderDetailForm
+                                        form={form}
+                                        isLoading={isLoading}
+                                        handleDecrement={handleDecrement}
+                                        handleIncrement={handleIncrement}
+                                        collectableFeild={collectableFeild}
+                                    />
 
-                            <div className="col-span-2">
-                                <div className="px-6">
-                                    <FormField
-                                        control={form.control}
-                                        name="pickupAddress"
-                                        render={({ field }) => (
-                                            <FormItem className='w-full'>
-                                                <FormLabel
-                                                    className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
-                                                >
-                                                    Select Facility <span className='text-red-500'>*</span>
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Select
-                                                        disabled={isLoading}
-                                                        onValueChange={field.onChange}
-
-                                                    >
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder={order?.pickupAddress?.name || "Select facility"} />
-                                                        </SelectTrigger>
-                                                        <SelectContent className="max-h-72">
-                                                            {sellerFacilities.length > 0 ? (sellerFacilities.map((facility: any) => (
-                                                                <SelectItem key={facility._id} value={facility._id} className="capitalize">
-                                                                    {facility.name}
-                                                                </SelectItem>
-                                                            ))) : (
-                                                                <SelectItem value="noFacility" className="capitalize" disabled={true}>
-                                                                    No facility available
-                                                                </SelectItem>
-                                                            )}
-                                                        </SelectContent>
-                                                    </Select>
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                </div>
+                                <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
+                                    <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
+                                        <MapPin className='mr-3' size={20} />Seller Details
+                                    </h4>
+                                    <SellerForm
+                                        form={form}
+                                        isLoading={isLoading}
                                     />
                                 </div>
 
-                                <AddCustomerForm
-                                    form={form}
-                                    isLoading={isLoading}
-                                />
-                                <BoxDetails
-                                    form={form}
-                                    isLoading={isLoading}
-                                />
+
+                            </div>
+
+                            <div className="col-span-2 space-y-2">
+                                <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
+                                    <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
+                                        <MapPin className='mr-3' size={20} />Delivery Details
+                                    </h4>
+
+                                    <div className="px-6">
+                                        <FormField
+                                            control={form.control}
+                                            name="pickupAddress"
+                                            render={({ field }) => (
+                                                <FormItem className='w-full'>
+                                                    <FormLabel
+                                                        className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
+                                                    >
+                                                        Select Facility <span className='text-red-500'>*</span>
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Select
+                                                            disabled={isLoading}
+                                                            onValueChange={field.onChange}
+
+                                                        >
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder={order?.pickupAddress?.name || "Select facility"} />
+                                                            </SelectTrigger>
+                                                            <SelectContent className="max-h-72">
+                                                                {sellerFacilities.length > 0 ? (sellerFacilities.map((facility: any) => (
+                                                                    <SelectItem key={facility._id} value={facility._id} className="capitalize">
+                                                                        {facility.name}
+                                                                    </SelectItem>
+                                                                ))) : (
+                                                                    <SelectItem value="noFacility" className="capitalize" disabled={true}>
+                                                                        No facility available
+                                                                    </SelectItem>
+                                                                )}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+
+
+                                    <AddCustomerForm
+                                        form={form}
+                                        isLoading={isLoading}
+                                    />
+                                </div>
+
+
+                                <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
+                                    <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
+                                        <Box className='mr-3' size={20} />Box Details
+                                    </h4>
+                                    <BoxDetails
+                                        form={form}
+                                        isLoading={isLoading}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -268,13 +304,7 @@ export function CloneOrderDrawer() {
                     </form>
                 </Form>
 
-
-
-
-
             </DrawerContent>
-
-
         </Drawer>
 
 

@@ -36,14 +36,14 @@ interface SellerContextType {
 
 interface sellerCustomerFormType {
   sellerForm: {
-    name: string;
-    gstNo?: string | undefined;
+    sellerName: string;
+    sellerGSTIN?: string | undefined;
     isSellerAddressAdded?: boolean | undefined;
-    pincode?: string | undefined;
-    address?: string | undefined;
-    phone?: string | undefined;
-    city?: string | undefined;
-    state?: string | undefined;
+    sellerCity?: string | undefined;
+    sellerState?: string | undefined;
+    sellerPhone?: string | undefined;
+    sellerAddress?: string | undefined;
+    sellerPincode?: string | undefined;
   }
   customerForm: {
     name: string;
@@ -70,14 +70,14 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
     sellerForm: {
-      name: "",
-      gstNo: "",
+      sellerName: "",
+      sellerGSTIN: "",
       isSellerAddressAdded: false,
-      pincode: "",
-      address: "",
-      phone: "",
-      city: "",
-      state: "",
+      sellerCity: "",
+      sellerState: "",
+      sellerPhone: "",
+      sellerAddress: "",
+      sellerPincode: "",
     },
     customerForm: {
       name: "",
@@ -167,82 +167,112 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     console.log(sellerCustomerForm, "order")
     try {
       const customerDetailsPayload = order.customerDetails && order.customerDetails.name.length > 0
-      ? {
+        ? {
           name: order.customerDetails.name,
           phone: order.customerDetails.phone,
           address: order.customerDetails.address,
           pincode: Number(order.customerDetails.pincode),
-      }
-      : {
+        }
+        : {
           name: sellerCustomerForm.customerForm.name,
           phone: sellerCustomerForm.customerForm.phone,
           address: sellerCustomerForm.customerForm.address,
           pincode: Number(sellerCustomerForm.customerForm.pincode),
-      };
-        
+        };
+
+        const sellerDetailsPayload = order.sellerDetails && order.sellerDetails.sellerName.length > 0
+        ? {
+          sellerName: order.sellerDetails.sellerName,
+          sellerGSTIN: order.sellerDetails.sellerGSTIN,
+          isSellerAddressAdded: order.sellerDetails.isSellerAddressAdded,
+          sellerCity: order.sellerDetails.sellerCity,
+          sellerState: order.sellerDetails.sellerState,
+          sellerPhone: order.sellerDetails.sellerPhone,
+          sellerAddress: order.sellerDetails.sellerAddress,
+          sellerPincode: Number(order.sellerDetails.sellerPincode),
+        }
+        : {
+          sellerName: sellerCustomerForm.sellerForm.sellerName,
+          sellerGSTIN: sellerCustomerForm.sellerForm.sellerGSTIN,
+          isSellerAddressAdded: sellerCustomerForm.sellerForm.isSellerAddressAdded,
+          sellerCity: sellerCustomerForm.sellerForm.sellerCity,
+          sellerState: sellerCustomerForm.sellerForm.sellerState,
+          sellerPhone: sellerCustomerForm.sellerForm.sellerPhone,
+          sellerAddress: sellerCustomerForm.sellerForm.sellerAddress,
+          sellerPincode: Number(sellerCustomerForm.sellerForm.sellerPincode),
+        };
+
       if (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode) {
         toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Customer details are required",
+          variant: "destructive",
+          title: "Error",
+          description: "Customer details are required",
         });
         return false;
-    }
-
-
-        const payload = {
-            order_reference_id: order.order_reference_id,
-            payment_mode: order.payment_mode === "COD" ? 1 : 0,
-            orderWeight: Number(order.orderWeight),
-            orderWeightUnit: "kg",
-            order_invoice_date: order.order_invoice_date,
-            order_invoice_number: order.order_invoice_number,
-            numberOfBoxes: Number(order.numberOfBoxes),
-            orderSizeUnit: order.orderSizeUnit,
-            orderBoxHeight: Number(order.orderBoxHeight),
-            orderBoxWidth: Number(order.orderBoxWidth),
-            orderBoxLength: Number(order.orderBoxLength),
-            amount2Collect: Number(order.amount2Collect),
-            customerDetails: customerDetailsPayload,
-            productDetails: {
-                name: order.productDetails.name,
-                category: order.productDetails.category,
-                hsn_code: order.productDetails.hsn_code,
-                quantity: Number(order.productDetails.quantity),
-                taxRate: order.productDetails.taxRate,
-                taxableValue: order.productDetails.taxableValue,
-            },
-            pickupAddress: order.pickupAddress,
-        }
-
-        const res = await axiosIWAuth.post('/order/b2c', payload);
-        if (res.data?.valid) {
-            toast({
-                variant: "default",
-                title: "Order created successfully",
-                description: "Order has been created successfully",
-            });
-            getSellerDashboardDetails();
-            getAllOrdersByStatus("all");
-            router.refresh();
-            return true;
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: res.data.message,
-            });
-            return false;
-        }
-    } catch (error) {
+      }
+      if (!sellerDetailsPayload?.sellerName?.length) {
         toast({
-            variant: "destructive",
-            title: "Error",
-            description: "An error occurred",
+          variant: "destructive",
+          title: "Error",
+          description: "Seller details are required",
         });
         return false;
+      }
+
+      const payload = {
+        order_reference_id: order.order_reference_id,
+        payment_mode: order.payment_mode === "COD" ? 1 : 0,
+        orderWeight: Number(order.orderWeight),
+        orderWeightUnit: "kg",
+        order_invoice_date: order.order_invoice_date,
+        order_invoice_number: order.order_invoice_number,
+        numberOfBoxes: Number(order.numberOfBoxes),
+        orderSizeUnit: order.orderSizeUnit,
+        orderBoxHeight: Number(order.orderBoxHeight),
+        orderBoxWidth: Number(order.orderBoxWidth),
+        orderBoxLength: Number(order.orderBoxLength),
+        amount2Collect: Number(order.amount2Collect),
+        customerDetails: customerDetailsPayload,
+        productDetails: {
+          name: order.productDetails.name,
+          category: order.productDetails.category,
+          hsn_code: order.productDetails.hsn_code,
+          quantity: Number(order.productDetails.quantity),
+          taxRate: order.productDetails.taxRate,
+          taxableValue: order.productDetails.taxableValue,
+        },
+        pickupAddress: order.pickupAddress,
+        sellerDetails: sellerDetailsPayload
+      }
+
+      const res = await axiosIWAuth.post('/order/b2c', payload);
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "Order created successfully",
+          description: "Order has been created successfully",
+        });
+        getSellerDashboardDetails();
+        getAllOrdersByStatus("all");
+        router.refresh();
+        return true;
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: res.data.message,
+        });
+        return false;
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An error occurred",
+      });
+      return false;
     }
-}, [axiosIWAuth, router, sellerCustomerForm, toast]);
+  }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
 
   const handleCreateB2BShipment = useCallback(async ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => {

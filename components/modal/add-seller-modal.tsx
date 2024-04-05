@@ -28,16 +28,24 @@ import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
 
+// sellerName
+// sellerGSTIN
+// isSellerAddressAdded
+// sellerPincode
+// sellerAddress
+// sellerPhone
+// sellerCity
+// sellerState
 export const sellerSchema = z.object({
     sellerDetails: z.object({
-        name: z.string().min(1, "Seller name is required"),
-        gstNo: z.string().optional(),
+        sellerName: z.string().min(1, "Seller name is required"),
+        sellerGSTIN: z.string().optional(),
         isSellerAddressAdded: z.boolean().optional(),
-        pincode: z.string().optional(),
-        address: z.string().optional(),
-        phone: z.string().optional(),
-        city: z.string().optional(),
-        state: z.string().optional(),
+        sellerPincode: z.string().optional(),
+        sellerAddress: z.string().optional(),
+        sellerPhone: z.string().optional(),
+        sellerCity: z.string().optional(),
+        sellerState: z.string().optional(),
     })
 })
 
@@ -52,28 +60,38 @@ export const AddSellerModal = () => {
         resolver: zodResolver(sellerSchema),
         defaultValues: {
             sellerDetails: {
-                name: "",
-                gstNo: "",
+                // name: "",
+                // gstNo: "",
+                // isSellerAddressAdded: false,
+                // pincode: "",
+                // address: "",
+                // phone: "",
+                // city: "",
+                // state: "",
+                // country: "India"
+                sellerName: "",
+                sellerGSTIN: "",
                 isSellerAddressAdded: false,
-                pincode: "",
-                address: "",
-                phone: "",
-                city: "",
-                state: "",
+                sellerPincode: "",
+                sellerAddress: "",
+                sellerPhone: "",
+                sellerCity: "",
+                sellerState: "",
                 country: "India"
+
             }
         }
     });
 
-    const pincode = form.watch('sellerDetails.pincode');
+    const pincode = form.watch('sellerDetails.sellerPincode');
     useEffect(() => {
         let timer: string | number | NodeJS.Timeout | undefined;
 
         const fetchCityState = async () => {
             if (pincode.length > 4) {
                 const cityStateRes = await getCityStateFPincode(pincode)
-                form.setValue('sellerDetails.city', cityStateRes.city)
-                form.setValue('sellerDetails.state', cityStateRes.state)
+                form.setValue('sellerDetails.sellerCity', cityStateRes.city)
+                form.setValue('sellerDetails.sellerState', cityStateRes.state)
             }
         };
 
@@ -142,7 +160,7 @@ export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any 
         <div className="grid grid-cols-2 px-6 gap-3">
             <FormField
                 control={form.control}
-                name="sellerDetails.name"
+                name="sellerDetails.sellerName"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -162,7 +180,7 @@ export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any 
             />
             <FormField
                 control={form.control}
-                name="sellerDetails.gstNo"
+                name="sellerDetails.sellerGSTIN"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -208,7 +226,7 @@ export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any 
                     <>
                         <FormField
                             control={form.control}
-                            name="sellerDetails.address"
+                            name="sellerDetails.sellerAddress"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -228,7 +246,7 @@ export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any 
                         />
                         <FormField
                             control={form.control}
-                            name="sellerDetails.phone"
+                            name="sellerDetails.sellerPhone"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -249,7 +267,7 @@ export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any 
                         />
                         <FormField
                             control={form.control}
-                            name="sellerDetails.pincode"
+                            name="sellerDetails.sellerPincode"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -269,7 +287,7 @@ export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any 
                         />
                         <FormField
                             control={form.control}
-                            name="sellerDetails.city"
+                            name="sellerDetails.sellerCity"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -289,7 +307,7 @@ export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any 
                         />
                         <FormField
                             control={form.control}
-                            name="sellerDetails.state"
+                            name="sellerDetails.sellerState"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
