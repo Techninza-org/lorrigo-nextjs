@@ -214,6 +214,7 @@ export function EditOrderDrawer() {
                                     </h4>
                                     <OrderDetailForm
                                         form={form}
+                                        orderRefDisable={true}
                                         isLoading={isLoading}
                                         handleDecrement={handleDecrement}
                                         handleIncrement={handleIncrement}

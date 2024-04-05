@@ -14,7 +14,7 @@ interface DeliveryDetailsFormProps {
 }
 
 export const DeliveryDetailsForm = ({ form, isLoading }: DeliveryDetailsFormProps) => {
-    const { sellerFacilities } = useSellerProvider();
+    const { sellerFacilities,sellerCustomerForm } = useSellerProvider();
 
     const { onOpen } = useModal();
     return (
@@ -65,10 +65,10 @@ export const DeliveryDetailsForm = ({ form, isLoading }: DeliveryDetailsFormProp
                         )}
                     />
                     <Button variant={"secondary"} size={"sm"} className="w-full mt-2 items-center" type="button" onClick={() => onOpen("addSeller")}>
-                        <UserRoundPlus size={15} className="mr-2" />Add Seller
+                        <UserRoundPlus size={15} className="mr-2" />{sellerCustomerForm.sellerForm.sellerName || "Add Seller"}
                     </Button>
                     <Button variant={"secondary"} size={"sm"} className="w-full mt-2 items-center" type="button" onClick={() => onOpen("addCustomer")}>
-                        <CircleUserRound size={15} className="mr-2" />Add Customer <span className='text-red-500'>*</span>
+                        <CircleUserRound size={15} className="mr-2" />{sellerCustomerForm.customerForm.name ||  "Add Customer"} <span className='text-red-500'>*</span>
                     </Button>
                 </div>
             </div>

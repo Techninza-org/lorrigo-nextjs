@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card"
 import { OrderDetailForm } from './b2c-order-form';
 import { DeliveryDetailsForm } from './delivery-details-form';
-import { MapPin, PackageOpen } from 'lucide-react';
+import { MapPin, PackageOpen, Undo2 } from 'lucide-react';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { Button } from '../ui/button';
 import { BoxDetails } from './box-details';
@@ -103,7 +103,7 @@ export const B2CForm = () => {
         }
     }, [isCOD]);
 
-    
+
     const handleIncrement = () => {
         const currentValue = parseInt(form.watch('productDetails.quantity').toString()) || 0;
         setValue('productDetails.quantity', (currentValue + 1).toString());
@@ -145,7 +145,12 @@ export const B2CForm = () => {
                 <div className="grid grid-cols-4 gap-2">
                     <Card className='col-span-3 space-y-3'>
                         <CardHeader>
-                            <CardTitle>Create a new shipment (D2C)</CardTitle>
+                            <CardTitle className='space-x-2'>
+                                {/* <Button type='button' size={"icon"} variant={"secondary"} onClick={()=>router.back()}>
+                                    <Undo2 size={20} />
+                                </Button> */}
+                                <span>Create a new shipment (D2C)</span>
+                            </CardTitle>
                             <CardDescription>Order Details</CardDescription>
                         </CardHeader>
                         <OrderDetailForm
@@ -157,7 +162,7 @@ export const B2CForm = () => {
                         />
                         <CardFooter className='flex-row-reverse'>
                             <Button disabled={isLoading} type='submit' variant={'themeButton'} >Create Shipment</Button>
-                            <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => router.push("/dashboard") }>Go to dashboard</Button>
+                            <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => router.push("/dashboard")}>Go to dashboard</Button>
                         </CardFooter>
                     </Card>
 
