@@ -166,12 +166,29 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const handleCreateOrder = useCallback(async (order: z.infer<typeof cloneFormSchema>) => {
     console.log(sellerCustomerForm, "order")
     try {
-        const customerDetailsPayload = order?.customerDetails.name.length > 0 || {
-            name: sellerCustomerForm.customerForm.name,
-            phone: sellerCustomerForm.customerForm.phone,
-            address: sellerCustomerForm.customerForm.address,
-            pincode: Number(sellerCustomerForm.customerForm.pincode),
-        };
+      const customerDetailsPayload = order.customerDetails && order.customerDetails.name.length > 0
+      ? {
+          name: order.customerDetails.name,
+          phone: order.customerDetails.phone,
+          address: order.customerDetails.address,
+          pincode: Number(order.customerDetails.pincode),
+      }
+      : {
+          name: sellerCustomerForm.customerForm.name,
+          phone: sellerCustomerForm.customerForm.phone,
+          address: sellerCustomerForm.customerForm.address,
+          pincode: Number(sellerCustomerForm.customerForm.pincode),
+      };
+        
+      if (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode) {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Customer details are required",
+        });
+        return false;
+    }
+
 
         const payload = {
             order_reference_id: order.order_reference_id,
