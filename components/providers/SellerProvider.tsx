@@ -23,7 +23,7 @@ interface SellerContextType {
   sellerCustomerForm: sellerCustomerFormType;
   setSellerCustomerForm: React.Dispatch<React.SetStateAction<sellerCustomerFormType>>;
   getHub: () => void;
-  handleCreateOrder: (order: any) => boolean | Promise<boolean>;
+  handleCreateOrder: (order: z.infer<typeof cloneFormSchema>) => boolean | Promise<boolean>;
   orders: B2COrderType[];
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
   getCourierPartners: (orderId: string) => Promise<any>;
@@ -163,69 +163,69 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     setbusiness(value);
   }
 
-  console.log(sellerCustomerForm, "order")
-  const handleCreateOrder = useCallback(async (order: any) => {
+  const handleCreateOrder = useCallback(async (order: z.infer<typeof cloneFormSchema>) => {
+    console.log(sellerCustomerForm, "order")
     try {
-      const customerDetailsPayload = order.customerDetails || {
-        name: sellerCustomerForm.customerForm.name,
-        phone: sellerCustomerForm.customerForm.phone,
-        address: sellerCustomerForm.customerForm.address,
-        pincode: Number(sellerCustomerForm.customerForm.pincode),
-      };
+        const customerDetailsPayload = order?.customerDetails.name.length > 0 || {
+            name: sellerCustomerForm.customerForm.name,
+            phone: sellerCustomerForm.customerForm.phone,
+            address: sellerCustomerForm.customerForm.address,
+            pincode: Number(sellerCustomerForm.customerForm.pincode),
+        };
 
-      const payload = {
-        order_reference_id: order.order_reference_id,
-        payment_mode: order.payment_mode === "COD" ? 1 : 0,
-        orderWeight: Number(order.orderWeight),
-        orderWeightUnit: "kg",
-        order_invoice_date: order.order_invoice_date,
-        order_invoice_number: order.order_invoice_number,
-        numberOfBoxes: Number(order.numberOfBoxes),
-        orderSizeUnit: order.orderSizeUnit,
-        orderBoxHeight: Number(order.orderBoxHeight),
-        orderBoxWidth: Number(order.orderBoxWidth),
-        orderBoxLength: Number(order.orderBoxLength),
-        amount2Collect: Number(order.amount2Collect),
-        customerDetails: customerDetailsPayload,
-        productDetails: {
-          name: order.productDetails.name,
-          category: order.productDetails.category,
-          hsn_code: order.productDetails.hsn_code,
-          quantity: Number(order.productDetails.quantity),
-          taxRate: order.productDetails.taxRate,
-          taxableValue: order.productDetails.taxableValue,
-        },
-        pickupAddress: order.pickupAddress,
-      }
+        const payload = {
+            order_reference_id: order.order_reference_id,
+            payment_mode: order.payment_mode === "COD" ? 1 : 0,
+            orderWeight: Number(order.orderWeight),
+            orderWeightUnit: "kg",
+            order_invoice_date: order.order_invoice_date,
+            order_invoice_number: order.order_invoice_number,
+            numberOfBoxes: Number(order.numberOfBoxes),
+            orderSizeUnit: order.orderSizeUnit,
+            orderBoxHeight: Number(order.orderBoxHeight),
+            orderBoxWidth: Number(order.orderBoxWidth),
+            orderBoxLength: Number(order.orderBoxLength),
+            amount2Collect: Number(order.amount2Collect),
+            customerDetails: customerDetailsPayload,
+            productDetails: {
+                name: order.productDetails.name,
+                category: order.productDetails.category,
+                hsn_code: order.productDetails.hsn_code,
+                quantity: Number(order.productDetails.quantity),
+                taxRate: order.productDetails.taxRate,
+                taxableValue: order.productDetails.taxableValue,
+            },
+            pickupAddress: order.pickupAddress,
+        }
 
-      const res = await axiosIWAuth.post('/order/b2c', payload);
-      if (res.data?.valid) {
+        const res = await axiosIWAuth.post('/order/b2c', payload);
+        if (res.data?.valid) {
+            toast({
+                variant: "default",
+                title: "Order created successfully",
+                description: "Order has been created successfully",
+            });
+            getSellerDashboardDetails();
+            getAllOrdersByStatus("all");
+            router.refresh();
+            return true;
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: res.data.message,
+            });
+            return false;
+        }
+    } catch (error) {
         toast({
-          variant: "default",
-          title: "Order created successfully",
-          description: "Order has been created successfully",
-        });
-        getSellerDashboardDetails();
-        getAllOrdersByStatus("all");
-        router.refresh();
-        return true;
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: res.data.message,
+            variant: "destructive",
+            title: "Error",
+            description: "An error occurred",
         });
         return false;
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "An error occurred",
-      });
-      return false;
     }
-  }, [axiosIWAuth, router, sellerCustomerForm, toast]);
+}, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
 
   const handleCreateB2BShipment = useCallback(async ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => {

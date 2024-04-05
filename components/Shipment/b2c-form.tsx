@@ -118,7 +118,15 @@ export const B2CForm = () => {
 
     const onSubmit = async (values: z.infer<typeof formDataSchema>) => {
         try {
-            const isSuccess = await handleCreateOrder(values);
+            const isSuccess = await handleCreateOrder({
+                ...values,
+                customerDetails: {
+                    name: '',
+                    phone: '',
+                    address: '',
+                    pincode: ''
+                }
+            });
             if (isSuccess == true) {
                 form.reset();
                 router.push('/orders');
