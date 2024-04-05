@@ -54,7 +54,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                        <DropdownMenuItem>Edit Order</DropdownMenuItem>
+                        <OrderEditButton rowData={rowData} />
                         <OrderCloneButton rowData={rowData} />
 
                         <DropdownMenuSeparator />
@@ -84,7 +84,6 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                    <DropdownMenuItem>Edit Order</DropdownMenuItem>
                     <OrderCloneButton rowData={rowData} />
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -100,6 +99,12 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
 export const OrderCloneButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     const { onOpen } = useModal();
     return (
-        <DropdownMenuItem>Clone Order</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onOpen("cloneOrder", { order: rowData })}>Clone Order</DropdownMenuItem>
+    );
+}
+export const OrderEditButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
+    const { onOpen } = useModal();
+    return (
+        <DropdownMenuItem onClick={() => onOpen("editOrder", { order: rowData })}>Edit Order</DropdownMenuItem>
     );
 }

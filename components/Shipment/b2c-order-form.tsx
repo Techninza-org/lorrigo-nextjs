@@ -16,12 +16,13 @@ import {
 interface OrderDetailFormProps {
     form: any;
     isLoading: boolean;
+    orderRefDisable?: boolean;
     handleIncrement: () => void;
     handleDecrement: () => void;
     collectableFeild: boolean;
 }
 
-export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrement, collectableFeild }: OrderDetailFormProps) => {
+export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrement, collectableFeild, orderRefDisable }: OrderDetailFormProps) => {
     const currentDate = new Date();
     const yesterday = new Date(currentDate);
     yesterday.setDate(yesterday.getDate() - 1);
@@ -41,7 +42,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                         </FormLabel>
                         <FormControl>
                             <Input
-                                disabled={isLoading}
+                                disabled={isLoading || orderRefDisable}
                                 className="bg-zinc-200/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                 placeholder="Enter the order reference ID"
                                 {...field}
@@ -339,7 +340,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                                     <SelectTrigger
                                         className="bg-zinc-300/50 dark:bg-zinc-700 dark:text-white border-0 focus:ring-0 text-black ring-offset-0 focus:ring-offset-0 capitalize outline-none"
                                     >
-                                        <SelectValue placeholder="Select a payment mode" />
+                                        <SelectValue placeholder={form.watch("payment_mode") || "Select a payment mode"} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>

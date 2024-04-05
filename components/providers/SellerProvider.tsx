@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { B2COrderType, HubType, OrderType, SellerType } from "@/types/types";
 import { useAuth } from "./AuthProvider";
 import { formDataSchema } from "../Shipment/b2c-form";
+import { cloneFormSchema } from "../drawer/clone-order-drawer";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -22,7 +23,7 @@ interface SellerContextType {
   sellerCustomerForm: sellerCustomerFormType;
   setSellerCustomerForm: React.Dispatch<React.SetStateAction<sellerCustomerFormType>>;
   getHub: () => void;
-  handleCreateOrder: (order: z.infer<typeof formDataSchema>) => boolean | Promise<boolean>;
+  handleCreateOrder: (order: any) => boolean | Promise<boolean>;
   orders: B2COrderType[];
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
   getCourierPartners: (orderId: string) => Promise<any>;
@@ -34,8 +35,26 @@ interface SellerContextType {
 }
 
 interface sellerCustomerFormType {
-  sellerForm: z.infer<typeof sellerSchema>;
-  customerForm: z.infer<typeof customerDetailsSchema>;
+  sellerForm: {
+    name: string;
+    gstNo?: string | undefined;
+    isSellerAddressAdded?: boolean | undefined;
+    pincode?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    city?: string | undefined;
+    state?: string | undefined;
+  }
+  customerForm: {
+    name: string;
+    pincode: string;
+    phone: string;
+    address: string;
+    address2?: string | undefined;
+    state?: string | undefined;
+    country?: string | undefined;
+    city?: string | undefined;
+  };
 }
 
 const SellerContext = createContext<SellerContextType | null>(null);
@@ -65,12 +84,13 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       phone: "",
       state: "",
       country: "",
-      address1: "",
+      address: "",
       address2: "",
       city: "",
       pincode: "",
     }
   });
+
   const [business, setbusiness] = useState<string>("D2C");
 
   const { toast } = useToast();
@@ -143,17 +163,15 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     setbusiness(value);
   }
 
-  const handleCreateOrder = useCallback(async (order: z.infer<typeof formDataSchema>) => {
+  console.log(sellerCustomerForm, "order")
+  const handleCreateOrder = useCallback(async (order: any) => {
     try {
-
-      if (!sellerCustomerForm.customerForm.name.length) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Customer details are required",
-        });
-        return false
-      }
+      const customerDetailsPayload = order.customerDetails || {
+        name: sellerCustomerForm.customerForm.name,
+        phone: sellerCustomerForm.customerForm.phone,
+        address: sellerCustomerForm.customerForm.address,
+        pincode: Number(sellerCustomerForm.customerForm.pincode),
+      };
 
       const payload = {
         order_reference_id: order.order_reference_id,
@@ -168,13 +186,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         orderBoxWidth: Number(order.orderBoxWidth),
         orderBoxLength: Number(order.orderBoxLength),
         amount2Collect: Number(order.amount2Collect),
-        customerDetails: {
-          name: sellerCustomerForm.customerForm.name,
-          phone: sellerCustomerForm.customerForm.phone,
-          address: sellerCustomerForm.customerForm.address1,
-          pincode: Number(sellerCustomerForm.customerForm.pincode),
-
-        },
+        customerDetails: customerDetailsPayload,
         productDetails: {
           name: order.productDetails.name,
           category: order.productDetails.category,
@@ -194,7 +206,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Order has been created successfully",
         });
         getSellerDashboardDetails();
-        router.refresh()
+        getAllOrdersByStatus("all");
+        router.refresh();
         return true;
       } else {
         toast({
@@ -202,18 +215,18 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Error",
           description: res.data.message,
         });
-        return false
+        return false;
       }
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "error.response.data.message",
+        description: "An error occurred",
       });
-      return false
-
+      return false;
     }
-  }, [axiosIWAuth, router, sellerCustomerForm, toast])
+  }, [axiosIWAuth, router, sellerCustomerForm, toast]);
+
 
   const handleCreateB2BShipment = useCallback(async ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => {
 
