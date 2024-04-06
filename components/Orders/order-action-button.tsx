@@ -56,6 +56,8 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                     <DropdownMenuContent align="start">
                         <OrderEditButton rowData={rowData} />
                         <OrderCloneButton rowData={rowData} />
+                        <DownloadInvoiceButton rowData={rowData} />
+                        
 
                         <DropdownMenuSeparator />
                         <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
@@ -106,5 +108,12 @@ export const OrderEditButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }
     const { onOpen } = useModal();
     return (
         <DropdownMenuItem onClick={() => onOpen("editOrder", { order: rowData })}>Edit Order</DropdownMenuItem>
+    );
+}
+
+export const DownloadInvoiceButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
+    const { onOpen } = useModal();
+    return (
+        <DropdownMenuItem onClick={() => onOpen("downloadInvoice", { order: rowData })}>Download Invoice</DropdownMenuItem>
     );
 }

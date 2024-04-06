@@ -1,10 +1,12 @@
 "use client"
+import { B2COrderType } from "@/types/types";
 import { InvoiceTemplate } from "./invoice-template";
 
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { Button } from "../ui/button";
 
-export const InvoicePage = () => {
+export const InvoicePage = ({ order }: { order?: B2COrderType }) => {
     const printDocument = () => {
         const input = document.getElementById("divToPrint");
         html2canvas(input!)?.then((canvas) => {
@@ -12,21 +14,19 @@ export const InvoicePage = () => {
             const pdf = new jsPDF();
             pdf.addImage(imgData, "JPEG", 3, 3, canvas.width * 0.16, canvas.height * 0.16);
             pdf.output('dataurlnewwindow');
-            pdf.save("Invoice.pdf");
+            pdf.save(`Invoice_${order?.order_invoice_number}.pdf`);
             pdf.autoPrint();
         });
     };
 
     return (
         <>
-            <button onClick={printDocument}>sss</button>
-            <div id="divToPrint" className="gap-y-14 w-full grid grid-cols-3 ">
-                <InvoiceTemplate />
-                <InvoiceTemplate />
-                <InvoiceTemplate />
-                <InvoiceTemplate />
-                <InvoiceTemplate />
+            <Button size={"sm"} variant={"webPageBtn"} onClick={printDocument}>Download Invoice</Button>
+            {/* <div id="divToPrint" className="gap-y-14 w-full grid grid-cols-3 "> */}
+            <div id="divToPrint" className="mx-auto pb-3">
+                <InvoiceTemplate order={order}/>
             </div>
+            {/* </div> */}
         </>
     );
 }
