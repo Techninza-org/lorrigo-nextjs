@@ -21,7 +21,7 @@ const LoginForm = () => {
   const { handleUserLogin } = useAuth();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const passwordType = isPasswordVisible ? "text" : "password";
-  const PasswordIcon = isPasswordVisible ? EyeOff : Eye;
+  const PasswordIcon = isPasswordVisible ? Eye : EyeOff;
   return (
     <Card>
       <CardHeader className="space-y-1">

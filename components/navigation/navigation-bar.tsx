@@ -1,7 +1,7 @@
 "use client";
 
 import { Nav } from "./nav";
-import { Home, Settings, ShoppingCart, TrendingUpIcon } from "lucide-react";
+import { HandCoins, Home, Settings, ShoppingCart, TrendingUpIcon } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -52,6 +52,10 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                             title: "Settings",
                             icon: Settings,
                             href: "/settings",
+                        },
+                        {
+                            title: "Finance",
+                            icon: HandCoins,
                         },
                     ]}
                 />

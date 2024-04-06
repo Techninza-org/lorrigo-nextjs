@@ -56,8 +56,6 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                     <DropdownMenuContent align="start">
                         <OrderEditButton rowData={rowData} />
                         <OrderCloneButton rowData={rowData} />
-                        <DownloadInvoiceButton rowData={rowData} />
-                        
 
                         <DropdownMenuSeparator />
                         <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
@@ -70,9 +68,25 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
 
     if (orderStage === 1) {
         return (
-            <Button variant={"themeButton"} size={"sm"} onClick={() => { onOpen("schedulePickup", { order: rowData }) }}>
-                {text}
-            </Button>
+            <>
+                <Button variant={"themeButton"} size={"sm"} onClick={() => { onOpen("schedulePickup", { order: rowData }) }}>
+                    {text}
+                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontalIcon className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                        <DownloadLabelButton rowData={rowData} />
+
+                        <DropdownMenuSeparator />
+                        <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </>
         );
     }
 
@@ -111,9 +125,9 @@ export const OrderEditButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }
     );
 }
 
-export const DownloadInvoiceButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
+export const DownloadLabelButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     const { onOpen } = useModal();
     return (
-        <DropdownMenuItem onClick={() => onOpen("downloadInvoice", { order: rowData })}>Download Invoice</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</DropdownMenuItem>
     );
 }

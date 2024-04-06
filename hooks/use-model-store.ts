@@ -2,7 +2,7 @@ import { B2COrderType, CustomerDetailsType, HubType, SellerType } from "@/types/
 import { create } from "zustand";
 
 
-export type ModalType = "wallet" | "addPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadInvoice";
+export type ModalType = "wallet" | "addPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel";
 interface ModalData {
   form?: any;
   customer?: CustomerDetailsType;

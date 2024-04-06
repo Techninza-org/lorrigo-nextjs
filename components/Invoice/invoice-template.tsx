@@ -3,7 +3,7 @@ import { Separator } from "../ui/separator"
 import Barcode from "react-barcode"
 import { B2COrderType } from "@/types/types"
 import { formatCurrencyForIndia } from "@/lib/utils"
-import { formatPhoneNumber, formatPhoneNumberIntl } from "react-phone-number-input"
+import { formatPhoneNumberIntl } from "react-phone-number-input"
 
 export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
     return (
@@ -47,12 +47,13 @@ export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
             <Separator orientation="horizontal" className="my-3 bg-gray-400" />
             <div className="grid grid-cols-2">
                 <div>
-                    <div>Shipped by:</div>
+                    <div className="font-semibold">Shipped by:</div>
                     <div>{order?.sellerDetails?.sellerName}</div>
-                    <div>{order?.pickupAddress.address1}</div>
+                    <div>{order?.pickupAddress.name}</div>
                     <div>India</div>
-                    <div>AWB: 545481531512212</div>
-                    <div>SID: LS4585685124156</div>
+                    <div className="font-semibold">If not delivered, return to:</div>
+                    <div>{order?.pickupAddress.address1}</div>
+                    <div>{order?.pickupAddress?.city}, {order?.pickupAddress?.state}</div>
                 </div>
             </div>
             <Separator orientation="horizontal" className="my-3 bg-gray-400" />
