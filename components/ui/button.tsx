@@ -22,6 +22,7 @@ const buttonVariants = cva(
         themeButton: "bg-[#be0c34] text-white hover:bg-[#f04d5a] dark:bg-[#be0c34] dark:text-white dark:hover:bg-[#f04d5a]",
         themeNavActiveBtn: "bg-[#be0c34] text-white hover:bg-[#f04d5a] dark:bg-[#be0c34] dark:text-white dark:hover:bg-[#f04d5a]",
         themeNavBtn: "hover:bg-[#f04d5a] hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50",
+        themeGrayBtn:"bg-[#444444] text-white hover:bg-[#929292]",
       },
       size: {
         default: "h-10 px-4 py-2",
