@@ -7,6 +7,7 @@ import axios, { AxiosInstance } from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
+import { SettingType } from "@/types/types";
 
 interface reqPayload {
     name: string;
@@ -19,7 +20,7 @@ interface reqPayload {
 }
 
 interface HubContextType {
-    handleCreateHub: (hub: reqPayload) => void;
+    handleCreateHub: (hub: SettingType) => void;
 }
 
 const HubContext = createContext<HubContextType | null>(null);
@@ -42,7 +43,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
     const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
-    const handleCreateHub = useCallback(async (hub: reqPayload) => {
+    const handleCreateHub = useCallback(async (hub: SettingType) => {
         try {
             const res = await axiosIWAuth.post('/hub', hub);
             toast({

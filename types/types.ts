@@ -134,3 +134,27 @@ export interface OrderType {
         order_zone: string;
     }[];
 }
+
+export interface SettingType {
+    company_id?: string;
+    name?: string;
+    email?: string;
+    website?: string;
+    logo?: string;
+    old?: string;
+    new?: string;
+    re_new?: string;
+    address_line_1?: string;
+    address_line_2?: string;
+    pincode?: string;
+    city?: string;
+    state?: string;
+    phone?: string;
+    holder_name?: string;
+    acc_type?: string;
+    acc_number?: string;
+    ifsc_number?: string; 
+    gstin?: string; 
+    deductTDS?: string; 
+    tan?: string; 
+}
