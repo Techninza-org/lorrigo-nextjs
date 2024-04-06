@@ -30,6 +30,7 @@ import { isValidPhoneNumber } from 'react-phone-number-input';
 import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
+import useFetchCityState from '@/hooks/use-fetch-city-state';
 
 export const pickupAddressFormSchema = z.object({
     facilityName: z.string().min(1, "Facility name is required"),
@@ -77,28 +78,20 @@ export const AddPickupLocationModal = () => {
         }
     });
 
+
+    const {cityState: cityStateRes} = useFetchCityState(form.watch("pincode"));
+    const {cityState: rtoCityStateRes} = useFetchCityState(form.watch("rtoPincode"));
+
     useEffect(() => {
-        let timer: string | number | NodeJS.Timeout | undefined;
-
-        const fetchCityState = async () => {
-            if (form.watch("pincode").length > 4) {
-                const cityStateRes = await getCityStateFPincode(form.watch("pincode"))
-                form.setValue('city', cityStateRes.city)
-                form.setValue('state', cityStateRes.state)
-            }
-            if (form.watch("rtoPincode").length > 4) {
-                const cityStateRes = await getCityStateFPincode(form.watch("rtoPincode"))
-                form.setValue('rtoCity', cityStateRes.city)
-                form.setValue('rtoState', cityStateRes.state)
-            }
-        };
-
-        // Debouncing the function
-        clearTimeout(timer);
-        timer = setTimeout(fetchCityState, 500); // Adjust the delay as per your preference
-
-        return () => clearTimeout(timer);
-    }, [form.watch("pincode"), form.watch("rtoPincode")])
+        if(cityStateRes){
+            form.setValue('city', cityStateRes.city)
+            form.setValue('state', cityStateRes.state)
+        }
+        if(rtoCityStateRes){
+            form.setValue('rtoCity', rtoCityStateRes.city)
+            form.setValue('rtoState', rtoCityStateRes.state)
+        }
+    }, [cityStateRes, form, rtoCityStateRes])
 
     const isLoading = form.formState.isSubmitting;
 

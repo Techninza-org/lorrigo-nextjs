@@ -27,6 +27,7 @@ import { Checkbox } from '../ui/checkbox';
 import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
+import useFetchCityState from '@/hooks/use-fetch-city-state';
 
 // sellerName
 // sellerGSTIN
@@ -84,23 +85,14 @@ export const AddSellerModal = () => {
     });
 
     const pincode = form.watch('sellerDetails.sellerPincode');
+    const { cityState: cityStateRes } = useFetchCityState(pincode)
+    
     useEffect(() => {
-        let timer: string | number | NodeJS.Timeout | undefined;
-
-        const fetchCityState = async () => {
-            if (pincode.length > 4) {
-                const cityStateRes = await getCityStateFPincode(pincode)
-                form.setValue('sellerDetails.sellerCity', cityStateRes.city)
-                form.setValue('sellerDetails.sellerState', cityStateRes.state)
-            }
-        };
-
-        // Debouncing the function
-        clearTimeout(timer);
-        timer = setTimeout(fetchCityState, 500);
-
-        return () => clearTimeout(timer);
-    }, [pincode])
+        if (cityStateRes) {
+            form.setValue('sellerDetails.sellerCity', cityStateRes.city)
+            form.setValue('sellerDetails.sellerState', cityStateRes.state)
+        }
+    }, [cityStateRes, form])
 
     const isLoading = form.formState.isSubmitting;
 
