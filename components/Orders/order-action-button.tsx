@@ -80,6 +80,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
+                        <OrderCloneButton rowData={rowData} />
                         <DownloadLabelButton rowData={rowData} />
 
                         <DropdownMenuSeparator />
@@ -92,22 +93,30 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
 
     if (orderStage === -1) {
         return (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontalIcon className="h-4 w-4" />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                    <OrderCloneButton rowData={rowData} />
-                </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant={"webPageBtn"} size={"sm"} onClick={() => onOpen("cloneOrder", { order: rowData })}>Clone Order</Button>
         );
     }
 
     return (
-        <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+       <>
+       <Button variant={"themeNavActiveBtn"} size={"sm"} onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</Button>
+       <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontalIcon className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+                <OrderCloneButton rowData={rowData} />
+
+                <DropdownMenuSeparator />
+
+                <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+
+            </DropdownMenuContent>
+        </DropdownMenu>
+        </>
     );
 };
 
