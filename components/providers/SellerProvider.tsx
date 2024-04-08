@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios, { AxiosInstance } from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
@@ -16,6 +16,7 @@ interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
   seller: SellerType | null;
   business: string;
+  isOrderCreated: boolean;
   sellerFacilities: HubType[];
   handlebusinessDropdown: (value: string) => void;
   sellerCustomerForm: sellerCustomerFormType;
@@ -27,7 +28,7 @@ interface SellerContextType {
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
   getCourierPartners: (orderId: string) => Promise<any>;
   courierPartners: OrderType | undefined;
-  handleCreateB2BShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => boolean | Promise<boolean>;
+  handleCreateD2CShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string, type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
@@ -62,11 +63,14 @@ const SellerContext = createContext<SellerContextType | null>(null);
 function SellerProvider({ children }: { children: React.ReactNode }) {
   const { userToken } = useAuth();
 
+
   const [seller, setSeller] = useState<SellerType | null>(null);
   const [sellerDashboard, setSellerDashboard] = useState<any>(null);
   const [sellerFacilities, setSellerFacilities] = useState([]);
   const [orders, setOrders] = useState<any[]>([]);
+  const [isOrderCreated, setIsOrderCreated] = useState<boolean>(false);
   const [courierPartners, setCourierPartners] = useState<OrderType>();
+
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
     sellerForm: {
@@ -95,6 +99,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const { toast } = useToast();
   const router = useRouter()
+
+  const status = useSearchParams().get("status");
 
   const axiosConfig = {
     baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
@@ -153,18 +159,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  useEffect(() => {
-    getHub();
-    getAllOrdersByStatus("all");
-    getSellerDashboardDetails()
-  }, [userToken]);
-
   const handlebusinessDropdown = (value: string) => {
     setbusiness(value);
   }
 
   const handleCreateOrder = useCallback(async (order: z.infer<typeof cloneFormSchema>) => {
-    console.log(sellerCustomerForm, "order")
     try {
       const customerDetailsPayload = order.customerDetails && order.customerDetails.name.length > 0
         ? {
@@ -180,7 +179,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           pincode: Number(sellerCustomerForm.customerForm.pincode),
         };
 
-        const sellerDetailsPayload = order.sellerDetails && order.sellerDetails.sellerName.length > 0
+      const sellerDetailsPayload = order.sellerDetails && order.sellerDetails.sellerName.length > 0
         ? {
           sellerName: order.sellerDetails.sellerName,
           sellerGSTIN: order.sellerDetails.sellerGSTIN,
@@ -252,6 +251,33 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order created successfully",
           description: "Order has been created successfully",
         });
+        setIsOrderCreated(!isOrderCreated);
+
+        setSellerCustomerForm({
+          sellerForm: {
+            sellerName: "",
+            sellerGSTIN: "",
+            isSellerAddressAdded: false,
+            sellerCity: "",
+            sellerState: "",
+            sellerPhone: "",
+            sellerAddress: "",
+            sellerPincode: "",
+          },
+          customerForm: {
+            name: "",
+            phone: "",
+            state: "",
+            country: "",
+            address: "",
+            address2: "",
+            city: "",
+            pincode: "",
+          }
+        })
+
+       
+
         getSellerDashboardDetails();
         getAllOrdersByStatus("all");
         router.refresh();
@@ -291,7 +317,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           pincode: Number(sellerCustomerForm.customerForm.pincode),
         };
 
-        const sellerDetailsPayload = order.sellerDetails && order.sellerDetails.sellerName.length > 0
+      const sellerDetailsPayload = order.sellerDetails && order.sellerDetails.sellerName.length > 0
         ? {
           sellerName: order.sellerDetails.sellerName,
           sellerGSTIN: order.sellerDetails.sellerGSTIN,
@@ -387,7 +413,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
-  const handleCreateB2BShipment = useCallback(async ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => {
+  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => {
 
     const payload = {
       orderId: orderId,
@@ -402,6 +428,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order created successfully",
           description: "Order has been created successfully",
         });
+        getAllOrdersByStatus("all")
         router.push('/orders')
         return true;
       }
@@ -522,10 +549,23 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  useEffect(() => {
+    if (!userToken) return;
+    getHub();
+    getSellerDashboardDetails()
+  }, [userToken]);
+
+  useEffect(() => {
+    // if (!userToken) return;
+    getAllOrdersByStatus(status || "all")
+
+  }, [userToken]);
+
   return (
     <SellerContext.Provider
       value={{
         seller,
+        isOrderCreated,
         business,
         sellerFacilities,
         handlebusinessDropdown,
@@ -537,7 +577,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getAllOrdersByStatus,
         getCourierPartners,
         courierPartners,
-        handleCreateB2BShipment,
+        handleCreateD2CShipment,
         handleCancelOrder,
         manifestOrder,
         getCityStateFPincode,

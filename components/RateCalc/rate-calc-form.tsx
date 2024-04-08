@@ -41,9 +41,7 @@ const rateCalcSchema = z.object({
     orderBoxWidth: z.string().min(1, "Please enter the width"),
     orderBoxHeight: z.string().min(1, "Please enter the height"),
     orderWeight: z.string().min(1, "Please enter the weight"),
-    payment_mode: z.enum(["COD", "Prepaid"], {
-        required_error: "Payment mode is required"
-    }),
+    payment_mode: z.string().min(1, "Payment mode is required"),
     collectableAmount: z.string()
 
 });
@@ -59,7 +57,7 @@ export const RateCalcForm = () => {
             pickupPincode: "",
             deliveryPincode: "",
             weight: "",
-            payment_mode: "" as "COD" | "Prepaid",
+            payment_mode: "",
             orderBoxLength: "",
             orderBoxWidth: "",
             orderBoxHeight: "",
