@@ -527,6 +527,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         })
         return { city: "City", state: "State" }
       }
+      toast({
+        variant: "default",
+        title: "City and State",
+        description: "City and State fetched successfully",
+      })
       return { city, state }
     } catch (error) {
       toast({
@@ -559,7 +564,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     // if (!userToken) return;
     getAllOrdersByStatus(status || "all")
 
-  }, [userToken]);
+  }, [userToken, status]);
 
   return (
     <SellerContext.Provider
