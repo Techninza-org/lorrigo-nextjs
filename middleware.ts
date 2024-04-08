@@ -4,7 +4,16 @@ export async function middleware(request: NextRequest) {
   const currentUser = request.cookies.get('user')?.value;
   const isAuthenticated = !!currentUser;
   const unauthenticatedPaths = ['/login', '/signup', '/forgot-password', '/reset-password'];
-  const authenticatedRoutes = ['/dashboard', '/new', '/orders', '/settings', '/track', '/rate-calc', '/invoices'];
+  const authenticatedRoutes = [
+    '/dashboard',
+    '/new',
+    '/orders',
+    '/settings',
+    '/track',
+    '/rate-calc',
+    '/invoices',
+    '/admin'
+  ];
 
   const { pathname } = request.nextUrl;
 

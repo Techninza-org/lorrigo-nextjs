@@ -84,10 +84,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
             if (response.data.user) {
                 setLoading(true);
-                return toast({
+                toast({
                     title: "Success",
                     description: "Signup successfully.",
                 });
+                return router.push("/login");
             } else if (response.data.message === "user already exists") {
                 return toast({
                     variant: "destructive",
@@ -198,7 +199,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             const password = formData.get("password")?.toString() || "";
             const confirmPassword = formData.get("confirmPassword")?.toString() || "";
-        
+
             if (password !== confirmPassword) {
                 return toast({
                     variant: "destructive",
@@ -206,7 +207,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 });
             }
 
-                if (!password || !token) {
+            if (!password || !token) {
                 return toast({
                     variant: "destructive",
                     title: "Invalid password or token.",

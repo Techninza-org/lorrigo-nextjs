@@ -17,6 +17,10 @@ interface NavProps {
     icon: LucideIcon
 
     href?: string
+    subLinks?: {
+      title: string
+      href: string
+    }[]
   }[]
 
 }

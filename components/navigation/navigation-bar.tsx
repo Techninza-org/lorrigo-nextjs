@@ -1,22 +1,62 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, Home, Settings, ShoppingCart, TrendingUpIcon } from "lucide-react";
+import { HandCoins, Home, Settings, ShoppingCart, TrendingUpIcon, Truck } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 
 export function NavigationBar({ children }: { children: React.ReactNode }) {
     const [isNavCollapsed, setIsNavCollapsed] = useState<boolean>(true)
     const handleMouseEnter = () => {
-        setIsNavCollapsed(false); // Expand when mouse enters
+        setIsNavCollapsed(false);
     };
 
     const handleMouseLeave = () => {
         setIsNavCollapsed(true);
     };
 
+    const pathname = usePathname();
+    const isAdmin = pathname.startsWith("/admin");
+
+    const SELLER_NAV_LINKS = [
+        {
+            title: "Home",
+            icon: Home,
+            href: "/dashboard",
+        },
+        {
+            title: "Dashboard Orders",
+            icon: TrendingUpIcon,
+            href: "/dashboard/orders",
+        },
+        {
+            title: "Your Orders",
+            icon: ShoppingCart,
+            href: "/orders",
+        },
+        {
+            title: "Settings",
+            icon: Settings,
+            href: "/settings",
+        },
+        {
+            title: "Finance",
+            icon: HandCoins,
+        },
+    ];
+
+    const ADMIN_NAV_LINKS = [
+        {
+            title: "Home",
+            icon: Truck,
+            href: "/admin",
+        },
+    ];
+
+    const navLinks = isAdmin ? ADMIN_NAV_LINKS : SELLER_NAV_LINKS;
 
     return (
         <div className="w-full z-50">
@@ -32,32 +72,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             >
                 <Nav
                     isCollapsed={isNavCollapsed}
-                    links={[
-                        {
-                            title: "Home",
-                            icon: Home,
-                            href: "/dashboard",
-                        },
-                        {
-                            title: "Dashboard Orders",
-                            icon: TrendingUpIcon,
-                            href: "/dashboard/orders",
-                        },
-                        {
-                            title: "Your Orders",
-                            icon: ShoppingCart,
-                            href: "/orders",
-                        },
-                        {
-                            title: "Settings",
-                            icon: Settings,
-                            href: "/settings",
-                        },
-                        {
-                            title: "Finance",
-                            icon: HandCoins,
-                        },
-                    ]}
+                    links={navLinks}
                 />
             </div>
             <div

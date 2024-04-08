@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderStatusTable } from "./order-status-table";
-import { columns } from "./order-status-col";
+import { OrderStatusCol } from "./order-status-col";
 import { useEffect } from "react";
 import { useSellerProvider } from "../providers/SellerProvider";
 import { useSearchParams } from "next/navigation";
@@ -35,7 +35,7 @@ export default function Orders() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-                <OrderStatusTable columns={columns} data={orders} />
+                <OrderStatusTable columns={OrderStatusCol} data={orders} />
             </CardContent>
         </Card>
     )
