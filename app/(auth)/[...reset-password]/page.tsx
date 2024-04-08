@@ -1,4 +1,4 @@
-import { ForgetPasswordForm } from "@/components/Auth/ForgetPasswordForm";
+import { ResetPasswordForm } from "@/components/Auth/ResetPasswordForm";
 import {
     Card,
     CardContent,
@@ -9,18 +9,18 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 
-export default function ForgetPasswordPage() {
+export default function RestPasswordPage({ searchParams }: { searchParams: { token: string } }) {
     return (
         <div className="w-full flex justify-center">
             <Card className="lg:w-2/5">
                 <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl text-center">Forgot Password?</CardTitle>
-                    <CardDescription className="text-center">
+                    <CardTitle className="text-2xl text-center">Reset Your Password?</CardTitle>
+                    {/* <CardDescription className="text-center">
                         Enter your email to reset your password
-                    </CardDescription>
+                    </CardDescription> */}
                 </CardHeader>
                 <CardContent>
-                   <ForgetPasswordForm  />
+                    <ResetPasswordForm token={searchParams.token} />
                 </CardContent>
                 <CardFooter className="flex flex-col">
                     <p className="mt-2 text-xs text-center text-gray-700">
