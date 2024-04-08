@@ -392,7 +392,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Order updated successfully",
         });
         getSellerDashboardDetails();
-        getAllOrdersByStatus("all");
+        getAllOrdersByStatus(status || "all");
         router.refresh();
         return true;
       } else {
@@ -428,7 +428,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order created successfully",
           description: "Order has been created successfully",
         });
-        getAllOrdersByStatus("all")
+        getAllOrdersByStatus(status || "all")
         router.push('/orders')
         return true;
       }
@@ -461,7 +461,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "Order cancellation request generated",
         });
-        getAllOrdersByStatus("all")
+        getAllOrdersByStatus(status || "all")
         router.refresh();
         return true;
       }
@@ -493,7 +493,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "Order manifested successfully",
         });
-        getAllOrdersByStatus("all")
+        getAllOrdersByStatus(status || "all")
         router.refresh();
         return true;
       }
