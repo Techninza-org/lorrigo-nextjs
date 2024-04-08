@@ -4,14 +4,11 @@ import { z } from "zod";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosInstance } from "axios";
-import { customerDetailsSchema } from "@/components/modal/add-customer-modal";
-import { sellerSchema } from "@/components/modal/add-seller-modal";
 
 import { useToast } from "@/components/ui/use-toast";
 
 import { B2COrderType, HubType, OrderType, SellerType } from "@/types/types";
 import { useAuth } from "./AuthProvider";
-import { formDataSchema } from "../Shipment/b2c-form";
 import { cloneFormSchema } from "../drawer/clone-order-drawer";
 import { EditFormSchema } from "../drawer/edit-order-drawer";
 
@@ -34,6 +31,7 @@ interface SellerContextType {
   handleCancelOrder: (orderId: string, type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
+  calcRate: (order: any) => Promise<any>;
 }
 
 interface sellerCustomerFormType {
@@ -513,6 +511,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const calcRate = async (order: any) => {
+    try {
+      const res = await axiosIWAuth.post('/ratecalculator', order);
+      if (res.data?.valid) {
+        return res.data.rates;
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   return (
     <SellerContext.Provider
       value={{
@@ -533,7 +542,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         manifestOrder,
         getCityStateFPincode,
         sellerDashboard,
-        handleUpdateOrder
+        handleUpdateOrder,
+        calcRate
 
       }}
     >
