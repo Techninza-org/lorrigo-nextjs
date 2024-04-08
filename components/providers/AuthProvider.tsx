@@ -2,12 +2,13 @@
 
 import axios, { AxiosInstance } from "axios";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-import { getCookies, setCookie, deleteCookie, getCookie } from 'cookies-next';
+import { setCookie, deleteCookie, getCookie } from 'cookies-next';
 import { AuthType } from "@/types/types";
 
 import { useToast } from "@/components/ui/use-toast";
+import { useOrigin } from "@/hooks/use-origin";
 
 
 interface AuthContextType {
@@ -17,6 +18,9 @@ interface AuthContextType {
     handleUserSignup: (formData: FormData) => void;
     handleUserLogin: (formData: FormData) => void;
     handleSignOut: () => void;
+    handleForgetPassword: (formData: FormData) => void;
+    handleResetPassword: (formData: FormData, token: string) => void;
+
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -24,6 +28,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 function AuthProvider({ children }: { children: React.ReactNode }) {
     const { toast } = useToast();
     const router = useRouter()
+    const origin = useOrigin();
 
     const [user, setUser] = useState<AuthType | null>(null);
     const [userToken, setUserToken] = useState<string>("");
@@ -35,7 +40,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             setUserToken(JSON.parse(userC).token);
         } else {
             setUser(null);
-            router.push("/login");
         }
 
     }, [router, user]);
@@ -80,10 +84,11 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
             if (response.data.user) {
                 setLoading(true);
-                return toast({
+                toast({
                     title: "Success",
                     description: "Signup successfully.",
                 });
+                return router.push("/login");
             } else if (response.data.message === "user already exists") {
                 return toast({
                     variant: "destructive",
@@ -143,7 +148,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
-
     const handleSignOut = useCallback(async () => {
         try {
             deleteCookie('user');
@@ -162,6 +166,82 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, [router, toast]);
 
+    const handleForgetPassword = async (formData: FormData) => {
+        try {
+            const userData = {
+                domain: origin,
+                email: formData.get("email")?.toString() || ""
+            };
+
+            const response = await axiosWOAuth.post("/auth/forgot-password", userData)
+
+            if (response.data.message === "user not found") {
+                return toast({
+                    variant: "destructive",
+                    title: "User not found",
+                    description: "Please enter a valid email address.",
+                });
+            } else if (response.data.valid) {
+                return toast({
+                    title: "Success",
+                    description: "Reset link sent to your email.",
+                });
+            }
+        } catch (error) {
+            return toast({
+                variant: "destructive",
+                title: "An error occurred during password reset.",
+            });
+        }
+    }
+
+    const handleResetPassword = async (formData: FormData, token: string) => {
+        try {
+            const password = formData.get("password")?.toString() || "";
+            const confirmPassword = formData.get("confirmPassword")?.toString() || "";
+
+            if (password !== confirmPassword) {
+                return toast({
+                    variant: "destructive",
+                    title: "Passwords do not match.",
+                });
+            }
+
+            if (!password || !token) {
+                return toast({
+                    variant: "destructive",
+                    title: "Invalid password or token.",
+                });
+            }
+
+            const userData = {
+                password,
+                token
+            };
+
+            const response = await axiosWOAuth.post("/auth/reset-password", userData)
+
+            if (response.data.message === "user not found") {
+                return toast({
+                    variant: "destructive",
+                    title: "User not found",
+                    description: "Please enter a valid email address.",
+                });
+            } else if (response.data.valid) {
+
+                toast({
+                    title: "Success",
+                    description: "Password reset successfully.",
+                });
+                return router.push("/login");
+            }
+        } catch (error) {
+            return toast({
+                variant: "destructive",
+                title: "An error occurred during password reset.",
+            });
+        }
+    }
 
     return (
         <AuthContext.Provider
@@ -172,6 +252,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 handleUserSignup,
                 handleUserLogin,
                 handleSignOut,
+                handleForgetPassword,
+                handleResetPassword,
 
             }}
         >

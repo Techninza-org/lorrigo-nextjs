@@ -30,6 +30,7 @@ import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
 import { useToast } from '../ui/use-toast';
+import useFetchCityState from '@/hooks/use-fetch-city-state';
 
 export const customerDetailsSchema = z.object({
     customerDetails: z.object({
@@ -72,22 +73,12 @@ export const AddCustomerModal = () => {
 
     const pincode = form.watch("customerDetails.pincode");
 
+    const {cityState: cityStateRes} = useFetchCityState(pincode)
+    
     useEffect(() => {
-        let timer: string | number | NodeJS.Timeout | undefined;
-
-        const fetchCityState = async () => {
-            if (pincode.length > 4) {
-                const cityStateRes = await getCityStateFPincode(pincode)
-                form.setValue('customerDetails.city', cityStateRes.city)
-                form.setValue('customerDetails.state', cityStateRes.state)
-            }
-        };
-
-        clearTimeout(timer);
-        timer = setTimeout(fetchCityState, 500);
-
-        return () => clearTimeout(timer);
-    }, [form.watch("customerDetails.pincode")])
+        form.setValue('customerDetails.city', cityStateRes.city)
+        form.setValue('customerDetails.state', cityStateRes.state)
+    }, [cityStateRes, form])
 
     const { formState: { errors, isSubmitting }, reset, handleSubmit } = form;
     const isLoading = isSubmitting;

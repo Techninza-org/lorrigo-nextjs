@@ -29,6 +29,7 @@ import { BoxDetails } from "../Shipment/box-details";
 import { AddCustomerForm, customerDetailsSchema } from "../modal/add-customer-modal";
 import { SellerForm, sellerSchema } from "../modal/add-seller-modal";
 import { Box, MapPin, Package, Undo2 } from "lucide-react";
+import useFetchCityState from "@/hooks/use-fetch-city-state";
 
 export const EditFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema).extend({
     orderId: z.string(),
@@ -101,6 +102,13 @@ export function EditOrderDrawer() {
         }
     });
 
+    const customerPincode = form.watch("customerDetails.pincode").toString();
+
+    const { cityState: customerCityState } = useFetchCityState(customerPincode);
+
+    const sellerPincode = form.watch("sellerDetails.sellerPincode").toString();
+
+    const { cityState: sellerCityState } = useFetchCityState(sellerPincode);
 
     useEffect(() => {
         form.setValue('orderId', order?._id || '');
@@ -142,6 +150,20 @@ export function EditOrderDrawer() {
 
 
     }, [form, order]);
+
+    useEffect(() => {
+        if (customerCityState.city) {
+            form.setValue('customerDetails.city', customerCityState.city);
+            form.setValue('customerDetails.state', customerCityState.state);
+        }
+    }, [customerCityState.city, customerCityState.state, form]);
+
+    useEffect(() => {
+        if (sellerCityState.city) {
+            form.setValue('sellerDetails.sellerCity', sellerCityState.city);
+            form.setValue('sellerDetails.sellerState', sellerCityState.state);
+        }
+    }, [sellerCityState.city, sellerCityState.state, form]);
 
     const isLoading = form.formState.isSubmitting;
 

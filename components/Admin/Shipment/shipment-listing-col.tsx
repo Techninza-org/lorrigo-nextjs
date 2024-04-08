@@ -5,14 +5,13 @@ import { Copy, ShoppingCartIcon } from "lucide-react";
 import { formatDate } from "date-fns";
 import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
-import { Badge } from "../ui/badge";
-import { OrderButton } from "./order-action-button";
-import { TrackOrder } from "./track-order-button";
+import { Badge } from "@/components/ui/badge";
+import { TrackOrder } from "@/components/Orders/track-order-button";
 
-export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
+export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
     {
-        header: 'Order Details',
-        accessorKey: 'order_reference_id',
+        header: 'Client',
+        accessorKey: 'customerDetails',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -29,8 +28,8 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
         }
     },
     {
-        header: 'Customer Details',
-        accessorKey: 'customerDetails',
+        header: 'Shipment ID',
+        accessorKey: 'order_reference_id',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -43,7 +42,8 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
         }
     },
     {
-        header: 'Package Details',
+        header: 'Address ID',
+        accessorKey: 'pickupAddressType',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -56,8 +56,8 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
         }
     },
     {
-        header: 'Payment',
-        accessorKey: 'payment_mode',
+        header: 'Partner',
+        accessorKey: 'pickupAddressType',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -82,8 +82,24 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
         }
     },
     {
-        header: 'Shipping Details',
-        accessorKey: 'Shipment Details',
+        header: 'Payment Mode',
+        accessorKey: 'payment_mode',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            const orderStage = rowData?.orderStages?.slice(-1)[0];
+            
+            return (
+                <div className="space-y-1">
+                    <Badge variant={orderStage?.stage == -1 ? "failure" : "success"}>{orderStage?.action}
+                    </Badge>
+                  <p>{formatDate(`${orderStage?.stageDateTime}`, 'dd MM yyyy | HH:mm a')}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Weight',
+        accessorKey: 'orderWeight',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -104,7 +120,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             const orderStage = rowData?.orderStages?.slice(-1)[0];
-
+            
             return (
                 <div className="space-y-1">
                     <Badge variant={orderStage?.stage == -1 ? "failure" : "success"}>{orderStage?.action}
@@ -115,14 +131,12 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
         }
     },
     {
-        header: 'Action',
+        header: 'Created At',
+        accessorKey: 'createdAt',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
                 <div className="flex gap-3 items-center">
-                    <OrderButton
-                        rowData={rowData}
-                    />
                 </div>
             )
         }

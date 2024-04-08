@@ -3,14 +3,25 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function middleware(request: NextRequest) {
   const currentUser = request.cookies.get('user')?.value;
   const isAuthenticated = !!currentUser;
+  const unauthenticatedPaths = ['/login', '/signup', '/forgot-password', '/reset-password'];
+  const authenticatedRoutes = [
+    '/dashboard',
+    '/new',
+    '/orders',
+    '/settings',
+    '/track',
+    '/rate-calc',
+    '/invoices',
+    '/admin'
+  ];
 
-  const authenticatedRoutes = ['/dashboard', '/new', '/orders', '/settings', '/track', '/rate-calc', '/invoices'];
+  const { pathname } = request.nextUrl;
 
-  if (!isAuthenticated && !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/signup') && !request.nextUrl.pathname.startsWith('/forgot-password')) {
+  if (!isAuthenticated && !unauthenticatedPaths.some(path => pathname.startsWith(path))) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (isAuthenticated && !authenticatedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+  if (isAuthenticated && !authenticatedRoutes.some(route => pathname.startsWith(route))) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
@@ -18,5 +29,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|\\.png$).*)'],
 };

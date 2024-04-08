@@ -29,6 +29,7 @@ import { BoxDetails } from "../Shipment/box-details";
 import { AddCustomerForm, customerDetailsSchema } from "../modal/add-customer-modal";
 import { SellerForm, sellerSchema } from "../modal/add-seller-modal";
 import { Box, MapPin, Package, Undo2 } from "lucide-react";
+import useFetchCityState from "@/hooks/use-fetch-city-state";
 
 export const cloneFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema)
 
@@ -96,6 +97,13 @@ export function CloneOrderDrawer() {
         }
     });
 
+    const customerPincode = form.watch("customerDetails.pincode").toString();
+
+    const { cityState: customerCityState } = useFetchCityState(customerPincode);
+
+    const sellerPincode = form.watch("sellerDetails.sellerPincode").toString();
+
+    const { cityState: sellerCityState } = useFetchCityState(sellerPincode);
 
     useEffect(() => {
         form.setValue('order_reference_id', order?.order_reference_id || '');
@@ -133,8 +141,23 @@ export function CloneOrderDrawer() {
         form.setValue('customerDetails.address', order?.customerDetails?.address || "");
         form.setValue('customerDetails.pincode', order?.customerDetails?.pincode.toString() || "");
 
-
     }, [form, order]);
+
+    useEffect(() => {
+        if (customerCityState.city) {
+            form.setValue('customerDetails.city', customerCityState.city);
+            form.setValue('customerDetails.state', customerCityState.state);
+        }
+    }, [customerCityState.city, customerCityState.state, form]);
+
+    useEffect(() => {
+        if (sellerCityState.city) {
+            form.setValue('sellerDetails.sellerCity', sellerCityState.city);
+            form.setValue('sellerDetails.sellerState', sellerCityState.state);
+        }
+    }, [sellerCityState.city, sellerCityState.state, form]);
+
+
 
     const isLoading = form.formState.isSubmitting;
 

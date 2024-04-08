@@ -15,15 +15,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import * as z from 'zod';
 import { Input } from "../ui/input";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrencyForIndia } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useEffect, useState } from "react";
-import { Circle, MapPin, MapPinIcon, Square } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { useSellerProvider } from "../providers/SellerProvider";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
+import Image from "next/image";
 
 
-// Define the schema for product details
 const rateCalcSchema = z.object({
     pickupPincode: z.string().min(6, "Please enter the valid pincode"),
     deliveryPincode: z.string().min(6, "Please enter the valid pincode"),
@@ -41,7 +50,8 @@ const rateCalcSchema = z.object({
 
 
 export const RateCalcForm = () => {
-    const { getCityStateFPincode } = useSellerProvider();
+    const { getCityStateFPincode, calcRate } = useSellerProvider();
+    const [courierCalcRate, setCourierCalcRate] = useState([{}] as any);
 
     const form = useForm({
         resolver: zodResolver(rateCalcSchema),
@@ -98,13 +108,23 @@ export const RateCalcForm = () => {
         return form.formState.isSubmitted && form.formState.errors[name] ? true : false;
     };
 
-
     const onSubmit = async (values: z.infer<typeof rateCalcSchema>) => {
-        console.log(values)
-        form.reset();
+        const res = await calcRate({
+            pickupPincode: values.pickupPincode,
+            deliveryPincode: values.deliveryPincode,
+            weight: values.orderWeight,
+            weightUnit: "kg",
+            boxLength: values.orderBoxLength,
+            boxWidth: values.orderBoxWidth,
+            boxHeight: values.orderBoxHeight,
+            sizeUnit: "cm",
+            paymentType: values.payment_mode == "COD" ? 1 : 0,
+            collectableAmount: values.collectableAmount
+        })
+        setCourierCalcRate(res);
     }
 
-    
+
     useEffect(() => {
         let timer: string | number | NodeJS.Timeout | undefined;
         console.log(form.watch("pickupPincode").length > 4)
@@ -133,6 +153,8 @@ export const RateCalcForm = () => {
 
         return () => clearTimeout(timer);
     }, [form.watch("pickupPincode"), form.watch("deliveryPincode")])
+
+
 
     return (
         <>
@@ -401,6 +423,50 @@ export const RateCalcForm = () => {
                     </div>
                 </form>
             </Form>
+
+            <div className="col-span-2 my-2">
+                <div className="grid gap-3">
+                    <Card className="drop-shadow-md">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle>
+                                Select Courier Partner
+                            </CardTitle>
+
+                        </CardHeader>
+                        <CardContent className="flex items-center justify-between gap-1">
+                            <Table>
+                                <TableCaption>A list of our Courier Partners</TableCaption>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="">Courier Partner</TableHead>
+                                        <TableHead>Expected Pickup</TableHead>
+                                        <TableHead>Zone</TableHead>
+                                        <TableHead>Charges</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {
+                                        courierCalcRate?.map((partner: any) => {
+                                            return <TableRow key={partner.smartship_carrier_id}>
+                                                <TableCell>
+                                                    <div className="flex items-center">
+                                                        <Image className="mr-2" src={"/assets/logo.png"} width={35} height={35} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>
+                                                    <div>RTO Charges : {formatCurrencyForIndia(partner.charge)}</div>
+                                                </TableCell>
+                                                <TableCell>{partner.expectedPickup}</TableCell>
+                                                <TableCell>{partner.order_zone}</TableCell>
+                                                <TableCell>{formatCurrencyForIndia(partner.charge)}</TableCell>
+
+                                            </TableRow>
+                                        })
+                                    }
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+
         </>
     )
 }

@@ -1,5 +1,4 @@
-"use client";
-import SubmitButton from "@/components/Auth/SubmitButton";
+import { ForgetPasswordForm } from "@/components/Auth/ForgetPasswordForm";
 import {
     Card,
     CardContent,
@@ -8,8 +7,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
 export default function ForgetPasswordPage() {
@@ -23,22 +20,7 @@ export default function ForgetPasswordPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form>
-                        <div className="grid w-full items-center gap-4">
-                            <div className="flex flex-col space-y-1.5">
-                                <Label htmlFor="email">Email</Label>
-                                <Input
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    placeholder=""
-                                />
-                            </div>
-                            <div className="flex justify-end">
-                                <SubmitButton title={"Send Reset Link"} />
-                            </div>
-                        </div>
-                    </form>
+                   <ForgetPasswordForm  />
                 </CardContent>
                 <CardFooter className="flex flex-col">
                     <p className="mt-2 text-xs text-center text-gray-700">
