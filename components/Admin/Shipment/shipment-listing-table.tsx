@@ -81,6 +81,7 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
           }
           className="max-w-sm"
         />
+        <Button variant={"themeButton"} type="submit" className="ml-6">Search</Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
