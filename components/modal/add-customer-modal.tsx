@@ -47,7 +47,7 @@ export const customerDetailsSchema = z.object({
 
 
 export const AddCustomerModal = () => {
-    const { setSellerCustomerForm, sellerCustomerForm, getCityStateFPincode } = useSellerProvider()
+    const { setSellerCustomerForm, sellerCustomerForm, isOrderCreated } = useSellerProvider()
     const { isOpen, onClose, type } = useModal();
 
     const router = useRouter();
@@ -73,8 +73,8 @@ export const AddCustomerModal = () => {
 
     const pincode = form.watch("customerDetails.pincode");
 
-    const {cityState: cityStateRes} = useFetchCityState(pincode)
-    
+    const { cityState: cityStateRes } = useFetchCityState(pincode)
+
     useEffect(() => {
         form.setValue('customerDetails.city', cityStateRes.city)
         form.setValue('customerDetails.state', cityStateRes.state)
@@ -98,8 +98,11 @@ export const AddCustomerModal = () => {
                 description: "Customer added successfully"
 
             });
-            reset();
-            router.refresh();
+
+            if (isOrderCreated) {
+                reset();
+                router.refresh();
+            }
             onClose();
         } catch (error) {
             console.log(error);

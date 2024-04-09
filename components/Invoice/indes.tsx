@@ -14,14 +14,14 @@ export const InvoicePage = ({ order }: { order?: B2COrderType }) => {
             const pdf = new jsPDF();
             pdf.addImage(imgData, "JPEG", 3, 3, canvas.width * 0.16, canvas.height * 0.16);
             pdf.output('dataurlnewwindow');
-            pdf.save(`Invoice_${order?.order_invoice_number}.pdf`);
+            pdf.save(`label_${order?.order_invoice_number}.pdf`);
             pdf.autoPrint();
         });
     };
 
     return (
         <>
-            <Button size={"sm"} variant={"webPageBtn"} onClick={printDocument}>Download Invoice</Button>
+            <Button size={"sm"} variant={"webPageBtn"} onClick={printDocument}>Download Label</Button>
             {/* <div id="divToPrint" className="gap-y-14 w-full grid grid-cols-3 "> */}
             <div id="divToPrint" className="mx-auto pb-3">
                 <InvoiceTemplate order={order}/>

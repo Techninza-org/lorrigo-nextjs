@@ -3,23 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderStatusTable } from "./order-status-table";
 import { OrderStatusCol } from "./order-status-col";
-import { useEffect } from "react";
 import { useSellerProvider } from "../providers/SellerProvider";
-import { useSearchParams } from "next/navigation";
 
 export default function Orders() {
 
-    const { getAllOrdersByStatus, orders } = useSellerProvider()
-
-    const searchParams = useSearchParams()
-    const status = searchParams.get("status")
-
-    useEffect(() => {
-        async function fetchData() {
-            await getAllOrdersByStatus(status ? status : "all")
-        }
-        fetchData()
-    }, [status])
+    const { orders } = useSellerProvider()
 
     return (
         <Card className="col-span-4">
