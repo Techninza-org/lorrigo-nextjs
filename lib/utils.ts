@@ -44,3 +44,34 @@ export const handleCopyText = (text: string) => {
     description: text,
   });
 }
+
+const calculateFinancialYear = () => {
+  const currentDate = new Date();
+  const currentMonth = currentDate.getMonth(); // 0-indexed, January is 0
+  const currentYear = currentDate.getFullYear();
+  let financialYearStart;
+  let financialYearEnd;
+  
+  if (currentMonth >= 3) {
+      // Financial year starts from April
+      financialYearStart = currentYear;
+      financialYearEnd = currentYear + 1;
+  } else {
+      // Financial year starts from April of the previous year
+      financialYearStart = currentYear - 1;
+      financialYearEnd = currentYear;
+  }
+  
+  // Format financial year as 'YYYY-YY' (e.g., '2023-24')
+  const financialYear = `${financialYearStart}-${String(financialYearEnd).slice(2)}`;
+  
+  return financialYear;
+};
+
+const generateOrderID = (platformName: string, financialYear: string, hubName: string, orderID: number): string => {
+  const paddedOrderID: string = orderID.toString().padStart(5, '0');
+  
+  const uniqueOrderID: string = `${platformName}${financialYear}-${hubName}${paddedOrderID}`;
+  
+  return uniqueOrderID;
+};

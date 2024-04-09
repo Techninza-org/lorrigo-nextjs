@@ -32,7 +32,7 @@ export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
                             <div className="font-bold">(Collect Rs {formatCurrencyForIndia(Number(order?.amount2Collect))})</div>
                         )
                     }
-                    <div className="capitalize">{order?.pickupAddress.name}</div>
+                    <div className="capitalize">{order?.carrierName}</div>
                     {
                         order?.awb && (
                             <div>AWB: {order?.awb}</div>
