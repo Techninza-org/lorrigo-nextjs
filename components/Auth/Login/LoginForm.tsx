@@ -16,6 +16,7 @@ import { buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { LorrigoLogo } from "@/components/Logos";
 
 const LoginForm = () => {
   const { handleUserLogin } = useAuth();
@@ -25,7 +26,7 @@ const LoginForm = () => {
   return (
     <Card>
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl mx-auto"><Image src={'/assets/logogosog.png'} width={130} height={130} alt="logo" /></CardTitle>
+        <CardTitle className="text-2xl mx-auto"><LorrigoLogo /></CardTitle>
       </CardHeader>
       <CardContent>
         <form action={handleUserLogin}>
