@@ -37,7 +37,7 @@ export default function OrdersPage() {
     return (
         <>
             <Suspense fallback={<span>Loading...</span>}>
-            <NavigationItem links={DASHBOARD_LINKS} />
+            <NavigationItem links={DASHBOARD_LINKS}  />
                 <Orders />
             </Suspense>
         </>

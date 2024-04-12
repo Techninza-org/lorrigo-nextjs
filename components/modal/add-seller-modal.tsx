@@ -51,7 +51,7 @@ export const sellerSchema = z.object({
 })
 
 export const AddSellerModal = () => {
-    const { setSellerCustomerForm, sellerCustomerForm, getCityStateFPincode } = useSellerProvider();
+    const { setSellerCustomerForm, sellerCustomerForm, isOrderCreated } = useSellerProvider();
     const { isOpen, onClose, type } = useModal();
     const router = useRouter();
 
@@ -86,7 +86,7 @@ export const AddSellerModal = () => {
 
     const pincode = form.watch('sellerDetails.sellerPincode');
     const { cityState: cityStateRes } = useFetchCityState(pincode)
-    
+
     useEffect(() => {
         if (cityStateRes) {
             form.setValue('sellerDetails.sellerCity', cityStateRes.city)
@@ -106,8 +106,11 @@ export const AddSellerModal = () => {
                     ...values.sellerDetails
                 }
             });
-            form.reset();
-            router.refresh();
+            if (isOrderCreated) {
+                form.reset();
+                router.refresh();
+            }
+
             onClose();
         } catch (error) {
             console.log(error);

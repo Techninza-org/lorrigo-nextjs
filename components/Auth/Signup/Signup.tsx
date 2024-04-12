@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Image from "next/image";
+import { LorrigoLogo } from "@/components/Logos";
 
 function Signup() {
   return (
@@ -22,7 +22,7 @@ function Signup() {
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 lg:max-w-lg shadow-xl rounded-md bg-white">
           <Card>
             <CardHeader className="space-y-1 w-full">
-              <CardTitle className="text-2xl mx-auto"><Image src={'/assets/logogosog.png'} width={130} height={130} alt="logo" /></CardTitle>
+              <CardTitle className="text-2xl mx-auto"><LorrigoLogo /></CardTitle>
 
             </CardHeader>
             <CardContent>

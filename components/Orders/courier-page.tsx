@@ -24,7 +24,7 @@ import { LoadingComponent } from "../loading-spinner"
 
 export default function CourierPage() {
     const params = useParams()
-    const { getCourierPartners, courierPartners, handleCreateB2BShipment } = useSellerProvider()
+    const { getCourierPartners, courierPartners, handleCreateD2CShipment } = useSellerProvider()
     const { userToken } = useAuth()
     const { pending } = useFormStatus();
 
@@ -118,7 +118,7 @@ export default function CourierPage() {
                                                     <Button disabled={pending} type="submit" variant={"themeButton"} size={"sm"} onClick={async () => {
                                                         setLoading(true)
                                                         try {
-                                                            const res = await handleCreateB2BShipment({
+                                                            const res = await handleCreateD2CShipment({
                                                                 orderId: courierPartners.orderDetails._id,
                                                                 carrierId: partner.smartship_carrier_id,
                                                             })

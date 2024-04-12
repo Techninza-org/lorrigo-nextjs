@@ -100,6 +100,7 @@ export const AddPickupLocationModal = () => {
 
             handleCreateHub({
                 name: values.facilityName,
+                email: values.email,
                 pincode: values.pincode,
                 address1: values.address,
                 address2: values.address,

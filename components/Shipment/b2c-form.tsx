@@ -35,9 +35,7 @@ const productDetailsSchema = z.object({
 export const formDataSchema = z.object({
     order_reference_id: z.string().min(1, "Order reference id is required"),
     fragile_items: z.boolean().default(false).optional(),
-    payment_mode: z.enum(["COD", "Prepaid"], {
-        required_error: "Payment mode is required"
-    }), // Assuming payment mode is either 0 or 1
+    payment_mode: z.string().min(1, "Payment mode is required"),
     orderWeight: z.string().min(1, "Order weight is required"),
     order_invoice_date: z.date(),
     order_invoice_number: z.string().optional(),
@@ -68,7 +66,7 @@ export const B2CForm = () => {
         defaultValues: {
             order_reference_id: "",
             fragile_items: false,
-            payment_mode: "" as "COD" | "Prepaid",
+            payment_mode: "",
             orderWeight: "",
             order_invoice_date: currentDate,
             order_invoice_number: "",
