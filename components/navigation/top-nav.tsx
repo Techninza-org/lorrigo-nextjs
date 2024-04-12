@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Separator } from "../ui/separator";
 import { useModal } from "@/hooks/use-model-store";
 import { useAuth } from "../providers/AuthProvider";
+import { LorrigoLogo } from "../Logos";
 
 interface NavProps {
     isCollapsed: boolean;
@@ -28,7 +29,8 @@ export function TopNav() {
         >
             <nav className="flex justify-between gap-1 px-5 min-w-full p-2">
                 <div className="flex space-x-4 cursor-pointer items-center">
-                    <Image src="/assets/logogosog.png" alt="logo" width={130} height={130} />
+                <LorrigoLogo />
+
                 </div>
                 <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-3">

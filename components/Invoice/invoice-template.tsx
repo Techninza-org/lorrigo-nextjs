@@ -4,6 +4,7 @@ import Barcode from "react-barcode"
 import { B2COrderType } from "@/types/types"
 import { formatCurrencyForIndia } from "@/lib/utils"
 import { formatPhoneNumberIntl } from "react-phone-number-input"
+import { LorrigoLogo } from "../Logos"
 
 export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
     return (
@@ -12,7 +13,7 @@ export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
                     Ship To:
                 </h4>
-                <Image src={"/assets/logogosog.png"} width={120} height={120} alt="logo" />
+                <LorrigoLogo />
             </div>
             <div>
                 <div>{order?.customerDetails?.name}</div>
@@ -32,7 +33,7 @@ export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
                             <div className="font-bold">(Collect Rs {formatCurrencyForIndia(Number(order?.amount2Collect))})</div>
                         )
                     }
-                    <div className="capitalize">{order?.pickupAddress.name}</div>
+                    <div className="capitalize">{order?.carrierName}</div>
                     {
                         order?.awb && (
                             <div>AWB: {order?.awb}</div>
@@ -68,7 +69,7 @@ export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
                         )
                     }
                 </div>
-                <Image src={"/assets/logogosog.png"} width={120} height={120} alt="logo" />
+                <LorrigoLogo />
             </div>
         </div>
     )
