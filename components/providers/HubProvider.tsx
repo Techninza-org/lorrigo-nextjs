@@ -10,6 +10,7 @@ import { useSellerProvider } from "./SellerProvider";
 
 interface reqPayload {
     name: string;
+    email?: string;
     pincode: string;
     address1: string;
     address2: string;
