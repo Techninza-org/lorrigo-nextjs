@@ -104,7 +104,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const axiosConfig = {
     baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
-    timeout: 5000,
     headers: {
       'Content-Type': 'application/json',
       ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
@@ -220,9 +219,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       }
 
       const payload = {
-
-        vendorType: "SR",
-
         order_reference_id: order.order_reference_id,
         payment_mode: order.payment_mode === "COD" ? 1 : 0,
         orderWeight: Number(order.orderWeight),
@@ -423,7 +419,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       orderId: orderId,
       carrierId: carrierId,
       orderType: 0,
-      vendorCategory: "SR"
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
@@ -456,6 +451,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }, [axiosIWAuth, router, toast])
 
   const handleCancelOrder = async (orderId: string, type: string) => {
+    router.refresh();
+
     try {
       const res = await axiosIWAuth.post(`/shipment/cancel`, {
         orderId: orderId,
