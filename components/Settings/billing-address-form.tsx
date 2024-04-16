@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormMessage } from '@/components/ui/form';
-import Image from "next/image";
 
 import {
     FormControl,
@@ -13,8 +12,6 @@ import {
     FormLabel,
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
-import { useHubProvider } from '../providers/HubProvider';
-import { useModal } from '@/hooks/use-model-store';
 import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -28,8 +25,6 @@ export const BillingAddressSchema = z.object({
     phone: z.string().min(1, "Phone is required")
 })
 const BillingAddressForm = () => {
-    const { handleCreateHub } = useHubProvider();
-    const { onClose } = useModal();
     const router = useRouter();
 
     const form = useForm({
@@ -46,19 +41,11 @@ const BillingAddressForm = () => {
 
     const onSubmit = async (values: z.infer<typeof BillingAddressSchema>) => {
         try {
+            console.log(values);
 
-            handleCreateHub({
-                address_line_1: values.address_line_1,
-                address_line_2: values.address_line_2,
-                pincode: values.pincode,
-                city: values.city,
-                state: values.state,
-                phone: values.phone,
-            });
 
             form.reset();
             router.refresh();
-            onClose();
         } catch (error) {
             console.log(error);
         }

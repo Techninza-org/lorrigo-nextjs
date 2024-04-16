@@ -70,6 +70,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<any[]>([]);
   const [isOrderCreated, setIsOrderCreated] = useState<boolean>(false);
   const [courierPartners, setCourierPartners] = useState<OrderType>();
+  
 
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
@@ -110,7 +111,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
     },
   };
-
   const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
   const getHub = () => {
@@ -549,10 +549,22 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const getSeller = async() => {
+    try{
+      const res = await axiosIWAuth.get('/seller');
+      if(res.data.valid){
+        setSeller(res.data.seller)
+      }
+    }catch(error){
+      console.error('Error fetching seller:', error);
+    }
+  }
+
   useEffect(() => {
     if (!userToken) return;
     getHub();
     getSellerDashboardDetails()
+    getSeller();
   }, [userToken]);
 
   useEffect(() => {

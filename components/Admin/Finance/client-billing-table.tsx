@@ -105,9 +105,9 @@ export function ClientBillingTable({ data, columns }: { data: any[], columns: Co
                 </div>
 
                 <div className='flex gap-x-4 justify-center h-full -ml-36'>
-                    <button className='rounded-full p-1 bg-red-500' onClick={decrementPage}><ChevronLeft size={28} color='white' /></button>
+                    <Button variant={'themeIconBtn'} size={'icon'} onClick={decrementPage}><ChevronLeft size={28} /></Button>
                     <p className='grid place-content-center'>{page} of {totalPages} pages</p>
-                    <button className='rounded-full p-1 bg-red-500' onClick={incrementPage}><ChevronRight size={28} color='white' /></button>
+                    <Button variant={'themeIconBtn'} size={'icon'} onClick={incrementPage}><ChevronRight size={28} /></Button>
                 </div>
             </div>
         </div>

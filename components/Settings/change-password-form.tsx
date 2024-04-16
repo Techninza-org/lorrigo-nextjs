@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormMessage } from '@/components/ui/form';
-import Image from "next/image";
 
 import {
     FormControl,
@@ -13,55 +12,42 @@ import {
     FormLabel,
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
-import { useHubProvider } from '../providers/HubProvider';
-import { useModal } from '@/hooks/use-model-store';
 import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
+import { useAuth } from '../providers/AuthProvider';
 
 export const ChangePasswordSchema = z.object({
-    old: z.string().min(1, "Old password is required"),
-    new: z.string().min(1, "New password is required"),
-    re_new: z.string().min(1, "New password is required"),
+    old_password: z.string().min(1, "Old password is required"),
+    password: z.string().min(1, "New password is required"),
+    confirmPassword: z.string().min(1, "This should be same as new password"),
 })
 
 const ChangePasswordForm = () => {
-    const { handleCreateHub } = useHubProvider();
-    const { onClose } = useModal();
-    const router = useRouter();
-
+    const {handleChangePassword, userToken} = useAuth();
+    const token = userToken;
+    
     const form = useForm({
         resolver: zodResolver(ChangePasswordSchema),
         defaultValues: {
-            old: '',
-            new: '',
-            re_new: ''
+            old_password: '',
+            password: '',
+            confirmPassword: ''
         }
     });
 
-    const onSubmit = async (values: z.infer<typeof ChangePasswordSchema>) => {
-        try {
-
-            handleCreateHub({
-                old: values.old,
-                new: values.new,
-                re_new: values.re_new
-            });
-
-            form.reset();
-            router.refresh();
-            onClose();
-        } catch (error) {
-            console.log(error);
-        }
+    const handleSubmit = (formData: FormData) => {
+        handleChangePassword(formData, token)
     }
+
+
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form action={handleSubmit}>
                 <div className="space-y-5 ">
                     <div className='grid gap-y-6  py-5'>
                         <FormField
                             control={form.control}
-                            name={'old'}
+                            name={'old_password'}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -77,7 +63,7 @@ const ChangePasswordForm = () => {
                             )} />
                         <FormField
                             control={form.control}
-                            name={'new'}
+                            name={'password'}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -93,7 +79,7 @@ const ChangePasswordForm = () => {
                             )} />
                         <FormField
                             control={form.control}
-                            name={'re_new'}
+                            name={'confirmPassword'}
                             render={({ field }) => (
                                 <FormItem>
                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -109,7 +95,7 @@ const ChangePasswordForm = () => {
                             )} />
                     </div>
                     <div className='flex gap-x-12'>
-                        <Button variant={'themeGrayBtn'} size={'lg'} >Cancel</Button>
+                        {/* <Button variant={'themeGrayBtn'} size={'lg'} >Cancel</Button> */}
                         <Button variant={'themeButton'} size={'lg'} >Save</Button>
                     </div>
                 </div>
@@ -119,3 +105,5 @@ const ChangePasswordForm = () => {
 }
 
 export default ChangePasswordForm
+
+

@@ -28,6 +28,15 @@ import {
 import { useSearchParams } from "next/navigation"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select"
 
+const user = {
+    id: 1,
+    email: 'user@email.com',
+    name: 'User Name',
+    phone: '1234567890',
+    company: 'Company Name',
+    creationDate: '2021-10-10',
+}
+
 export function UsersListingTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
     const [page, setPage] = React.useState(1)
     const table = useReactTable({

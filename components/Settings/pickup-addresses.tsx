@@ -4,7 +4,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { ChevronLeft, ChevronRight, Circle, CircleCheck, Download, Plus, SearchIcon, SquarePen } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-// import * as Switch from '@radix-ui/react-switch';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 const data = [
@@ -57,9 +56,7 @@ const AddressDetails = () => {
                     <label className="Label pr-4" htmlFor="primary-address" >
                       Primary Address
                     </label>
-                    {/* <Switch.Root className="SwitchRoot" id="primary-address">
-                      <Switch.Thumb className="SwitchThumb" />
-                    </Switch.Root> */}
+                    {/* switch */}
                   </div>
                 </div>
               </TableCell>
@@ -143,18 +140,18 @@ const PickupAddresses = () => {
               />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={'5'}>5</SelectItem>
-              <SelectItem value={'10'}>10</SelectItem>
               <SelectItem value={'15'}>15</SelectItem>
+              <SelectItem value={'20'}>20</SelectItem>
+              <SelectItem value={'25'}>25</SelectItem>
             </SelectContent>
           </Select>
           <p className='grid place-content-center'> items per page</p>
         </div>
 
         <div className='flex gap-x-4 justify-center h-full -ml-36'>
-          <button className='rounded-full p-1 bg-red-500' onClick={decrementPage}><ChevronLeft size={28} color='white' /></button>
+          <Button variant={'themeIconBtn'} size={'icon'} onClick={decrementPage}><ChevronLeft size={28} /></Button>
           <p className='grid place-content-center'>{page} of {totalPages} pages</p>
-          <button className='rounded-full p-1 bg-red-500' onClick={incrementPage}><ChevronRight size={28} color='white' /></button>
+          <Button variant={'themeIconBtn'} size={'icon'} onClick={incrementPage}><ChevronRight size={28} /></Button>
         </div>
       </div>
     </div>

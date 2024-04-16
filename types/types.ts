@@ -4,6 +4,7 @@ export type SellerType = {
   email: string;
   walletBalance?: number;
   companyName?: string;
+  website?: string;
   entityType?: string;
   address?: string;
   gstno?: string;
@@ -135,8 +136,8 @@ export interface OrderType {
 }
 
 export interface SettingType {
-  company_id?: string;
-  name?: string;
+  companyId?: string;
+  companyName?: string;
   email?: string;
   website?: string;
   logo?: string;
@@ -156,6 +157,10 @@ export interface SettingType {
   gstin?: string;
   deductTDS?: string;
   tan?: string;
+  //////// add-pickup-location.tsx
+  name?: string;
+  address1?: string;
+  address2?: string;
 }
 
 export interface AdminType {

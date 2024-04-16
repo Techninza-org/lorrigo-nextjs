@@ -1,10 +1,9 @@
 'use client'
-import React, { useRef } from 'react'
+import React from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormMessage } from '@/components/ui/form';
-import Image from "next/image";
 
 import {
     FormControl,
@@ -12,21 +11,23 @@ import {
     FormItem,
     FormLabel,
 } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAdminProvider } from '@/components/providers/AdminProvider';
-import { useModal } from '@/hooks/use-model-store';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Select from 'react-select';
+
 
 export const UploadPincodesSchema = z.object({
     partner: z.string().min(1, "Partner is required"),
     upload_sheet: z.string().min(1, "Please choose CSV version of file"),
 })
 
+const partners = [
+    { value: 'delhivery', label: 'Delhivery' },
+    { value: 'post', label: 'Post' },
+];
+
 const UploadPincodeSheet = () => {
-    const { handleCreateHub } = useAdminProvider();
-    const { onClose } = useModal();
     const router = useRouter();
 
     const form = useForm({
@@ -39,15 +40,8 @@ const UploadPincodeSheet = () => {
 
     const onSubmit = async (values: z.infer<typeof UploadPincodesSchema>) => {
         try {
-
-            handleCreateHub({        
-                partner: values.partner,
-                upload_sheet: values.upload_sheet,
-            });
-
             form.reset();
             router.refresh();
-            onClose();
         } catch (error) {
             console.log(error);
         }
@@ -73,16 +67,17 @@ const UploadPincodeSheet = () => {
                                                     Partner <span className='text-red-600'>*</span>
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Select>
-                                                        <SelectTrigger className='w-full'>
-                                                            <SelectValue
-                                                                placeholder="Select Partner Name"
-                                                            />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value={'delhivery'}>Delhivery</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
+                                                    <div>
+                                                        <Select
+                                                            {...field}
+                                                            options={partners}
+                                                            isSearchable
+                                                            placeholder='Select Partner'
+                                                            onChange={option => field.onChange(option?.value)}
+                                                            onBlur={field.onBlur}
+                                                            value={partners.find(partner => partner.value === field.value)}
+                                                        />
+                                                    </div>
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -97,7 +92,20 @@ const UploadPincodeSheet = () => {
                                                 </FormLabel>
                                                 <FormControl>
                                                     <div>
-                                                        <input type='file' accept='.csv' />
+                                                        <input
+                                                            type='file'
+                                                            accept='.csv'
+                                                            onChange={(event) => {
+                                                                const file = event.target?.files?.[0];
+                                                                const reader = new FileReader();
+                                                                if (file) {
+                                                                    reader.onload = function (event) {
+                                                                        field.onChange(event.target?.result);
+                                                                    };
+                                                                    reader.readAsText(file);
+                                                                }
+                                                            }}
+                                                        />
                                                     </div>
                                                 </FormControl>
                                                 <FormMessage />

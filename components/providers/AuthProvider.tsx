@@ -20,6 +20,7 @@ interface AuthContextType {
     handleSignOut: () => void;
     handleForgetPassword: (formData: FormData) => void;
     handleResetPassword: (formData: FormData, token: string) => void;
+    handleChangePassword: (formData: FormData, token: string) => void;
 
 }
 
@@ -242,6 +243,62 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             });
         }
     }
+    
+    const handleChangePassword = async (formData: FormData, token: string) => {
+        try {
+            const old_password = formData.get("old_password")?.toString() || "";
+            const password = formData.get("password")?.toString() || "";
+            const confirmPassword = formData.get("confirmPassword")?.toString() || "";
+
+            if (password !== confirmPassword) {
+                return toast({
+                    variant: "destructive",
+                    title: "Passwords do not match.",
+                });
+            }
+
+            if (!password || !token) {
+                return toast({
+                    variant: "destructive",
+                    title: "Invalid password or token.",
+                });
+            }
+
+            const userData = {
+                old_password,
+                password,
+                token
+            };
+
+            const response = await axiosWOAuth.post("/auth/change-password", userData)
+
+            if (response.data.message === "user not found") {
+                return toast({
+                    variant: "destructive",
+                    title: "User not found",
+                    description: "Please enter a valid email address.",
+                });
+            }else if(response.data.message === "incorrect old password"){
+                    return toast({
+                        variant: "destructive",
+                        title: "Incorrect Password",
+                        description: "Please enter correct old password",
+                    });
+            } else if (response.data.valid) {
+
+                toast({
+                    title: "Success",
+                    description: "Password reset successfully.",
+                });
+                return router.push("/login");
+            }
+        } catch (error) {
+            return toast({
+                variant: "destructive",
+                title: "An error occurred during password reset.",
+            });
+        }
+    }
 
     return (
         <AuthContext.Provider
@@ -254,6 +311,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 handleSignOut,
                 handleForgetPassword,
                 handleResetPassword,
+                handleChangePassword
 
             }}
         >
@@ -271,3 +329,4 @@ export function useAuth() {
     }
     return context;
 }
+

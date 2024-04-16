@@ -9,7 +9,7 @@ const ChangePassword = () => {
       <Card>
         <CardContent className='px-10 py-5'>
           <CardTitle className='py-4 font-semibold'>Change Password</CardTitle>
-          <ChangePasswordForm />
+            <ChangePasswordForm />
         </CardContent>
 
       </Card>

@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -17,10 +17,11 @@ import { useModal } from '@/hooks/use-model-store';
 import { useRouter } from 'next/navigation';
 import { Save, Upload } from 'lucide-react';
 import { Button } from '../ui/button';
+import { useSellerProvider } from '../providers/SellerProvider';
 
 export const CompanyProfileSchema = z.object({
-  company_id: z.string().min(1, "Company ID is required"),
-  name: z.string().min(1, "Company ID is required"),
+  companyId: z.string().optional(),
+  companyName: z.string().min(1, "Company Name is required"),
   email: z.string().email("Invalid email address"),
   website: z.string().optional(),
   logo: z.string().optional(),
@@ -30,39 +31,40 @@ export const CompanyProfileForm = () => {
 
   const hiddenFileInput = useRef<HTMLInputElement>(null);
 
-  const { handleCreateHub } = useHubProvider();
+  const { updateCompanyProfile } = useHubProvider();
+  const { seller } = useSellerProvider();
   const { onClose } = useModal();
   const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(CompanyProfileSchema),
     defaultValues: {
-      company_id: '',
-      name: '',
+      companyId: '',
+      companyName: '',
       email: '',
       website: '',
       logo: '',
     }
   });
 
-  const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {
+  useEffect(() => {
+    if (seller) {
+      
+      form.setValue('companyName', seller.companyName || '');
+      form.setValue('email', seller.email || '');
+      form.setValue('website', seller.website || '');
+    }
+  }, [seller, form]);
+
+  const handleSubmit = (formData: FormData) => {
     try {
-
-      handleCreateHub({
-        company_id: values.company_id,
-        name: values.name,
-        email: values.email,
-        website: values.website,
-        logo: values.logo
-      });
-
-      form.reset();
+      updateCompanyProfile(formData)
       router.refresh();
       onClose();
-    } catch (error) {
-      console.log(error);
+    }catch(error){
+      console.log(error)
     }
-  }
+}
 
   const handleClick = () => {
     hiddenFileInput.current?.click();
@@ -75,12 +77,12 @@ export const CompanyProfileForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form action={handleSubmit}>
         <div className="space-y-5 ">
           <div className='grid grid-cols-2 gap-y-6 gap-x-20 py-5'>
             <FormField
               control={form.control}
-              name={'company_id'}
+              name={'companyId'}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -96,7 +98,7 @@ export const CompanyProfileForm = () => {
               )} />
             <FormField
               control={form.control}
-              name={'name'}
+              name={'companyName'}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -120,7 +122,7 @@ export const CompanyProfileForm = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-md"
+                      className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                       {...field} />
                   </FormControl>
                   <FormMessage />
@@ -154,7 +156,7 @@ export const CompanyProfileForm = () => {
                     <button className='border-2 flex h-full w-1/3 justify-between rounded-lg' type='button' onClick={handleClick}>
                       <div className='grid place-content-center text-red-600 w-full h-full'><p>Upload</p></div>
                       <div className='bg-slate-200 h-full w-1/3 grid place-content-center'><Upload size={20} color='red' /></div>
-                      <input type='file' className='hidden' onChange={handleChange} ref={hiddenFileInput} accept='.jpg .jpeg .png'/>
+                      <input type='file' className='hidden' onChange={handleChange} ref={hiddenFileInput} accept='.jpg .jpeg .png' />
                     </button>
                   </FormControl>
                   <FormMessage />
@@ -170,8 +172,5 @@ export const CompanyProfileForm = () => {
         </div>
       </form>
     </Form>
-
   )
 }
-
-

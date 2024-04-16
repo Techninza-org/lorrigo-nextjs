@@ -12,8 +12,6 @@ import {
     FormLabel,
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
-import { useHubProvider } from '../providers/HubProvider';
-import { useModal } from '@/hooks/use-model-store';
 import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -25,8 +23,6 @@ export const BankDetailsSchema = z.object({
     ifsc_number: z.string().min(1, "IFSC Number is required"),
 })
 const BankDetailsForm = () => {
-    const { handleCreateHub } = useHubProvider();
-    const { onClose } = useModal();
     const router = useRouter();
 
     const form = useForm({
@@ -41,17 +37,8 @@ const BankDetailsForm = () => {
 
     const onSubmit = async (values: z.infer<typeof BankDetailsSchema>) => {
         try {
-
-            handleCreateHub({
-                holder_name: values.holder_name,
-                acc_type: values.acc_type,
-                acc_number: values.acc_number,
-                ifsc_number: values.ifsc_number
-            });
-
             form.reset();
             router.refresh();
-            onClose();
         } catch (error) {
             console.log(error);
         }

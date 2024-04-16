@@ -1,5 +1,5 @@
 'use client'
-import React, { useRef } from 'react'
+import React from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -11,12 +11,8 @@ import {
     FormItem,
     FormLabel,
 } from "@/components/ui/form";
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAdminProvider } from '@/components/providers/AdminProvider';
-import { useModal } from '@/hooks/use-model-store';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Plus } from 'lucide-react';
 
@@ -34,8 +30,6 @@ export const AddUserSchema = z.object({
 })
 
 const AddUserForm = () => {
-    const { handleCreateHub } = useAdminProvider();
-    const { onClose } = useModal();
     const router = useRouter();
 
     const form = useForm({
@@ -56,23 +50,8 @@ const AddUserForm = () => {
 
     const onSubmit = async (values: z.infer<typeof AddUserSchema>) => {
         try {
-
-            handleCreateHub({
-                name: values.name,
-                email: values.email,
-                password: values.password,
-                confirm_password: values.confirm_password,
-                phone: values.phone,
-                company: values.company,
-                prefix: values.prefix,
-                pan: values.pan,
-                aadhar: values.aadhar,
-                gstin: values.gstin,
-            });
-
             form.reset();
             router.refresh();
-            onClose();
         } catch (error) {
             console.log(error);
         }
