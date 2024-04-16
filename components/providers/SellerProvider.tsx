@@ -140,7 +140,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const getCourierPartners = async (orderId: string) => {
     try {
-      const res = await axiosIWAuth.get(`/order/courier/b2c/${orderId}`);
+
+      const res = await axiosIWAuth.get(`/order/courier/b2c/SR/${orderId}`);
       if (res.data?.valid) {
         setCourierPartners(res.data);
         return res.data
@@ -219,6 +220,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       }
 
       const payload = {
+
+        vendorType: "SR",
+
         order_reference_id: order.order_reference_id,
         payment_mode: order.payment_mode === "COD" ? 1 : 0,
         orderWeight: Number(order.orderWeight),
@@ -418,11 +422,13 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     const payload = {
       orderId: orderId,
       carrierId: carrierId,
-      orderType: 0
+      orderType: 0,
+      vendorCategory: "SR"
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
-      if (res.data.shipment.response.data.errors === null) {
+      console.log(res.data.order.awb, "res")
+      if (res.data.order.awb) {
         toast({
           variant: "default",
           title: "Order created successfully",
