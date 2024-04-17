@@ -105,7 +105,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const axiosConfig = {
     baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
-    timeout: 5000,
     headers: {
       'Content-Type': 'application/json',
       ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
@@ -140,7 +139,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const getCourierPartners = async (orderId: string) => {
     try {
-      const res = await axiosIWAuth.get(`/order/courier/b2c/${orderId}`);
+
+      const res = await axiosIWAuth.get(`/order/courier/b2c/SR/${orderId}`);
       if (res.data?.valid) {
         setCourierPartners(res.data);
         return res.data
@@ -418,11 +418,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     const payload = {
       orderId: orderId,
       carrierId: carrierId,
-      orderType: 0
+      orderType: 0,
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
-      if (res.data.shipment.response.data.errors === null) {
+      console.log(res.data.order.awb, "res")
+      if (res.data.order.awb) {
         toast({
           variant: "default",
           title: "Order created successfully",
@@ -450,6 +451,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }, [axiosIWAuth, router, toast])
 
   const handleCancelOrder = async (orderId: string, type: string) => {
+    router.refresh();
+
     try {
       const res = await axiosIWAuth.post(`/shipment/cancel`, {
         orderId: orderId,

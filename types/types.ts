@@ -177,3 +177,4 @@ export interface AdminType {
   aadhar?: string;
   gstin?: string;
 }
+
