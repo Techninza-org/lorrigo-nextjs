@@ -5,6 +5,7 @@ import { InvoiceTemplate } from "./invoice-template";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Button } from "../ui/button";
+import GenerateManifestTemplate from "./manifest-template";
 
 export const InvoicePage = ({ order }: { order?: B2COrderType }) => {
     const printDocument = () => {
@@ -24,9 +25,17 @@ export const InvoicePage = ({ order }: { order?: B2COrderType }) => {
             <Button size={"sm"} variant={"webPageBtn"} onClick={printDocument}>Download Label</Button>
             {/* <div id="divToPrint" className="gap-y-14 w-full grid grid-cols-3 "> */}
             <div id="divToPrint" className="mx-auto pb-3">
-                <InvoiceTemplate order={order}/>
+                <InvoiceTemplate order={order} />
             </div>
             {/* </div> */}
         </>
     );
+}
+
+export const GenerateManifest = ({ order }: { order?: B2COrderType }) => {
+    return (
+        <div className="w-full p-4" id="divToPrint">
+            <GenerateManifestTemplate order={order} />
+        </div>
+    )
 }

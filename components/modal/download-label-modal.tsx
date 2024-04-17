@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { useModal } from "@/hooks/use-model-store";
-import { InvoicePage } from "../Invoice/indes";
+import { InvoicePage } from "../Invoice_manifest";
 
 export const DownloadLableModal = () => {
     const { isOpen, onClose, type, data } = useModal();
