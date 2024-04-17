@@ -445,7 +445,7 @@ export const RateCalcForm = () => {
                                 <TableBody>
                                     {
                                         courierCalcRate?.map((partner: any) => {
-                                            return <TableRow key={partner.smartship_carrier_id}>
+                                            return <TableRow key={partner.carrierID}>
                                                 <TableCell>
                                                     <div className="flex items-center">
                                                         <Image className="mr-2" src={"/assets/logo.png"} width={35} height={35} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>

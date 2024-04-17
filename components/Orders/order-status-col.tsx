@@ -109,7 +109,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
                 <div className="space-y-1">
                     <Badge variant={orderStage?.stage == -1 ? "failure" : "success"}>{orderStage?.action}
                     </Badge>
-                  <p>{formatDate(`${orderStage?.stageDateTime}`, 'dd MM yyyy | HH:mm a')}</p>
+                    <p>{formatDate(`${orderStage?.stageDateTime}`, 'dd MM yyyy | HH:mm a')}</p>
                 </div>
             )
         }

@@ -27,7 +27,7 @@ interface HubContextType {
 const HubContext = createContext<HubContextType | null>(null);
 
 function HubProvider({ children }: { children: React.ReactNode }) {
-    const {getHub} = useSellerProvider()
+    const { getHub } = useSellerProvider()
     const { userToken } = useAuth();
 
     const { toast } = useToast();
@@ -47,23 +47,32 @@ function HubProvider({ children }: { children: React.ReactNode }) {
     const handleCreateHub = useCallback(async (hub: SettingType) => {
         try {
             const res = await axiosIWAuth.post('/hub', hub);
-            toast({
-                variant: "default",
-                title: "Hub created successfully",
-                description: "Hub has been created successfully",
-            });
 
-            getHub()
-            router.refresh()
+
+            if (res.data.valid) {
+                getHub()
+                toast({
+                    variant: "default",
+                    title: "Hub created successfully",
+                    description: "Hub has been created successfully",
+                });
+                router.refresh()
+            }else{
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Something went wrong. Please try again later.",
+                });
+            }
         } catch (error) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "error.response.data.message",
+                description: "Something went wrong. Please try again later.",
             });
 
         }
-    }, [userToken,axiosIWAuth, getHub, router, toast])
+    }, [userToken, axiosIWAuth, getHub, router, toast])
 
     return (
         <HubContext.Provider
