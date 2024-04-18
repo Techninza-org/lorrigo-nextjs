@@ -20,6 +20,16 @@ type ButtonStyles = {
 
 export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     const orderStage = rowData?.orderStages?.slice(-1)[0]?.stage;
+
+    const orderBucktingStatuses = {
+        new: [0],
+        "ready-for-pickup": [2, 3, 4],
+        "in-transit": [10, 27, 30],
+        delivered: [11],
+        ndr: [12, 13, 14, 15, 16, 17, 214],
+        rto: [18, 19, 118, 198, 199, 201, 212],
+    };
+
     const { onOpen } = useModal();
     const buttonStyles: ButtonStyles = {
         "0": "bg-green-500",
@@ -30,6 +40,13 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
     const buttonText: ButtonStyles = {
         "0": "Ship Now",
         "1": "Schedule Pickup",
+        "12": "Re-attempt",
+        "13": "Re-attempt",
+        "14": "Re-attempt",
+        "15": "Re-attempt",
+        "16": "Re-attempt",
+        "17": "Re-attempt",
+        "214": "Re-attempt",
         "-1": "Comming Soon",
         "default": "Disabled Button",
     };
@@ -96,26 +113,49 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
             <Button variant={"webPageBtn"} size={"sm"} onClick={() => onOpen("cloneOrder", { order: rowData })}>Clone Order</Button>
         );
     }
+    console.log("orderStage", orderStage)
+
+    if (orderBucktingStatuses.ndr.includes(Number(orderStage))) {
+        return (
+            <>
+                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("schedulePickup", { order: rowData })}>Re-attempt</Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontalIcon className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                        <DropdownMenuItem>Return</DropdownMenuItem>
+                        <DropdownMenuItem>Fake attempt</DropdownMenuItem>
+                        <DropdownMenuItem>RTO</DropdownMenuItem>
+
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </>
+        );
+    }
 
     return (
-       <>
-       <Button variant={"themeNavActiveBtn"} size={"sm"} onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</Button>
-       <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                    <span className="sr-only">Open menu</span>
-                    <MoreHorizontalIcon className="h-4 w-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-                <OrderCloneButton rowData={rowData} />
+        <>
+            <Button variant={"themeNavActiveBtn"} size={"sm"} onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontalIcon className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                    <OrderCloneButton rowData={rowData} />
 
-                <DropdownMenuSeparator />
+                    <DropdownMenuSeparator />
 
-                <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+                    <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
 
-            </DropdownMenuContent>
-        </DropdownMenu>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </>
     );
 };

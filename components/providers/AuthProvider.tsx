@@ -47,7 +47,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const axiosConfig = {
         baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
-        timeout: 5000,
         headers: {
             'Content-Type': 'application/json',
         },
