@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Circle, CircleCheck, Download, Plus, SearchI
 import { Button } from '../ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useModal } from '@/hooks/use-model-store';
 
 const data = [
   {
@@ -72,6 +73,7 @@ const AddressDetails = () => {
 const PickupAddresses = () => {
   const [page, setPage] = React.useState(1)
   const totalPages = 5
+  const { onOpen } = useModal();
   function incrementPage() {
     setPage(prevPage => Math.min(prevPage + 1, totalPages));
   }
@@ -103,7 +105,7 @@ const PickupAddresses = () => {
         </div>
         <div className='flex gap-x-6'>
           <Button variant={'themeGrayBtn'} size={'icon'}><Download size={18} /></Button>
-          <Button variant={'themeButton'} className='rounded-full'><Plus size={15} /> Add Pickup Address</Button>
+          <Button onClick={()=>onOpen("addPickupLocation")} variant={'themeButton'} className='rounded-full'><Plus size={15} /> Add Pickup Address</Button>
         </div>
       </div>
       {/* <AddressDetails /> */}

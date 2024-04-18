@@ -21,16 +21,16 @@ import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Label } from '../ui/label';
 
 export const GstinFormSchema = z.object({
-    gstin: z.string().min(1, "Account holder's name is required"),
-    tan: z.string().min(1, "Account type is required"),
+    gstin: z.string().min(1, "Gst number is required"),
+    tan: z.string().min(1, "Tan number is required"),
     deductTDS: z.string(),
 })
 
 const GstinForm = () => {
-    const { handleCreateHub } = useHubProvider();
     const { onClose } = useModal();
     const router = useRouter();
     const [selectedValue, setSelectedValue] = useState('yes');
+    const {uploadGstinInvoicing} = useHubProvider();
 
     const handleChange = (value: React.SetStateAction<string>) => {
         setSelectedValue(value);
@@ -48,13 +48,7 @@ const GstinForm = () => {
 
     const onSubmit = async (values: z.infer<typeof GstinFormSchema>) => {
         try {
-
-            handleCreateHub({
-                gstin: values.gstin,
-                deductTDS: values.deductTDS,
-                tan: values.tan,
-            });
-
+            uploadGstinInvoicing(values);
             form.reset();
             router.refresh();
             onClose();
@@ -90,7 +84,7 @@ const GstinForm = () => {
                                 <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
                                     I want to deduct TDS payment <span className='text-red-600'>*</span>
                                 </FormLabel>
-                                <FormControl>
+                                <FormControl >
                                     <RadioGroup defaultValue="yes" className='flex'>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="yes" id="yes" />

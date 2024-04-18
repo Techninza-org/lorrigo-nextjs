@@ -11,6 +11,8 @@ import { SellerType } from "@/types/types";
 import { BankDetailsSchema } from "../Settings/bank-details";
 import { z } from "zod";
 import { CompanyProfileSchema } from "../Settings/company-profile-form";
+import { BillingAddressSchema } from "../Settings/billing-address-form";
+import { GstinFormSchema } from "../Settings/gstin-form";
 
 // interface reqPayload {
 //     name: string;
@@ -27,6 +29,8 @@ interface HubContextType {
     handleCreateHub: (hub: SellerType) => void;
     updateCompanyProfile: (values: z.infer<typeof CompanyProfileSchema>) => void;
     updateBankDetails: (values: z.infer<typeof BankDetailsSchema>) => void;
+    updateBillingAddress: (values: z.infer<typeof BillingAddressSchema>) => void;
+    uploadGstinInvoicing: (values: z.infer<typeof GstinFormSchema>) => void;
 }
 
 const HubContext = createContext<HubContextType | null>(null);
@@ -150,12 +154,79 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const updateBillingAddress = async (values: z.infer<typeof BillingAddressSchema>) => {
+        try {
+            const address_line_1 = values?.address_line_1?.toString() || "";
+            const address_line_2 = values?.address_line_2?.toString() || "";
+            const pincode = values?.pincode?.toString() || "";
+            const city = values?.city?.toString() || "";
+            const state = values?.state?.toString() || "";
+            const phone = values?.phone?.toString() || "";
+
+            const billingAddress = {
+                address_line_1,
+                address_line_2,
+                pincode,
+                city,
+                state,
+                phone,
+            }
+
+            const userRes = await axiosIWAuth.put("/seller", billingAddress);
+            if(userRes){
+                toast({
+                    title: "Success",
+                    description: "Billing Address updated successfully.",
+                });
+            }
+
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "error.response.data.message",
+            });
+        }
+    }
+
+    const uploadGstinInvoicing = async (values: z.infer<typeof GstinFormSchema>) => {
+        try {
+            const gstin = values?.gstin?.toString() || "";
+            const tan = values?.tan?.toString() || "";
+            const deductTDS = values?.deductTDS?.toString() || "";
+            
+
+            const gstinData = {
+                gstin,
+                tan,
+                deductTDS,
+            }
+
+            const userRes = await axiosIWAuth.put("/seller", gstinData);
+            if(userRes){
+                toast({
+                    title: "Success",
+                    description: "GSTIN Details updated successfully.",
+                });
+            }
+
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "error.response.data.message",
+            });
+        }
+    }
+
     return (
         <HubContext.Provider
             value={{
                 handleCreateHub,
                 updateCompanyProfile,
-                updateBankDetails
+                updateBankDetails,
+                updateBillingAddress,
+                uploadGstinInvoicing
                   
             }}
         >

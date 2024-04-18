@@ -17,6 +17,7 @@ import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useModal } from '@/hooks/use-model-store';
 import { useSellerProvider } from '../providers/SellerProvider';
+import { useHubProvider } from '../providers/HubProvider';
 
 export const BillingAddressSchema = z.object({
     address_line_1: z.string().min(1, "Address Line 1 is required"),
@@ -29,10 +30,11 @@ export const BillingAddressSchema = z.object({
 const BillingAddressForm = () => {
     const router = useRouter();
     const { onClose } = useModal();
+    const { updateBillingAddress } = useHubProvider();
     const {getCityStateFPincode} = useSellerProvider();
     const [billingCityState, setCityState] = useState({
-        city: "Pincode",
-        state: "state"
+        city: "",
+        state: ""
     })
 
     const form = useForm({
@@ -69,11 +71,16 @@ const BillingAddressForm = () => {
         return () => clearTimeout(timer);
     }, [form.watch("pincode")])
 
+    useEffect(() => {
+        if (billingCityState) {
+            form.setValue('city', billingCityState.city || '');
+            form.setValue('state', billingCityState.state || '');
+        }
+    }, [billingCityState, form]);   
+
     const onSubmit = async (values: z.infer<typeof BillingAddressSchema>) => {
         try {
-            console.log(values);
-
-
+            updateBillingAddress(values);
             form.reset();
             router.refresh();
             onClose();
