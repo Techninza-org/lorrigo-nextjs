@@ -14,19 +14,19 @@ import { CompanyProfileSchema } from "../Settings/company-profile-form";
 import { BillingAddressSchema } from "../Settings/billing-address-form";
 import { GstinFormSchema } from "../Settings/gstin-form";
 
-// interface reqPayload {
-//     name: string;
-//     email?: string;
-//     pincode: string;
-//     address1: string;
-//     address2: string;
-//     phone: string;
-//     city: string;
-//     state: string;
-// }                                 //added all these to SettingType .../components/modal/add-pickup-location.tsx
+interface reqPayload {
+    name: string;
+    email?: string;
+    pincode: string;
+    address1: string;
+    address2: string;
+    phone: string;
+    city: string;
+    state: string;
+}                                 //added all these to SettingType .../components/modal/add-pickup-location.tsx
 
 interface HubContextType {
-    handleCreateHub: (hub: SellerType) => void;
+    handleCreateHub: (hub: reqPayload) => void;
     updateCompanyProfile: (values: z.infer<typeof CompanyProfileSchema>) => void;
     updateBankDetails: (values: z.infer<typeof BankDetailsSchema>) => void;
     updateBillingAddress: (values: z.infer<typeof BillingAddressSchema>) => void;
@@ -56,7 +56,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
     const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
-    const handleCreateHub = useCallback(async (hub: SellerType) => {
+    const handleCreateHub = useCallback(async (hub: reqPayload) => {
         try {
             const res = await axiosIWAuth.post('/hub', hub);
 
