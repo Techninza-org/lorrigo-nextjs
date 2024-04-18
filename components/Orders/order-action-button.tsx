@@ -113,7 +113,26 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
             <Button variant={"webPageBtn"} size={"sm"} onClick={() => onOpen("cloneOrder", { order: rowData })}>Clone Order</Button>
         );
     }
-    console.log("orderStage", orderStage)
+    if (orderStage === 4) {
+        return (
+            <>
+                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("downloadManifest", { order: rowData })}>Download Manifest</Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontalIcon className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                        <OrderCloneButton rowData={rowData} />
+                        <DropdownMenuSeparator />
+                        <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </>
+        );
+    }
 
     if (orderBucktingStatuses.ndr.includes(Number(orderStage))) {
         return (
