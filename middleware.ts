@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
     '/settings',
     '/track',
     '/rate-calc',
-    '/invoices',
+    '/print',
     '/admin'
   ];
 
