@@ -1,15 +1,16 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext} from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosInstance } from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
-import { SettingType } from "@/types/types";
-import { get } from "http";
-import { set } from "date-fns";
+import { SellerType } from "@/types/types";
+import { BankDetailsSchema } from "../Settings/bank-details";
+import { z } from "zod";
+import { CompanyProfileSchema } from "../Settings/company-profile-form";
 
 // interface reqPayload {
 //     name: string;
@@ -23,8 +24,9 @@ import { set } from "date-fns";
 // }                                 //added all these to SettingType .../components/modal/add-pickup-location.tsx
 
 interface HubContextType {
-    handleCreateHub: (hub: SettingType) => void;
-    updateCompanyProfile: (formData: FormData) => void;
+    handleCreateHub: (hub: SellerType) => void;
+    updateCompanyProfile: (values: z.infer<typeof CompanyProfileSchema>) => void;
+    updateBankDetails: (values: z.infer<typeof BankDetailsSchema>) => void;
 }
 
 const HubContext = createContext<HubContextType | null>(null);
@@ -50,7 +52,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
     const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
-    const handleCreateHub = useCallback(async (hub: SettingType) => {
+    const handleCreateHub = useCallback(async (hub: SellerType) => {
         try {
             const res = await axiosIWAuth.post('/hub', hub);
 
@@ -81,13 +83,13 @@ function HubProvider({ children }: { children: React.ReactNode }) {
     }, [userToken, axiosIWAuth, getHub, router, toast])
 
 
-    const updateCompanyProfile = async (formData: FormData) => {
+    const updateCompanyProfile = async (values: z.infer<typeof CompanyProfileSchema>) => {
         try {
-            const companyName = formData.get("companyName")?.toString() || "";
-            const email = formData.get("email")?.toString() || "";
-            const website = formData.get("website")?.toString() || "";
+            const companyName = values?.companyName?.toString() || "";
+            const companyEmail = values?.companyEmail?.toString() || "";
+            const website = values?.website?.toString() || "";
 
-            if (!email.includes("@")) {
+            if (!companyEmail.includes("@")) {
                 return toast({
                     variant: "destructive",
                     title: "Invalid email.",
@@ -96,7 +98,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
             const companyProfileData = {
                 companyName,
-                email,
+                companyEmail,
                 website,
             }
 
@@ -116,12 +118,44 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             });
         }
     }
+    
+    const updateBankDetails = async (values: z.infer<typeof BankDetailsSchema>) => {
+        try {
+            const accHolderName = values?.accHolderName?.toString() || "";
+            const accType = values?.accType?.toString() || "";
+            const accNumber = values?.accNumber?.toString() || "";
+            const ifscNumber = values?.ifscNumber?.toString() || "";
+
+            const bankDetails = {
+                accHolderName,
+                accType,
+                accNumber,
+                ifscNumber,
+            }
+
+            const userRes = await axiosIWAuth.put("/seller", bankDetails);
+            if(userRes){
+                toast({
+                    title: "Success",
+                    description: "Bank Details submitted successfully.",
+                });
+            }
+
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "error.response.data.message",
+            });
+        }
+    }
 
     return (
         <HubContext.Provider
             value={{
                 handleCreateHub,
                 updateCompanyProfile,
+                updateBankDetails
                   
             }}
         >

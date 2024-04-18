@@ -22,7 +22,7 @@ import { useSellerProvider } from '../providers/SellerProvider';
 export const CompanyProfileSchema = z.object({
   companyId: z.string().optional(),
   companyName: z.string().min(1, "Company Name is required"),
-  email: z.string().email("Invalid email address"),
+  companyEmail: z.string().email("Invalid email address"),
   website: z.string().optional(),
   logo: z.string().optional(),
 })
@@ -41,7 +41,7 @@ export const CompanyProfileForm = () => {
     defaultValues: {
       companyId: '',
       companyName: '',
-      email: '',
+      companyEmail: '',
       website: '',
       logo: '',
     }
@@ -49,20 +49,21 @@ export const CompanyProfileForm = () => {
 
   useEffect(() => {
     if (seller) {
-      
+      form.setValue('companyId', seller.companyId || '');
       form.setValue('companyName', seller.companyName || '');
-      form.setValue('email', seller.email || '');
+      form.setValue('companyEmail', seller.companyEmail || '');
       form.setValue('website', seller.website || '');
     }
   }, [seller, form]);
 
-  const handleSubmit = (formData: FormData) => {
+  const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {
     try {
-      updateCompanyProfile(formData)
-      router.refresh();
-      onClose();
-    }catch(error){
-      console.log(error)
+        updateCompanyProfile(values);
+        form.reset();
+        router.refresh();
+        onClose();
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -77,7 +78,7 @@ export const CompanyProfileForm = () => {
 
   return (
     <Form {...form}>
-      <form action={handleSubmit}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="space-y-5 ">
           <div className='grid grid-cols-2 gap-y-6 gap-x-20 py-5'>
             <FormField
@@ -91,6 +92,7 @@ export const CompanyProfileForm = () => {
                   <FormControl>
                     <Input
                       className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                      readOnly={true}
                       {...field} />
                   </FormControl>
                   <FormMessage />
@@ -130,7 +132,7 @@ export const CompanyProfileForm = () => {
               )} />
             <FormField
               control={form.control}
-              name={'email'}
+              name={'companyEmail'}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">

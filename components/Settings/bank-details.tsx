@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -15,30 +15,47 @@ import { Input } from '../ui/input';
 import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
+import { useHubProvider } from '../providers/HubProvider';
+import { useSellerProvider } from '../providers/SellerProvider';
+import { useModal } from '@/hooks/use-model-store';
 
 export const BankDetailsSchema = z.object({
-    holder_name: z.string().min(1, "Account holder's name is required"),
-    acc_type: z.string().min(1, "Account type is required"),
-    acc_number: z.string().min(1, "Account number is required"),
-    ifsc_number: z.string().min(1, "IFSC Number is required"),
+    accHolderName: z.string().min(1, "Account holder's name is required"),
+    accType: z.string().min(1, "Account type is required"),
+    accNumber: z.string().min(1, "Account number is required"),
+    ifscNumber: z.string().min(1, "IFSC Number is required"),
 })
 const BankDetailsForm = () => {
     const router = useRouter();
+    const { onClose } = useModal();
+    const { updateBankDetails } = useHubProvider();
+    const { seller } = useSellerProvider();
 
     const form = useForm({
         resolver: zodResolver(BankDetailsSchema),
         defaultValues: {
-            holder_name: '',
-            acc_type: '',
-            acc_number: '',
-            ifsc_number: ''
+            accHolderName: '',
+            accType: '',
+            accNumber: '',
+            ifscNumber: ''
         }
     });
 
+    useEffect(() => {
+        if (seller) {
+            form.setValue('accHolderName', seller.accHolderName || '');
+            form.setValue('accType', seller.accType || '');
+            form.setValue('accNumber', seller.accNumber || '');
+            form.setValue('ifscNumber', seller.ifscNumber || '');
+        }
+    }, [seller, form]);
+    
     const onSubmit = async (values: z.infer<typeof BankDetailsSchema>) => {
         try {
+            updateBankDetails(values);
             form.reset();
             router.refresh();
+            onClose();
         } catch (error) {
             console.log(error);
         }
@@ -50,7 +67,7 @@ const BankDetailsForm = () => {
                     <div className='grid grid-cols-2 gap-y-6 gap-x-28 py-5 mt-6'>
                         <FormField
                             control={form.control}
-                            name={'holder_name'}
+                            name={'accHolderName'}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -66,7 +83,7 @@ const BankDetailsForm = () => {
                             )} />
                         <FormField
                             control={form.control}
-                            name={'acc_type'}
+                            name={'accType'}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -82,7 +99,7 @@ const BankDetailsForm = () => {
                             )} />
                         <FormField
                             control={form.control}
-                            name={'acc_number'}
+                            name={'accNumber'}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -98,7 +115,7 @@ const BankDetailsForm = () => {
                             )} />
                         <FormField
                             control={form.control}
-                            name={'ifsc_number'}
+                            name={'ifscNumber'}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">

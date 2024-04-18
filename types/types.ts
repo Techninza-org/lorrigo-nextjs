@@ -4,6 +4,8 @@ export type SellerType = {
   email: string;
   walletBalance?: number;
   companyName?: string;
+  companyEmail?: string;
+  companyId?: string;
   website?: string;
   entityType?: string;
   address?: string;
@@ -13,6 +15,13 @@ export type SellerType = {
   vendors?: string[];
   codPrice?: number;
   isVerified: boolean;
+  accHolderName?: string;
+  accType?: string;
+  accNumber?: string;
+  ifscNumber?: string;
+  gstin?: string;
+  deductTDS?: string;
+  tan?: string;
 };
 
 export type AuthType = {
@@ -157,6 +166,7 @@ export interface SettingType {
   gstin?: string;
   deductTDS?: string;
   tan?: string;
+  companyEmail?: string;
   //////// add-pickup-location.tsx
   name?: string;
   address1?: string;
