@@ -9,7 +9,6 @@ const user = userCookie ? JSON.parse(userCookie.value) : { token: null };
 
 const axiosConfig = {
     baseURL: BASEURL,
-    timeout: 5000,
     headers: {
         'Content-Type': 'application/json',
         ...(user.token && { 'Authorization': `Bearer ${user.token}` }), 
