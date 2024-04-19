@@ -94,7 +94,7 @@ const TrackRemittance = () => {
                                     return (
                                         <TableRow key={index}>
                                             <TableCell>{order.awb}</TableCell>
-                                            <TableCell>{formatCurrencyForIndia(Number(order?.productId?.taxable_value))}</TableCell>
+                                            <TableCell>{formatCurrencyForIndia(Number(order?.amount2Collect))}</TableCell>
                                         </TableRow>
                                     )
                                 })
