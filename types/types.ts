@@ -134,3 +134,13 @@ export interface OrderType {
         order_zone: string;
     }[];
 }
+
+export interface RemittanceType {
+    _id: string;
+    remittanceId: string;
+    remittanceDate: string;
+    remittanceAmount: number;
+    remittanceStatus: string;
+    orders: B2COrderType[];
+    BankTransactionId: string;
+}

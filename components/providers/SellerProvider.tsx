@@ -7,7 +7,7 @@ import axios, { AxiosInstance } from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
 
-import { B2COrderType, HubType, OrderType, SellerType } from "@/types/types";
+import { B2COrderType, HubType, OrderType, RemittanceType, SellerType } from "@/types/types";
 import { useAuth } from "./AuthProvider";
 import { cloneFormSchema } from "../drawer/clone-order-drawer";
 import { EditFormSchema } from "../drawer/edit-order-drawer";
@@ -33,6 +33,8 @@ interface SellerContextType {
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
   calcRate: (order: any) => Promise<any>;
+  getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
+  sellerRemittance: RemittanceType[] | null;
 }
 
 interface sellerCustomerFormType {
@@ -62,9 +64,8 @@ const SellerContext = createContext<SellerContextType | null>(null);
 
 function SellerProvider({ children }: { children: React.ReactNode }) {
   const { userToken } = useAuth();
-
-
   const [seller, setSeller] = useState<SellerType | null>(null);
+  const [sellerRemittance, setSellerRemittance] = useState<RemittanceType[] | null>(null);
   const [sellerDashboard, setSellerDashboard] = useState<any>(null);
   const [sellerFacilities, setSellerFacilities] = useState([]);
   const [orders, setOrders] = useState<any[]>([]);
@@ -552,10 +553,33 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const getSellerRemittance = async () => {
+    try {
+      const res = await axiosIWAuth.get('/seller/remittance');
+      if (res.data?.valid) {
+        setSellerRemittance(res.data.remittanceOrders);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  const getSellerRemittanceDetails = async (id: string) => {
+    try {
+      const res = await axiosIWAuth.get(`/seller/remittance/${id}`);
+      if (res.data?.valid) {
+        return res.data.remittanceOrder;
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   useEffect(() => {
     if (!userToken) return;
     getHub();
     getSellerDashboardDetails()
+    getSellerRemittance();
   }, [userToken]);
 
   useEffect(() => {
@@ -586,7 +610,10 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getCityStateFPincode,
         sellerDashboard,
         handleUpdateOrder,
-        calcRate
+        calcRate,
+        getSellerRemittanceDetails,
+        sellerRemittance
+
 
       }}
     >
