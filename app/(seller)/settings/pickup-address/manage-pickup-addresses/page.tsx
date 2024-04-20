@@ -1,24 +1,20 @@
-import PickupAddresses from '@/components/Settings/pickup-addresses'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import React from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import PickupAddresses from "@/components/Settings/pickup-addresses";
 
-
-const ManagePickupAddresses = () => {
-  return (
-    <div>
-      <h1 className='py-5 text-2xl font-semibold'>Settings - Manage Pickup Addresses</h1>
-      <Card>
-        <CardContent className='px-10 py-5'>
-          <PickupAddresses />
-        </CardContent>
-      </Card>
-      
-
-    </div>
-  )
+export default function ManagePickupAddresses() {
+  
+    return (
+        <Card className="col-span-4">
+            <CardHeader>
+                <CardTitle className="md:flex justify-between space-y-3">
+                   Pickup Addresses
+                    <div className="md:flex space-y-3 md:space-y-0 md:space-x-3 mt-6 md:mt-0">
+                        </div>
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="pl-2">
+              <PickupAddresses />
+            </CardContent>
+        </Card>
+    )
 }
-
-export default ManagePickupAddresses

@@ -7,7 +7,7 @@ import axios, { AxiosInstance } from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
 
-import { B2COrderType, HubType, OrderType, SellerType } from "@/types/types";
+import { B2COrderType, OrderType, SellerType, pickupAddressType } from "@/types/types"; ////removed HubType
 import { useAuth } from "./AuthProvider";
 import { cloneFormSchema } from "../drawer/clone-order-drawer";
 import { EditFormSchema } from "../drawer/edit-order-drawer";
@@ -17,7 +17,7 @@ interface SellerContextType {
   seller: SellerType | null;
   business: string;
   isOrderCreated: boolean;
-  sellerFacilities: HubType[];
+  sellerFacilities: pickupAddressType[];   ///////////// HubType
   handlebusinessDropdown: (value: string) => void;
   sellerCustomerForm: sellerCustomerFormType;
   setSellerCustomerForm: React.Dispatch<React.SetStateAction<sellerCustomerFormType>>;

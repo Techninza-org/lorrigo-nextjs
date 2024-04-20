@@ -17,8 +17,8 @@ const BusinessType = () => {
                 <Card className='px-10 py-4 flex hover:shadow-md hover:shadow-slate-200'>
                     <input type="radio" id="solo" name="businessType" value="solo" className='mr-8 accent-red-600 scale-125' />
                     <label htmlFor="solo" className="cursor-pointer">
-                        <CardTitle>Solo Proprietor</CardTitle>
-                        <CardDescription className='pt-3'>Registered company as &apos;Solo Proprietor&apos; under Companies Act 2013</CardDescription>
+                        <CardTitle>Sole Proprietor</CardTitle>
+                        <CardDescription className='pt-3'>Registered company as &apos;Sole Proprietor&apos; under Companies Act 2013</CardDescription>
                     </label>
                 </Card>
                 <Card className='px-10 py-4 flex hover:shadow-md hover:shadow-slate-200'>

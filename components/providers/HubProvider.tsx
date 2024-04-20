@@ -7,15 +7,16 @@ import axios, { AxiosInstance } from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
-import { SellerType } from "@/types/types";
 import { BankDetailsSchema } from "../Settings/bank-details";
 import { z } from "zod";
 import { CompanyProfileSchema } from "../Settings/company-profile-form";
 import { BillingAddressSchema } from "../Settings/billing-address-form";
 import { GstinFormSchema } from "../Settings/gstin-form";
+import { pickupAddressFormSchema } from "../modal/add-pickup-location";
 
 interface reqPayload {
     name: string;
+    contactPersonName: string;
     email?: string;
     pincode: string;
     address1: string;
@@ -23,7 +24,7 @@ interface reqPayload {
     phone: string;
     city: string;
     state: string;
-}                                 //added all these to SettingType .../components/modal/add-pickup-location.tsx
+}                                 
 
 interface HubContextType {
     handleCreateHub: (hub: reqPayload) => void;
@@ -31,6 +32,7 @@ interface HubContextType {
     updateBankDetails: (values: z.infer<typeof BankDetailsSchema>) => void;
     updateBillingAddress: (values: z.infer<typeof BillingAddressSchema>) => void;
     uploadGstinInvoicing: (values: z.infer<typeof GstinFormSchema>) => void;
+    editPickupLocation: (values: z.infer<typeof pickupAddressFormSchema>, id: string) => void;
 }
 
 const HubContext = createContext<HubContextType | null>(null);
@@ -218,6 +220,62 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const editPickupLocation = async (values: z.infer<typeof pickupAddressFormSchema>, id: string) => {
+        const update_id = id;
+        
+        try {
+            const facilityName = values?.facilityName?.toString() || "";
+            const contactPersonName = values?.contactPersonName?.toString() || "";
+            const pickupLocContact = values?.pickupLocContact?.toString() || "";
+            const email = values?.email?.toString() || "";
+            const address = values?.address?.toString() || "";
+            const country = values?.country?.toString() || "";
+            const pincode = values?.pincode?.toString() || "";
+            const city = values?.city?.toString() || "";
+            const state = values?.state?.toString() || "";
+            const isRTOAddressSame = values?.isRTOAddressSame || false;
+            const rtoAddress = values?.rtoAddress?.toString() || "";
+            const rtoCity = values?.rtoCity?.toString() || "";
+            const rtoState = values?.rtoState?.toString() || "";
+            const rtoPincode = values?.rtoPincode?.toString() || "";
+
+            const pickupLocationData = {
+                facilityName,
+                contactPersonName,
+                pickupLocContact,
+                email,
+                address,
+                country,
+                pincode,
+                city,
+                state,
+                isRTOAddressSame,
+                rtoAddress,
+                rtoCity,
+                rtoState,
+                rtoPincode,
+            }
+            
+
+            const userRes = await axiosIWAuth.put(`/hub/${update_id}`, pickupLocationData);
+            console.log('userRes ', userRes);
+            
+            if(userRes){
+                toast({
+                    title: "Success",
+                    description: "Pickup Location updated successfully.",
+                });
+            }
+
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "error.response.data.message",
+            });
+        }
+    }
+
     return (
         <HubContext.Provider
             value={{
@@ -225,7 +283,8 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 updateCompanyProfile,
                 updateBankDetails,
                 updateBillingAddress,
-                uploadGstinInvoicing
+                uploadGstinInvoicing,
+                editPickupLocation
                   
             }}
         >

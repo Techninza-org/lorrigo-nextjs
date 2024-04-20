@@ -31,20 +31,22 @@ export type AuthType = {
   isVerified?: boolean;
 };
 
-export interface HubType {
-  _id?: string;
-  sellerId?: string;
-  name?: string;
-  pincode?: number;
-  city?: string;
-  state?: string;
-  address1?: string;
-  address2?: string;
-  phone?: number;
-  delivery_type_id?: number;
-  hub_id?: number;
-  __v?: number;
-}
+// export interface HubType {
+//   _id?: string;
+//   sellerId?: string;
+//   name?: string;
+//   email?: string;
+//   contactPersonName?: string;
+//   pincode?: number;
+//   city?: string;
+//   state?: string;
+//   address1?: string;
+//   address2?: string;
+//   phone?: number;
+//   delivery_type_id?: number;
+//   hub_id?: number;
+//   __v?: number;
+// }
 
 export interface ProductDetailsType {
   _id: string;
@@ -73,10 +75,16 @@ export interface pickupAddressType {
   sellerId: string;
   name: string;
   pincode: number;
+  email: string;
+  contactPersonName: string;
   city: string;
   state: string;
   address1: string;
   address2?: string;
+  rtoAddress?: string;
+  rtoCity?: string;
+  rtoState?: string;
+  rtoPincode?: number;
   phone: number;
   delivery_type_id?: number;
   hub_id?: number;
@@ -139,7 +147,7 @@ export interface OrderType {
     type?: string;
     expectedPickup: string;
     orderWeight: number;
-    smartship_carrier_id: number;
+    carrierID: number;
     order_zone: string;
   }[];
 }
@@ -187,4 +195,3 @@ export interface AdminType {
   aadhar?: string;
   gstin?: string;
 }
-
