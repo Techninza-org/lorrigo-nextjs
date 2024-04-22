@@ -158,7 +158,7 @@ export const CompanyProfileForm = () => {
                     <button className='border-2 flex h-full w-1/3 justify-between rounded-lg' type='button' onClick={handleClick}>
                       <div className='grid place-content-center text-red-600 w-full h-full'><p>Upload</p></div>
                       <div className='bg-slate-200 h-full w-1/3 grid place-content-center'><Upload size={20} color='red' /></div>
-                      <input type='file' className='hidden' onChange={handleChange} ref={hiddenFileInput} accept='.jpg .jpeg .png' />
+                      <input type='file' className='hidden' onChange={handleChange} ref={hiddenFileInput} accept='.jpg, .jpeg, .png' />
                     </button>
                   </FormControl>
                   <FormMessage />

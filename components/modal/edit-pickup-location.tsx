@@ -67,8 +67,8 @@ export const EditPickupLocationModal = () => {
         }
     });
 
-    const { formState: { errors } } = form;
-    console.log("errors", errors);
+    // const { formState: { errors } } = form;
+    // console.log("errors", errors);
 
 
     useEffect(() => {
