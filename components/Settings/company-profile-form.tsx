@@ -49,10 +49,10 @@ export const CompanyProfileForm = () => {
 
   useEffect(() => {
     if (seller) {
-      form.setValue('companyId', seller.companyId || '');
-      form.setValue('companyName', seller.companyName || '');
-      form.setValue('companyEmail', seller.companyEmail || '');
-      form.setValue('website', seller.website || '');
+      form.setValue('companyId', seller.companyProfile.companyId || '');
+      form.setValue('companyName', seller.companyProfile.companyName || '');
+      form.setValue('companyEmail', seller.companyProfile.companyEmail || '');
+      form.setValue('website', seller.companyProfile.website || '');
     }
   }, [seller, form]);
 

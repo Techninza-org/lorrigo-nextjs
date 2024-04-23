@@ -8,50 +8,62 @@ import { useAuth } from '../providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 
 const KycCompleted = () => {
-    const { formData } = useKycProvider();
-    const { userToken } = useAuth();
-    const router = useRouter()
+  const { formData } = useKycProvider();
+  const { userToken } = useAuth();
+  const router = useRouter()
 
-    const axiosConfig = {
-      baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
-      headers: {
-          'Content-Type': 'application/json',        ///////sending Buffer files????
-          ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
-      },
+  const axiosConfig = {
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
+    headers: {
+      'Content-Type': 'application/json',        ///////sending Buffer files????
+      ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
+    },
   };
 
   const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
-    const handleCompleteKyc = async () =>{
-        try{
-            const userRes = await axiosIWAuth.put("/seller", formData);
-            console.log(userRes);
-            console.log(formData);
-            
-            if(userRes.data.message == 'request entity too large'){
-                toast({
-                    variant: "destructive",
-                    title: "Error",
-                    description: "File size too large. Please upload a file less than 2MB.",
-                });
-            }
-            if(userRes){
-                toast({
-                    title: "Success",
-                    description: "KYC Documents submitted successfully.",
-                });
-            }
-            router.push('/settings')
-        }catch (error) {
-          toast({
-              variant: "destructive",
-              title: "Error",
-              description: "error.response.data.message",
-          });
+  const handleCompleteKyc = async () => {
+    const kycDetails = {
+      kycDetails: {
+        businessType: formData?.businessType,
+        // photoUrl: formData?.photoUrl,
+        // gstin: formData?.gstin,
+        // pan: formData?.pan,
+        // document1Front: formData?.document1Front,
+        // document1Back: formData?.document1Back,
+        // document2Front: formData?.document2Front,
+        // document2Back: formData?.document2Back,
       }
     }
-    
-    
+    try {
+      const userRes = await axiosIWAuth.put("/seller", kycDetails);
+      console.log(userRes);
+      console.log(formData);
+
+      if (userRes.data.message == 'request entity too large') {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "File size too large. Please upload a file less than 2MB.",
+        });
+      }
+      if (userRes) {
+        toast({
+          title: "Success",
+          description: "KYC Documents submitted successfully.",
+        });
+      }
+      router.push('/settings')
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "error.response.data.message",
+      });
+    }
+  }
+
+
   return (
     <Card className='p-10'>
       <CardTitle>KYC Documents Uploaded</CardTitle>

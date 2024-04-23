@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useCallback, useContext} from "react";
+import React, { createContext, useCallback, useContext } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosInstance } from "axios";
 
@@ -24,7 +24,7 @@ interface reqPayload {
     phone: string;
     city: string;
     state: string;
-}                                 
+}
 
 interface HubContextType {
     handleCreateHub: (hub: reqPayload) => void;
@@ -38,7 +38,7 @@ interface HubContextType {
 const HubContext = createContext<HubContextType | null>(null);
 
 function HubProvider({ children }: { children: React.ReactNode }) {
-    
+
     const { getHub } = useSellerProvider()
 
     const { userToken } = useAuth();
@@ -70,7 +70,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                     description: "Hub has been created successfully",
                 });
                 router.refresh()
-            }else{
+            } else {
                 toast({
                     variant: "destructive",
                     title: "Error",
@@ -101,14 +101,16 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 });
             }
 
-            const companyProfileData = {
-                companyName,
-                companyEmail,
-                website,
+            const companyProfileData = {   ///not providing id and logo yet
+                companyProfile: {
+                    companyName,
+                    companyEmail,
+                    website,
+                }
             }
 
             const userRes = await axiosIWAuth.put("/seller", companyProfileData);
-            if(userRes){
+            if (userRes) {
                 toast({
                     title: "Success",
                     description: "Company Profile updated successfully.",
@@ -123,7 +125,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             });
         }
     }
-    
+
     const updateBankDetails = async (values: z.infer<typeof BankDetailsSchema>) => {
         try {
             const accHolderName = values?.accHolderName?.toString() || "";
@@ -132,14 +134,16 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             const ifscNumber = values?.ifscNumber?.toString() || "";
 
             const bankDetails = {
-                accHolderName,
-                accType,
-                accNumber,
-                ifscNumber,
+                bankDetails: {
+                    accHolderName,
+                    accType,
+                    accNumber,
+                    ifscNumber,
+                }
             }
 
             const userRes = await axiosIWAuth.put("/seller", bankDetails);
-            if(userRes){
+            if (userRes) {
                 toast({
                     title: "Success",
                     description: "Bank Details submitted successfully.",
@@ -165,16 +169,18 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             const phone = values?.phone?.toString() || "";
 
             const billingAddress = {
-                address_line_1,
-                address_line_2,
-                pincode,
-                city,
-                state,
-                phone,
+                billingAddress: {
+                    address_line_1,
+                    address_line_2,
+                    pincode,
+                    city,
+                    state,
+                    phone,
+                }
             }
 
             const userRes = await axiosIWAuth.put("/seller", billingAddress);
-            if(userRes){
+            if (userRes) {
                 toast({
                     title: "Success",
                     description: "Billing Address updated successfully.",
@@ -195,16 +201,18 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             const gstin = values?.gstin?.toString() || "";
             const tan = values?.tan?.toString() || "";
             const deductTDS = values?.deductTDS?.toString() || "";
-            
+
 
             const gstinData = {
-                gstin,
-                tan,
-                deductTDS,
+                gstInvoice: {
+                    gstin,
+                    tan,
+                    deductTDS,
+                }
             }
 
             const userRes = await axiosIWAuth.put("/seller", gstinData);
-            if(userRes){
+            if (userRes) {
                 toast({
                     title: "Success",
                     description: "GSTIN Details updated successfully.",
@@ -222,7 +230,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
     const editPickupLocation = async (values: z.infer<typeof pickupAddressFormSchema>, id: string) => {
         const update_id = id;
-        
+
         try {
             const facilityName = values?.facilityName?.toString() || "";
             const contactPersonName = values?.contactPersonName?.toString() || "";
@@ -255,12 +263,12 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 rtoState,
                 rtoPincode,
             }
-            
+
 
             const userRes = await axiosIWAuth.put(`/hub/${update_id}`, pickupLocationData);
             console.log('userRes ', userRes);
-            
-            if(userRes){
+
+            if (userRes) {
                 toast({
                     title: "Success",
                     description: "Pickup Location updated successfully.",
@@ -285,7 +293,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 updateBillingAddress,
                 uploadGstinInvoicing,
                 editPickupLocation
-                  
+
             }}
         >
             {children}

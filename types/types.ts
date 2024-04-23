@@ -3,10 +3,12 @@ export type SellerType = {
   name: string;
   email: string;
   walletBalance?: number;
-  companyName?: string;
-  companyEmail?: string;
-  companyId?: string;
-  website?: string;
+  companyProfile: {
+    companyName?: string;
+    companyEmail?: string;
+    companyId?: string;
+    website?: string;
+  };
   entityType?: string;
   address?: string;
   gstno?: string;
@@ -15,13 +17,17 @@ export type SellerType = {
   vendors?: string[];
   codPrice?: number;
   isVerified: boolean;
-  accHolderName?: string;
-  accType?: string;
-  accNumber?: string;
-  ifscNumber?: string;
-  gstin?: string;
-  deductTDS?: string;
-  tan?: string;
+  bankDetails: {
+    accHolderName?: string;
+    accType?: string;
+    accNumber?: string;
+    ifscNumber?: string;
+  };
+  gstInvoice: {
+    gstin?: string;
+    deductTDS?: string;
+    tan?: string;
+  };
 };
 
 export type AuthType = {

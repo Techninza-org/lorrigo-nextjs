@@ -43,10 +43,10 @@ const BankDetailsForm = () => {
 
     useEffect(() => {
         if (seller) {
-            form.setValue('accHolderName', seller.accHolderName || '');
-            form.setValue('accType', seller.accType || '');
-            form.setValue('accNumber', seller.accNumber || '');
-            form.setValue('ifscNumber', seller.ifscNumber || '');
+            form.setValue('accHolderName', seller.bankDetails.accHolderName || '');
+            form.setValue('accType', seller.bankDetails.accType || '');
+            form.setValue('accNumber', seller.bankDetails.accNumber || '');
+            form.setValue('ifscNumber', seller.bankDetails.ifscNumber || '');
         }
     }, [seller, form]);
     
