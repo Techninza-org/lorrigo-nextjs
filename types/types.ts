@@ -90,7 +90,7 @@ export interface B2COrderType {
     awb?: string;
     carrierName?: string;
     sellerId: string;
-    orderStage?: number;
+    bucket?: number;
     orderStages?: {
         stage: number;
         stageDateTime: string;

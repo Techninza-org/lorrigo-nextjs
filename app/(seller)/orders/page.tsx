@@ -9,8 +9,8 @@ export default function OrdersPage() {
             href: "/orders?status=new",
         },
         {
-            label: "Ready for Pickup",
-            href: "/orders?status=ready-for-pickup",
+            label: "Ready to Ship",
+            href: "/orders?status=ready-to-ship",
         },
         {
             label: "In-Transit",

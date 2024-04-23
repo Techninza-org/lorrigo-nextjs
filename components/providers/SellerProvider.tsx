@@ -180,8 +180,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           phone: sellerCustomerForm.customerForm.phone,
           address: sellerCustomerForm.customerForm.address,
           pincode: Number(sellerCustomerForm.customerForm.pincode),
-          state: order.customerDetails.state,
-          city: order.customerDetails.city,
+          state: sellerCustomerForm.customerForm.state,
+          city: sellerCustomerForm.customerForm.city,
 
         };
 
@@ -593,7 +593,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }, [userToken]);
 
   useEffect(() => {
-    // if (!userToken) return;
+    if (!userToken) return;
     getAllOrdersByStatus(status || "all")
 
   }, [userToken, status]);

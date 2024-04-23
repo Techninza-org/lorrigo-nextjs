@@ -19,15 +19,18 @@ type ButtonStyles = {
 };
 
 export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
-    const orderStage = rowData?.orderStages?.slice(-1)[0]?.stage;
+    const orderStage = rowData?.bucket;
 
     const orderBucktingStatuses = {
-        new: [0],
-        "ready-for-pickup": [2, 3, 4],
-        "in-transit": [10, 27, 30],
-        delivered: [11],
-        ndr: [12, 13, 14, 15, 16, 17, 214],
-        rto: [18, 19, 118, 198, 199, 201, 212],
+        new: 0,
+        "ready-to-ship": 1,
+        "in-transit": 2,
+        delivered: 4,
+        ndr: 3,
+        rto: 5,
+        canceled: 6,
+        "lost-damaged": 7,
+        disposed: 8,
     };
 
     const { onOpen } = useModal();
@@ -37,22 +40,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
         "default": "bg-gray-300 cursor-not-allowed",
     };
 
-    const buttonText: ButtonStyles = {
-        "0": "Ship Now",
-        "1": "Schedule Pickup",
-        "12": "Re-attempt",
-        "13": "Re-attempt",
-        "14": "Re-attempt",
-        "15": "Re-attempt",
-        "16": "Re-attempt",
-        "17": "Re-attempt",
-        "214": "Re-attempt",
-        "-1": "Comming Soon",
-        "default": "Disabled Button",
-    };
 
-    const style = buttonStyles[orderStage?.toString() ?? "default"];
-    const text = buttonText[orderStage?.toString() ?? "default"];
     const disabled = orderStage !== 0 && orderStage !== 1;
 
     if (orderStage === 0) {
@@ -60,7 +48,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
             <>
                 <Link href={`/orders/${rowData._id}`}>
                     <Button variant={"themeButton"} size={"sm"} disabled={disabled}>
-                        {text}
+                        Ship now
                     </Button>
                 </Link>
                 <DropdownMenu>
@@ -87,7 +75,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
         return (
             <>
                 <Button variant={"themeButton"} size={"sm"} onClick={() => { onOpen("schedulePickup", { order: rowData }) }}>
-                    {text}
+                    Schedule Pickup
                 </Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -108,12 +96,12 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
         );
     }
 
-    if (orderStage === -1) {
+    if (orderStage === 6) {
         return (
             <Button variant={"webPageBtn"} size={"sm"} onClick={() => onOpen("cloneOrder", { order: rowData })}>Clone Order</Button>
         );
     }
-    if (orderStage === 4) {
+    if (orderStage === 2) {
         return (
             <>
                 <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("downloadManifest", { order: rowData })}>Download Manifest</Button>
@@ -134,7 +122,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
         );
     }
 
-    if (orderBucktingStatuses.ndr.includes(Number(orderStage))) {
+    if (orderStage == 3) {
         return (
             <>
                 <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("schedulePickup", { order: rowData })}>Re-attempt</Button>

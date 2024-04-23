@@ -52,7 +52,6 @@ export const pickupAddressFormSchema = z.object({
 
 export const AddPickupLocationModal = () => {
     const { handleCreateHub } = useHubProvider();
-    const { getCityStateFPincode} = useSellerProvider();
     const { isOpen, onClose, type } = useModal();
     const router = useRouter();
 
@@ -79,15 +78,15 @@ export const AddPickupLocationModal = () => {
     });
 
 
-    const {cityState: cityStateRes} = useFetchCityState(form.watch("pincode"));
-    const {cityState: rtoCityStateRes} = useFetchCityState(form.watch("rtoPincode"));
+    const { cityState: cityStateRes } = useFetchCityState(form.watch("pincode"));
+    const { cityState: rtoCityStateRes } = useFetchCityState(form.watch("rtoPincode"));
 
     useEffect(() => {
-        if(cityStateRes){
+        if (cityStateRes) {
             form.setValue('city', cityStateRes.city)
             form.setValue('state', cityStateRes.state)
         }
-        if(rtoCityStateRes){
+        if (rtoCityStateRes) {
             form.setValue('rtoCity', rtoCityStateRes.city)
             form.setValue('rtoState', rtoCityStateRes.state)
         }
@@ -106,7 +105,8 @@ export const AddPickupLocationModal = () => {
                 address2: values.address,
                 phone: values.pickupLocContact,
                 city: values.city,
-                state: values.state
+                state: values.state,
+                contactPersonName: values.contactPersonName
             });
 
             form.reset();
