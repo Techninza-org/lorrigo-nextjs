@@ -3,24 +3,23 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { useKycProvider } from '../providers/KycProvider';
-import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { useModal } from '@/hooks/use-model-store';
 import { useToast } from "@/components/ui/use-toast";
 import { Camera } from 'lucide-react';
 
-const PhotoSchema = z.object({
-    photoUrl: z.string().min(1, { message: "Please take a photo" }),
-})
+type PhotoSchema = {
+    photoUrl: Buffer | null,
+}
 
 const PhotoIdentification = () => {
     const router = useRouter();
     const { onClose } = useModal();
     const { onHandleBack, onHandleNext, formData, setFormData } = useKycProvider();
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
-    const [photoURL, setPhotoURL] = useState<string | null>(null); 
-    const [cameraOn, setCameraOn] = useState<boolean>(false); 
-    const {toast} = useToast();
+    const [photoURL, setPhotoURL] = useState<Buffer | null>(null);
+    const [cameraOn, setCameraOn] = useState<boolean>(false);
+    const { toast } = useToast();
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -40,7 +39,7 @@ const PhotoIdentification = () => {
         const video = document.createElement('video');
         video.srcObject = mediaStream;
         video.onloadedmetadata = () => {
-            video.play(); 
+            video.play();
         };
 
         video.onplay = () => {
@@ -55,8 +54,17 @@ const PhotoIdentification = () => {
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
             const newPhotoURL = canvas.toDataURL('image/jpeg');
-            setPhotoURL(newPhotoURL);
-            handleStopCamera();            
+            const dataUrlParts = newPhotoURL.split(',');
+            const base64Data = dataUrlParts[1];
+            const byteCharacters = atob(base64Data); 
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const newPhotoBuffer = Buffer.from(byteArray);
+            setPhotoURL(newPhotoBuffer); 
+            handleStopCamera();
         };
     };
 
@@ -68,14 +76,14 @@ const PhotoIdentification = () => {
     };
 
     useEffect(() => {
-        if(formData?.photoUrl){
+        if (formData?.photoUrl) {
             setPhotoURL(formData.photoUrl)
         }
     }, [formData]);
 
-    const handleSubmit = async (values: z.infer<typeof PhotoSchema>) => {
+    const handleSubmit = async (values: PhotoSchema) => {
         try {
-            if(!values.photoUrl){
+            if (!values.photoUrl) {
                 toast({
                     variant: "destructive",
                     title: "Photo Required",
@@ -83,7 +91,7 @@ const PhotoIdentification = () => {
                 })
                 return;
             }
-            setFormData((prev: any) => ({ ...prev, ...values }));  
+            setFormData((prev: any) => ({ ...prev, ...values }));
             onHandleNext();
             router.refresh();
             onClose();
@@ -96,18 +104,18 @@ const PhotoIdentification = () => {
         <Card className='p-10'>
             <CardTitle>Photo Identification</CardTitle>
             <div className='grid place-content-center m-4'>
-                <canvas ref={canvasRef} className='border-2 border-black w-full h-full hidden'/>
+                <canvas ref={canvasRef} className='border-2 border-black w-full h-full hidden' />
                 {!photoURL && <div className='border-2 border-dashed border-[#be0c34] rounded-lg w-[640px] h-[480px] grid place-content-center bg-[#F7F7F7]'>
-                    <div className='flex justify-center'><Camera size={50} color='#be0c34'/></div>
+                    <div className='flex justify-center'><Camera size={50} color='#be0c34' /></div>
                     {cameraOn && <p>Please look at the camera and then Capture Selfie</p>}
                 </div>}
-                {photoURL && <img src={photoURL} alt="Captured" />}
+                {/* {photoURL && <img src={photoURL} alt="Captured" />} */}
                 <div className='flex justify-center mt-6'>{!mediaStream && <Button variant={'themeButton'} className='w-fit' onClick={handleStartCamera}>Start Camera</Button>}</div>
                 <div className='flex justify-center'>{mediaStream && <Button variant={'themeButton'} className='w-fit' onClick={handleTakePhoto}>Capture Selfie</Button>}</div>
             </div>
             <div className='flex justify-between'>
                 <Button type="button" variant={'themeButton'} onClick={onHandleBack} >Back</Button>
-                <Button type="submit" variant={'themeButton'} disabled={photoURL? false: true} onClick={() => handleSubmit({photoUrl: photoURL || ''})} >Next</Button>
+                <Button type="submit" variant={'themeButton'} disabled={photoURL ? false : true} onClick={() => handleSubmit({ photoUrl: photoURL })} >Next</Button>
             </div>
         </Card>
     );

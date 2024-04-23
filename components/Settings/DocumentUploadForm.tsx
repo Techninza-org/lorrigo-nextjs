@@ -11,13 +11,14 @@ import { useModal } from '@/hooks/use-model-store';
 import { useKycProvider } from '../providers/KycProvider';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { ChevronsUpDown, Upload } from 'lucide-react';
+import { toast } from '../ui/use-toast';
 
-const DocumentUploadSchema = z.object({
-    document1Front: z.string().min(1, 'Document is required'),
-    document1Back: z.string().optional(),
-    document2Front: z.string().min(1, 'Document is required'),
-    document2Back: z.string().optional(),
-})
+type DocumentUploadSchema = {
+    document1Front: Buffer | null,
+    document1Back: Buffer | null,
+    document2Front: Buffer | null,
+    document2Back: Buffer | null,
+}
 
 export const DocumentUploadForm = () => {
     const router = useRouter();
@@ -25,17 +26,25 @@ export const DocumentUploadForm = () => {
     const { formData, setFormData, verifyOtpOpen, setVerifyOtpOpen, onHandleNext } = useKycProvider();
     const businessType = formData?.businessType;
 
-    const form = useForm<z.infer<typeof DocumentUploadSchema>>({
-        resolver: zodResolver(DocumentUploadSchema),
+    const form = useForm< DocumentUploadSchema>({
+        // resolver: zodResolver(DocumentUploadSchema),
     })
 
-    const onSubmit = async (values: z.infer<typeof DocumentUploadSchema>) => {
+    const onSubmit = async (values: DocumentUploadSchema) => {
         try {
+            const document1Front = form.getValues("document1Front");
+            const document2Front = form.getValues("document2Front");
+
+            if (!document1Front || !document2Front) {
+                toast({
+                    variant: 'destructive',
+                    title: "Documents not uploaded",
+                    description: "Please upload all the documents.",
+                })
+                return;
+            }
             setFormData((prev: any) => ({ ...prev, ...values }));
-            console.log('documents submitted');
-            //go to next step
             onHandleNext();
-            
             router.refresh();
             onClose();
         } catch (error) {
@@ -43,18 +52,37 @@ export const DocumentUploadForm = () => {
         }
     }
 
-    const handleFileChange = (fieldName: "document1Front" | "document1Back" | "document2Front" | "document2Back") => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (fieldName: "document1Front" | "document1Back" | "document2Front" | "document2Back") => async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            form.setValue(fieldName, reader.result as string);
-            console.log(fieldName, form.getValues(fieldName));
-            console.log(formData);
+        try {
+            const buffer = await readFileAsBuffer(file);
+            const bufferString = buffer;
+            form.setValue(fieldName, bufferString);
+            console.log(fieldName, bufferString);
+        } catch (error) {
+            console.error('Error reading file:', error);
+        }
+    };
 
-        };
-        reader.readAsDataURL(file);
+    const readFileAsBuffer = (file: File): Promise<Buffer> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (event.target && event.target.result) {
+                    const arrayBuffer = event.target.result as ArrayBuffer;
+                    const buffer = Buffer.from(arrayBuffer);
+                    resolve(buffer);
+                } else {
+                    reject(new Error('Failed to read file as buffer'));
+                }
+            };
+            reader.onerror = (error) => {
+                reject(error);
+            };
+            reader.readAsArrayBuffer(file);
+        });
     };
 
     function handleOpen() {

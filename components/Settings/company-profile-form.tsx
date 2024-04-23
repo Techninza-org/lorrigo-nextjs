@@ -59,9 +59,12 @@ export const CompanyProfileForm = () => {
   const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {
     try {
         updateCompanyProfile(values);
+        console.log(form.getValues());
+        
         form.reset();
         router.refresh();
         onClose();
+        // router.push('/settings');
     } catch (error) {
         console.log(error);
     }
@@ -72,8 +75,13 @@ export const CompanyProfileForm = () => {
   };
 
   const handleChange = (event: any) => {
-    const fileUploaded = event.target.files[0];
-    // handleFile(fileUploaded);
+    const file = event.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            form.setValue("logo", reader.result as string);
+        };
+        reader.readAsDataURL(file);
   };
 
   return (

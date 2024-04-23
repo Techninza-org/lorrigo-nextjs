@@ -14,7 +14,7 @@ interface KycContextType {
     onHandleNext: () => void;
     onHandleBack: () => void;
     businessType: string | "";
-    photoUrl: string | "";
+    photoUrl: Buffer | "";
     gstin: string | "";
     pan: string | "";
     document1Front: string | "";
@@ -26,7 +26,7 @@ interface KycContextType {
 
 interface KycFormType {
     businessType: string | "";
-    photoUrl: string | "";
+    photoUrl: Buffer | "";
     gstin: string | "";
     pan: string | "";
     verifyOtpOpen: boolean;
