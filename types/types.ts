@@ -125,6 +125,7 @@ export interface OrderType {
     orderDetails: B2COrderType;
     courierPartner: {
         name: string;
+        nickName: string;
         minWeight: number;
         charge: number;
         type?: string;

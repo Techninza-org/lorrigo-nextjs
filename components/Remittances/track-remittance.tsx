@@ -90,7 +90,6 @@ const TrackRemittance = () => {
                         <TableBody>
                             {
                                 remittanceDetails.orders.map((order, index) => {
-                                    console.log(order?.productId?.taxable_value)
                                     return (
                                         <TableRow key={index}>
                                             <TableCell>{order.awb}</TableCell>

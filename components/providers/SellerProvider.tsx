@@ -28,7 +28,7 @@ interface SellerContextType {
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
   getCourierPartners: (orderId: string) => Promise<any>;
   courierPartners: OrderType | undefined;
-  handleCreateD2CShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => boolean | Promise<boolean>;
+  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName }: { orderId: string, carrierNickName: string, carrierId: Number }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string, type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
@@ -172,12 +172,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           phone: order.customerDetails.phone,
           address: order.customerDetails.address,
           pincode: Number(order.customerDetails.pincode),
+          state: order.customerDetails.state,
+          city: order.customerDetails.city,
         }
         : {
           name: sellerCustomerForm.customerForm.name,
           phone: sellerCustomerForm.customerForm.phone,
           address: sellerCustomerForm.customerForm.address,
           pincode: Number(sellerCustomerForm.customerForm.pincode),
+          state: order.customerDetails.state,
+          city: order.customerDetails.city,
+
         };
 
       const sellerDetailsPayload = order.sellerDetails && order.sellerDetails.sellerName.length > 0
@@ -277,7 +282,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           }
         })
 
-       
+
 
         getSellerDashboardDetails();
         getAllOrdersByStatus("all");
@@ -310,12 +315,16 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           phone: order.customerDetails.phone,
           address: order.customerDetails.address,
           pincode: Number(order.customerDetails.pincode),
+          state: order.customerDetails.state,
+          city: order.customerDetails.city,
         }
         : {
           name: sellerCustomerForm.customerForm.name,
           phone: sellerCustomerForm.customerForm.phone,
           address: sellerCustomerForm.customerForm.address,
           pincode: Number(sellerCustomerForm.customerForm.pincode),
+          state: order.customerDetails.state,
+          city: order.customerDetails.city,
         };
 
       const sellerDetailsPayload = order.sellerDetails && order.sellerDetails.sellerName.length > 0
@@ -414,11 +423,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
-  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => {
+  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName }: { orderId: string, carrierId: Number, carrierNickName: string }) => {
 
     const payload = {
       orderId: orderId,
       carrierId: carrierId,
+      carrierNickName,
       orderType: 0,
     }
     try {

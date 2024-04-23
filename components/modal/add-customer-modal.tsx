@@ -38,9 +38,9 @@ export const customerDetailsSchema = z.object({
         phone: z.string().refine(isValidPhoneNumber, { message: "Invalid phone number" }),
         address: z.string().min(1, "Address is required"),
         address2: z.string().optional(),
-        state: z.string().optional(),
-        country: z.string().optional(),
-        city: z.string().optional(),
+        state: z.string(),
+        country: z.string(),
+        city: z.string(),
         pincode: z.string().min(1, "Pincode is required"),
     })
 });
