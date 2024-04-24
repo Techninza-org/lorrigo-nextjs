@@ -9,6 +9,7 @@ import { SchedulePickupModal } from "../modal/schedule-pickup-modal";
 import { TrackOrderStatusModal } from "../modal/track-order-status-modal";
 import { DownloadLableModal } from "../modal/download-label-modal";
 import { DownloadManifestModal } from "../modal/download-manifest-modal";
+import { EditPickupLocationModal } from "../modal/edit-pickup-location";
 
 export const ModalProvider = () => {
     const [isMounted, setIsMounted] = useState(false);
@@ -19,6 +20,7 @@ export const ModalProvider = () => {
   
     if (!isMounted) return null;
   
+
     return (
       <>
         <RechargeModal />
@@ -29,7 +31,7 @@ export const ModalProvider = () => {
         <TrackOrderStatusModal/>
         <DownloadLableModal/>
         <DownloadManifestModal/>
-        
+        <EditPickupLocationModal />
       </>
     );
   };

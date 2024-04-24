@@ -22,7 +22,7 @@ import { useSellerProvider } from '../providers/SellerProvider';
 export const CompanyProfileSchema = z.object({
   companyId: z.string().optional(),
   companyName: z.string().min(1, "Company Name is required"),
-  email: z.string().email("Invalid email address"),
+  companyEmail: z.string().email("Invalid email address"),
   website: z.string().optional(),
   logo: z.string().optional(),
 })
@@ -41,7 +41,7 @@ export const CompanyProfileForm = () => {
     defaultValues: {
       companyId: '',
       companyName: '',
-      email: '',
+      companyEmail: '',
       website: '',
       logo: '',
     }
@@ -49,20 +49,24 @@ export const CompanyProfileForm = () => {
 
   useEffect(() => {
     if (seller) {
-      
-      form.setValue('companyName', seller.companyName || '');
-      form.setValue('email', seller.email || '');
-      form.setValue('website', seller.website || '');
+      form.setValue('companyId', seller.companyProfile.companyId || '');
+      form.setValue('companyName', seller.companyProfile.companyName || '');
+      form.setValue('companyEmail', seller.companyProfile.companyEmail || '');
+      form.setValue('website', seller.companyProfile.website || '');
     }
   }, [seller, form]);
 
-  const handleSubmit = (formData: FormData) => {
+  const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {
     try {
-      updateCompanyProfile(formData)
-      router.refresh();
-      onClose();
-    }catch(error){
-      console.log(error)
+        updateCompanyProfile(values);
+        console.log(form.getValues());
+        
+        form.reset();
+        router.refresh();
+        onClose();
+        // router.push('/settings');
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -71,13 +75,18 @@ export const CompanyProfileForm = () => {
   };
 
   const handleChange = (event: any) => {
-    const fileUploaded = event.target.files[0];
-    // handleFile(fileUploaded);
+    const file = event.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            form.setValue("logo", reader.result as string);
+        };
+        reader.readAsDataURL(file);
   };
 
   return (
     <Form {...form}>
-      <form action={handleSubmit}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="space-y-5 ">
           <div className='grid grid-cols-2 gap-y-6 gap-x-20 py-5'>
             <FormField
@@ -91,6 +100,7 @@ export const CompanyProfileForm = () => {
                   <FormControl>
                     <Input
                       className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                      readOnly={true}
                       {...field} />
                   </FormControl>
                   <FormMessage />
@@ -130,7 +140,7 @@ export const CompanyProfileForm = () => {
               )} />
             <FormField
               control={form.control}
-              name={'email'}
+              name={'companyEmail'}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -156,7 +166,7 @@ export const CompanyProfileForm = () => {
                     <button className='border-2 flex h-full w-1/3 justify-between rounded-lg' type='button' onClick={handleClick}>
                       <div className='grid place-content-center text-red-600 w-full h-full'><p>Upload</p></div>
                       <div className='bg-slate-200 h-full w-1/3 grid place-content-center'><Upload size={20} color='red' /></div>
-                      <input type='file' className='hidden' onChange={handleChange} ref={hiddenFileInput} accept='.jpg .jpeg .png' />
+                      <input type='file' className='hidden' onChange={handleChange} ref={hiddenFileInput} accept='.jpg, .jpeg, .png' />
                     </button>
                   </FormControl>
                   <FormMessage />

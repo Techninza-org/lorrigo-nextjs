@@ -3,8 +3,12 @@ export type SellerType = {
   name: string;
   email: string;
   walletBalance?: number;
-  companyName?: string;
-  website?: string;
+  companyProfile: {
+    companyName?: string;
+    companyEmail?: string;
+    companyId?: string;
+    website?: string;
+  };
   entityType?: string;
   address?: string;
   gstno?: string;
@@ -13,6 +17,17 @@ export type SellerType = {
   vendors?: string[];
   codPrice?: number;
   isVerified: boolean;
+  bankDetails: {
+    accHolderName?: string;
+    accType?: string;
+    accNumber?: string;
+    ifscNumber?: string;
+  };
+  gstInvoice: {
+    gstin?: string;
+    deductTDS?: string;
+    tan?: string;
+  };
 };
 
 export type AuthType = {
@@ -22,20 +37,22 @@ export type AuthType = {
   isVerified?: boolean;
 };
 
-export interface HubType {
-  _id?: string;
-  sellerId?: string;
-  name?: string;
-  pincode?: number;
-  city?: string;
-  state?: string;
-  address1?: string;
-  address2?: string;
-  phone?: number;
-  delivery_type_id?: number;
-  hub_id?: number;
-  __v?: number;
-}
+// export interface HubType {
+//   _id?: string;
+//   sellerId?: string;
+//   name?: string;
+//   email?: string;
+//   contactPersonName?: string;
+//   pincode?: number;
+//   city?: string;
+//   state?: string;
+//   address1?: string;
+//   address2?: string;
+//   phone?: number;
+//   delivery_type_id?: number;
+//   hub_id?: number;
+//   __v?: number;
+// }
 
 export interface ProductDetailsType {
   _id: string;
@@ -64,10 +81,16 @@ export interface pickupAddressType {
   sellerId: string;
   name: string;
   pincode: number;
+  email: string;
+  contactPersonName: string;
   city: string;
   state: string;
   address1: string;
   address2?: string;
+  rtoAddress?: string;
+  rtoCity?: string;
+  rtoState?: string;
+  rtoPincode?: number;
   phone: number;
   delivery_type_id?: number;
   hub_id?: number;
@@ -130,7 +153,7 @@ export interface OrderType {
     type?: string;
     expectedPickup: string;
     orderWeight: number;
-    smartship_carrier_id: number;
+    carrierID: number;
     order_zone: string;
   }[];
 }
@@ -157,6 +180,7 @@ export interface SettingType {
   gstin?: string;
   deductTDS?: string;
   tan?: string;
+  companyEmail?: string;
   //////// add-pickup-location.tsx
   name?: string;
   address1?: string;
@@ -178,3 +202,28 @@ export interface AdminType {
   gstin?: string;
 }
 
+export interface OrderType {
+    valid: boolean;
+    orderDetails: B2COrderType;
+    courierPartner: {
+        name: string;
+        nickName: string;
+        minWeight: number;
+        charge: number;
+        type?: string;
+        expectedPickup: string;
+        orderWeight: number;
+        carrierID: number;
+        order_zone: string;
+    }[];
+}
+
+export interface RemittanceType {
+    _id: string;
+    remittanceId: string;
+    remittanceDate: string;
+    remittanceAmount: number;
+    remittanceStatus: string;
+    orders: B2COrderType[];
+    BankTransactionId: string;
+}

@@ -16,7 +16,6 @@ import {
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -38,9 +37,9 @@ export const customerDetailsSchema = z.object({
         phone: z.string().refine(isValidPhoneNumber, { message: "Invalid phone number" }),
         address: z.string().min(1, "Address is required"),
         address2: z.string().optional(),
-        state: z.string().optional(),
-        country: z.string().optional(),
-        city: z.string().optional(),
+        state: z.string().min(1, "State is required"),
+        country: z.string().min(1, "Country is required"),
+        city: z.string().min(1, "City is required"),
         pincode: z.string().min(1, "Pincode is required"),
     })
 });

@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -15,6 +15,9 @@ import { Input } from '../ui/input';
 import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
+import { useModal } from '@/hooks/use-model-store';
+import { useSellerProvider } from '../providers/SellerProvider';
+import { useHubProvider } from '../providers/HubProvider';
 
 export const BillingAddressSchema = z.object({
     address_line_1: z.string().min(1, "Address Line 1 is required"),
@@ -26,6 +29,13 @@ export const BillingAddressSchema = z.object({
 })
 const BillingAddressForm = () => {
     const router = useRouter();
+    const { onClose } = useModal();
+    const { updateBillingAddress } = useHubProvider();
+    const {getCityStateFPincode} = useSellerProvider();
+    const [billingCityState, setCityState] = useState({
+        city: "",
+        state: ""
+    })
 
     const form = useForm({
         resolver: zodResolver(BillingAddressSchema),
@@ -39,13 +49,41 @@ const BillingAddressForm = () => {
         }
     });
 
+    useEffect(() => {
+        let timer: string | number | NodeJS.Timeout | undefined;
+        console.log(form.watch("pincode").length > 4)
+
+        const fetchCityState = async () => {
+            if (form.watch("pincode").length > 4) {
+                const cityStateRes = await getCityStateFPincode(form.watch("pincode"))
+
+                setCityState({
+                    city: cityStateRes.city,
+                    state: cityStateRes.state
+                })
+            }
+        };
+
+        // Debouncing the function
+        clearTimeout(timer);
+        timer = setTimeout(fetchCityState, 500); // Adjust the delay as per your preference
+
+        return () => clearTimeout(timer);
+    }, [form.watch("pincode")])
+
+    useEffect(() => {
+        if (billingCityState) {
+            form.setValue('city', billingCityState.city || '');
+            form.setValue('state', billingCityState.state || '');
+        }
+    }, [billingCityState, form]);   
+
     const onSubmit = async (values: z.infer<typeof BillingAddressSchema>) => {
         try {
-            console.log(values);
-
-
+            updateBillingAddress(values);
             form.reset();
             router.refresh();
+            onClose();
         } catch (error) {
             console.log(error);
         }

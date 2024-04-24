@@ -55,7 +55,7 @@ const Settings = () => {
       title: 'COD Payments',
       links: [
         { href: '/settings/cod-payments/bank-details', label: 'Bank Details' },
-        { href: '/settings/cod-payments/postpaid', label: 'Postpaid' }
+        // { href: '/settings/cod-payments/postpaid', label: 'Postpaid' }
       ],
       logo: '/assets/cod.png'
     },

@@ -12,7 +12,8 @@ export async function middleware(request: NextRequest) {
     '/track',
     '/rate-calc',
     '/print',
-    '/admin'
+    '/admin',
+    '/finance',
   ];
 
   const { pathname } = request.nextUrl;

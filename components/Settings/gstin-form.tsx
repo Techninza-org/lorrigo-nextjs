@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -21,40 +21,37 @@ import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Label } from '../ui/label';
 
 export const GstinFormSchema = z.object({
-    gstin: z.string().min(1, "Account holder's name is required"),
-    tan: z.string().min(1, "Account type is required"),
+    gstin: z.string().min(1, "Gst number is required"),
+    tan: z.string().min(1, "Tan number is required"),
     deductTDS: z.string(),
 })
 
 const GstinForm = () => {
-    const { handleCreateHub } = useHubProvider();
     const { onClose } = useModal();
     const router = useRouter();
     const [selectedValue, setSelectedValue] = useState('yes');
+    const { uploadGstinInvoicing } = useHubProvider();
 
-    const handleChange = (value: React.SetStateAction<string>) => {
+    const handleChange = (value: string) => {
         setSelectedValue(value);
     };
-
 
     const form = useForm({
         resolver: zodResolver(GstinFormSchema),
         defaultValues: {
             gstin: '',
-            deductTDS: 'yes',
+            deductTDS: selectedValue,
             tan: '',
         }
     });
 
+    useEffect(() => {
+        form.setValue('deductTDS', selectedValue);
+    }, [selectedValue]);
+
     const onSubmit = async (values: z.infer<typeof GstinFormSchema>) => {
         try {
-
-            handleCreateHub({
-                gstin: values.gstin,
-                deductTDS: values.deductTDS,
-                tan: values.tan,
-            });
-
+            uploadGstinInvoicing(values);
             form.reset();
             router.refresh();
             onClose();
@@ -62,6 +59,7 @@ const GstinForm = () => {
             console.log(error);
         }
     }
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -91,20 +89,21 @@ const GstinForm = () => {
                                     I want to deduct TDS payment <span className='text-red-600'>*</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <RadioGroup defaultValue="yes" className='flex'>
+                                    <RadioGroup defaultValue={selectedValue} className='flex' onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e.target.value)}>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="yes" id="yes" />
-                                            <Label htmlFor="option-one">Yes</Label>
+                                            <Label htmlFor="yes">Yes</Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <RadioGroupItem value="no" id="no" />
-                                            <Label htmlFor="option-two">No</Label>
+                                            <Label htmlFor="no">No</Label>
                                         </div>
                                     </RadioGroup>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )} />
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name={'tan'}

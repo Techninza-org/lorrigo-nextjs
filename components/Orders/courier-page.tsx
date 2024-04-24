@@ -108,7 +108,7 @@ export default function CourierPage() {
                                         courierPartners.courierPartner.map((partner) => {
                                             return <TableRow key={partner.carrierID}>
                                                 <TableCell>
-                                                    <div className="flex items-center"><Image className="mr-2" src={"/assets/logo.png"} width={35} height={35} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>
+                                                    <div className="flex items-center"><Image className="mr-2" src={"/assets/logo.png"} width={35} height={35} alt="logo" /> {partner.name} <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg</div>
                                                     <div>RTO Charges : {formatCurrencyForIndia(partner.charge)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
@@ -121,6 +121,7 @@ export default function CourierPage() {
                                                             const res = await handleCreateD2CShipment({
                                                                 orderId: courierPartners.orderDetails._id,
                                                                 carrierId: partner.carrierID,
+                                                                carrierNickName: partner.nickName,
                                                             })
                                                         } finally {
                                                             setLoading(false)
