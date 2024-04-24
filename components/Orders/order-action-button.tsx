@@ -14,32 +14,11 @@ import {
 import { MoreHorizontalIcon } from "lucide-react";
 import { CancelOrderDialog } from "./cancel-order-dialog";
 
-type ButtonStyles = {
-    [key: string]: string;
-};
 
 export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     const orderStage = rowData?.bucket;
 
-    const orderBucktingStatuses = {
-        new: 0,
-        "ready-to-ship": 1,
-        "in-transit": 2,
-        delivered: 4,
-        ndr: 3,
-        rto: 5,
-        canceled: 6,
-        "lost-damaged": 7,
-        disposed: 8,
-    };
-
     const { onOpen } = useModal();
-    const buttonStyles: ButtonStyles = {
-        "0": "bg-green-500",
-        "1": "bg-blue-500",
-        "default": "bg-gray-300 cursor-not-allowed",
-    };
-
 
     const disabled = orderStage !== 0 && orderStage !== 1;
 
