@@ -121,7 +121,6 @@ export default function CourierPrice() {
                                                             const res = await handleCreateD2CShipment({
                                                                 orderId: courierPartners.orderDetails._id,
                                                                 carrierId: partner.carrierID,
-                                                                carrierNickName: partner.nickName,
                                                             })
                                                         } finally {
                                                             setLoading(false)
