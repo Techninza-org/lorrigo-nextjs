@@ -201,3 +201,29 @@ export interface AdminType {
   aadhar?: string;
   gstin?: string;
 }
+
+export interface OrderType {
+    valid: boolean;
+    orderDetails: B2COrderType;
+    courierPartner: {
+        name: string;
+        nickName: string;
+        minWeight: number;
+        charge: number;
+        type?: string;
+        expectedPickup: string;
+        orderWeight: number;
+        carrierID: number;
+        order_zone: string;
+    }[];
+}
+
+export interface RemittanceType {
+    _id: string;
+    remittanceId: string;
+    remittanceDate: string;
+    remittanceAmount: number;
+    remittanceStatus: string;
+    orders: B2COrderType[];
+    BankTransactionId: string;
+}

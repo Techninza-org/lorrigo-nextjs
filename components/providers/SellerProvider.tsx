@@ -7,7 +7,8 @@ import axios, { AxiosInstance } from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
 
-import { B2COrderType, OrderType, SellerType, pickupAddressType } from "@/types/types"; ////removed HubType
+import { B2COrderType, OrderType, RemittanceType, SellerType, pickupAddressType } from "@/types/types";
+
 import { useAuth } from "./AuthProvider";
 import { cloneFormSchema } from "../drawer/clone-order-drawer";
 import { EditFormSchema } from "../drawer/edit-order-drawer";
@@ -17,7 +18,7 @@ interface SellerContextType {
   seller: SellerType | null;
   business: string;
   isOrderCreated: boolean;
-  sellerFacilities: pickupAddressType[];   ///////////// HubType
+  sellerFacilities: pickupAddressType[];   
   handlebusinessDropdown: (value: string) => void;
   sellerCustomerForm: sellerCustomerFormType;
   setSellerCustomerForm: React.Dispatch<React.SetStateAction<sellerCustomerFormType>>;
@@ -28,11 +29,13 @@ interface SellerContextType {
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
   getCourierPartners: (orderId: string) => Promise<any>;
   courierPartners: OrderType | undefined;
-  handleCreateD2CShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => boolean | Promise<boolean>;
+  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName }: { orderId: string, carrierNickName: string, carrierId: Number }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string, type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
   calcRate: (order: any) => Promise<any>;
+  getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
+  sellerRemittance: RemittanceType[] | null;
 }
 
 interface sellerCustomerFormType {
@@ -62,9 +65,8 @@ const SellerContext = createContext<SellerContextType | null>(null);
 
 function SellerProvider({ children }: { children: React.ReactNode }) {
   const { userToken } = useAuth();
-
-
   const [seller, setSeller] = useState<SellerType | null>(null);
+  const [sellerRemittance, setSellerRemittance] = useState<RemittanceType[] | null>(null);
   const [sellerDashboard, setSellerDashboard] = useState<any>(null);
   const [sellerFacilities, setSellerFacilities] = useState([]);
   const [orders, setOrders] = useState<any[]>([]);
@@ -171,12 +173,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           phone: order.customerDetails.phone,
           address: order.customerDetails.address,
           pincode: Number(order.customerDetails.pincode),
+          state: order.customerDetails.state,
+          city: order.customerDetails.city,
         }
         : {
           name: sellerCustomerForm.customerForm.name,
           phone: sellerCustomerForm.customerForm.phone,
           address: sellerCustomerForm.customerForm.address,
           pincode: Number(sellerCustomerForm.customerForm.pincode),
+          state: sellerCustomerForm.customerForm.state,
+          city: sellerCustomerForm.customerForm.city,
+
         };
 
       const sellerDetailsPayload = order.sellerDetails && order.sellerDetails.sellerName.length > 0
@@ -276,7 +283,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           }
         })
 
-       
+
 
         getSellerDashboardDetails();
         getAllOrdersByStatus("all");
@@ -309,12 +316,16 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           phone: order.customerDetails.phone,
           address: order.customerDetails.address,
           pincode: Number(order.customerDetails.pincode),
+          state: order.customerDetails.state,
+          city: order.customerDetails.city,
         }
         : {
           name: sellerCustomerForm.customerForm.name,
           phone: sellerCustomerForm.customerForm.phone,
           address: sellerCustomerForm.customerForm.address,
           pincode: Number(sellerCustomerForm.customerForm.pincode),
+          state: order.customerDetails.state,
+          city: order.customerDetails.city,
         };
 
       const sellerDetailsPayload = order.sellerDetails && order.sellerDetails.sellerName.length > 0
@@ -413,11 +424,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
-  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => {
+  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName }: { orderId: string, carrierId: Number, carrierNickName: string }) => {
 
     const payload = {
       orderId: orderId,
       carrierId: carrierId,
+      carrierNickName,
       orderType: 0,
     }
     try {
@@ -560,6 +572,26 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       }
     }catch(error){
       console.error('Error fetching seller:', error);
+      
+  const getSellerRemittance = async () => {
+    try {
+      const res = await axiosIWAuth.get('/seller/remittance');
+      if (res.data?.valid) {
+        setSellerRemittance(res.data.remittanceOrders);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  const getSellerRemittanceDetails = async (id: string) => {
+    try {
+      const res = await axiosIWAuth.get(`/seller/remittance/${id}`);
+      if (res.data?.valid) {
+        return res.data.remittanceOrder;
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
   }
 
@@ -568,10 +600,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     getHub();
     getSellerDashboardDetails()
     getSeller();
+    getSellerRemittance();
   }, [userToken]);
 
   useEffect(() => {
-    // if (!userToken) return;
+    if (!userToken) return;
     getAllOrdersByStatus(status || "all")
 
   }, [userToken, status]);
@@ -598,7 +631,10 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getCityStateFPincode,
         sellerDashboard,
         handleUpdateOrder,
-        calcRate
+        calcRate,
+        getSellerRemittanceDetails,
+        sellerRemittance
+
 
       }}
     >

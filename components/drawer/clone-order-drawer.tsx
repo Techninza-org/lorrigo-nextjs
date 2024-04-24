@@ -140,22 +140,25 @@ export function CloneOrderDrawer() {
         form.setValue('customerDetails.phone', order?.customerDetails?.phone || "");
         form.setValue('customerDetails.address', order?.customerDetails?.address || "");
         form.setValue('customerDetails.pincode', order?.customerDetails?.pincode.toString() || "");
+        form.setValue('customerDetails.state', order?.customerDetails?.state || "");
+        form.setValue('customerDetails.city', order?.customerDetails?.city || "");
+
 
     }, [form, order]);
 
     useEffect(() => {
-        if (customerCityState.city) {
+        if (customerCityState.city && !order?.customerDetails?.city) {
             form.setValue('customerDetails.city', customerCityState.city);
             form.setValue('customerDetails.state', customerCityState.state);
         }
-    }, [customerCityState.city, customerCityState.state, form]);
+    }, [customerCityState.city, customerCityState.state, form, order?.customerDetails?.city]);
 
     useEffect(() => {
-        if (sellerCityState.city) {
+        if (sellerCityState.city && !order?.sellerDetails?.sellerCity) {
             form.setValue('sellerDetails.sellerCity', sellerCityState.city);
             form.setValue('sellerDetails.sellerState', sellerCityState.state);
         }
-    }, [sellerCityState.city, sellerCityState.state, form]);
+    }, [sellerCityState.city, sellerCityState.state, form, order?.sellerDetails?.sellerCity]);
 
 
 

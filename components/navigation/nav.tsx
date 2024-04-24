@@ -2,7 +2,7 @@
 
 import React from "react"
 import Link from "next/link"
-import { ArrowDown, ArrowDownIcon, LucideIcon } from "lucide-react"
+import { ArrowDown, ArrowDownIcon, ChevronDown, ChevronUp, LucideIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -28,8 +28,10 @@ interface NavProps {
 export function Nav({ links, isCollapsed }: NavProps) {
   const pathname = usePathname()
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false)
+
+  const DropDownToggleIcon = isDropdownOpen ? ChevronUp : ChevronDown
   const isActive = (href: string) => {
-    return pathname === href ? "themeNavActiveBtn" : "themeNavBtn"
+    return pathname.includes(href.toLowerCase()) ? "themeNavActiveBtn" : "themeNavBtn"
 
   }
   return (
@@ -61,12 +63,11 @@ export function Nav({ links, isCollapsed }: NavProps) {
                 ) : (
                   <Button
                     type="button"
-                    className={cn(
-                      buttonVariants({ variant: isActive(link.href || ""), size: "icon" }),
-                      "h-9 w-9",
-                    )}
+                    variant={isActive(link.title)}
+                    size={"icon"}
+                    className={"h-9 w-9"}
                   >
-                    <link.icon className="h-4 w-full" />
+                    <link.icon className="h-4" />
                     <span className="sr-only">{link.title}</span>
                   </Button>
                 )
@@ -74,9 +75,9 @@ export function Nav({ links, isCollapsed }: NavProps) {
             </ActionTooltip>
           ) : (
             <React.Fragment key={index}>
-              {link.title !== "Finance" ? (
+              {link.href ? (
                 <Link
-                  href={link.href || "/"}
+                  href={link.href}
                   className={cn(
                     buttonVariants({ variant: isActive(link.href || ""), size: "sm" }),
                     "justify-start"
@@ -97,57 +98,38 @@ export function Nav({ links, isCollapsed }: NavProps) {
               ) : (
                 <div className="relative inline-block text-left">
                   <div>
-                    <button
+                    <Button
                       type="button"
-                      className={cn(
-                        buttonVariants({ variant: isActive(link.href || ""), size: "sm" }),
-                        "w-full justify-start",
-                      )}
+                      variant={isActive(link.title || "")}
+                      size={"sm"}
+                      className={"w-full justify-start"}
                       onClick={() => { setIsDropdownOpen(!isDropdownOpen) }}
                     >
-                      <link.icon className="mr-2 h-4 w-4" /> Finance
-                      {/* <ArrowDownIcon className="h-4 w-4 ml-auto" /> */}
-                    </button>
+                      <link.icon className="mr-2 h-4 w-4" /> {link.label || link.title}
+                      <DropDownToggleIcon className="h-4 w-4 ml-auto transition-all" />
+                    </Button>
                   </div>
                   {
-                   isDropdownOpen && (
+                    isDropdownOpen && (
                       <div
-                        className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lgring-1 ring-black ring-opacity-5"
-                        role="menu"
-                        aria-orientation="vertical"
-                        aria-labelledby="options-menu"
+                        className="w-56"
                       >
                         <div className="py-1" role="none">
-                          <Link
-                            href="/finance/report"
-                            className={cn(
-                              buttonVariants({ variant: isActive(link.href || ""), size: "sm" }),
-                              "justify-start w-full"
-                            )}
-                            role="menuitem"
-                          >
-                            Financial Report
-                          </Link>
-                          <Link
-                            href="/finance/summary"
-                            className={cn(
-                              buttonVariants({ variant: isActive(link.href || ""), size: "sm" }),
-                              "justify-start w-full"
-                            )}
-                            role="menuitem"
-                          >
-                            Financial Summary
-                          </Link>
-                          <Link
-                            href="/finance/settings"
-                            className={cn(
-                              buttonVariants({ variant: isActive(link.href || ""), size: "sm" }),
-                              "justify-start w-full"
-                            )}
-                            role="menuitem"
-                          >
-                            Finance Settings
-                          </Link>
+                          {
+                            link.subLinks?.map((subLink, index) => (
+                              <Link
+                                key={index}
+                                href={subLink.href}
+                                className={cn(
+                                  buttonVariants({ variant: isActive(link.title || ""), size: "sm" }),
+                                  "justify-start w-full bg-opacity-50"
+                                )}
+                              >
+                                {subLink.title}
+                              </Link>
+                            ))
+                          }
+
                         </div>
                       </div>
                     )
@@ -159,56 +141,5 @@ export function Nav({ links, isCollapsed }: NavProps) {
         )}
       </nav>
     </div>
-
-
-    // <div
-    //   data-collapsed={isCollapsed}
-    //   className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2 w-full"
-    // >
-    //   <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-    //     {links.map((link, index) =>
-    //       isCollapsed ? (
-    //         <ActionTooltip
-    //           key={index}
-    //           side="right"
-    //           align="start"
-    //           label={link.title}
-    //         >
-    //           <Link
-    //             href={link.href || "/"}
-    //             className={cn(
-    //               buttonVariants({ variant: isActive(link.href || ""), size: "icon" }),
-    //               "h-9 w-9",
-    //             )}
-    //           >
-    //             <link.icon className="h-4 w-4" />
-    //             <span className="sr-only">{link.title}</span>
-    //           </Link>
-    //         </ActionTooltip>
-    //       ) : (
-    //         <Link
-    //           key={index}
-    //           href={link.href || "/"}
-    //           className={cn(
-    //             buttonVariants({ variant: isActive(link.href || ""), size: "sm" }),
-    //             "justify-start"
-    //           )}
-    //         >
-    //           <link.icon className="mr-2 h-4 w-4" />
-    //           {link.title}
-    //           {link.label && (
-    //             <span
-    //               className={cn(
-    //                 "ml-auto",
-    //               )}
-    //             >
-    //               {link.label}
-    //             </span>
-    //           )}
-    //         </Link>
-    //       )
-    //     )}
-    //   </nav>
-    // </div>
   )
 }

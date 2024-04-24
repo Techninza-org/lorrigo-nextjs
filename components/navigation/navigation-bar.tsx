@@ -1,7 +1,7 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, Home, Settings, ShoppingCart, TrendingUpIcon, Truck } from "lucide-react";
+import { HandCoins, HandIcon, Home, Settings, ShoppingCart, TrendingUpIcon, Truck } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -38,14 +38,21 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             href: "/orders",
         },
         {
+            title: "Finance",
+            icon: HandCoins,
+            subLinks: [
+                {
+                    title: "Remittances",
+                    href: "/finance/remittances",
+                },
+            ],
+        },
+        {
             title: "Settings",
             icon: Settings,
             href: "/settings",
         },
-        {
-            title: "Finance",
-            icon: HandCoins,
-        },
+        
     ];
 
     const ADMIN_NAV_LINKS = [

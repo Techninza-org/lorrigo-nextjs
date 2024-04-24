@@ -84,6 +84,8 @@ export const AddSellerModal = () => {
         }
     });
 
+    const { formState: { errors } } = form;
+
     const pincode = form.watch('sellerDetails.sellerPincode');
     const { cityState: cityStateRes } = useFetchCityState(pincode)
 

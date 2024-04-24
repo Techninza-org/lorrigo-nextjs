@@ -107,7 +107,7 @@ export const AddPickupLocationModal = () => {
                 phone: values.pickupLocContact,
                 city: values.city,
                 state: values.state,
-                contactPersonName: values.contactPersonName,
+                contactPersonName: values.contactPersonName
             });
 
             form.reset();
