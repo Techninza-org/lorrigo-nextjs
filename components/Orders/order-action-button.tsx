@@ -14,6 +14,27 @@ import {
 import { MoreHorizontalIcon } from "lucide-react";
 import { CancelOrderDialog } from "./cancel-order-dialog";
 
+export const getBucketStatus = (bucket: number) => {
+    switch (bucket) {
+        case 0:
+            return "New";
+        case 1:
+            return "Scheduled";
+        case 2:
+            return "In Transit";
+        case 3:
+            return "Out for delivery";
+        case 4:
+            return "Delivered";
+        case 5:
+            return "Cancelled";
+        case 6:
+            return "Returned";
+        default:
+            return "Unknown";
+    }
+}
+
 
 export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     const orderStage = rowData?.bucket;
@@ -153,6 +174,7 @@ export const OrderCloneButton: React.FC<{ rowData: B2COrderType }> = ({ rowData 
         <DropdownMenuItem onClick={() => onOpen("cloneOrder", { order: rowData })}>Clone Order</DropdownMenuItem>
     );
 }
+
 export const OrderEditButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     const { onOpen } = useModal();
     return (
