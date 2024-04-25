@@ -99,11 +99,11 @@ export function CloneOrderDrawer() {
 
     const customerPincode = form.watch("customerDetails.pincode").toString();
 
-    const { cityState: customerCityState } = useFetchCityState(customerPincode);
+    const { cityState: customerCityState,  } = useFetchCityState(customerPincode);
 
     const sellerPincode = form.watch("sellerDetails.sellerPincode").toString();
 
-    const { cityState: sellerCityState } = useFetchCityState(sellerPincode);
+    const { cityState: sellerCityState,  } = useFetchCityState(sellerPincode);
 
     useEffect(() => {
         form.setValue('order_reference_id', order?.order_reference_id || '');
@@ -302,6 +302,7 @@ export function CloneOrderDrawer() {
                                     <AddCustomerForm
                                         form={form}
                                         isLoading={isLoading}
+                                        isPinLoading={false}
                                     />
                                 </div>
 

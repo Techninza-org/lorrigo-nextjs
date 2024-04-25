@@ -124,7 +124,6 @@ export const AddCustomerModal = () => {
                 <Form {...form}>
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <AddCustomerForm
-
                             form={form}
                             isLoading={isLoading}
                             isPinLoading={loading}

@@ -307,6 +307,7 @@ export function EditOrderDrawer() {
                                     <AddCustomerForm
                                         form={form}
                                         isLoading={isLoading}
+                                        isPinLoading={false}
                                     />
                                 </div>
 
