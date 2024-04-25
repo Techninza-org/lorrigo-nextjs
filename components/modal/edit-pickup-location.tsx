@@ -67,9 +67,6 @@ export const EditPickupLocationModal = () => {
         }
     });
 
-    // const { formState: { errors } } = form;
-    // console.log("errors", errors);
-
 
     useEffect(() => {
         if (hub) {

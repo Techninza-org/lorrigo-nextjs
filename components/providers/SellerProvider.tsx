@@ -18,7 +18,7 @@ interface SellerContextType {
   seller: SellerType | null;
   business: string;
   isOrderCreated: boolean;
-  sellerFacilities: pickupAddressType[];   
+  sellerFacilities: pickupAddressType[];
   handlebusinessDropdown: (value: string) => void;
   sellerCustomerForm: sellerCustomerFormType;
   setSellerCustomerForm: React.Dispatch<React.SetStateAction<sellerCustomerFormType>>;
@@ -72,7 +72,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<any[]>([]);
   const [isOrderCreated, setIsOrderCreated] = useState<boolean>(false);
   const [courierPartners, setCourierPartners] = useState<OrderType>();
-  
+
 
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
@@ -564,15 +564,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const getSeller = async() => {
-    try{
+  const getSeller = async () => {
+    try {
       const res = await axiosIWAuth.get('/seller');
-      if(res.data.valid){
+      if (res.data.valid) {
         setSeller(res.data.seller)
       }
-    }catch(error){
+    } catch (error) {
       console.error('Error fetching seller:', error);
-      
+    }
+  }
+
   const getSellerRemittance = async () => {
     try {
       const res = await axiosIWAuth.get('/seller/remittance');

@@ -113,7 +113,7 @@ export interface B2COrderType {
   awb?: string;
   carrierName?: string;
   sellerId: string;
-  orderStage?: number;
+  bucket?: number;
   orderStages?: {
     stage: number;
     stageDateTime: string;
@@ -141,21 +141,6 @@ export interface B2COrderType {
   createdAt?: string;
   updatedAt?: string;
   __v?: number;
-}
-
-export interface OrderType {
-  valid: boolean;
-  orderDetails: B2COrderType;
-  courierPartner: {
-    name: string;
-    minWeight: number;
-    charge: number;
-    type?: string;
-    expectedPickup: string;
-    orderWeight: number;
-    carrierID: number;
-    order_zone: string;
-  }[];
 }
 
 export interface SettingType {
