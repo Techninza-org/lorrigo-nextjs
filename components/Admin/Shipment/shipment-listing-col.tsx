@@ -6,7 +6,7 @@ import { formatDate } from "date-fns";
 import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { TrackOrder } from "@/components/Orders/track-order-button";
+import Link from "next/link";
 
 export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
     {
@@ -17,9 +17,7 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
             return (
                 <div className="space-y-1 items-center">
                     <p className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
-                        <TrackOrder
-                            order={rowData}
-                        />
+                    <Link href={`/track/${rowData._id}`}>{rowData.order_reference_id}</Link>
                         <Copy className="ml-2 cursor-pointer" size={15} onClick={() => handleCopyText(`${rowData.order_reference_id}`)} /></p>
                     <p>{formatDate(`${rowData?.order_invoice_date}`, 'dd MM yyyy | HH:mm a')}</p>
                     <p className="uppercase flex gap-1"><ShoppingCartIcon size={18} /> Custom</p>

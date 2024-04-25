@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-model-store";
 import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '../ui/use-toast';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
 
@@ -72,7 +72,7 @@ export const AddCustomerModal = () => {
 
     const pincode = form.watch("customerDetails.pincode");
 
-    const { cityState: cityStateRes } = useFetchCityState(pincode)
+    const { cityState: cityStateRes, loading } = useFetchCityState(pincode)
 
     useEffect(() => {
         form.setValue('customerDetails.city', cityStateRes.city)
@@ -113,7 +113,6 @@ export const AddCustomerModal = () => {
         onClose();
     }
 
-
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
             <DialogContent className="bg-white dark:text-white text-black p-0 overflow-hidden max-w-2xl">
@@ -128,6 +127,7 @@ export const AddCustomerModal = () => {
 
                             form={form}
                             isLoading={isLoading}
+                            isPinLoading={loading}
                         />
                         <DialogFooter className="px-6 py-4">
                             <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => form.reset()}>
@@ -144,7 +144,7 @@ export const AddCustomerModal = () => {
     )
 };
 
-export const AddCustomerForm = ({ form, isLoading }: { form: any, isLoading: boolean }) => {
+export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, isLoading: boolean, isPinLoading: boolean }) => {
 
     return (
         <>
@@ -284,7 +284,7 @@ export const AddCustomerForm = ({ form, isLoading }: { form: any, isLoading: boo
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                        disabled={isLoading}
+                                        disabled={isLoading || isPinLoading}
                                         className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                         placeholder="Enter the state"
                                         {...field}
@@ -304,7 +304,7 @@ export const AddCustomerForm = ({ form, isLoading }: { form: any, isLoading: boo
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                        disabled={isLoading}
+                                        disabled={isLoading || isPinLoading}
                                         className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                         placeholder="Enter the city"
                                         {...field}

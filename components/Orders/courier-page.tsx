@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatCurrencyForIndia } from "@/lib/utils"
+import { formatCurrencyForIndia, getSvg, removeWhitespaceAndLowercase } from "@/lib/utils"
 import { useParams } from "next/navigation"
 import {
     Table,
@@ -39,12 +39,13 @@ export default function CourierPage() {
     }, [userToken, params])
 
     if (!courierPartners) {
-        return <div>Loading...</div>
+        return <LoadingComponent />
     }
 
+ 
     return (
         <>
-        {loading && <LoadingComponent />}
+            {loading && <LoadingComponent />}
             <div className="grid gap-3">
                 <Card className="drop-shadow-md">
                     <CardHeader className="flex flex-row items-center justify-between">
@@ -103,12 +104,19 @@ export default function CourierPage() {
                                         <TableHead className="text-right">Action</TableHead>
                                     </TableRow>
                                 </TableHeader>
-                                <TableBody>
+                                <TableBody >
                                     {
-                                        courierPartners.courierPartner.map((partner) => {
-                                            return <TableRow key={partner.carrierID}>
+                                        courierPartners.courierPartner.map((partner, i) => {
+
+                                            return <TableRow key={i}>
                                                 <TableCell>
-                                                    <div className="flex items-center"><Image className="mr-2" src={"/assets/logo.png"} width={35} height={35} alt="logo" /> {partner.name} <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg</div>
+                                                    <div className="flex items-center">
+                                                        <Image className="mr-2 mix-blend-multiply"
+                                                            src={getSvg(removeWhitespaceAndLowercase(partner.name))}
+                                                            width={60} height={60} alt="logo" />
+                                                        {partner.name}
+                                                        <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
+                                                    </div>
                                                     <div>RTO Charges : {formatCurrencyForIndia(partner.charge)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>

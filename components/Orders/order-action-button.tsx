@@ -35,6 +35,8 @@ export const getBucketStatus = (bucket: number) => {
     }
 }
 
+export const CANCELED = 6;
+
 
 export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     const orderStage = rowData?.bucket;
@@ -45,7 +47,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
 
     if (orderStage === 0) {
         return (
-            <>
+            <div className="flex gap-2 items-center">
                 <Link href={`/orders/${rowData._id}`}>
                     <Button variant={"themeButton"} size={"sm"} disabled={disabled}>
                         Ship now
@@ -63,17 +65,17 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                         <OrderCloneButton rowData={rowData} />
 
                         <DropdownMenuSeparator />
-                        <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+                        <OrderCancelButton rowData={rowData}/>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            </>
+            </div>
 
         );
     }
 
     if (orderStage === 1) {
         return (
-            <>
+            <div className="flex gap-2 items-center">
                 <Button variant={"themeButton"} size={"sm"} onClick={() => { onOpen("schedulePickup", { order: rowData }) }}>
                     Schedule Pickup
                 </Button>
@@ -89,10 +91,10 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                         <DownloadLabelButton rowData={rowData} />
 
                         <DropdownMenuSeparator />
-                        <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+                        <OrderCancelButton rowData={rowData}/>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            </>
+            </div>
         );
     }
 
@@ -103,7 +105,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
     }
     if (orderStage === 2) {
         return (
-            <>
+            <div className="flex gap-2 items-center">
                 <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("downloadManifest", { order: rowData })}>Download Manifest</Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -115,16 +117,16 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                     <DropdownMenuContent align="start">
                         <OrderCloneButton rowData={rowData} />
                         <DropdownMenuSeparator />
-                        <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+                        <OrderCancelButton rowData={rowData}/>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            </>
+            </div>
         );
     }
 
     if (orderStage == 3) {
         return (
-            <>
+            <div className="flex gap-2 items-center">
                 <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("schedulePickup", { order: rowData })}>Re-attempt</Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -140,12 +142,12 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
 
                     </DropdownMenuContent>
                 </DropdownMenu>
-            </>
+            </div>
         );
     }
 
     return (
-        <>
+        <div className="flex gap-2 items-center">
             <Button variant={"themeNavActiveBtn"} size={"sm"} onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -158,15 +160,20 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                     <OrderCloneButton rowData={rowData} />
 
                     <DropdownMenuSeparator />
-
-                    <CancelOrderDialog order={rowData} clientRefId={rowData?.order_reference_id ?? rowData._id} />
+                    <OrderCancelButton rowData={rowData}/>
 
                 </DropdownMenuContent>
             </DropdownMenu>
-        </>
+        </div>
     );
 };
 
+export const OrderCancelButton = ({ rowData }: { rowData: B2COrderType }) => {
+    const { onOpen } = useModal();
+    return (
+        <DropdownMenuItem onClick={() => onOpen("cancelOrder", { order: rowData })} className="text-red-500">Cancel Order</DropdownMenuItem>
+    );
+}
 
 export const OrderCloneButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     const { onOpen } = useModal();

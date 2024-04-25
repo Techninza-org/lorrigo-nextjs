@@ -96,7 +96,6 @@ export const RateCalcForm = () => {
             numericValue = parts[0] + '.' + parts.slice(1).join('');
         }
         const field = e.target.name as keyof typeof rateCalcSchema; // Explicitly define the type of 'field'
-        console.log(field)
         //@ts-ignore
         form.setValue(field, numericValue);
     };
@@ -107,6 +106,7 @@ export const RateCalcForm = () => {
     };
 
     const onSubmit = async (values: z.infer<typeof rateCalcSchema>) => {
+        console.log(values, values.payment_mode)
         const res = await calcRate({
             pickupPincode: values.pickupPincode,
             deliveryPincode: values.deliveryPincode,
@@ -427,7 +427,7 @@ export const RateCalcForm = () => {
                     <Card className="drop-shadow-md">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>
-                                Select Courier Partner
+                                Courier Partner
                             </CardTitle>
 
                         </CardHeader>
@@ -449,11 +449,11 @@ export const RateCalcForm = () => {
                                                 <TableCell>
                                                     <div className="flex items-center">
                                                         <Image className="mr-2" src={"/assets/logo.png"} width={35} height={35} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>
-                                                    <div>RTO Charges : {formatCurrencyForIndia(partner.charge)}</div>
+                                                    <div>RTO Charges : {formatCurrencyForIndia(partner.charge ?? 0)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
                                                 <TableCell>{partner.order_zone}</TableCell>
-                                                <TableCell>{formatCurrencyForIndia(partner.charge)}</TableCell>
+                                                <TableCell>{formatCurrencyForIndia(partner.charge ?? 0)}</TableCell>
 
                                             </TableRow>
                                         })

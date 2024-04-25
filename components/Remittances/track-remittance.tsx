@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { CircleAlert, CircleCheck, NotepadTextDashed, PackageIcon, XCircle } from "lucide-react";
 import { formatCurrencyForIndia } from "@/lib/utils";
+import { LoadingComponent } from "../loading-spinner";
 
 const TrackRemittance = () => {
     const params = useParams()
@@ -43,7 +44,7 @@ const TrackRemittance = () => {
     }, [userToken, params])
 
     if (!remittanceDetails) {
-        return <div>Loading...</div>
+        return <LoadingComponent/>
     }
 
     const status = remittanceDetails.remittanceStatus;

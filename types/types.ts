@@ -16,6 +16,7 @@ export type SellerType = {
 
 export type AuthType = {
     id: string;
+    name: string;
     email: string;
     role?: string;
     isVerified?: boolean;

@@ -7,7 +7,7 @@ import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { OrderButton } from "./order-action-button";
-import { TrackOrder } from "./track-order-button";
+import Link from "next/link";
 
 export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
     {
@@ -18,9 +18,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
             return (
                 <div className="space-y-1 items-center">
                     <p className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
-                        <TrackOrder
-                            order={rowData}
-                        />
+                    <Link href={`/track/${rowData._id}`}>{rowData.order_reference_id}</Link>
                         <Copy className="ml-2 cursor-pointer" size={15} onClick={() => handleCopyText(`${rowData.order_reference_id}`)} /></p>
                     <p>{formatDate(`${rowData?.order_invoice_date}`, 'dd MM yyyy | HH:mm a')}</p>
                     <p className="uppercase flex gap-1"><ShoppingCartIcon size={18} /> Custom</p>
@@ -44,6 +42,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
     },
     {
         header: 'Package Details',
+        accessorKey: 'awb',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -83,7 +82,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
     },
     {
         header: 'Shipping Details',
-        accessorKey: 'Shipment Details',
+        accessorKey: 'Shipment_Details',
         cell: ({ row }) => {
             const rowData = row.original;
             return (

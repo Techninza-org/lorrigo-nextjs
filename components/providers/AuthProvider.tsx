@@ -35,14 +35,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        const userC = getCookie('user')
+        const userC = getCookie('user');
         if (userC) {
-            setUserToken(JSON.parse(userC).token);
-        } else {
-            setUser(null);
+            const userData = JSON.parse(userC);
+            setUser(userData);
+            setUserToken(userData.token);
         }
-
-    }, [router, user]);
+    }, []);
 
     const axiosConfig = {
         baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',

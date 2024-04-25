@@ -1,95 +1,54 @@
-// Create timeline using tailwind css
-
+import { B2COrderType } from '@/types/types';
 import React from 'react';
-import { ChevronRightIcon, Circle } from 'lucide-react';
-import { format } from 'date-fns';
+import { formatDate } from "date-fns";
+import { cn } from '@/lib/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { CANCELED } from './order-action-button';
 
-const OrderTrackTimeline: React.FC<{}> = ({ }) => {
-    const status = [
-        { date: '2021-09-01', completed: true },
-        { date: '2021-09-02', completed: true },
-        { date: '2021-09-03', completed: false },
-        { date: '2021-09-04', completed: false },
-        { date: '2021-09-05', completed: false },
-    ];
+interface OrderTrackTimelineProps {
+    order: B2COrderType;
+}
+
+export const OrderTrackTimeline: React.FC<OrderTrackTimelineProps> = ({ order }) => {
+
     return (
-        <div className="p-4 mt-4">
-            <h1 className="text-4xl text-center font-semibold mb-6">Package status</h1>
-            <div className="container">
+        <Tabs defaultValue="Activity_log" className="w-[400px]">
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="Activity_log">Activity Log</TabsTrigger>
+                {/* <TabsTrigger value="tracking_info">Tracking Info</TabsTrigger> */}
+            </TabsList>
+            <TabsContent value="Activity_log">
+
                 <div className="flex flex-col md:grid grid-cols-12 text-gray-50">
+                    {order?.orderStages?.map((stage, index) => {
+                        const isLastItem = index === (order?.orderStages?.length ?? 0) - 1;
+                        const shouldAnimate =  isLastItem && order.bucket !== CANCELED;
 
-                    <div className="flex md:contents">
-                        <div className="col-start-2 col-end-4 mr-10 md:mx-auto relative">
-                            <div className="h-full w-6 flex items-center justify-center">
-                                <div className="h-full w-1 bg-green-500 pointer-events-none"></div>
+                        return (
+                            <div key={stage.stage} className="flex md:contents">
+                                <div className="col-start-1 col-end-4 mr-10 md:mx-auto relative">
+                                    <div className="h-full w-6 flex items-center justify-center">
+                                        <div className={cn("h-full w-1 bg-slate-300 pointer-events-none", stage.stage === -1 ? "bg-red-400" : "")}></div>
+                                    </div>
+                                    <div className={cn("w-6 h-6 absolute top-1/2 -mt-3 rounded-full ring-offset-2 ring-2 shadow bg-slate-400 text-center", shouldAnimate ? "animate-bounce bg-slate-500" : "", stage.stage === -1 ? "bg-red-300" : "")}>
+                                    </div>
+                                </div>
+                                <div className={cn("bg-slate-100 text-black col-start-4 col-end-12 p-4 rounded-xl my-4 shadow-md w-full", stage.stage === -1 ? "bg-red-100" : "")}>
+                                    <h3 className="font-medium mb-1">{stage.action}</h3>
+                                    <div className="text-xs leading-tight text-justify w-full">
+                                        {formatDate(`${stage?.stageDateTime}`, 'dd-MM-yyyy | HH:mm a')}
+                                    </div>
+                                </div>
                             </div>
-                            <div className="w-6 h-6 absolute top-1/2 -mt-3 rounded-full bg-green-500 shadow text-center">
-                                <i className="fas fa-check-circle text-white"></i>
-                            </div>
-                        </div>
-                        <div className="bg-green-500 col-start-4 col-end-12 p-4 rounded-xl my-4 mr-auto shadow-md w-full">
-                            <h3 className="font-semibold text-lg mb-1">Package Booked</h3>
-                            <p className="leading-tight text-justify w-full">
-                                21 July 2021, 04:30 PM
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex md:contents">
-                        <div className="col-start-2 col-end-4 mr-10 md:mx-auto relative">
-                            <div className="h-full w-6 flex items-center justify-center">
-                                <div className="h-full w-1 bg-green-500 pointer-events-none"></div>
-                            </div>
-                            <div className="w-6 h-6 absolute top-1/2 -mt-3 rounded-full bg-green-500 shadow text-center">
-                                <i className="fas fa-check-circle text-white"></i>
-                            </div>
-                        </div>
-                        <div className="bg-green-500 col-start-4 col-end-12 p-4 rounded-xl my-4 mr-auto shadow-md w-full">
-                            <h3 className="font-semibold text-lg mb-1">Out for Delivery</h3>
-                            <p className="leading-tight text-justify">
-                                22 July 2021, 01:00 PM
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex md:contents">
-                        <div className="col-start-2 col-end-4 mr-10 md:mx-auto relative">
-                            <div className="h-full w-6 flex items-center justify-center">
-                                <div className="h-full w-1 bg-red-500 pointer-events-none"></div>
-                            </div>
-                            <div className="w-6 h-6 absolute top-1/2 -mt-3 rounded-full bg-red-500 shadow text-center">
-                                <i className="fas fa-times-circle text-white"></i>
-                            </div>
-                        </div>
-                        <div className="bg-red-500 col-start-4 col-end-12 p-4 rounded-xl my-4 mr-auto shadow-md w-full">
-                            <h3 className="font-semibold text-lg mb-1 text-gray-50">Cancelled</h3>
-                            <p className="leading-tight text-justify">
-                                Customer cancelled the order
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex md:contents">
-                        <div className="col-start-2 col-end-4 mr-10 md:mx-auto relative">
-                            <div className="h-full w-6 flex items-center justify-center">
-                                <div className="h-full w-1 bg-gray-300 pointer-events-none"></div>
-                            </div>
-                            <div className="w-6 h-6 absolute top-1/2 -mt-3 rounded-full bg-gray-300 shadow text-center">
-                                <i className="fas fa-exclamation-circle text-gray-400"></i>
-                            </div>
-                        </div>
-                        <div className="bg-gray-300 col-start-4 col-end-12 p-4 rounded-xl my-4 mr-auto shadow-md w-full">
-                            <h3 className="font-semibold text-lg mb-1 text-gray-400">Delivered</h3>
-                            <p className="leading-tight text-justify">
-
-                            </p>
-                        </div>
-                    </div>
-
+                        );
+                    })}
                 </div>
-            </div>
-        </div>
+
+            </TabsContent>
+            {/* <TabsContent value="tracking_info">
+
+            </TabsContent> */}
+        </Tabs>
+
     );
 };
-
-export default OrderTrackTimeline;

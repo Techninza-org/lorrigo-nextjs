@@ -35,6 +35,7 @@ interface SellerContextType {
   calcRate: (order: any) => Promise<any>;
   getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
   sellerRemittance: RemittanceType[] | null;
+  getOrderDetails: (orderId: string) => Promise<B2COrderType | undefined>;
 }
 
 interface sellerCustomerFormType {
@@ -126,7 +127,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getAllOrdersByStatus = async (status: string) => {
-    let url = status === "all" ? `/order?limit=50&page=1` : `/order?limit=50&page=1&status=${status}`
+    let url = status === "all" ? `/order` : `/order?status=${status}`
     try {
       const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
@@ -462,13 +463,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }, [axiosIWAuth, router, toast])
 
   const handleCancelOrder = async (orderId: string, type: string) => {
-    router.refresh();
-
     try {
       const res = await axiosIWAuth.post(`/shipment/cancel`, {
         orderId: orderId,
         type: type
       });
+      console.log(res.data, "res")
       if (res.data?.valid) {
         toast({
           variant: "default",
@@ -476,7 +476,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Order cancellation request generated",
         });
         getAllOrdersByStatus(status || "all")
-        router.refresh();
         return true;
       }
       toast({
@@ -585,6 +584,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const getOrderDetails = async (orderId: string) => {
+    try {
+      const res = await axiosIWAuth.get(`/order/${orderId}`);
+      if (res.data?.valid) {
+        return res.data.order;
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   useEffect(() => {
     if (!userToken) return;
     getHub();
@@ -622,7 +632,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         handleUpdateOrder,
         calcRate,
         getSellerRemittanceDetails,
-        sellerRemittance
+        sellerRemittance,
+        getOrderDetails,
 
 
       }}

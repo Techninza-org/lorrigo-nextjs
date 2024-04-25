@@ -7,6 +7,7 @@ import { Separator } from "../ui/separator";
 import { useModal } from "@/hooks/use-model-store";
 import { useAuth } from "../providers/AuthProvider";
 import { LorrigoLogo } from "../Logos";
+import { UserAvatar } from "../user-avatar";
 
 interface NavProps {
     isCollapsed: boolean;
@@ -41,14 +42,14 @@ export function TopNav() {
                         >
                             <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
                         </ActionTooltip>
-                        <span>{formatCurrencyForIndia(1000)}</span>
-                        <Button variant={"themeButton"} size={"sm"} onClick={()=>onOpen("wallet")}>Recharge Wallet</Button>
+                        <span>{formatCurrencyForIndia(0)}</span>
+                        <Button variant={"themeButton"} size={"sm"} onClick={()=>onOpen("wallet")} disabled={true}>Recharge Wallet</Button>
                     </div>
 
                     <Separator orientation="vertical" className="w-[1px] bg-gray-400" />
                     
                     <div>
-                        <Button variant={"themeButton"} size={"sm"} onClick={handleSignOut}>Logout</Button>
+                        <UserAvatar/>
                     </div>
                 </div>
             </nav>

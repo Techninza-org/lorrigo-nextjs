@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -21,9 +21,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -41,6 +38,7 @@ import { useSearchParams } from "next/navigation"
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
+  const [filtering, setFiltering] = React.useState<string>("")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
@@ -62,23 +60,23 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    enableSorting: false, 
+    enableSorting: false,
     state: {
       columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter: filtering
     },
+    onGlobalFilterChange: setFiltering
   })
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter by Order Reference ID"
-          value={(table.getColumn("order_reference_id")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("order_reference_id")?.setFilterValue(event.target.value)
-          }
+          placeholder="Filter by AWB or Order Reference ID"
+          value={filtering}
+          onChange={(e) => setFiltering(e.target.value)}
           className="max-w-sm"
         />
         <DropdownMenu>

@@ -43,7 +43,7 @@ const useFetchCityState = (pincode: string) => {
                 if (retryAttempts < 3) {
                     fetchCityState(); 
                 }
-            }, 2500);
+            }, 1500);
         };
 
         if (pincode) {

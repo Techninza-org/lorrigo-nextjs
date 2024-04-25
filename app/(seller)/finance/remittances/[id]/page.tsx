@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NotebookText } from "lucide-react";
 import TrackRemittance from "@/components/Remittances/track-remittance";
+import { LoadingComponent } from "@/components/loading-spinner";
 
 export default function RemittancePage({ params }: { params: { id: string } }) {
 
@@ -17,7 +18,7 @@ export default function RemittancePage({ params }: { params: { id: string } }) {
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-                <Suspense fallback={<span>Loading...</span>}>
+                <Suspense fallback={<LoadingComponent/>}>
                     <TrackRemittance />
                 </Suspense>
 
