@@ -49,26 +49,26 @@ export const CompanyProfileForm = () => {
 
   useEffect(() => {
     if (seller) {
-      form.setValue('companyId', seller.companyProfile.companyId || '');
-      form.setValue('companyName', seller.companyProfile.companyName || '');
-      form.setValue('companyEmail', seller.companyProfile.companyEmail || '');
-      form.setValue('website', seller.companyProfile.website || '');
+      form.setValue('companyId', seller.companyProfile?.companyId || '');
+      form.setValue('companyName', seller.companyProfile?.companyName || '');
+      form.setValue('companyEmail', seller.companyProfile?.companyEmail || '');
+      form.setValue('website', seller.companyProfile?.website || '');
     }
   }, [seller, form]);
 
   const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {
     try {
-        updateCompanyProfile(values);
-        console.log(form.getValues());
-        
-        form.reset();
-        router.refresh();
-        onClose();
-        // router.push('/settings');
+      updateCompanyProfile(values);
+      console.log(form.getValues());
+
+      form.reset();
+      router.refresh();
+      onClose();
+      // router.push('/settings');
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-}
+  }
 
   const handleClick = () => {
     hiddenFileInput.current?.click();
@@ -76,12 +76,14 @@ export const CompanyProfileForm = () => {
 
   const handleChange = (event: any) => {
     const file = event.target.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            form.setValue("logo", reader.result as string);
-        };
-        reader.readAsDataURL(file);
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const dataURI = reader.result as string;
+      var base64String = dataURI.split(',')[1];
+      form.setValue("logo", base64String);
+    };
+    reader.readAsDataURL(file);
   };
 
   return (

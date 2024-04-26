@@ -28,6 +28,18 @@ export type SellerType = {
     deductTDS?: string;
     tan?: string;
   };
+  kycDetails: {
+    businessType?: string;
+    photoUrl?: string;
+    gstin?: string;
+    pan?: string;
+    document1Front?: string;
+    document1Back?: string;
+    document2Front?: string;
+    document2Back?: string;
+    submitted?: boolean;
+    verified?: boolean;
+  };
 };
 
 export type AuthType = {
@@ -188,27 +200,27 @@ export interface AdminType {
 }
 
 export interface OrderType {
-    valid: boolean;
-    orderDetails: B2COrderType;
-    courierPartner: {
-        name: string;
-        nickName: string;
-        minWeight: number;
-        charge: number;
-        type?: string;
-        expectedPickup: string;
-        orderWeight: number;
-        carrierID: number;
-        order_zone: string;
-    }[];
+  valid: boolean;
+  orderDetails: B2COrderType;
+  courierPartner: {
+    name: string;
+    nickName: string;
+    minWeight: number;
+    charge: number;
+    type?: string;
+    expectedPickup: string;
+    orderWeight: number;
+    carrierID: number;
+    order_zone: string;
+  }[];
 }
 
 export interface RemittanceType {
-    _id: string;
-    remittanceId: string;
-    remittanceDate: string;
-    remittanceAmount: number;
-    remittanceStatus: string;
-    orders: B2COrderType[];
-    BankTransactionId: string;
+  _id: string;
+  remittanceId: string;
+  remittanceDate: string;
+  remittanceAmount: number;
+  remittanceStatus: string;
+  orders: B2COrderType[];
+  BankTransactionId: string;
 }

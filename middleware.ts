@@ -14,6 +14,8 @@ export async function middleware(request: NextRequest) {
     '/print',
     '/admin',
     '/finance',
+    '/bulk-sample.csv',
+    '/pickup_bulk_sample.xlsx'
   ];
 
   const { pathname } = request.nextUrl;

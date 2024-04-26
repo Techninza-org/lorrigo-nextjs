@@ -42,7 +42,7 @@ const BankDetailsForm = () => {
     });
 
     useEffect(() => {
-        if (seller) {
+        if (seller && seller.bankDetails) {
             form.setValue('accHolderName', seller.bankDetails.accHolderName || '');
             form.setValue('accType', seller.bankDetails.accType || '');
             form.setValue('accNumber', seller.bankDetails.accNumber || '');

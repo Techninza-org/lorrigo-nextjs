@@ -3,7 +3,7 @@
 import React, { createContext, useCallback, useContext } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosInstance } from "axios";
-
+import * as XLSX from 'xlsx';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
@@ -20,7 +20,7 @@ interface reqPayload {
     email?: string;
     pincode: string;
     address1: string;
-    address2: string;
+    address2?: string;
     phone: string;
     city: string;
     state: string;
@@ -33,6 +33,8 @@ interface HubContextType {
     updateBillingAddress: (values: z.infer<typeof BillingAddressSchema>) => void;
     uploadGstinInvoicing: (values: z.infer<typeof GstinFormSchema>) => void;
     editPickupLocation: (values: z.infer<typeof pickupAddressFormSchema>, id: string) => void;
+    addBulkAddresses: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleCreateHubs: (hubs: reqPayload[]) => Promise<any>;
 }
 
 const HubContext = createContext<HubContextType | null>(null);
@@ -57,10 +59,102 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
     const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
+
+    const handleCreateHubs = useCallback(async (hubs: reqPayload[]) => {
+        try {
+            const responses = await Promise.all(hubs.map(hub => axiosIWAuth.post('/hub', hub)));
+            const allValid = responses.every(res => res.data.valid);
+            if (allValid) {
+                getHub();
+                toast({
+                    variant: "default",
+                    title: "Hubs created successfully",
+                    description: "Hubs have been created successfully",
+                });
+                router.refresh();
+            } else {
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Something went wrong. Please try again later.",
+                });
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Something went wrong. Please try again later.",
+            });
+        }
+    }, [userToken, axiosIWAuth, getHub, router, toast]);
+
+    const addBulkAddresses = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const contents = e.target?.result as string;
+                let data: any[];
+    
+                // Handle CSV files
+                if (file.name.endsWith('.csv')) {
+                    const lines = contents.split('\n');
+                    data = lines.map(line => line.split(','));
+                }
+                // Handle XLSX files
+                else if (file.name.endsWith('.xlsx')) {
+                    const workbook = XLSX.read(contents, { type: 'binary' });
+                    const sheetName = workbook.SheetNames[0]; 
+                    const worksheet = workbook.Sheets[sheetName];
+                    data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                } else {
+                    throw new Error('Unsupported file format');
+                }
+    
+                const indexNames = ["name", "contactPersonName", "phone", "email", "address1", "pincode", "city", "state"];
+    
+                function transformArraysToObjects(data: any[], indexNames: string[]) {
+                    return data.slice(1).map(innerArray => { 
+                        const obj: { [key: string]: any } = {};
+                        innerArray.forEach((item: any, index: number) => {
+                            if (typeof item === 'string') {
+                                const trimmedItem = item.trim();
+                                const num = Number(trimmedItem);
+                                if (indexNames[index] === 'phone' || indexNames[index] === 'pincode') {
+                                    if (!Number.isNaN(num)) {
+                                        obj[indexNames[index]] = num;
+                                    } else {
+                                        toast({
+                                            variant: "destructive",
+                                            title: "Error",
+                                            description: `Invalid Phone or Pincode`,
+                                        })
+                                    }
+                                } else {
+                                    obj[indexNames[index]] = trimmedItem;
+                                }
+                            } else {
+                                obj[indexNames[index]] = item;
+                            }
+                        });
+                        return obj;
+                    })
+                }
+                const hubs = transformArraysToObjects(data, indexNames);
+                console.log(hubs);
+                handleCreateHubs(hubs as reqPayload[]);
+            };
+            if (file.name.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else if (file.name.endsWith('.xlsx')) {
+                reader.readAsArrayBuffer(file);
+            }
+        }
+    }
+
     const handleCreateHub = useCallback(async (hub: reqPayload) => {
         try {
             const res = await axiosIWAuth.post('/hub', hub);
-
 
             if (res.data.valid) {
                 getHub()
@@ -232,11 +326,12 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         const update_id = id;
 
         try {
-            const facilityName = values?.facilityName?.toString() || "";
+            const name = values?.facilityName?.toString() || "";
             const contactPersonName = values?.contactPersonName?.toString() || "";
-            const pickupLocContact = values?.pickupLocContact?.toString() || "";
+            const phone = values?.pickupLocContact?.toString() || "";
             const email = values?.email?.toString() || "";
-            const address = values?.address?.toString() || "";
+            const address1 = values?.address?.toString() || "";
+            const address2 = values?.address?.toString() || "";
             const country = values?.country?.toString() || "";
             const pincode = values?.pincode?.toString() || "";
             const city = values?.city?.toString() || "";
@@ -248,11 +343,12 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             const rtoPincode = values?.rtoPincode?.toString() || "";
 
             const pickupLocationData = {
-                facilityName,
+                name,
                 contactPersonName,
-                pickupLocContact,
+                phone,
                 email,
-                address,
+                address1,
+                address2,
                 country,
                 pincode,
                 city,
@@ -292,7 +388,9 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 updateBankDetails,
                 updateBillingAddress,
                 uploadGstinInvoicing,
-                editPickupLocation
+                editPickupLocation,
+                addBulkAddresses,
+                handleCreateHubs
 
             }}
         >
