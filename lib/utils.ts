@@ -20,7 +20,7 @@ export function formatCurrencyForIndia(amount: number): string {
 }
 
 export const dateFormatter = (date: string) => {
-  let splittedDate = date.split("-");
+  let splittedDate = date?.split("-");
   const temp = splittedDate[0];
   splittedDate[0] = splittedDate[2];
   splittedDate[2] = temp;

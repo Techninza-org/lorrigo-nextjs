@@ -23,7 +23,7 @@ export function UserAvatar() {
                     <Avatar className="h-8 w-8">
                         <AvatarFallback>
                            <Button size={"icon"} className="text-xl" variant={"ghost"}>
-                            {user?.name.split('')[0]}
+                            {user?.name?.split('')[0]}
                            </Button>
                         </AvatarFallback>
                     </Avatar>
