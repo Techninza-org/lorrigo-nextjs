@@ -122,7 +122,10 @@ export const B2CForm = () => {
                     name: '',
                     phone: '',
                     address: '',
-                    pincode: ''
+                    pincode: '',
+                    state: '',
+                    country: '',
+                    city: ''
                 },
                 sellerDetails: {
                     sellerName: ''

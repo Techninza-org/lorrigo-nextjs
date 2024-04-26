@@ -1,9 +1,7 @@
 "use client";
 
-import { z } from "zod";
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import axios, { AxiosInstance } from "axios";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useSellerProvider } from "./SellerProvider";
 
 interface KycContextType {
     formData: KycFormType | null;
@@ -21,7 +19,8 @@ interface KycContextType {
     document1Back: string | "";
     document2Front: string | "";
     document2Back: string | "";
-
+    submitted: boolean;
+    verified: boolean;
 }
 
 interface KycFormType {
@@ -34,6 +33,8 @@ interface KycFormType {
     document1Back: string | "";
     document2Front: string | "";
     document2Back: string | "";
+    submitted: boolean;
+    verified: boolean;
 }
 
 const KycContext = createContext<KycContextType | null>(null);
@@ -41,8 +42,15 @@ const KycContext = createContext<KycContextType | null>(null);
 function KycProvider({ children }: { children: React.ReactNode }) {
     const [formData, setFormData] = useState<KycContextType | null>(null);
     const [step, setStep] = useState(1);
-    const [verifyOtpOpen, setVerifyOtpOpen] = useState(true);
-    
+    const [verifyOtpOpen, setVerifyOtpOpen] = useState(false);
+    const { seller } = useSellerProvider();
+
+    useEffect(() => {
+        if (seller?.kycDetails?.verified === true || seller?.kycDetails?.submitted === true) {
+            setStep(4);
+        }
+    }, [seller]);
+
     function onHandleNext() {
         setStep((prev) => prev + 1);
     }
@@ -52,7 +60,7 @@ function KycProvider({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <KycContext.Provider value={{ formData, step, photoUrl: "", gstin: '', pan: '', verifyOtpOpen, setVerifyOtpOpen, onHandleNext, onHandleBack, setFormData: setFormData as React.Dispatch<React.SetStateAction<KycFormType | null>>, businessType: "", document1Front: "", document1Back:"", document2Front: "", document2Back: "" }}>
+        <KycContext.Provider value={{ formData, step, photoUrl: "", gstin: '', pan: '', verifyOtpOpen, setVerifyOtpOpen, onHandleNext, onHandleBack, setFormData: setFormData as React.Dispatch<React.SetStateAction<KycFormType | null>>, businessType: "", document1Front: "", document1Back: "", document2Front: "", document2Back: "", submitted: false, verified: false }}>
             {children}
         </KycContext.Provider>
     );

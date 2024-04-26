@@ -12,8 +12,8 @@ const DocumentVerification = () => {
 
   return (
     <>
-      {businessType === 'company' ? <GstinTanVerificationForm /> : <AadharPanVerificationForm />}
-      <br />
+      {/* {businessType === 'company' ? <GstinTanVerificationForm /> : <AadharPanVerificationForm />}
+      <br /> */}
       <DocumentUploadForm />
       <div className='flex justify-between'>
         <Button type="button" variant={'themeButton'} onClick={onHandleBack} className='mt-6'>Back</Button>

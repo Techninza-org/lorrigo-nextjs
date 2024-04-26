@@ -28,6 +28,18 @@ export type SellerType = {
     deductTDS?: string;
     tan?: string;
   };
+  kycDetails: {
+    businessType?: string;
+    photoUrl?: string;
+    gstin?: string;
+    pan?: string;
+    document1Front?: string;
+    document1Back?: string;
+    document2Front?: string;
+    document2Back?: string;
+    submitted?: boolean;
+    verified?: boolean;
+  };
 };
 
 export type AuthType = {
@@ -114,7 +126,7 @@ export interface B2COrderType {
   awb?: string;
   carrierName?: string;
   sellerId: string;
-  orderStage?: number;
+  bucket?: number;
   orderStages?: {
     stage: number;
     stageDateTime: string;

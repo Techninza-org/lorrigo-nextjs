@@ -94,7 +94,7 @@ export const DocumentUploadForm = () => {
             <div className='flex p-6 justify-between'>
                 <div>
                     <CardTitle>KYC by uploading ID & Address Proofs</CardTitle>
-                    <CardDescription>(Upload pdf or images)</CardDescription>
+                    <CardDescription>(Upload documents as jpeg, jpg or png)</CardDescription>
                 </div>
                 <div className='cursor-pointer' onClick={handleOpen}><ChevronsUpDown /></div>
             </div>
@@ -128,7 +128,7 @@ export const DocumentUploadForm = () => {
                                 <div>
                                     <div className='border-2 border-dashed border-[#be0c34] rounded-lg w-2/3 h-[150px] grid place-content-center bg-[#F7F7F7]'>
                                         <div className='flex justify-center mb-2'><Upload size={30} color='#be0c34' /></div>
-                                        <p>Upload Front Side</p>
+                                        <p>Upload Front Side <span className='text-red-600'>*</span></p>
                                     </div>
                                     <br />
                                     <input type='file' onChange={handleFileChange('document1Front')} accept='.png, .jpg, .jpeg' />
@@ -170,7 +170,7 @@ export const DocumentUploadForm = () => {
                                 <div>
                                     <div className='border-2 border-dashed border-[#be0c34] rounded-lg w-2/3 h-[150px] grid place-content-center bg-[#F7F7F7]'>
                                         <div className='flex justify-center mb-2'><Upload size={30} color='#be0c34' /></div>
-                                        <p>Upload Front Side</p>
+                                        <p>Upload Front Side <span className='text-red-600'>*</span></p>
                                     </div>
                                     <br />
                                     <input type='file' onChange={handleFileChange('document2Front')} accept='.png, .jpg, .jpeg' />
@@ -187,7 +187,7 @@ export const DocumentUploadForm = () => {
                             </div>
                         </div>
                     </div>
-                    <Button type='submit' variant={'themeButton'}>Submit Documents</Button>
+                    <div className='flex justify-end mb-6 mr-6'><Button type='submit' variant={'themeButton'}>Submit Documents</Button></div>
                 </form>
             </Form>
         </Card>

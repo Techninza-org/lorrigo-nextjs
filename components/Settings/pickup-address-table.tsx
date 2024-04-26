@@ -13,19 +13,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, Download, MoreHorizontal, Plus } from "lucide-react"
-
+import { Download, Plus, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -37,16 +26,17 @@ import {
 } from "@/components/ui/table"
 import { useSearchParams } from "next/navigation"
 import { useModal } from "@/hooks/use-model-store"
-
-
+import { useHubProvider } from "../providers/HubProvider"
 
 export function PickupAddressTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const { onOpen } = useModal();
+  const {addBulkAddresses} = useHubProvider();
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
   const searchParams = useSearchParams()
+  const hiddenFileInput = React.useRef<HTMLInputElement>(null);
   //   const isShipmentVisible = searchParams.get('status') !== 'new'
   //   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
   //     "Shipment Details": isShipmentVisible,
@@ -72,8 +62,9 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
     },
   })
 
-  console.log(data);
-
+  function handleClick(){
+    hiddenFileInput.current?.click();
+  }
 
   return (
     <div className="w-full">
@@ -88,11 +79,12 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
             className="max-w-sm"
           />
           <div className='flex gap-x-6'>
-            <Button variant={'themeGrayBtn'} size={'icon'}><Download size={18} /></Button>
+            <Button variant={'themeGrayBtn'} size={'icon'}  onClick={handleClick} ><Upload size={18} /><input type="file" accept=".csv, .xlsx" onChange={addBulkAddresses} ref={hiddenFileInput} className="hidden" /></Button>
+            <Button variant={'themeGrayBtn'} size={'icon'}><a href="/pickup_bulk_sample.xlsx" download ><Download size={18} /></a></Button>
             <Button onClick={() => onOpen("addPickupLocation")} variant={'themeButton'} className='rounded-full'><Plus size={15} /> Add Pickup Address</Button>
           </div>
         </div>
-        {/* <DropdownMenu>
+        {/* <DropdownMenu> 
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
               Columns <ChevronDown className="ml-2 h-4 w-4" />

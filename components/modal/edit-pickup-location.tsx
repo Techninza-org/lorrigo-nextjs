@@ -67,9 +67,6 @@ export const EditPickupLocationModal = () => {
         }
     });
 
-    // const { formState: { errors } } = form;
-    // console.log("errors", errors);
-
 
     useEffect(() => {
         if (hub) {
@@ -81,7 +78,7 @@ export const EditPickupLocationModal = () => {
             form.setValue('pincode', String(hub.pincode) || '');
             form.setValue('city', hub.city || '');
             form.setValue('state', hub.state || '');
-            form.setValue('rtoAddress', hub.rtoAddress || '');
+            // form.setValue('rtoAddress', hub.rtoAddress || '');
             // form.setValue('isRTOAddressSame', hub.isRTOAddressSame || false);
             // form.setValue('rtoCity', hub.rtoCity || '');
             // form.setValue('rtoState', hub.rtoState || '');
