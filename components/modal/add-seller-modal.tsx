@@ -28,15 +28,8 @@ import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
+import { LoadingSpinner } from '../loading-spinner';
 
-// sellerName
-// sellerGSTIN
-// isSellerAddressAdded
-// sellerPincode
-// sellerAddress
-// sellerPhone
-// sellerCity
-// sellerState
 export const sellerSchema = z.object({
     sellerDetails: z.object({
         sellerName: z.string().min(1, "Seller name is required"),
@@ -61,15 +54,6 @@ export const AddSellerModal = () => {
         resolver: zodResolver(sellerSchema),
         defaultValues: {
             sellerDetails: {
-                // name: "",
-                // gstNo: "",
-                // isSellerAddressAdded: false,
-                // pincode: "",
-                // address: "",
-                // phone: "",
-                // city: "",
-                // state: "",
-                // country: "India"
                 sellerName: "",
                 sellerGSTIN: "",
                 isSellerAddressAdded: false,
@@ -87,7 +71,7 @@ export const AddSellerModal = () => {
     const { formState: { errors } } = form;
 
     const pincode = form.watch('sellerDetails.sellerPincode');
-    const { cityState: cityStateRes, loading } = useFetchCityState(pincode)
+    const { cityState: cityStateRes, isTyping } = useFetchCityState(pincode)
 
     useEffect(() => {
         if (cityStateRes) {
@@ -139,7 +123,7 @@ export const AddSellerModal = () => {
                         <SellerForm
                             isLoading={isLoading}
                             form={form}
-                            isPinLoading={loading}
+                            isPinLoading={isTyping}
                         />
                         <DialogFooter className="px-6 py-4">
                             <Button onClick={() => form.reset()} disabled={isLoading} variant={'secondary'} type='button'>
@@ -295,12 +279,15 @@ export const SellerForm = ({ isLoading, form, isPinLoading }: { isLoading: boole
                                         City
                                     </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            disabled={isLoading || isPinLoading}
-                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                            placeholder="Enter the city"
-                                            {...field}
-                                        />
+                                        <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                            <Input
+                                                disabled={isLoading || isPinLoading}
+                                                className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                                placeholder="Enter the city"
+                                                {...field}
+                                            />
+                                            {isPinLoading && <LoadingSpinner />}
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -315,12 +302,15 @@ export const SellerForm = ({ isLoading, form, isPinLoading }: { isLoading: boole
                                         State
                                     </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            disabled={isLoading || isPinLoading}
-                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                    <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                            <Input
+                                                disabled={isLoading || isPinLoading}
+                                                className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             placeholder="Enter the state"
                                             {...field}
                                         />
+                                          {isPinLoading && <LoadingSpinner />}
+                                    </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

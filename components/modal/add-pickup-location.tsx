@@ -31,11 +31,12 @@ import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
+import { LoadingSpinner } from '../loading-spinner';
 
 export const pickupAddressFormSchema = z.object({
     facilityName: z.string().min(1, "Facility name is required"),
     contactPersonName: z.string().min(1, "Contact person name is required"),
-    pickupLocContact: z.string().refine(isValidPhoneNumber, { message: "Invalid phone number" }),
+    pickupLocContact: z.string().refine(isValidPhoneNumber, { message: "Phone number is required" }),
     email: z.string().optional(),
     address: z.string().min(1, "Address is required"),
     country: z.string().min(1, "Country is required"),
@@ -78,8 +79,8 @@ export const AddPickupLocationModal = () => {
     });
 
 
-    const { cityState: cityStateRes, loading: isPinloading } = useFetchCityState(form.watch("pincode"));
-    const { cityState: rtoCityStateRes, loading: isRTOPinloading } = useFetchCityState(form.watch("rtoPincode"));
+    const { cityState: cityStateRes, isTyping: isPinloading } = useFetchCityState(form.watch("pincode"));
+    const { cityState: rtoCityStateRes, isTyping: isRTOPinloading } = useFetchCityState(form.watch("rtoPincode"));
 
     useEffect(() => {
         if (cityStateRes) {
@@ -177,7 +178,7 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
                 control={form.control}
                 name="contactPersonName"
                 render={({ field }) => (
-                    <FormItem className='pt-2'>
+                    <FormItem>
                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
                             Contact Person Name<span className='text-red-500'>*</span>
                         </FormLabel>
@@ -284,12 +285,15 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
                             City <span className='text-red-500'>*</span>
                         </FormLabel>
                         <FormControl>
-                            <Input
-                                disabled={isLoading || isPinLoading}
-                                className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                placeholder="Enter the city"
-                                {...field}
-                            />
+                            <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                <Input
+                                    disabled={isLoading || isPinLoading}
+                                    className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                    placeholder="Enter the city"
+                                    {...field}
+                                />
+                                {isPinLoading && <LoadingSpinner />}
+                            </div>
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -304,12 +308,15 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
                             State <span className='text-red-500'>*</span>
                         </FormLabel>
                         <FormControl>
-                            <Input
-                                disabled={isLoading || isPinLoading}
-                                className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                placeholder="Enter the state"
-                                {...field}
-                            />
+                            <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                <Input
+                                    disabled={isLoading || isPinLoading}
+                                    className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                    placeholder="Enter the state"
+                                    {...field}
+                                />
+                                {isPinLoading && <LoadingSpinner />}
+                            </div>
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -393,12 +400,15 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
                                         City
                                     </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            disabled={isLoading || isRTOPinLoading}
-                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                            placeholder="Enter the city"
-                                            {...field}
-                                        />
+                                        <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                            <Input
+                                                disabled={isLoading || isRTOPinLoading}
+                                                className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                                placeholder="Enter the city"
+                                                {...field}
+                                            />
+                                            {isRTOPinLoading && <LoadingSpinner />}
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -433,12 +443,15 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
                                         State
                                     </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            disabled={isLoading || isRTOPinLoading}
-                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                            placeholder="Enter the state"
-                                            {...field}
-                                        />
+                                        <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                            <Input
+                                                disabled={isLoading || isRTOPinLoading}
+                                                className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                                placeholder="Enter the state"
+                                                {...field}
+                                            />
+                                            {isRTOPinLoading && <LoadingSpinner />}
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

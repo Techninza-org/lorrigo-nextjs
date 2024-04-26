@@ -9,6 +9,7 @@ import { SchedulePickupModal } from "../modal/schedule-pickup-modal";
 import { DownloadLableModal } from "../modal/download-label-modal";
 import { DownloadManifestModal } from "../modal/download-manifest-modal";
 import { CancelOrderDialog } from "../Orders/cancel-order-dialog";
+import { NDROrderDialog, NDRRTODialog } from "../Orders/ndr-order-dialog";
 
 export const ModalProvider = () => {
     const [isMounted, setIsMounted] = useState(false);
@@ -29,6 +30,10 @@ export const ModalProvider = () => {
         <DownloadLableModal/>
         <DownloadManifestModal/>
         <CancelOrderDialog/>
+        
+
+        <NDROrderDialog/>
+        <NDRRTODialog/>
         
       </>
     );

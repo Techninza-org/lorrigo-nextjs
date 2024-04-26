@@ -162,7 +162,7 @@ export const B2CForm = () => {
                             handleIncrement={handleIncrement}
                             collectableFeild={collectableFeild}
                         />
-                        <CardFooter className='flex-row-reverse'>
+                        <CardFooter className='flex-row-reverse gap-3'>
                             <Button disabled={isLoading} type='submit' variant={'themeButton'} >Create Shipment</Button>
                             <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => router.push("/dashboard")}>Go to dashboard</Button>
                         </CardFooter>

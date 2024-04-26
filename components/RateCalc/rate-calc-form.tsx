@@ -106,7 +106,6 @@ export const RateCalcForm = () => {
     };
 
     const onSubmit = async (values: z.infer<typeof rateCalcSchema>) => {
-        console.log(values, values.payment_mode)
         const res = await calcRate({
             pickupPincode: values.pickupPincode,
             deliveryPincode: values.deliveryPincode,
@@ -125,10 +124,9 @@ export const RateCalcForm = () => {
 
     useEffect(() => {
         let timer: string | number | NodeJS.Timeout | undefined;
-        console.log(form.watch("pickupPincode").length > 4)
 
         const fetchCityState = async () => {
-            if (form.watch("pickupPincode").length > 4) {
+            if (form.watch("pickupPincode").length > 5) {
                 const cityStateRes = await getCityStateFPincode(form.watch("pickupPincode"))
 
                 setCityState({
@@ -136,7 +134,7 @@ export const RateCalcForm = () => {
                     state: cityStateRes.state
                 })
             }
-            if (form.watch("deliveryPincode").length > 4) {
+            if (form.watch("deliveryPincode").length > 5) {
                 const cityStateRes = await getCityStateFPincode(form.watch("deliveryPincode"))
                 setDeliveryCityState({
                     city: cityStateRes.city,
@@ -389,7 +387,7 @@ export const RateCalcForm = () => {
 
 
                             </CardContent>
-                            <CardFooter className='flex-row-reverse'>
+                            <CardFooter className='flex-row-reverse gap-3'>
                                 <Button type='submit' variant={'themeButton'} >Calculate</Button>
                                 <Button variant={'secondary'} type='button'>Reset</Button>
                             </CardFooter>
@@ -445,7 +443,6 @@ export const RateCalcForm = () => {
                                 <TableBody>
                                     {
                                         courierCalcRate?.map((partner: any, i: number) => {
-                                            console.log(getSvg(removeWhitespaceAndLowercase(partner?.name ?? "")))
                                             return <TableRow key={i}>
                                                 <TableCell>
                                                     <div className="flex items-center">

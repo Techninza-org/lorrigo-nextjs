@@ -11,6 +11,7 @@ import { B2COrderType, HubType, OrderType, RemittanceType, SellerType } from "@/
 import { useAuth } from "./AuthProvider";
 import { cloneFormSchema } from "../drawer/clone-order-drawer";
 import { EditFormSchema } from "../drawer/edit-order-drawer";
+import { ReattemptOrderSchema } from "../Orders/ndr-order-dialog";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -36,6 +37,7 @@ interface SellerContextType {
   getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
   sellerRemittance: RemittanceType[] | null;
   getOrderDetails: (orderId: string) => Promise<B2COrderType | undefined>;
+  handleOrderNDR: (orderId: string, type: string, ndrInfo: z.infer<typeof ReattemptOrderSchema>) => boolean | Promise<boolean>;
 }
 
 interface sellerCustomerFormType {
@@ -433,7 +435,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
-      if (res.data.order.awb) {
+      if (res.data?.valid && res.data?.order.awb) {
         toast({
           variant: "default",
           title: "Order created successfully",
@@ -449,11 +451,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         description: res.data.message,
       });
       return false
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Something went wrong",
+        description: error?.message ?? "Something went wrong",
       });
       return false
 
@@ -592,6 +594,40 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const handleOrderNDR = async (orderId: string, type: string, ndrInfo: z.infer<typeof ReattemptOrderSchema>) => {
+    try {
+      const res = await axiosIWAuth.post('/shipment/order-reattempt', {
+        orderId,
+        type,
+        ndrInfo
+      });
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "Order",
+          description: "NDR request generated",
+        });
+        getAllOrdersByStatus(status || "all")
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Order",
+        description: res.data.message,
+      });
+      return false
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong",
+      });
+      return false
+    }
+
+  }
+
+
   useEffect(() => {
     if (!userToken) return;
     getHub();
@@ -631,6 +667,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getSellerRemittanceDetails,
         sellerRemittance,
         getOrderDetails,
+        handleOrderNDR
 
 
       }}

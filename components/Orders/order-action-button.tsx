@@ -44,7 +44,7 @@ export const CANCELED = 6;
 export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     let orderStage = rowData.orderStages?.[rowData.orderStages.length - 1]?.stage as number;
 
-    const orderStatusTillUs = [0, 1, 4, 6, 24, 52, 67];
+    const orderStatusTillUs = [0, 1, 4, 6, 17, 24, 52, 67];
     if (!orderStatusTillUs.includes(orderStage)) {
         orderStage = rowData?.bucket || 0;
     }
@@ -111,7 +111,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
             <Button variant={"webPageBtn"} size={"sm"} onClick={() => onOpen("cloneOrder", { order: rowData })}>Clone Order</Button>
         );
     }
-    
+
     if (orderStage === 67 || orderStage === 4) {
         return (
             <div className="flex gap-2 items-center">
@@ -137,7 +137,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
     if (orderStage == 3) {
         return (
             <div className="flex gap-2 items-center">
-                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("ndrOrder", { order: rowData })}>NDR</Button>
+                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("ndrOrder", { order: rowData })}>Reattempt</Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -146,10 +146,9 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                        <DropdownMenuItem>Return</DropdownMenuItem>
-                        <DropdownMenuItem>Fake attempt</DropdownMenuItem>
-                        <DropdownMenuItem>RTO</DropdownMenuItem>
-
+                        <DropdownMenuItem onClick={() => onOpen("ndrRTOrder", { order: rowData })}>RTO</DropdownMenuItem>
+                        <OrderCloneButton rowData={rowData} />
+                        <DownloadLabelButton rowData={rowData} />
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
@@ -157,8 +156,26 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
     }
 
     return (
+        // <div className="flex gap-2 items-center">
+        //     {/* <Button variant={"themeNavActiveBtn"} size={"sm"} onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</Button> */}
+        //     <DropdownMenu>
+        //         <DropdownMenuTrigger asChild>
+        //             <Button variant="ghost" className="h-8 w-8 p-0">
+        //                 <span className="sr-only">Open menu</span>
+        //                 <MoreHorizontalIcon className="h-4 w-4" />
+        //             </Button>
+        //         </DropdownMenuTrigger>
+        //         <DropdownMenuContent align="start">
+        //             <OrderCloneButton rowData={rowData} />
+
+        //             <DropdownMenuSeparator />
+        //             <OrderCancelButton rowData={rowData} />ndr
+
+        //         </DropdownMenuContent>
+        //     </DropdownMenu>
+        // </div>
         <div className="flex gap-2 items-center">
-            {/* <Button variant={"themeNavActiveBtn"} size={"sm"} onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</Button> */}
+            <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("ndrOrder", { order: rowData })}>Reattempt</Button>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -167,10 +184,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                    <OrderCloneButton rowData={rowData} />
-
-                    <DropdownMenuSeparator />
-                    <OrderCancelButton rowData={rowData} />
+                <DropdownMenuItem onClick={() => onOpen("ndrRTOrder", { order: rowData })}>RTO</DropdownMenuItem>
 
                 </DropdownMenuContent>
             </DropdownMenu>
