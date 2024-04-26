@@ -13,7 +13,6 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
     {
         header: 'Order Details',
         accessorKey: 'order_reference_id',
-        enableGlobalFilter: true,
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -44,7 +43,6 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
     {
         header: 'Package Details',
         accessorKey: 'awb',
-        enableGlobalFilter: true,
         cell: ({ row }) => {
             const rowData = row.original;
             return (
