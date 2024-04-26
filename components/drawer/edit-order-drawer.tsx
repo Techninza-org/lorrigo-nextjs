@@ -197,7 +197,6 @@ export function EditOrderDrawer() {
 
     const onSubmit = async (values: z.infer<typeof EditFormSchema>) => {
         try {
-            console.log(values, 'values')
             const isSuccess = await handleUpdateOrder(values)
             if (isSuccess == true) {
                 // form.reset();
@@ -307,6 +306,7 @@ export function EditOrderDrawer() {
                                     <AddCustomerForm
                                         form={form}
                                         isLoading={isLoading}
+                                        isPinLoading={false}
                                     />
                                 </div>
 

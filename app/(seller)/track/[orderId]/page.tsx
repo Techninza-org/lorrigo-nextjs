@@ -1,11 +1,7 @@
-import OrderTrackTimeline from "@/components/Orders/order-track-timeline";
+import { OrderTrackInfo } from "@/components/Orders/order-track-info";
 
 export default function TrackOrder() {
-    return(
-        <div>
-            <h1>Track Order</h1>
-            <OrderTrackTimeline/>
-        </div>
-
+    return (
+        <OrderTrackInfo />
     )
 }

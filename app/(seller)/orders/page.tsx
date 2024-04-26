@@ -1,4 +1,5 @@
 import Orders from "@/components/Orders";
+import { LoadingComponent } from "@/components/loading-spinner";
 import { NavigationItem } from "@/components/navigation/navigation-item";
 import { Suspense } from "react";
 
@@ -36,7 +37,7 @@ export default function OrdersPage() {
 
     return (
         <>
-            <Suspense fallback={<span>Loading...</span>}>
+            <Suspense fallback={<LoadingComponent/>}>
             <NavigationItem links={DASHBOARD_LINKS}  />
                 <Orders />
             </Suspense>

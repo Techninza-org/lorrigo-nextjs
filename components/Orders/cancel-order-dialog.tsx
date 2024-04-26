@@ -6,19 +6,36 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
 
 import { useSellerProvider } from "../providers/SellerProvider"
 import { Button } from "../ui/button"
 import { CircleAlert, TriangleAlertIcon } from "lucide-react"
-import { B2COrderType } from "@/types/types"
+import { useModal } from "@/hooks/use-model-store"
+import { useState } from "react"
 
-export const CancelOrderDialog = ({ order, clientRefId }: { order: B2COrderType, clientRefId: string }) => {
+
+export const CancelOrderDialog = () => {
     const { handleCancelOrder } = useSellerProvider()
+    const { onClose, type, isOpen, data } = useModal();
+    const [isLoading, setIsLoading] = useState(false)
+    const { order } = data
+    const isModalOpen = isOpen && type === "cancelOrder";
+
+    const handleOrder = async (orderId: string, type: "order" | "shipment") => {
+        setIsLoading(true)
+        const res = await handleCancelOrder(orderId, type);
+        if (res) {
+            setIsLoading(false)
+            handleClose();
+        }
+    }
+
+    const handleClose = () => {
+        onClose();
+    }
     return (
-        <Dialog>
-            <DialogTrigger className="text-red-500 w-full relative flex cursor-pointer items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors">Cancel Order</DialogTrigger>
+        <Dialog open={isModalOpen} onOpenChange={handleClose}>
             <DialogContent className="space-y-6">
                 <DialogHeader className="space-y-4">
                     <DialogTitle className="text-center text-xl"><TriangleAlertIcon size={75} className="mx-auto mb-3" color="red" />Do you want to cancel the Order or Shipment?</DialogTitle>
@@ -35,13 +52,13 @@ export const CancelOrderDialog = ({ order, clientRefId }: { order: B2COrderType,
                     </div>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant={"destructive"} className="w-full" onClick={() => handleCancelOrder(order._id, "order")}>
+                    <Button variant={"destructive"} disabled={isLoading} className="w-full" onClick={() => handleOrder(order?._id ?? "", "order")}>
                         Cancel Order
                     </Button>
 
                     {
-                        order.awb ? (
-                            <Button variant={"secondary"} className="w-full" onClick={() => handleCancelOrder(order._id, "shipment")}>
+                        order?.awb ? (
+                            <Button variant={"secondary"} disabled={isLoading} className="w-full" onClick={() => handleOrder(order?._id ?? "", "shipment")}>
                                 Cancel Shipment
                             </Button>
                         ) : null

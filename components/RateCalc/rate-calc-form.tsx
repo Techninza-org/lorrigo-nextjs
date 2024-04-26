@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import * as z from 'zod';
 import { Input } from "../ui/input";
-import { cn, formatCurrencyForIndia } from "@/lib/utils";
+import { cn, formatCurrencyForIndia, getSvg, removeWhitespaceAndLowercase } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useEffect, useState } from "react";
 import { MapPin } from "lucide-react";
@@ -91,12 +91,11 @@ export const RateCalcForm = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let numericValue = e.target.value.replace(/[^0-9.]/g, '');
-        const parts = numericValue.split('.');
+        const parts = numericValue?.split('.');
         if (parts.length > 2) {
             numericValue = parts[0] + '.' + parts.slice(1).join('');
         }
         const field = e.target.name as keyof typeof rateCalcSchema; // Explicitly define the type of 'field'
-        console.log(field)
         //@ts-ignore
         form.setValue(field, numericValue);
     };
@@ -107,6 +106,7 @@ export const RateCalcForm = () => {
     };
 
     const onSubmit = async (values: z.infer<typeof rateCalcSchema>) => {
+        console.log(values, values.payment_mode)
         const res = await calcRate({
             pickupPincode: values.pickupPincode,
             deliveryPincode: values.deliveryPincode,
@@ -427,7 +427,7 @@ export const RateCalcForm = () => {
                     <Card className="drop-shadow-md">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>
-                                Select Courier Partner
+                                Courier Partner
                             </CardTitle>
 
                         </CardHeader>
@@ -444,16 +444,19 @@ export const RateCalcForm = () => {
                                 </TableHeader>
                                 <TableBody>
                                     {
-                                        courierCalcRate?.map((partner: any) => {
-                                            return <TableRow key={partner.carrierID}>
+                                        courierCalcRate?.map((partner: any, i: number) => {
+                                            console.log(getSvg(removeWhitespaceAndLowercase(partner?.name ?? "")))
+                                            return <TableRow key={i}>
                                                 <TableCell>
                                                     <div className="flex items-center">
-                                                        <Image className="mr-2" src={"/assets/logo.png"} width={35} height={35} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>
-                                                    <div>RTO Charges : {formatCurrencyForIndia(partner.charge)}</div>
+                                                        <Image className="mr-2 mix-blend-multiply"
+                                                            src={getSvg(removeWhitespaceAndLowercase(partner?.name ?? ""))}
+                                                            width={55} height={55} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>
+                                                    <div>RTO Charges : {formatCurrencyForIndia(partner.charge ?? 0)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
                                                 <TableCell>{partner.order_zone}</TableCell>
-                                                <TableCell>{formatCurrencyForIndia(partner.charge)}</TableCell>
+                                                <TableCell>{formatCurrencyForIndia(partner.charge ?? 0)}</TableCell>
 
                                             </TableRow>
                                         })

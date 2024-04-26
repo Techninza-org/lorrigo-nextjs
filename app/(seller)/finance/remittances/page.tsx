@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CodRemittancePage from "@/components/Remittances/cod-remittances-page";
+import { LoadingComponent } from "@/components/loading-spinner";
 
 
 export default function RemittancesPage() {
@@ -15,7 +16,7 @@ export default function RemittancesPage() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-                <Suspense fallback={<span>Loading...</span>}>
+                <Suspense fallback={<LoadingComponent/>}>
                     <CodRemittancePage />
                 </Suspense>
             </CardContent>

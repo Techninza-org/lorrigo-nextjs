@@ -2,7 +2,7 @@ import { B2COrderType, CustomerDetailsType, SellerType, pickupAddressType } from
 import { create } from "zustand";
 
 
-export type ModalType = "wallet" | "addPickupLocation" | "editPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest";
+export type ModalType = "wallet" | "addPickupLocation" | "editPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest" | "ndrOrder";
 interface ModalData {
   form?: any;
   customer?: CustomerDetailsType;

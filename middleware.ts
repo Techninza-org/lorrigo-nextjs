@@ -18,6 +18,12 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // Exclude favicon.ico from authentication checks
+  if (pathname === '/favicon.ico') {
+    return;
+  }
+
+
   if (!isAuthenticated && !unauthenticatedPaths.some(path => pathname.startsWith(path))) {
     return NextResponse.redirect(new URL('/login', request.url));
   }

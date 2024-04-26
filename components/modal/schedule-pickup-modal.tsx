@@ -70,7 +70,6 @@ export const SchedulePickupModal = () => {
     const onSubmit = async (values: z.infer<typeof schema>) => {
         try {
             const res = await manifestOrder({ orderId: order?._id ?? '', scheduleDate: formatDate(`${values.schedulePickup}`, 'yyyy MM dd') })
-            console.log(values);
             if (res) {
                 form.reset();
                 router.refresh();

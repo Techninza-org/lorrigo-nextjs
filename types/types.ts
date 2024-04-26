@@ -31,10 +31,11 @@ export type SellerType = {
 };
 
 export type AuthType = {
+  isVerified?: boolean;
   id: string;
+  name: string;
   email: string;
   role?: string;
-  isVerified?: boolean;
 };
 
 // export interface HubType {
@@ -143,21 +144,6 @@ export interface B2COrderType {
   __v?: number;
 }
 
-export interface OrderType {
-  valid: boolean;
-  orderDetails: B2COrderType;
-  courierPartner: {
-    name: string;
-    minWeight: number;
-    charge: number;
-    type?: string;
-    expectedPickup: string;
-    orderWeight: number;
-    carrierID: number;
-    order_zone: string;
-  }[];
-}
-
 export interface SettingType {
   companyId?: string;
   companyName?: string;
@@ -203,27 +189,27 @@ export interface AdminType {
 }
 
 export interface OrderType {
-    valid: boolean;
-    orderDetails: B2COrderType;
-    courierPartner: {
-        name: string;
-        nickName: string;
-        minWeight: number;
-        charge: number;
-        type?: string;
-        expectedPickup: string;
-        orderWeight: number;
-        carrierID: number;
-        order_zone: string;
-    }[];
+  valid: boolean;
+  orderDetails: B2COrderType;
+  courierPartner: {
+    name: string;
+    nickName: string;
+    minWeight: number;
+    charge: number;
+    type?: string;
+    expectedPickup: string;
+    orderWeight: number;
+    carrierID: number;
+    order_zone: string;
+  }[];
 }
 
 export interface RemittanceType {
-    _id: string;
-    remittanceId: string;
-    remittanceDate: string;
-    remittanceAmount: number;
-    remittanceStatus: string;
-    orders: B2COrderType[];
-    BankTransactionId: string;
+  _id: string;
+  remittanceId: string;
+  remittanceDate: string;
+  remittanceAmount: number;
+  remittanceStatus: string;
+  orders: B2COrderType[];
+  BankTransactionId: string;
 }

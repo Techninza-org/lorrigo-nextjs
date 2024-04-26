@@ -50,7 +50,7 @@ export const DataAnalysis = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="drop-shadow-md">
+                {/* <Card className="drop-shadow-md">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
                     </CardHeader>
                     <CardContent className="flex items-center">
@@ -62,7 +62,7 @@ export const DataAnalysis = () => {
                             <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.todayAverageShippingCost)}</div>
                         </div>
                     </CardContent>
-                </Card>
+                </Card> */}
             </div>
 
             <div className="col-span-2">
@@ -115,7 +115,7 @@ export const DataAnalysis = () => {
                         <CardContent className="flex items-center justify-between gap-1 w-full">
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
                             <span className="p-3">{sellerDashboard?.NDRDetails?.TotalNRD}</span>
-                                <Label>Total NRD</Label>
+                                <Label>Total NDR</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
                             <span className="p-3">{sellerDashboard?.NDRDetails?.buyerReattempt}</span>

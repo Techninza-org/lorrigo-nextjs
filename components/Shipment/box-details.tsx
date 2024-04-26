@@ -12,7 +12,7 @@ export const BoxDetails = ({ form, isLoading }: BoxDetailsProps) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let numericValue = e.target.value.replace(/[^0-9.]/g, '');
-        const parts = numericValue.split('.');
+        const parts = numericValue?.split('.');
         if (parts.length > 2) {
             numericValue = parts[0] + '.' + parts.slice(1).join('');
         }

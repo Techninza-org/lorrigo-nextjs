@@ -28,11 +28,6 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             href: "/dashboard",
         },
         {
-            title: "Dashboard Orders",
-            icon: TrendingUpIcon,
-            href: "/dashboard/orders",
-        },
-        {
             title: "Your Orders",
             icon: ShoppingCart,
             href: "/orders",
@@ -47,12 +42,6 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 },
             ],
         },
-        {
-            title: "Settings",
-            icon: Settings,
-            href: "/settings",
-        },
-        
     ];
 
     const ADMIN_NAV_LINKS = [

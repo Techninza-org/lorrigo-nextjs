@@ -14,22 +14,24 @@ import Link from "next/link";
 import { useSellerProvider } from "@/components/providers/SellerProvider";
 
 export const DashboardHeader = () => {
-    const { handlebusinessDropdown, business  } = useSellerProvider()
+    const { handlebusinessDropdown, business } = useSellerProvider()
     return (
-        <div className="flex space-x-6 py-6">
-            <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-                Dashboard
-            </h2>
-            <Select onValueChange={handlebusinessDropdown}>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="D2C" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="D2C">D2C</SelectItem>
-                    <SelectItem disabled={true} value="B2B">B2B</SelectItem>
-                </SelectContent>
-            </Select>
-            <SearchBar
+        <div className="flex justify-between space-x-6 py-6">
+            <div className="flex  gap-3">
+                <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+                    Dashboard
+                </h2>
+                <Select onValueChange={handlebusinessDropdown}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="D2C" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="D2C">D2C</SelectItem>
+                        <SelectItem disabled={true} value="B2B">B2B</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+            {/* <SearchBar
                 data={[
                     {
                         label: "Orders",
@@ -47,15 +49,17 @@ export const DashboardHeader = () => {
                         data: [{ icon: null, name: "", id: "" }]
                     },
                 ]}
-            />
-            
-            <Link href="/new/b2c" className={buttonVariants({
-                variant: "themeButton"
-            })}>Create Forward Shipment</Link>
-           
-            <Button disabled={true}  className={buttonVariants({
-                variant: "themeButton"
-            })}>Create Reverse Shipment</Button>
+            /> */}
+
+            <div className="space-x-3">
+                <Link href="/new/b2c" className={buttonVariants({
+                    variant: "themeButton"
+                })}>Create Forward Shipment</Link>
+
+                <Button disabled={true} className={buttonVariants({
+                    variant: "themeButton"
+                })}>Create Reverse Shipment</Button>
+            </div>
 
         </div>
     );

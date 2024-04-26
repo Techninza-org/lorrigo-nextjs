@@ -18,7 +18,7 @@ interface SellerContextType {
   seller: SellerType | null;
   business: string;
   isOrderCreated: boolean;
-  sellerFacilities: pickupAddressType[];   
+  sellerFacilities: pickupAddressType[];
   handlebusinessDropdown: (value: string) => void;
   sellerCustomerForm: sellerCustomerFormType;
   setSellerCustomerForm: React.Dispatch<React.SetStateAction<sellerCustomerFormType>>;
@@ -36,6 +36,7 @@ interface SellerContextType {
   calcRate: (order: any) => Promise<any>;
   getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
   sellerRemittance: RemittanceType[] | null;
+  getOrderDetails: (orderId: string) => Promise<B2COrderType | undefined>;
 }
 
 interface sellerCustomerFormType {
@@ -72,7 +73,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<any[]>([]);
   const [isOrderCreated, setIsOrderCreated] = useState<boolean>(false);
   const [courierPartners, setCourierPartners] = useState<OrderType>();
-  
+
 
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
@@ -127,7 +128,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getAllOrdersByStatus = async (status: string) => {
-    let url = status === "all" ? `/order?limit=50&page=1` : `/order?limit=50&page=1&status=${status}`
+    let url = status === "all" ? `/order` : `/order?status=${status}`
     try {
       const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
@@ -308,7 +309,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
   const handleUpdateOrder = useCallback(async (order: z.infer<typeof EditFormSchema>) => {
-    console.log(sellerCustomerForm, "order")
     try {
       const customerDetailsPayload = order.customerDetails && order.customerDetails.name.length > 0
         ? {
@@ -434,7 +434,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
-      console.log(res.data.order.awb, "res")
       if (res.data.order.awb) {
         toast({
           variant: "default",
@@ -463,8 +462,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }, [axiosIWAuth, router, toast])
 
   const handleCancelOrder = async (orderId: string, type: string) => {
-    router.refresh();
-
     try {
       const res = await axiosIWAuth.post(`/shipment/cancel`, {
         orderId: orderId,
@@ -477,7 +474,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Order cancellation request generated",
         });
         getAllOrdersByStatus(status || "all")
-        router.refresh();
         return true;
       }
       toast({
@@ -564,83 +560,97 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const getSeller = async() => {
-    try{
+  const getSeller = async () => {
+    try {
       const res = await axiosIWAuth.get('/seller');
-      if(res.data.valid){
+      if (res.data.valid) {
         setSeller(res.data.seller)
       }
-    }catch(error){
+    } catch (error) {
       console.error('Error fetching seller:', error);
-      
-  const getSellerRemittance = async () => {
-    try {
-      const res = await axiosIWAuth.get('/seller/remittance');
-      if (res.data?.valid) {
-        setSellerRemittance(res.data.remittanceOrders);
+
+      const getSellerRemittance = async () => {
+        try {
+          const res = await axiosIWAuth.get('/seller/remittance');
+          if (res.data?.valid) {
+            setSellerRemittance(res.data.remittanceOrders);
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
       }
-    } catch (error) {
-      console.error('Error fetching data:', error);
+
+      const getSellerRemittanceDetails = async (id: string) => {
+        try {
+          const res = await axiosIWAuth.get(`/seller/remittance/${id}`);
+          if (res.data?.valid) {
+            return res.data.remittanceOrder;
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+
+      const getOrderDetails = async (orderId: string) => {
+        try {
+          const res = await axiosIWAuth.get(`/order/${orderId}`);
+          if (res.data?.valid) {
+            return res.data.order;
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+
+      useEffect(() => {
+        if (!userToken) return;
+        getHub();
+        getSellerDashboardDetails()
+        getSeller();
+        getSellerRemittance();
+      }, [userToken]);
+
+      useEffect(() => {
+        if (!userToken) return;
+        getAllOrdersByStatus(status || "all")
+
+      }, [userToken, status]);
+
+      return (
+        <SellerContext.Provider
+          value={{
+            seller,
+            isOrderCreated,
+            business,
+            sellerFacilities,
+            handlebusinessDropdown,
+            sellerCustomerForm,
+            setSellerCustomerForm,
+            getHub,
+            handleCreateOrder,
+            orders,
+            getAllOrdersByStatus,
+            getCourierPartners,
+            courierPartners,
+            handleCreateD2CShipment,
+            handleCancelOrder,
+            manifestOrder,
+            getCityStateFPincode,
+            sellerDashboard,
+            handleUpdateOrder,
+            calcRate,
+            getSellerRemittanceDetails,
+            sellerRemittance,
+            getOrderDetails,
+
+
+          }}
+        >
+          {children}
+        </SellerContext.Provider>
+      );
     }
   }
-
-  const getSellerRemittanceDetails = async (id: string) => {
-    try {
-      const res = await axiosIWAuth.get(`/seller/remittance/${id}`);
-      if (res.data?.valid) {
-        return res.data.remittanceOrder;
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }
-
-  useEffect(() => {
-    if (!userToken) return;
-    getHub();
-    getSellerDashboardDetails()
-    getSeller();
-    getSellerRemittance();
-  }, [userToken]);
-
-  useEffect(() => {
-    if (!userToken) return;
-    getAllOrdersByStatus(status || "all")
-
-  }, [userToken, status]);
-
-  return (
-    <SellerContext.Provider
-      value={{
-        seller,
-        isOrderCreated,
-        business,
-        sellerFacilities,
-        handlebusinessDropdown,
-        sellerCustomerForm,
-        setSellerCustomerForm,
-        getHub,
-        handleCreateOrder,
-        orders,
-        getAllOrdersByStatus,
-        getCourierPartners,
-        courierPartners,
-        handleCreateD2CShipment,
-        handleCancelOrder,
-        manifestOrder,
-        getCityStateFPincode,
-        sellerDashboard,
-        handleUpdateOrder,
-        calcRate,
-        getSellerRemittanceDetails,
-        sellerRemittance
-
-
-      }}
-    >
-      {children}
-    </SellerContext.Provider>
-  );
 }
 
 export default SellerProvider;
