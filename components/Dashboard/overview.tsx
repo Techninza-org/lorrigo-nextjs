@@ -19,7 +19,7 @@ export const Overview = () => {
 
       {
         business == "D2B" ? (
-          <Card className="max-w-screen-sm flex-1 shadow-lg">
+          <Card className="max-w-screen-lg flex-1 shadow-lg">
             <CardHeader>
               <CardTitle>B2B Order</CardTitle>
             </CardHeader>
@@ -36,7 +36,7 @@ export const Overview = () => {
             </CardFooter>
           </Card>
         ) : (
-          <Card className="max-w-screen-sm flex-1 shadow-lg">
+          <Card className="max-w-screen-lg flex-1 shadow-lg">
             <CardHeader>
               <CardTitle>D2C Order</CardTitle>
             </CardHeader>
@@ -56,7 +56,7 @@ export const Overview = () => {
           </Card>
         )
       }
-      <Card className="max-w-screen-sm flex-1 shadow-lg">
+      <Card className="max-w-screen-lg flex-1 shadow-lg">
         <CardHeader>
           <CardTitle>Rate Calculator</CardTitle>
         </CardHeader>

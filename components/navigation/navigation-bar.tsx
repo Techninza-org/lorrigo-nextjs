@@ -73,7 +73,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             </div>
             <div
                 className={cn(
-                    "container transition-all duration-300 ease-in-out pt-20 space-y-3",
+                    "container max-w-screen-2xl transition-all duration-300 ease-in-out pt-20 space-y-3",
                     isNavCollapsed ? "pl-14" : "pl-64"
                 )}
             >

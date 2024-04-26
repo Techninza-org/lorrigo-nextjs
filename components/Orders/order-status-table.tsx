@@ -39,6 +39,7 @@ import { useSearchParams } from "next/navigation"
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [filtering, setFiltering] = React.useState<string>("")
+  console.log(filtering, "filtering")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
