@@ -79,8 +79,8 @@ export const AddPickupLocationModal = () => {
     });
 
 
-    const { cityState: cityStateRes } = useFetchCityState(form.watch("pincode"));
-    const { cityState: rtoCityStateRes } = useFetchCityState(form.watch("rtoPincode"));
+    const { cityState: cityStateRes, loading: isPinloading } = useFetchCityState(form.watch("pincode"));
+    const { cityState: rtoCityStateRes, loading: isRTOPinloading } = useFetchCityState(form.watch("rtoPincode"));
 
     useEffect(() => {
         if (cityStateRes) {
@@ -134,7 +134,7 @@ export const AddPickupLocationModal = () => {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <AddPickupLocationForm form={form} isLoading={isLoading} />
+                        <AddPickupLocationForm isLoading={isLoading} form={form} isPinLoading={isPinloading} isRTOPinLoading={isRTOPinloading} />
                         <DialogFooter className="px-6 py-4">
                             <Button onClick={() => form.reset()} disabled={isLoading} variant={'secondary'} type='button'>
                                 Reset
@@ -150,7 +150,7 @@ export const AddPickupLocationModal = () => {
     )
 };
 
-export const AddPickupLocationForm = ({ form, isLoading }: { form: any, isLoading: boolean }) => {
+export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinLoading }: { isRTOPinLoading: boolean, isLoading: boolean, isPinLoading: boolean, form: any }) => {
     return (
         <div className="grid grid-cols-2 px-6 gap-3">
             <FormField
@@ -285,7 +285,7 @@ export const AddPickupLocationForm = ({ form, isLoading }: { form: any, isLoadin
                         </FormLabel>
                         <FormControl>
                             <Input
-                                disabled={isLoading}
+                                disabled={isLoading || isPinLoading}
                                 className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                 placeholder="Enter the city"
                                 {...field}
@@ -305,7 +305,7 @@ export const AddPickupLocationForm = ({ form, isLoading }: { form: any, isLoadin
                         </FormLabel>
                         <FormControl>
                             <Input
-                                disabled={isLoading}
+                                disabled={isLoading || isPinLoading}
                                 className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                 placeholder="Enter the state"
                                 {...field}
@@ -394,7 +394,7 @@ export const AddPickupLocationForm = ({ form, isLoading }: { form: any, isLoadin
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            disabled={isLoading}
+                                            disabled={isLoading || isRTOPinLoading}
                                             className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             placeholder="Enter the city"
                                             {...field}
@@ -434,7 +434,7 @@ export const AddPickupLocationForm = ({ form, isLoading }: { form: any, isLoadin
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            disabled={isLoading}
+                                            disabled={isLoading || isRTOPinLoading}
                                             className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             placeholder="Enter the state"
                                             {...field}

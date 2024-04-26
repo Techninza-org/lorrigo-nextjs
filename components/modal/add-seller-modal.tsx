@@ -87,7 +87,7 @@ export const AddSellerModal = () => {
     const { formState: { errors } } = form;
 
     const pincode = form.watch('sellerDetails.sellerPincode');
-    const { cityState: cityStateRes } = useFetchCityState(pincode)
+    const { cityState: cityStateRes, loading } = useFetchCityState(pincode)
 
     useEffect(() => {
         if (cityStateRes) {
@@ -136,7 +136,11 @@ export const AddSellerModal = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
 
-                        <SellerForm isLoading={isLoading} form={form} />
+                        <SellerForm
+                            isLoading={isLoading}
+                            form={form}
+                            isPinLoading={loading}
+                        />
                         <DialogFooter className="px-6 py-4">
                             <Button onClick={() => form.reset()} disabled={isLoading} variant={'secondary'} type='button'>
                                 Reset
@@ -152,7 +156,7 @@ export const AddSellerModal = () => {
     )
 };
 
-export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any }) => {
+export const SellerForm = ({ isLoading, form, isPinLoading }: { isLoading: boolean, isPinLoading: boolean, form: any }) => {
     return (
         <div className="grid grid-cols-2 px-6 gap-3">
             <FormField
@@ -292,7 +296,7 @@ export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any 
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            disabled={isLoading}
+                                            disabled={isLoading || isPinLoading}
                                             className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             placeholder="Enter the city"
                                             {...field}
@@ -312,7 +316,7 @@ export const SellerForm = ({ isLoading, form }: { isLoading: boolean, form: any 
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            disabled={isLoading}
+                                            disabled={isLoading || isPinLoading}
                                             className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             placeholder="Enter the state"
                                             {...field}

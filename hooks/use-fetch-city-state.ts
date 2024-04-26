@@ -21,6 +21,7 @@ const useFetchCityState = (pincode: string) => {
             setLoading(true);
             try {
                 const response = await getCityStateFPincode(pincode);
+                console.log(response, "response")
                 setCityState({ city: response.city, state: response.state });
                 
                 setError(null);

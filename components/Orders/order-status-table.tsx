@@ -39,6 +39,7 @@ import { useSearchParams } from "next/navigation"
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [filtering, setFiltering] = React.useState<string>("")
+  console.log(filtering, "filtering")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
@@ -52,19 +53,19 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    // onSortingChange: setSorting,
+    // onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
+    // getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    enableSorting: false,
+    // onColumnVisibilityChange: setColumnVisibility,
+    // onRowSelectionChange: setRowSelection,
+    // enableSorting: false,
     state: {
-      columnFilters,
-      columnVisibility,
-      rowSelection,
+      // columnFilters,
+      // columnVisibility,
+      // rowSelection,
       globalFilter: filtering
     },
     onGlobalFilterChange: setFiltering
