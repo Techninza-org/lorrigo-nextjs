@@ -132,7 +132,7 @@ export const EditPickupLocationModal = () => {
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <AddPickupLocationForm form={form} isLoading={isLoading} />
+                        <AddPickupLocationForm form={form} isLoading={isLoading} isRTOPinLoading={false} isPinLoading={false} />
                         <DialogFooter className="px-6 py-4">
                             {/* <Button onClick={() => form.reset()} disabled={isLoading} variant={'secondary'} type='button'>
                                 Reset

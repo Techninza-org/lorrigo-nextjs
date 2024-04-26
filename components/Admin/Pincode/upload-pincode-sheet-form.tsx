@@ -16,7 +16,6 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Select from 'react-select';
 
-
 export const UploadPincodesSchema = z.object({
     partner: z.string().min(1, "Partner is required"),
     upload_sheet: z.string().min(1, "Please choose CSV version of file"),

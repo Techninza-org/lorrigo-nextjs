@@ -11,28 +11,28 @@ interface KycContextType {
     setVerifyOtpOpen: React.Dispatch<React.SetStateAction<boolean>>;
     onHandleNext: () => void;
     onHandleBack: () => void;
-    businessType: string | "";
-    photoUrl: Buffer | "";
-    gstin: string | "";
-    pan: string | "";
-    document1Front: string | "";
-    document1Back: string | "";
-    document2Front: string | "";
-    document2Back: string | "";
+    businessType: string;
+    photoUrl: Buffer | "";   
+    gstin: string;
+    pan: string;
+    document1Front: string;
+    document1Back: string;
+    document2Front: string;
+    document2Back: string;
     submitted: boolean;
     verified: boolean;
 }
 
 interface KycFormType {
-    businessType: string | "";
+    businessType: string;
     photoUrl: Buffer | "";
-    gstin: string | "";
-    pan: string | "";
+    gstin: string;
+    pan: string;
     verifyOtpOpen: boolean;
-    document1Front: string | "";
-    document1Back: string | "";
-    document2Front: string | "";
-    document2Back: string | "";
+    document1Front: string;
+    document1Back: string;
+    document2Front: string;
+    document2Back: string;
     submitted: boolean;
     verified: boolean;
 }

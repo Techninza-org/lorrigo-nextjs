@@ -156,35 +156,6 @@ export interface B2COrderType {
   __v?: number;
 }
 
-export interface SettingType {
-  companyId?: string;
-  companyName?: string;
-  email?: string;
-  website?: string;
-  logo?: string;
-  old?: string;
-  new?: string;
-  re_new?: string;
-  address_line_1?: string;
-  address_line_2?: string;
-  pincode?: string;
-  city?: string;
-  state?: string;
-  phone?: string;
-  holder_name?: string;
-  acc_type?: string;
-  acc_number?: string;
-  ifsc_number?: string;
-  gstin?: string;
-  deductTDS?: string;
-  tan?: string;
-  companyEmail?: string;
-  //////// add-pickup-location.tsx
-  name?: string;
-  address1?: string;
-  address2?: string;
-}
-
 export interface AdminType {
   partner?: string;
   upload_sheet?: string;

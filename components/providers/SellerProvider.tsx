@@ -37,6 +37,7 @@ interface SellerContextType {
   getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
   sellerRemittance: RemittanceType[] | null;
   getOrderDetails: (orderId: string) => Promise<B2COrderType | undefined>;
+  getSeller: () => void;
 }
 
 interface sellerCustomerFormType {
@@ -568,90 +569,92 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error('Error fetching seller:', error);
-
-      const getSellerRemittance = async () => {
-        try {
-          const res = await axiosIWAuth.get('/seller/remittance');
-          if (res.data?.valid) {
-            setSellerRemittance(res.data.remittanceOrders);
-          }
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      }
-
-      const getSellerRemittanceDetails = async (id: string) => {
-        try {
-          const res = await axiosIWAuth.get(`/seller/remittance/${id}`);
-          if (res.data?.valid) {
-            return res.data.remittanceOrder;
-          }
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      }
-
-      const getOrderDetails = async (orderId: string) => {
-        try {
-          const res = await axiosIWAuth.get(`/order/${orderId}`);
-          if (res.data?.valid) {
-            return res.data.order;
-          }
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
-      }
-
-      useEffect(() => {
-        if (!userToken) return;
-        getHub();
-        getSellerDashboardDetails()
-        getSeller();
-        getSellerRemittance();
-      }, [userToken]);
-
-      useEffect(() => {
-        if (!userToken) return;
-        getAllOrdersByStatus(status || "all")
-
-      }, [userToken, status]);
-
-      return (
-        <SellerContext.Provider
-          value={{
-            seller,
-            isOrderCreated,
-            business,
-            sellerFacilities,
-            handlebusinessDropdown,
-            sellerCustomerForm,
-            setSellerCustomerForm,
-            getHub,
-            handleCreateOrder,
-            orders,
-            getAllOrdersByStatus,
-            getCourierPartners,
-            courierPartners,
-            handleCreateD2CShipment,
-            handleCancelOrder,
-            manifestOrder,
-            getCityStateFPincode,
-            sellerDashboard,
-            handleUpdateOrder,
-            calcRate,
-            getSellerRemittanceDetails,
-            sellerRemittance,
-            getOrderDetails,
-
-
-          }}
-        >
-          {children}
-        </SellerContext.Provider>
-      );
     }
   }
+
+  const getSellerRemittance = async () => {
+    try {
+      const res = await axiosIWAuth.get('/seller/remittance');
+      if (res.data?.valid) {
+        setSellerRemittance(res.data.remittanceOrders);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  const getSellerRemittanceDetails = async (id: string) => {
+    try {
+      const res = await axiosIWAuth.get(`/seller/remittance/${id}`);
+      if (res.data?.valid) {
+        return res.data.remittanceOrder;
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  const getOrderDetails = async (orderId: string) => {
+    try {
+      const res = await axiosIWAuth.get(`/order/${orderId}`);
+      if (res.data?.valid) {
+        return res.data.order;
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  useEffect(() => {
+    if (!userToken) return;
+    getHub();
+    getSellerDashboardDetails()
+    getSeller();
+    getSellerRemittance();
+  }, [userToken]);
+
+  useEffect(() => {
+    if (!userToken) return;
+    getAllOrdersByStatus(status || "all")
+
+  }, [userToken, status]);
+
+  return (
+    <SellerContext.Provider
+      value={{
+        seller,
+        isOrderCreated,
+        business,
+        sellerFacilities,
+        handlebusinessDropdown,
+        sellerCustomerForm,
+        setSellerCustomerForm,
+        getHub,
+        handleCreateOrder,
+        orders,
+        getAllOrdersByStatus,
+        getCourierPartners,
+        courierPartners,
+        handleCreateD2CShipment,
+        handleCancelOrder,
+        manifestOrder,
+        getCityStateFPincode,
+        sellerDashboard,
+        handleUpdateOrder,
+        calcRate,
+        getSellerRemittanceDetails,
+        sellerRemittance,
+        getOrderDetails,
+        getSeller
+
+
+      }}
+    >
+      {children}
+    </SellerContext.Provider>
+  );
 }
+
 
 export default SellerProvider;
 
