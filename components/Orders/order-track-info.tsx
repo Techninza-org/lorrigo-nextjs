@@ -9,10 +9,11 @@ import { ClipboardList, Copy, Package2, ShoppingCartIcon, UserRound } from "luci
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils"
 import { Button } from "../ui/button"
 import { formatPhoneNumberIntl } from "react-phone-number-input"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { B2COrderType } from "@/types/types"
 import { useSellerProvider } from "../providers/SellerProvider"
 import { useAuth } from "../providers/AuthProvider"
+import { LoadingComponent } from "../loading-spinner"
 
 export const OrderTrackInfo = () => {
     const params = useParams()
@@ -33,11 +34,23 @@ export const OrderTrackInfo = () => {
             setOrderDetails(null)
         }
     }, [userToken, params])
+
+    if(!order) return (
+        <div className="grid grid-cols-6 gap-3">
+            <Card className="col-span-6">
+                <CardContent>
+                    <LoadingComponent />
+                </CardContent>
+            </Card>
+        </div>
+    )
     
  
 
     return (
         <div className="grid grid-cols-6 gap-3">
+            <Suspense fallback={<LoadingComponent/>}>
+
             <Card className="col-span-4">
                 <CardHeader>
                     <CardTitle className="flex justify-between">
@@ -222,6 +235,7 @@ export const OrderTrackInfo = () => {
                 </CardContent>
             </Card>
 
+            </Suspense>
 
         </div>
     )

@@ -19,12 +19,10 @@ export function UserAvatar() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="secondary" className="relative h-8 w-8 rounded-full ">
+                <Button variant="secondary" size={"icon"} className="relative h-8 w-8 rounded-full text-xl ">
                     <Avatar className="h-8 w-8">
                         <AvatarFallback>
-                           <Button size={"icon"} className="text-xl" variant={"ghost"}>
                             {user?.name?.split('')[0]}
-                           </Button>
                         </AvatarFallback>
                     </Avatar>
                 </Button>

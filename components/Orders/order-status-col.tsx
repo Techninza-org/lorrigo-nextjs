@@ -6,7 +6,7 @@ import { formatDate } from "date-fns";
 import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
 import { Badge } from "../ui/badge";
-import { OrderButton } from "./order-action-button";
+import { OrderButton, getBucketStatus } from "./order-action-button";
 import Link from "next/link";
 
 export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
@@ -106,8 +106,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
 
             return (
                 <div className="space-y-1">
-                    <Badge variant={orderStage?.stage == -1 ? "failure" : "success"}>{orderStage?.action}
-                    </Badge>
+                     <Badge variant={rowData?.bucket == 6 ? "failure" : "success"}>{getBucketStatus(rowData?.bucket ?? 0)}</Badge>
                     <p>{formatDate(`${orderStage?.stageDateTime}`, 'dd MM yyyy | HH:mm a')}</p>
                 </div>
             )

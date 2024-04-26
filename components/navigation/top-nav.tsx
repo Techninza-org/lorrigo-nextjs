@@ -48,9 +48,7 @@ export function TopNav() {
 
                     <Separator orientation="vertical" className="w-[1px] bg-gray-400" />
                     
-                    <div>
                         <UserAvatar/>
-                    </div>
                 </div>
             </nav>
         </div>

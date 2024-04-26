@@ -308,7 +308,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
   const handleUpdateOrder = useCallback(async (order: z.infer<typeof EditFormSchema>) => {
-    console.log(sellerCustomerForm, "order")
     try {
       const customerDetailsPayload = order.customerDetails && order.customerDetails.name.length > 0
         ? {
@@ -434,7 +433,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
-      console.log(res.data.order.awb, "res")
       if (res.data.order.awb) {
         toast({
           variant: "default",
@@ -468,7 +466,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         orderId: orderId,
         type: type
       });
-      console.log(res.data, "res")
       if (res.data?.valid) {
         toast({
           variant: "default",

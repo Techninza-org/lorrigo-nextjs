@@ -12,17 +12,21 @@ import { useSellerProvider } from "../providers/SellerProvider"
 import { Button } from "../ui/button"
 import { CircleAlert, TriangleAlertIcon } from "lucide-react"
 import { useModal } from "@/hooks/use-model-store"
+import { useState } from "react"
 
 
 export const CancelOrderDialog = () => {
     const { handleCancelOrder } = useSellerProvider()
     const { onClose, type, isOpen, data } = useModal();
+    const [isLoading, setIsLoading] = useState(false)
     const { order } = data
     const isModalOpen = isOpen && type === "cancelOrder";
 
     const handleOrder = async (orderId: string, type: "order" | "shipment") => {
+        setIsLoading(true)
         const res = await handleCancelOrder(orderId, type);
         if (res) {
+            setIsLoading(false)
             handleClose();
         }
     }
@@ -48,13 +52,13 @@ export const CancelOrderDialog = () => {
                     </div>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant={"destructive"} className="w-full" onClick={() => handleOrder(order?._id ?? "", "order")}>
+                    <Button variant={"destructive"} disabled={isLoading} className="w-full" onClick={() => handleOrder(order?._id ?? "", "order")}>
                         Cancel Order
                     </Button>
 
                     {
                         order?.awb ? (
-                            <Button variant={"secondary"} className="w-full" onClick={() => handleOrder(order?._id ?? "", "shipment")}>
+                            <Button variant={"secondary"} disabled={isLoading} className="w-full" onClick={() => handleOrder(order?._id ?? "", "shipment")}>
                                 Cancel Shipment
                             </Button>
                         ) : null

@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import * as z from 'zod';
 import { Input } from "../ui/input";
-import { cn, formatCurrencyForIndia } from "@/lib/utils";
+import { cn, formatCurrencyForIndia, getSvg, removeWhitespaceAndLowercase } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useEffect, useState } from "react";
 import { MapPin } from "lucide-react";
@@ -444,11 +444,14 @@ export const RateCalcForm = () => {
                                 </TableHeader>
                                 <TableBody>
                                     {
-                                        courierCalcRate?.map((partner: any) => {
-                                            return <TableRow key={partner.carrierID}>
+                                        courierCalcRate?.map((partner: any, i: number) => {
+                                            console.log(getSvg(removeWhitespaceAndLowercase(partner?.name ?? "")))
+                                            return <TableRow key={i}>
                                                 <TableCell>
                                                     <div className="flex items-center">
-                                                        <Image className="mr-2" src={"/assets/logo.png"} width={35} height={35} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>
+                                                        <Image className="mr-2 mix-blend-multiply"
+                                                            src={getSvg(removeWhitespaceAndLowercase(partner?.name ?? ""))}
+                                                            width={55} height={55} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>
                                                     <div>RTO Charges : {formatCurrencyForIndia(partner.charge ?? 0)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>

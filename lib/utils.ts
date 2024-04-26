@@ -4,7 +4,9 @@ import { twMerge } from "tailwind-merge"
 import BluedartSVG from "../components/SVGs/bluedart.svg"
 import EcommSVG from "../components/SVGs/ecom.svg"
 import XBSVG from "../components/SVGs/xb.svg"
+import DTDCSVG from "../components/SVGs/dtdc.svg"
 import DelhiverySVG from "../components/SVGs/delhivery.svg"
+import LogoPNG from "../components/SVGs/logo.png"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -50,25 +52,26 @@ export const handleCopyText = (text: string) => {
 }
 
 export function removeWhitespaceAndLowercase(text: string) {
-  const processedText = text.replace(/\s+/g, '').toLowerCase();
+  const processedText = text?.replace(/\s+/g, '').toLowerCase();
   return processedText;
 }
 
 const SVGMAP = {
   "bluedart": BluedartSVG,
   "delhivery": DelhiverySVG,
-  "dtdc": "/assets/dtdc.svg",
+  "dtdc": DTDCSVG,
   "ecom": EcommSVG,
   "xpressbees": XBSVG,
+  "default": "/assets/logo.png",
 }
 
 export function getSvg(name: string) {
   for (const key in SVGMAP) {
-      if (name.includes(key)) {
+      if (name?.includes(key) ) {
           return SVGMAP[key as keyof typeof SVGMAP];
       }
   }
-  return null;
+  return LogoPNG;
 }
 
 

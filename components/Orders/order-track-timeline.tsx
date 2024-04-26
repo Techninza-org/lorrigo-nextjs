@@ -13,8 +13,9 @@ export const OrderTrackTimeline: React.FC<OrderTrackTimelineProps> = ({ order })
 
     return (
         <Tabs defaultValue="Activity_log" className="w-[400px]">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="Activity_log">Activity Log</TabsTrigger>
+            {/* <TabsList className="grid w-full grid-cols-2"> */}
+            <TabsList className="w-full">
+                <TabsTrigger value="Activity_log" className='w-full'>Activity Log</TabsTrigger>
                 {/* <TabsTrigger value="tracking_info">Tracking Info</TabsTrigger> */}
             </TabsList>
             <TabsContent value="Activity_log">

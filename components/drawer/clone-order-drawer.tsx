@@ -193,7 +193,6 @@ export function CloneOrderDrawer() {
 
     const onSubmit = async (values: z.infer<typeof cloneFormSchema>) => {
         try {
-            console.log(values, 'values')
             const isSuccess = await handleCreateOrder(values)
             if (isSuccess == true) {
                 // form.reset();
