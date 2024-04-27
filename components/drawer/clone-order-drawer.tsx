@@ -83,6 +83,7 @@ export function CloneOrderDrawer() {
                 sellerCity: "",
                 sellerState: "",
                 sellerPhone: "",
+                country: "India",
             },
             customerDetails: {
                 name: "",
@@ -99,11 +100,11 @@ export function CloneOrderDrawer() {
 
     const customerPincode = form.watch("customerDetails.pincode").toString();
 
-    const { cityState: customerCityState,  } = useFetchCityState(customerPincode);
+    const { cityState: customerCityState, isTyping: isCusPinLoading, loading } = useFetchCityState(customerPincode);
 
     const sellerPincode = form.watch("sellerDetails.sellerPincode").toString();
 
-    const { cityState: sellerCityState,  } = useFetchCityState(sellerPincode);
+    const { cityState: sellerCityState, isTyping: isSellerPinLoading, } = useFetchCityState(sellerPincode);
 
     useEffect(() => {
         form.setValue('order_reference_id', order?.order_reference_id || '');
@@ -130,7 +131,7 @@ export function CloneOrderDrawer() {
         form.setValue('sellerDetails.sellerName', order?.sellerDetails?.sellerName || "");
         form.setValue('sellerDetails.sellerGSTIN', order?.sellerDetails?.sellerGSTIN || "");
         form.setValue('sellerDetails.isSellerAddressAdded', order?.sellerDetails?.isSellerAddressAdded || false);
-        form.setValue('sellerDetails.sellerPincode', order?.sellerDetails?.sellerPincode || "");
+        form.setValue('sellerDetails.sellerPincode', order?.sellerDetails?.sellerPincode?.toString() === "0" ? "" : order?.sellerDetails?.sellerPincode?.toString() || "");
         form.setValue('sellerDetails.sellerAddress', order?.sellerDetails?.sellerAddress || "");
         form.setValue('sellerDetails.sellerPhone', order?.sellerDetails?.sellerPhone?.toString() || "");
         form.setValue('sellerDetails.sellerCity', order?.sellerDetails?.sellerCity || "");
@@ -147,14 +148,15 @@ export function CloneOrderDrawer() {
     }, [form, order]);
 
     useEffect(() => {
-        if (customerCityState.city && !order?.customerDetails?.city) {
+
+        if (customerCityState.city && (order?.customerDetails?.pincode.toString() !== customerPincode?.toString())) {
             form.setValue('customerDetails.city', customerCityState.city);
             form.setValue('customerDetails.state', customerCityState.state);
         }
     }, [customerCityState.city, customerCityState.state, form, order?.customerDetails?.city]);
 
     useEffect(() => {
-        if (sellerCityState.city && !order?.sellerDetails?.sellerCity) {
+        if (sellerCityState.city && (order?.sellerDetails?.sellerPincode?.toString() !== sellerPincode?.toString())) {
             form.setValue('sellerDetails.sellerCity', sellerCityState.city);
             form.setValue('sellerDetails.sellerState', sellerCityState.state);
         }
@@ -246,7 +248,7 @@ export function CloneOrderDrawer() {
                                     <SellerForm
                                         form={form}
                                         isLoading={isLoading}
-                                        isPinLoading={false}
+                                        isPinLoading={isSellerPinLoading}
                                     />
                                 </div>
 
@@ -302,7 +304,7 @@ export function CloneOrderDrawer() {
                                     <AddCustomerForm
                                         form={form}
                                         isLoading={isLoading}
-                                        isPinLoading={false}
+                                        isPinLoading={isCusPinLoading}
                                     />
                                 </div>
 

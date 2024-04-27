@@ -30,11 +30,12 @@ import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect, useState } from 'react';
 import { useToast } from '../ui/use-toast';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
+import { LoadingSpinner } from '../loading-spinner';
 
 export const customerDetailsSchema = z.object({
     customerDetails: z.object({
         name: z.string().min(1, "Name is required"),
-        phone: z.string().refine(isValidPhoneNumber, { message: "Invalid phone number" }),
+        phone: z.string().refine(isValidPhoneNumber, { message: "Phone number is required" }),
         address: z.string().min(1, "Address is required"),
         address2: z.string().optional(),
         state: z.string().min(1, "State is required"),
@@ -72,7 +73,7 @@ export const AddCustomerModal = () => {
 
     const pincode = form.watch("customerDetails.pincode");
 
-    const { cityState: cityStateRes, loading } = useFetchCityState(pincode)
+    const { cityState: cityStateRes, isTyping } = useFetchCityState(pincode)
 
     useEffect(() => {
         form.setValue('customerDetails.city', cityStateRes.city)
@@ -126,7 +127,7 @@ export const AddCustomerModal = () => {
                         <AddCustomerForm
                             form={form}
                             isLoading={isLoading}
-                            isPinLoading={loading}
+                            isPinLoading={isTyping}
                         />
                         <DialogFooter className="px-6 py-4">
                             <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => form.reset()}>
@@ -282,12 +283,15 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                                     State
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        disabled={isLoading || isPinLoading}
-                                        className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                        placeholder="Enter the state"
-                                        {...field}
-                                    />
+                                    <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                        <Input
+                                            disabled={isLoading || isPinLoading}
+                                            className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                            placeholder="Enter the state"
+                                            {...field}
+                                        />
+                                        {isPinLoading && <LoadingSpinner />}
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -302,12 +306,15 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                                     City
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        disabled={isLoading || isPinLoading}
-                                        className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                        placeholder="Enter the city"
-                                        {...field}
-                                    />
+                                    <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                        <Input
+                                            disabled={isLoading || isPinLoading}
+                                            className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                            placeholder="Enter the city"
+                                            {...field}
+                                        />
+                                        {isPinLoading && <LoadingSpinner />}
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

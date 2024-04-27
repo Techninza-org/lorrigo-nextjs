@@ -13,6 +13,7 @@ const useFetchCityState = (pincode: string) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [retryAttempts, setRetryAttempts] = useState(0);
+    const [isTyping, setIsTyping] = useState(false); // New state for isTyping
 
     useEffect(() => {
         let timer: NodeJS.Timeout | null = null;
@@ -21,34 +22,31 @@ const useFetchCityState = (pincode: string) => {
             setLoading(true);
             try {
                 const response = await getCityStateFPincode(pincode);
-                console.log(response, "response")
                 setCityState({ city: response.city, state: response.state });
                 
                 setError(null);
                 setRetryAttempts(0);
             } catch (error: AxiosError | any) {
                 setError(error.message);
-            
                 setRetryAttempts(retryAttempts + 1);
-                
             } finally {
                 setLoading(false);
             }
         };
 
-    
         const debounceFetchCityState = (input: string) => {
             clearTimeout(timer!);
             timer = setTimeout(() => {
-            
-                if (retryAttempts < 3) {
+                if (input.length === 6 && retryAttempts < 3) {
                     fetchCityState(); 
                 }
+                setIsTyping(false); // Reset isTyping after debounce timeout
             }, 1500);
         };
 
         if (pincode) {
             debounceFetchCityState(pincode);
+            setIsTyping(true); // Set isTyping when user types
         }
 
         return () => {
@@ -58,7 +56,7 @@ const useFetchCityState = (pincode: string) => {
         };
     }, [pincode, retryAttempts]);
 
-    return { cityState, loading, error };
+    return { cityState, loading, error, isTyping };
 };
 
 export default useFetchCityState;

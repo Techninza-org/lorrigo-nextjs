@@ -42,7 +42,6 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
     },
     {
         header: 'Package Details',
-        accessorKey: 'awb',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -82,7 +81,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
     },
     {
         header: 'Shipping Details',
-        accessorKey: 'Shipment_Details',
+        accessorKey: 'awb',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
