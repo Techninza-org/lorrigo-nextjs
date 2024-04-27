@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Camera } from 'lucide-react';
 
 type PhotoSchema = {
-    photoUrl: Buffer | null,
+    photoUrl: string;
 }
 
 const PhotoIdentification = () => {
@@ -17,7 +17,7 @@ const PhotoIdentification = () => {
     const { onClose } = useModal();
     const { onHandleBack, onHandleNext, formData, setFormData } = useKycProvider();
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
-    const [photoURL, setPhotoURL] = useState<Buffer | null>(null);
+    const [photoURL, setPhotoURL] = useState('')
     const [cameraOn, setCameraOn] = useState<boolean>(false);
     const { toast } = useToast();
 
@@ -54,16 +54,9 @@ const PhotoIdentification = () => {
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
             const newPhotoURL = canvas.toDataURL('image/jpeg');
-            const dataUrlParts = newPhotoURL.split(',');
-            const base64Data = dataUrlParts[1];
-            const byteCharacters = atob(base64Data); 
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            const newPhotoBuffer = Buffer.from(byteArray);
-            setPhotoURL(newPhotoBuffer); 
+            setPhotoURL(newPhotoURL); 
+            console.log('photo: ', newPhotoURL);
+            
             handleStopCamera();
         };
     };
@@ -77,7 +70,7 @@ const PhotoIdentification = () => {
 
     useEffect(() => {
         if (formData?.photoUrl) {
-            setPhotoURL(formData.photoUrl)
+            setPhotoURL(formData.photoUrl) 
         }
     }, [formData]);
 

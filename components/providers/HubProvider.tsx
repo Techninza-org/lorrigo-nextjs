@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useCallback, useContext } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosInstance } from "axios";
 import * as XLSX from 'xlsx';
@@ -35,6 +35,7 @@ interface HubContextType {
     editPickupLocation: (values: z.infer<typeof pickupAddressFormSchema>, id: string) => void;
     addBulkAddresses: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleCreateHubs: (hubs: reqPayload[]) => Promise<any>;
+    handleCompanyLogoChange: (logo: any) => void;
 }
 
 const HubContext = createContext<HubContextType | null>(null);
@@ -47,7 +48,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
     const { toast } = useToast();
     const router = useRouter()
-
+    const [companyLogo, setCompanyLogo] = useState("");
 
     const axiosConfig = {
         baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
@@ -95,7 +96,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             reader.onload = function (e) {
                 const contents = e.target?.result as string;
                 let data: any[];
-    
+
                 // Handle CSV files
                 if (file.name.endsWith('.csv')) {
                     const lines = contents.split('\n');
@@ -104,17 +105,17 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 // Handle XLSX files
                 else if (file.name.endsWith('.xlsx')) {
                     const workbook = XLSX.read(contents, { type: 'binary' });
-                    const sheetName = workbook.SheetNames[0]; 
+                    const sheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[sheetName];
                     data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                 } else {
                     throw new Error('Unsupported file format');
                 }
-    
+
                 const indexNames = ["name", "contactPersonName", "phone", "email", "address1", "pincode", "city", "state"];
-    
+
                 function transformArraysToObjects(data: any[], indexNames: string[]) {
-                    return data.slice(1).map(innerArray => { 
+                    return data.slice(1).map(innerArray => {
                         const obj: { [key: string]: any } = {};
                         innerArray.forEach((item: any, index: number) => {
                             if (typeof item === 'string') {
@@ -181,9 +182,10 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         }
     }, [userToken, axiosIWAuth, getHub, router, toast])
 
-
     const updateCompanyProfile = async (values: z.infer<typeof CompanyProfileSchema>) => {
+
         try {
+            const formData = new FormData();
             const companyName = values?.companyName?.toString() || "";
             const companyEmail = values?.companyEmail?.toString() || "";
             const website = values?.website?.toString() || "";
@@ -195,21 +197,30 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 });
             }
 
-            const companyProfileData = {   ///not providing id and logo yet
-                companyProfile: {
-                    companyName,
-                    companyEmail,
-                    website,
-                }
-            }
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", `Bearer ${userToken}`);
 
-            const userRes = await axiosIWAuth.put("/seller", companyProfileData);
-            if (userRes) {
-                toast({
-                    title: "Success",
-                    description: "Company Profile updated successfully.",
-                });
-            }
+            const formdata = new FormData();
+            formdata.append("logo", companyLogo);
+            formdata.append("companyProfile", `\"{\\\"companyName\\\":\\\"${companyName}\\\",\\\"companyEmail\\\":\\\"${companyEmail}\\\",\\\"website\\\":\\\"${website}\\\"}\"\n`);
+
+
+            const requestOptions = {
+                method: "PUT",
+                headers: myHeaders,
+                body: formdata,
+                redirect: "follow"
+            };
+
+            fetch("http://localhost:4000/api/seller", { ...requestOptions, redirect: 'follow' })
+                .then((response) => response.json())
+                .then((result) => console.log(result))
+                .catch((error) => console.error(error));
+
+            toast({
+                title: "Success",
+                description: "Company Profile updated successfully.",
+            });
 
         } catch (error) {
             toast({
@@ -328,7 +339,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         try {
             const name = values?.facilityName?.toString() || "";
             const contactPersonName = values?.contactPersonName?.toString() || "";
-            const phone = values?.pickupLocContact?.toString() || "";
+            const phone = values?.phone?.toString() || "";
             const email = values?.email?.toString() || "";
             const address1 = values?.address?.toString() || "";
             const address2 = values?.address?.toString() || "";
@@ -380,6 +391,11 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const handleCompanyLogoChange = (logo: any) => {
+        console.log(logo);
+        setCompanyLogo(logo);
+    }
+
     return (
         <HubContext.Provider
             value={{
@@ -390,8 +406,8 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 uploadGstinInvoicing,
                 editPickupLocation,
                 addBulkAddresses,
-                handleCreateHubs
-
+                handleCreateHubs,
+                handleCompanyLogoChange
             }}
         >
             {children}

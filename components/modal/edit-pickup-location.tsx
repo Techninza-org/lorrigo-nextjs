@@ -12,30 +12,16 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage
+    Form
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-model-store";
-import { Checkbox } from '../ui/checkbox';
 import { AddPickupLocationForm, pickupAddressFormSchema } from './add-pickup-location';
-import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect, } from 'react';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
 import { useHubProvider } from '../providers/HubProvider';
-import { format } from 'path';
-import { formatPhoneNumberIntl } from 'react-phone-number-input';
-
-
-
 
 export const EditPickupLocationModal = () => {
     const { sellerFacilities } = useSellerProvider();
@@ -52,7 +38,7 @@ export const EditPickupLocationModal = () => {
         defaultValues: {
             facilityName: "",
             contactPersonName: "",
-            pickupLocContact: "",
+            phone: "",
             email: "",
             address: "",
             country: "India",
@@ -69,17 +55,19 @@ export const EditPickupLocationModal = () => {
 
 
     useEffect(() => {
+        
         if (hub) {
+            console.log(hub.phone);
             form.setValue('facilityName', hub.name || '');
             form.setValue('contactPersonName', hub.contactPersonName || '');
-            form.setValue('pickupLocContact', `+${hub.phone}` || '');
+            form.setValue('phone', `+${hub.phone}` || '');  
             form.setValue('email', hub?.email || '');
             form.setValue('address', hub.address1 || '');
             form.setValue('pincode', String(hub.pincode) || '');
             form.setValue('city', hub.city || '');
             form.setValue('state', hub.state || '');
             // form.setValue('rtoAddress', hub.rtoAddress || '');
-            // form.setValue('isRTOAddressSame', hub.isRTOAddressSame || false);
+            // form.setValue('isRTOAddressSame', hub.isRTOAddressSame || true);
             // form.setValue('rtoCity', hub.rtoCity || '');
             // form.setValue('rtoState', hub.rtoState || '');
             // form.setValue('rtoPincode', String(hub.rtoPincode) || '');

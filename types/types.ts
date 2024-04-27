@@ -50,23 +50,6 @@ export type AuthType = {
   role?: string;
 };
 
-// export interface HubType {
-//   _id?: string;
-//   sellerId?: string;
-//   name?: string;
-//   email?: string;
-//   contactPersonName?: string;
-//   pincode?: number;
-//   city?: string;
-//   state?: string;
-//   address1?: string;
-//   address2?: string;
-//   phone?: number;
-//   delivery_type_id?: number;
-//   hub_id?: number;
-//   __v?: number;
-// }
-
 export interface ProductDetailsType {
   _id: string;
   name: string;
@@ -100,6 +83,7 @@ export interface pickupAddressType {
   state: string;
   address1: string;
   address2?: string;
+  isRTOAddressSame?: boolean;
   rtoAddress?: string;
   rtoCity?: string;
   rtoState?: string;

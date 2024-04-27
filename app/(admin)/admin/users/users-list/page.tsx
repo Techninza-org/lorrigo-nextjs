@@ -1,8 +1,9 @@
-import { AdminUsersListingCols } from "@/components/Admin/User/users-listing-cols";
-import { UsersListingTable } from "@/components/Admin/User/users-listing-table";
+import UsersList from "@/components/Admin/User/UsersList";
+import { useAdminProvider } from "@/components/providers/AdminProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function UsersListing() {
+    
     return (
         <Card className="col-span-4">
             <CardHeader>
@@ -11,7 +12,7 @@ export default function UsersListing() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-                <UsersListingTable data={[]} columns={AdminUsersListingCols} />
+                <UsersList />
             </CardContent>
         </Card>
     )

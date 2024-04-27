@@ -1,16 +1,18 @@
 "use client";
 
-import React, { createContext, useCallback, useContext } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios, { AxiosInstance } from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
-import { AdminType } from "@/types/types";
+import { AdminType, SellerType } from "@/types/types";
 
 interface AdminContextType {
     handleCreateHub: (hub: AdminType) => void;
+    users: SellerType[];
+    
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -18,6 +20,7 @@ const AdminContext = createContext<AdminContextType | null>(null);
 export default function AdminProvider({ children }: { children: React.ReactNode }) {
     const { getHub } = useSellerProvider()
     const { userToken } = useAuth();
+    const [users, setUsers] = useState([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -55,10 +58,26 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }, [userToken, axiosIWAuth, getHub, router, toast])
 
+    const getAllSellers = async () => {
+        try {
+            const res = await axiosIWAuth.get('/getSellers');
+            setUsers(res.data.sellers);
+        } catch (error) {
+            console.log('Error fetching sellers: ', error);
+            
+        }
+    };
+
+    useEffect(() => {
+        if (!userToken) return;
+        getAllSellers();
+      }, [userToken]);
+
     return (
         <AdminContext.Provider
             value={{
                 handleCreateHub,
+                users
             }}
         >
             {children}

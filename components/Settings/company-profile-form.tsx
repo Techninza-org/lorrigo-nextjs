@@ -31,7 +31,7 @@ export const CompanyProfileForm = () => {
 
   const hiddenFileInput = useRef<HTMLInputElement>(null);
 
-  const { updateCompanyProfile } = useHubProvider();
+  const { updateCompanyProfile, handleCompanyLogoChange } = useHubProvider();
   const { seller } = useSellerProvider();
   const { onClose } = useModal();
   const router = useRouter();
@@ -59,12 +59,11 @@ export const CompanyProfileForm = () => {
   const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {
     try {
       updateCompanyProfile(values);
-      console.log(form.getValues());
 
       form.reset();
       router.refresh();
       onClose();
-      // router.push('/settings');
+      router.push('/settings');
     } catch (error) {
       console.log(error);
     }
@@ -77,13 +76,7 @@ export const CompanyProfileForm = () => {
   const handleChange = (event: any) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const dataURI = reader.result as string;
-      var base64String = dataURI.split(',')[1];
-      form.setValue("logo", base64String);
-    };
-    reader.readAsDataURL(file);
+    handleCompanyLogoChange(file);
   };
 
   return (

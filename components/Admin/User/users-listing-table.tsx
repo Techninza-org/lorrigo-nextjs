@@ -13,8 +13,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
-
+import { Download, Plus, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -26,44 +25,41 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useSearchParams } from "next/navigation"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select"
+import { SellerType } from "@/types/types"
 
-const user = {
-    id: 1,
-    email: 'user@email.com',
-    name: 'User Name',
-    phone: '1234567890',
-    company: 'Company Name',
-    creationDate: '2021-10-10',
-}
+export function UsersListingTable({ data, columns }: { data: SellerType[], columns: ColumnDef<any, any>[] }) {
+    console.log('table: ', data, columns);
 
-export function UsersListingTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
-    const [page, setPage] = React.useState(1)
+    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+        []
+    )
+    const searchParams = useSearchParams()
+    //   const isShipmentVisible = searchParams.get('status') !== 'new'
+    //   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+    //     "Shipment Details": isShipmentVisible,
+    //   });
+    const [rowSelection, setRowSelection] = React.useState({})
+
     const table = useReactTable({
         data,
         columns,
-        // onSortingChange: setSorting,
-        // onColumnFiltersChange: setColumnFilters,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         // onColumnVisibilityChange: setColumnVisibility,
-        // onRowSelectionChange: setRowSelection,
+        onRowSelectionChange: setRowSelection,
         enableSorting: false,
-        // state: {
-        //     columnFilters,
-        //     columnVisibility,
-        //     rowSelection,
-        // },
+        state: {
+            columnFilters,
+            //   columnVisibility,
+            rowSelection,
+        },
     })
-    const totalPages = 5
-    function incrementPage() {
-        setPage(prevPage => Math.min(prevPage + 1, totalPages));
-    }
-    function decrementPage() {
-        setPage(prevPage => Math.max(prevPage - 1, 1));
-    }
+
     return (
         <div className="w-full">
             <div className="flex items-center py-4">
@@ -93,32 +89,61 @@ export function UsersListingTable({ data, columns }: { data: any[], columns: Col
                             </TableRow>
                         ))}
                     </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected()}
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    No results.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
                 </Table>
             </div>
-            <div className='flex mt-10'>
-                <div className='flex align-center w-1/2'>
-                    <p className='grid place-content-center'>Show </p>
-                    <Select>
-                        <SelectTrigger className='w-[70px] mx-4'>
-                            <SelectValue
-                                placeholder="15"
-                            />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value={'15'}>15</SelectItem>
-                            <SelectItem value={'20'}>20</SelectItem>
-                            <SelectItem value={'25'}>25</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <p className='grid place-content-center'> items per page</p>
+            <div className="flex items-center justify-end space-x-2 py-4">
+                <div className="flex-1 text-sm text-muted-foreground">
+                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                    {table.getFilteredRowModel().rows.length} row(s) selected.
                 </div>
-
-                <div className='flex gap-x-4 justify-center h-full -ml-36'>
-                    <button className='rounded-full p-1 bg-red-500' onClick={decrementPage}><ChevronLeft size={28} color='white' /></button>
-                    <p className='grid place-content-center'>{page} of {totalPages} pages</p>
-                    <button className='rounded-full p-1 bg-red-500' onClick={incrementPage}><ChevronRight size={28} color='white' /></button>
+                <div className="space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
                 </div>
             </div>
         </div>
+
     )
 }
