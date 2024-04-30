@@ -10,6 +10,8 @@ import HubProvider from "@/components/providers/HubProvider";
 import { LoadingProvider } from "@/components/providers/LoadingProvider";
 import { cn } from "@/lib/utils";
 import { DrawerProvider } from "@/components/providers/DrawerProvider";
+import KycProvider from "@/components/providers/KycProvider";
+import AdminProvider from "@/components/providers/AdminProvider";
 
 const inter = IBM_Plex_Sans_Condensed({
   subsets: ["cyrillic-ext"],
@@ -32,12 +34,16 @@ export default function RootLayout({
         <LoadingProvider>
           <AuthProvider>
             <SellerProvider>
-              <HubProvider>
-                <Toaster />
-                <ModalProvider />
-                <DrawerProvider />
-                {children}
-              </HubProvider>
+              <AdminProvider>
+                <HubProvider>
+                  <KycProvider>
+                    <Toaster />
+                    <ModalProvider />
+                    <DrawerProvider />
+                    {children}
+                  </KycProvider>
+                </HubProvider>
+              </AdminProvider>
             </SellerProvider>
           </AuthProvider>
         </LoadingProvider>

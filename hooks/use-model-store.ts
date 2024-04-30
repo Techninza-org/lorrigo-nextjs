@@ -1,14 +1,14 @@
-import { B2COrderType, CustomerDetailsType, HubType, SellerType } from "@/types/types";
+import { B2COrderType, CustomerDetailsType, SellerType, pickupAddressType } from "@/types/types";
 import { create } from "zustand";
 
 
-export type ModalType = "wallet" | "addPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest" | "ndrOrder" | "ndrRTOrder";
+export type ModalType = "wallet" | "addPickupLocation" | "editPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest" | "ndrOrder" | "ndrRTOrder";
 interface ModalData {
   form?: any;
   customer?: CustomerDetailsType;
   order?: B2COrderType;
   seller?: SellerType;
-  hub?: HubType;
+  hub?: pickupAddressType;
   apiUrl?: string;
   query?: Record<string, any>;
 }

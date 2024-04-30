@@ -36,7 +36,7 @@ import { LoadingSpinner } from '../loading-spinner';
 export const pickupAddressFormSchema = z.object({
     facilityName: z.string().min(1, "Facility name is required"),
     contactPersonName: z.string().min(1, "Contact person name is required"),
-    pickupLocContact: z.string().refine(isValidPhoneNumber, { message: "Phone number is required" }),
+    phone: z.string().refine(isValidPhoneNumber, { message: "Invalid phone number" }),
     email: z.string().optional(),
     address: z.string().min(1, "Address is required"),
     country: z.string().min(1, "Country is required"),
@@ -53,6 +53,7 @@ export const pickupAddressFormSchema = z.object({
 
 export const AddPickupLocationModal = () => {
     const { handleCreateHub } = useHubProvider();
+    const { getCityStateFPincode } = useSellerProvider();
     const { isOpen, onClose, type } = useModal();
     const router = useRouter();
 
@@ -63,7 +64,7 @@ export const AddPickupLocationModal = () => {
         defaultValues: {
             facilityName: "",
             contactPersonName: "",
-            pickupLocContact: "",
+            phone: "",
             email: "",
             address: "",
             country: "India",
@@ -104,7 +105,7 @@ export const AddPickupLocationModal = () => {
                 pincode: values.pincode,
                 address1: values.address,
                 address2: values.address,
-                phone: values.pickupLocContact,
+                phone: values.phone, 
                 city: values.city,
                 state: values.state,
                 contactPersonName: values.contactPersonName
@@ -135,7 +136,6 @@ export const AddPickupLocationModal = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <AddPickupLocationForm isLoading={isLoading} form={form} isPinLoading={isPinloading} isRTOPinLoading={isRTOPinloading} />
-
                         <DialogFooter className="px-6 py-4">
                             <Button onClick={() => form.reset()} disabled={isLoading} variant={'secondary'} type='button'>
                                 Reset
@@ -196,7 +196,7 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
             />
             <FormField
                 control={form.control}
-                name="pickupLocContact"
+                name="phone"
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">

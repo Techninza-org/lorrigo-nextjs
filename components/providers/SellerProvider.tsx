@@ -7,7 +7,8 @@ import axios, { AxiosInstance } from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
 
-import { B2COrderType, HubType, OrderType, RemittanceType, SellerType } from "@/types/types";
+import { B2COrderType, OrderType, RemittanceType, SellerType, pickupAddressType } from "@/types/types";
+
 import { useAuth } from "./AuthProvider";
 import { cloneFormSchema } from "../drawer/clone-order-drawer";
 import { EditFormSchema } from "../drawer/edit-order-drawer";
@@ -18,7 +19,7 @@ interface SellerContextType {
   seller: SellerType | null;
   business: string;
   isOrderCreated: boolean;
-  sellerFacilities: HubType[];
+  sellerFacilities: pickupAddressType[];
   handlebusinessDropdown: (value: string) => void;
   sellerCustomerForm: sellerCustomerFormType;
   setSellerCustomerForm: React.Dispatch<React.SetStateAction<sellerCustomerFormType>>;
@@ -37,6 +38,7 @@ interface SellerContextType {
   getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
   sellerRemittance: RemittanceType[] | null;
   getOrderDetails: (orderId: string) => Promise<B2COrderType | undefined>;
+  getSeller: () => void;
   handleOrderNDR: (orderId: string, type: string, ndrInfo: z.infer<typeof ReattemptOrderSchema>) => boolean | Promise<boolean>;
 }
 
@@ -76,6 +78,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [courierPartners, setCourierPartners] = useState<OrderType>();
 
 
+
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
     sellerForm: {
       sellerName: "",
@@ -113,7 +116,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
     },
   };
-
   const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
   const getHub = () => {
@@ -561,6 +563,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const getSeller = async () => {
+    try {
+      const res = await axiosIWAuth.get('/seller');
+      if (res.data.valid) {
+        setSeller(res.data.seller)
+      }
+    } catch (error) {
+      console.error('Error fetching seller:', error);
+    }
+  }
+
   const getSellerRemittance = async () => {
     try {
       const res = await axiosIWAuth.get('/seller/remittance');
@@ -593,6 +606,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       console.error('Error fetching data:', error);
     }
   }
+
 
   const handleOrderNDR = async (orderId: string, type: string, ndrInfo: z.infer<typeof ReattemptOrderSchema>) => {
     try {
@@ -632,6 +646,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     if (!userToken) return;
     getHub();
     getSellerDashboardDetails()
+    getSeller();
     getSellerRemittance();
   }, [userToken]);
 
@@ -667,6 +682,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getSellerRemittanceDetails,
         sellerRemittance,
         getOrderDetails,
+        getSeller,
         handleOrderNDR
 
 
@@ -676,6 +692,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     </SellerContext.Provider>
   );
 }
+
 
 export default SellerProvider;
 
