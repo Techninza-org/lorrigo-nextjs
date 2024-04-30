@@ -91,7 +91,7 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>Dead wt. 0.5kg</p>
+                    <p>Dead wt. {rowData.orderWeight} {rowData?.orderWeightUnit}</p>
                     <p>{rowData.orderBoxLength} x {rowData.orderBoxWidth} x {rowData.orderBoxHeight} ({rowData.orderSizeUnit})</p>
                     <p>Vol. weight: {((rowData?.orderBoxLength || 1) * (rowData?.orderBoxWidth || 1) * (rowData?.orderBoxHeight || 1)) / 5000} ({rowData?.orderWeightUnit})</p>
                 </div>

@@ -78,7 +78,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [courierPartners, setCourierPartners] = useState<OrderType>();
 
 
-
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
     sellerForm: {
       sellerName: "",
@@ -353,7 +352,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           sellerPincode: Number(sellerCustomerForm.sellerForm.sellerPincode),
         };
 
-      if (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode) {
+      if ((sellerDetailsPayload.sellerName) || (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode)) {
         toast({
           variant: "destructive",
           title: "Error",

@@ -124,9 +124,10 @@ export const SchedulePickupModal = () => {
                                             <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
+                                                    disabled={true}
                                                         variant={"outline"}
                                                         className={cn(
-                                                            "w-full pl-3 text-left font-normal bg-zinc-200/50",
+                                                            "w-full pl-3 text-left font-normal bg-zinc-200/50 disabled:text-black",
                                                             !field.value && "text-muted-foreground"
                                                         )}
                                                     >

@@ -35,7 +35,9 @@ import { LoadingSpinner } from '../loading-spinner';
 
 export const pickupAddressFormSchema = z.object({
     facilityName: z.string().min(1, "Facility name is required"),
-    contactPersonName: z.string().min(1, "Contact person name is required"),
+    contactPersonName: z.string().min(1, "Contact person name is required").refine((value) => typeof value === "string" && !/\d/.test(value), {
+        message: "Contact person name cannot contain numbers",
+    }),
     phone: z.string().refine(isValidPhoneNumber, { message: "Invalid phone number" }),
     email: z.string().optional(),
     address: z.string().min(1, "Address is required"),
@@ -80,8 +82,8 @@ export const AddPickupLocationModal = () => {
     });
 
 
-    const { cityState: cityStateRes, isTyping: isPinloading } = useFetchCityState(form.watch("pincode"));
-    const { cityState: rtoCityStateRes, isTyping: isRTOPinloading } = useFetchCityState(form.watch("rtoPincode"));
+    const { cityState: cityStateRes, isTyping: isPinloading, setCityState: cityState } = useFetchCityState(form.watch("pincode"));
+    const { cityState: rtoCityStateRes, isTyping: isRTOPinloading, setCityState: rtoCityState } = useFetchCityState(form.watch("rtoPincode"));
 
     useEffect(() => {
         if (cityStateRes) {
@@ -105,11 +107,15 @@ export const AddPickupLocationModal = () => {
                 pincode: values.pincode,
                 address1: values.address,
                 address2: values.address,
-                phone: values.phone, 
+                phone: values.phone,
                 city: values.city,
                 state: values.state,
                 contactPersonName: values.contactPersonName
             });
+
+            cityState({ city: "", state: "" })
+            rtoCityState({ city: "", state: "" })
+
 
             form.reset();
             router.refresh();
