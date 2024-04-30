@@ -111,7 +111,7 @@ export function CloneOrderDrawer() {
         form.setValue('fragile_items', order?.isContainFragileItem || false);
         form.setValue('payment_mode', order?.payment_mode == 0 ? "Prepaid" : "COD");
         form.setValue('orderWeight', order?.orderWeight?.toString() || '');
-        form.setValue('order_invoice_date', new Date(order?.order_invoice_date || ''));
+        form.setValue('order_invoice_date', new Date());  //order?.order_invoice_date || ''
         form.setValue('order_invoice_number', order?.order_invoice_number || '');
         form.setValue('numberOfBoxes', order?.numberOfBoxes?.toString() as "1" | "2" | "3" | "4" | "5" || "1");
         form.setValue('orderSizeUnit', order?.orderSizeUnit || '');

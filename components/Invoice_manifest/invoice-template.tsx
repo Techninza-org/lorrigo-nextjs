@@ -50,7 +50,10 @@ export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
                 <div>
                     <div className="font-semibold">Shipped by:</div>
                     <div>{order?.sellerDetails?.sellerName}</div>
-                    <div>{order?.pickupAddress.address1}</div>
+                    {order?.sellerDetails?.sellerAddress ?
+                        <div>{order?.sellerDetails?.sellerAddress}</div> : 
+                        <div>{order?.pickupAddress.address1}</div>
+                    }
                     <div>India</div>
                     <div className="font-semibold">If not delivered, return to:</div>
                     <div>{order?.pickupAddress.address1}</div>

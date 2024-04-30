@@ -29,7 +29,7 @@ export const getBucketStatus = (bucket: number) => {
             return "RTO";
         case 6:
             return "Cancelled";
-        case 8:
+        case 7:
             return "Lost/Damaged";
         case 8:
             return "Disposed";

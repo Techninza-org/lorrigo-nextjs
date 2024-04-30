@@ -54,6 +54,7 @@ export const CompanyProfileForm = () => {
       form.setValue('companyEmail', seller.companyProfile?.companyEmail || '');
       form.setValue('website', seller.companyProfile?.website || '');
     }
+    
   }, [seller, form]);
 
   const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {

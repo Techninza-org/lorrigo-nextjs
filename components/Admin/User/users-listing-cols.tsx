@@ -6,12 +6,12 @@ import { LayoutDashboard, SquarePen, Wrench } from "lucide-react";
 export const AdminUsersListingCols: ColumnDef<any>[] = [
     {
         header: 'Id',
-        accessorKey: 'id',
+        accessorKey: '_id',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{rowData.id}</p>
+                    <p>{rowData._id}</p>
                 </div>
             )
         }

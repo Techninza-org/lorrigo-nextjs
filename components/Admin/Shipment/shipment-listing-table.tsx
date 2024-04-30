@@ -13,17 +13,13 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -36,8 +32,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useSearchParams } from "next/navigation"
-
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export function ShipmentListingTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -50,6 +45,8 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
     "Shipment Details": isShipmentVisible,
   });
   const [rowSelection, setRowSelection] = React.useState({})
+  const [selectedColumn, setSelectedColumn] = React.useState("order_reference_id");
+
 
   const table = useReactTable({
     data,
@@ -62,7 +59,7 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    enableSorting: false, 
+    enableSorting: false,
     state: {
       columnFilters,
       columnVisibility,
@@ -70,18 +67,30 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
     },
   })
 
+  function handleFilterChange(value: string) {
+    setSelectedColumn(value);
+  }
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
+        <Select onValueChange={handleFilterChange}>
+          <SelectTrigger className='w-1/6 mx-4' >
+            <SelectValue placeholder='Shipment ID' />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={'order_reference_id'}>Shipment ID</SelectItem>
+            <SelectItem value={'awb'}>AWB</SelectItem>
+          </SelectContent>
+        </Select>
         <Input
-          placeholder="Filter by Order Reference ID"
-          value={(table.getColumn("order_reference_id")?.getFilterValue() as string) ?? ""}
+          placeholder={`Filter by ${selectedColumn}`}
+          value={(table.getColumn(selectedColumn)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("order_reference_id")?.setFilterValue(event.target.value)
+            table.getColumn(selectedColumn)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        <Button variant={"themeButton"} type="submit" className="ml-6">Search</Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

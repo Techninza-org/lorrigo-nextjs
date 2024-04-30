@@ -76,7 +76,7 @@ export function UsersListingTable({ data, columns }: { data: SellerType[], colum
                             <TableRow key={headerGroup.id} >
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} className="text-center ">
+                                        <TableHead key={header.id}>
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
