@@ -211,11 +211,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           sellerPincode: Number(sellerCustomerForm.sellerForm.sellerPincode),
         };
 
-      if (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode) {
+        if ((!sellerDetailsPayload.sellerName) || (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode)) {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Customer details are required",
+          description: "Customer and Seller details are required",
         });
         return false;
       }
@@ -352,11 +352,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           sellerPincode: Number(sellerCustomerForm.sellerForm.sellerPincode),
         };
 
-      if ((sellerDetailsPayload.sellerName) || (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode)) {
+      if ((!sellerDetailsPayload.sellerName) || (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode)) {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Customer details are required",
+          description: "Customer and Seller details are required",
         });
         return false;
       }
