@@ -74,7 +74,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             <div
                 className={cn(
                     "container max-w-screen-2xl transition-all duration-300 ease-in-out pt-20 space-y-3",
-                    isNavCollapsed ? "pl-14" : "pl-64"
+                    isNavCollapsed ? "pl-24" : "pl-72"
                 )}
             >
                 {children}
