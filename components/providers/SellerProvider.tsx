@@ -13,6 +13,7 @@ import { useAuth } from "./AuthProvider";
 import { cloneFormSchema } from "../drawer/clone-order-drawer";
 import { EditFormSchema } from "../drawer/edit-order-drawer";
 import { ReattemptOrderSchema } from "../Orders/ndr-order-dialog";
+import { unstable_noStore } from "next/cache";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -118,6 +119,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
   const getHub = () => {
+    unstable_noStore()
     axiosIWAuth.get('/hub')
       .then((res) => {
         if (res.data?.valid) {
@@ -143,6 +145,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getCourierPartners = async (orderId: string) => {
+    unstable_noStore()
     try {
 
       const res = await axiosIWAuth.get(`/order/courier/b2c/SR/${orderId}`);
@@ -156,6 +159,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getSellerDashboardDetails = async () => {
+    unstable_noStore();
     try {
       const res = await axiosIWAuth.get(`/shipment/dashboard`);
       setSellerDashboard(res.data);

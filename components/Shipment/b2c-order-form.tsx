@@ -211,7 +211,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                             </FormLabel>
                             <FormControl>
                                 <Input
-                                    disabled={isLoading}
+                                    disabled={true}
                                     className="bg-zinc-200/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                     placeholder="Enter the total value"
                                     {...field}

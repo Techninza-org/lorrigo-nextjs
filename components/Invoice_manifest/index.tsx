@@ -14,7 +14,6 @@ export const InvoicePage = ({ order }: { order?: B2COrderType }) => {
             const imgData = canvas.toDataURL("image/png");
             const pdf = new jsPDF();
             pdf.addImage(imgData, "JPEG", 3, 3, canvas.width * 0.16, canvas.height * 0.16);
-            pdf.output('dataurlnewwindow');
             pdf.save(`label_${order?.order_invoice_number}.pdf`);
             pdf.autoPrint();
         });

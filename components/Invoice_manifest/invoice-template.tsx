@@ -56,8 +56,8 @@ export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
                     }
                     <div>India</div>
                     <div className="font-semibold">If not delivered, return to:</div>
-                    <div>{order?.pickupAddress.address1}</div>
-                    <div>{order?.pickupAddress?.city}, {order?.pickupAddress?.state}</div>
+                    <div>{order?.pickupAddress.rtoAddress || order?.pickupAddress.address1}</div>
+                    <div>{order?.pickupAddress?.rtoCity || order?.pickupAddress?.city}, {order?.pickupAddress?.rtoState || order?.pickupAddress?.state}</div>
                 </div>
             </div>
             <Separator orientation="horizontal" className="my-3 bg-gray-400" />
