@@ -396,7 +396,26 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
                                 </FormItem>
                             )}
                         />
-
+                        <FormField
+                            control={form.control}
+                            name="rtoPincode"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                        Pincode
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            disabled={isLoading}
+                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                            placeholder="Enter the pincode"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name="rtoCity"
@@ -420,26 +439,7 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="rtoPincode"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                        Pincode
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            disabled={isLoading}
-                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                            placeholder="Enter the pincode"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+
                         <FormField
                             control={form.control}
                             name="rtoState"

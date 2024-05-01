@@ -448,7 +448,10 @@ export const RateCalcForm = () => {
                                                     <div className="flex items-center">
                                                         <Image className="mr-2 mix-blend-multiply"
                                                             src={getSvg(removeWhitespaceAndLowercase(partner?.name ?? ""))}
-                                                            width={55} height={55} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>
+                                                            width={55} height={55} alt="logo" /> {partner.name}
+                                                        <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
+
+                                                    </div>
                                                     <div>RTO Charges : {formatCurrencyForIndia(partner.charge ?? 0)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>

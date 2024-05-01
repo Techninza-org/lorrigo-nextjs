@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Calculator, MoveUpRight } from "lucide-react"
+import { Building, Building2, Calculator, MoveUpRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useSellerProvider } from "../providers/SellerProvider"
@@ -42,7 +42,7 @@ export const Overview = () => {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center justify-center">
-                <Image src="/assets/b2c.png" width={50} height={50} alt="B2C" />
+                <Building2 size={50} color="#787878" />
                 <h4 className="scroll-m-20 text-base font-medium tracking-tight">
                  Create Forward Shipment
                 </h4>
@@ -62,7 +62,7 @@ export const Overview = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center">
-            <Calculator size={50} strokeWidth={1.25} color="gray" />
+            <Calculator size={50} color="#787878" />
             <h4 className="scroll-m-20 text-base font-medium tracking-tight">
               Rate Calculator
             </h4>
