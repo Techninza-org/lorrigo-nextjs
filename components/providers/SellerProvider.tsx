@@ -654,7 +654,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }, [user, userToken])
 
   useEffect(() => {
-    console.log(!!user || !!userToken, "user", user, "userToken", userToken)
     if (!!user || !!userToken) {
       getAllOrdersByStatus(status || "all")
     }

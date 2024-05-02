@@ -14,7 +14,7 @@ const HoverCardToolTip = ({
 }: HoverCardToolTipProps) => {
     return (
         <HoverCard openDelay={50}>
-            <HoverCardTrigger className="border-dashed border-b border-blue-600 underline-offset-1 text-blue-900 cursor-pointer w-min text-nowrap">@{label}</HoverCardTrigger>
+            <HoverCardTrigger className="border-dashed border-b border-blue-600 underline-offset-1 text-blue-900 cursor-pointer w-min text-nowrap capitalize">{label}</HoverCardTrigger>
             <HoverCardContent side={side} align={align}>
                 {children}
             </HoverCardContent>

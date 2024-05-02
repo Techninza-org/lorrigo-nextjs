@@ -16,7 +16,6 @@ import {
 import { ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -39,7 +38,6 @@ import { useSearchParams } from "next/navigation"
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [filtering, setFiltering] = React.useState<string>("")
-  console.log(filtering, "filtering")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
