@@ -179,4 +179,16 @@ export interface RemittanceType {
   remittanceStatus: string;
   orders: B2COrderType[];
   BankTransactionId: string;
+  sellerId: SellerType;
 }
+
+// export interface RemittanceTypeAdmin {
+//   _id: string;
+//   remittanceId: string;
+//   remittanceDate: string;
+//   remittanceAmount: number;
+//   remittanceStatus: string;
+//   orders: B2COrderType[];
+//   BankTransactionId: string;
+//   sellerId: SellerType;
+// }
