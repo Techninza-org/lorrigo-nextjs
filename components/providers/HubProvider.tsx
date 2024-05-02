@@ -169,7 +169,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 toast({
                     variant: "destructive",
                     title: "Error",
-                    description: "Something went wrong. Please try again later.",
+                    description: res.data.message || "Something went wrong. Please try again later.",
                 });
             }
         } catch (error) {

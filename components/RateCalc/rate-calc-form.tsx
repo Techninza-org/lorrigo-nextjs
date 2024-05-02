@@ -158,8 +158,6 @@ export const RateCalcForm = () => {
         return () => clearTimeout(timer);
     }, [form.watch("pickupPincode"), form.watch("deliveryPincode")])
 
-    console.log(courierCalcRate)
-
     return (
         <>
             {
@@ -399,7 +397,7 @@ export const RateCalcForm = () => {
                             </CardContent>
                             <CardFooter className='flex-row-reverse gap-3'>
                                 <Button type='submit' variant={'themeButton'} >Calculate</Button>
-                                <Button variant={'secondary'} type='button'>Reset</Button>
+                                <Button variant={'secondary'} type='button' onClick={()=>form.reset()}>Reset</Button>
                             </CardFooter>
                         </Card>
                         <Card>

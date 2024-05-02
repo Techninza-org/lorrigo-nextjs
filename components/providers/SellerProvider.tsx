@@ -69,7 +69,7 @@ interface sellerCustomerFormType {
 const SellerContext = createContext<SellerContextType | null>(null);
 
 function SellerProvider({ children }: { children: React.ReactNode }) {
-  const { userToken } = useAuth();
+  const { userToken, user } = useAuth();
   const [seller, setSeller] = useState<SellerType | null>(null);
   const [sellerRemittance, setSellerRemittance] = useState<RemittanceType[] | null>(null);
   const [sellerDashboard, setSellerDashboard] = useState<any>(null);
@@ -113,13 +113,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
     headers: {
       'Content-Type': 'application/json',
-      ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
+      ...((!!user || !!userToken) && { 'Authorization': `Bearer ${userToken || (user && user.token)}` }),
     },
   };
   const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
   const getHub = () => {
-    unstable_noStore()
     axiosIWAuth.get('/hub')
       .then((res) => {
         if (res.data?.valid) {
@@ -145,9 +144,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getCourierPartners = async (orderId: string) => {
-    unstable_noStore()
     try {
 
+      unstable_noStore()
       const res = await axiosIWAuth.get(`/order/courier/b2c/SR/${orderId}`);
       if (res.data?.valid) {
         setCourierPartners(res.data);
@@ -159,10 +158,10 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getSellerDashboardDetails = async () => {
-    unstable_noStore();
     try {
       const res = await axiosIWAuth.get(`/shipment/dashboard`);
       setSellerDashboard(res.data);
+      return res.data
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -215,7 +214,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           sellerPincode: Number(sellerCustomerForm.sellerForm.sellerPincode),
         };
 
-        if ((!sellerDetailsPayload.sellerName) || (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode)) {
+      if ((!sellerDetailsPayload.sellerName) || (!customerDetailsPayload.name || !customerDetailsPayload.phone || !customerDetailsPayload.address || !customerDetailsPayload.pincode)) {
         toast({
           variant: "destructive",
           title: "Error",
@@ -410,6 +409,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         getSellerDashboardDetails();
         getAllOrdersByStatus(status || "all");
+        // revalidatePath('/')
         router.refresh();
         return true;
       } else {
@@ -644,20 +644,21 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   }
 
+  useEffect(() => {
+    if (!!user || !!userToken) {
+      getHub();
+      getSeller();
+      getSellerDashboardDetails()
+      getSellerRemittance();
+    }
+  }, [user, userToken])
 
   useEffect(() => {
-    if (!userToken) return;
-    getHub();
-    getSellerDashboardDetails()
-    getSeller();
-    getSellerRemittance();
-  }, [userToken]);
+    if (!!user || !!userToken) {
+      getAllOrdersByStatus(status || "all")
+    }
 
-  useEffect(() => {
-    if (!userToken) return;
-    getAllOrdersByStatus(status || "all")
-
-  }, [userToken, status]);
+  }, [user, userToken, status]);
 
   return (
     <SellerContext.Provider

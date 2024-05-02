@@ -20,29 +20,37 @@ import { useEffect, useState } from "react"
 import { useAuth } from "../providers/AuthProvider"
 import { useFormStatus } from "react-dom";
 import { LoadingComponent } from "../loading-spinner"
+import { OrderType } from "@/types/types"
 
+export const dynamic = 'force-dynamic'
 
 export default function CourierPage() {
     const params = useParams()
-    const { getCourierPartners, courierPartners, handleCreateD2CShipment } = useSellerProvider()
+    const { getCourierPartners, handleCreateD2CShipment } = useSellerProvider()
     const { userToken } = useAuth()
     const { pending } = useFormStatus();
+
+    const [courierPartners, setCourierPartners] = useState<OrderType>()
 
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         async function fetchCourierPartners() {
-            await getCourierPartners(String(params.id))
+            const res = await getCourierPartners(String(params.id))
+            setCourierPartners(res)
         }
         fetchCourierPartners()
+        return () => {
+            setCourierPartners(undefined)
+        }
 
-    }, [userToken, params])
+    }, [userToken, params.id])
 
     if (!courierPartners) {
         return <LoadingComponent />
     }
 
- 
+
     return (
         <>
             {loading && <LoadingComponent />}

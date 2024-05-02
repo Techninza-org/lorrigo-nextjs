@@ -14,7 +14,7 @@ import { B2COrderType } from "@/types/types"
 import { useSellerProvider } from "../providers/SellerProvider"
 import { useAuth } from "../providers/AuthProvider"
 import { LoadingComponent } from "../loading-spinner"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card"
+import HoverCardToolTip from "../hover-card-tooltip"
 
 export const OrderTrackInfo = () => {
     const params = useParams()
@@ -90,12 +90,9 @@ export const OrderTrackInfo = () => {
                                 <span className="text-gray-400">
                                     Pickup Address
                                 </span>
-                                <HoverCard>
-                                    <HoverCardTrigger className="underline underline-offset-1 text-blue-700">@{order.pickupAddress.name}</HoverCardTrigger>
-                                    <HoverCardContent className="capitalize">
-                                        {`${order.pickupAddress.address1}, ${order.pickupAddress.address2}, ${order.pickupAddress.city}, ${order.pickupAddress.state}, ${order.pickupAddress.pincode}`}
-                                    </HoverCardContent>
-                                </HoverCard>
+                                <HoverCardToolTip label={order.pickupAddress.name} side="bottom">
+                                    {`${order?.pickupAddress?.address1}, ${order?.pickupAddress?.address2}, ${order?.pickupAddress?.city}, ${order?.pickupAddress?.state}, ${order?.pickupAddress?.pincode}`}
+                                </HoverCardToolTip>
 
                             </div>
                             <div>
@@ -221,13 +218,9 @@ export const OrderTrackInfo = () => {
                                 <span className="text-gray-400">
                                     Address
                                 </span>
-                                {/* <p>{order?.customerDetails?.address?.slice(0, 20)}...</p> */}
-                                <HoverCard>
-                                    <HoverCardTrigger className="underline underline-offset-1 text-blue-700 capitalize">{order?.customerDetails?.address?.slice(0, 20)}...</HoverCardTrigger>
-                                    <HoverCardContent className="capitalize">
-                                        {`${order?.customerDetails?.address}, ${order?.customerDetails?.city}, ${order?.customerDetails?.state}, ${order?.customerDetails?.pincode}`}
-                                    </HoverCardContent>
-                                </HoverCard>
+                                <HoverCardToolTip label="Address" side="bottom" >
+                                    {`${order?.customerDetails?.address}, ${order?.customerDetails?.city}, ${order?.customerDetails?.state}, ${order?.customerDetails?.pincode}`}
+                                </HoverCardToolTip>
                             </div>
                             <div>
                                 <span className="text-gray-400">

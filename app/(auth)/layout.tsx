@@ -2,7 +2,7 @@
 
 export const metadata = {
   title: "Authentication | Lorrigo Portal",
-  description: "We provide Lorrigo portal for BCIIT",
+  description: "Lorrigo is a platform for managing your logistics business.",
 };
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
