@@ -7,12 +7,13 @@ import axios, { AxiosInstance } from "axios";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
-import { AdminType, SellerType } from "@/types/types";
+import { AdminType, RemittanceType, SellerType } from "@/types/types";
 
 interface AdminContextType {
     handleCreateHub: (hub: AdminType) => void;
     users: SellerType[];
-    
+    allRemittance: RemittanceType[] | null;
+
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -21,6 +22,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const { getHub } = useSellerProvider()
     const { userToken } = useAuth();
     const [users, setUsers] = useState([]);
+    const [allRemittance, setAllRemittance] = useState<RemittanceType[] | null>(null);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -64,20 +66,34 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             setUsers(res.data.sellers);
         } catch (error) {
             console.log('Error fetching sellers: ', error);
-            
+
         }
     };
+
+    const getAllRemittance = async () => {
+        try {
+            const res = await axiosIWAuth.get('/admin/all-remittances');
+            
+            if (res.data?.valid) {
+                setAllRemittance(res.data.remittanceOrders);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
 
     useEffect(() => {
         if (!userToken) return;
         getAllSellers();
-      }, [userToken]);
+        getAllRemittance();
+    }, [userToken]);
 
     return (
         <AdminContext.Provider
             value={{
                 handleCreateHub,
-                users
+                users,
+                allRemittance
             }}
         >
             {children}

@@ -1,7 +1,7 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, HandIcon, Home, Settings, ShoppingCart, TrendingUpIcon, Truck } from "lucide-react";
+import { HandCoins, HandIcon, Home, Settings, ShoppingCart, TrendingUpIcon, Truck, User } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -46,10 +46,40 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
 
     const ADMIN_NAV_LINKS = [
         {
-            title: "Home",
+            title: "Shipment Listing",
             icon: Truck,
-            href: "/admin",
+            href: "/admin/shipment-listing",
         },
+        {
+            title: "Remittances",
+            icon: Truck,
+            href: "/admin/finance/remittance",
+        },
+        {
+            title: "Finance",
+            icon: HandCoins,
+            sublinks: [
+                {
+                    title: "Remittances",
+                    href: "/admin/finance/remittance",
+                },
+                {
+                    title: "Remittances",
+                    href: "/admin/finance/remittance",
+                },
+            ]
+        },
+        {
+            title: "Users",
+            icon: User,
+            sublinks: [
+                {
+                    title: "Users",
+                    href: "/admin/users/users-list",
+                }
+            ]
+        },
+        
     ];
 
     const navLinks = isAdmin ? ADMIN_NAV_LINKS : SELLER_NAV_LINKS;

@@ -29,7 +29,7 @@ export const OrderTrackInfoAdmin = () => {
 
     const getOrderDetailsAdmin = async (orderId: string) => {
         try {
-            const res = await axiosIWAuth.get(`/admin/${orderId}`);
+            const res = await axiosIWAuth.get(`/admin/order/${orderId}`);
             if (res.data?.valid) {
                 setOrderDetails(res.data.order);
             }
