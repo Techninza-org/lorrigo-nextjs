@@ -172,7 +172,7 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
                             <Input
                                 disabled={isLoading}
                                 className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                placeholder="Enter the seller name"
+                                placeholder="Enter the Facility Name"
                                 {...field}
                             />
                         </FormControl>

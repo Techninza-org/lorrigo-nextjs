@@ -20,7 +20,7 @@ const AdminContext = createContext<AdminContextType | null>(null);
 
 export default function AdminProvider({ children }: { children: React.ReactNode }) {
     const { getHub } = useSellerProvider()
-    const { userToken } = useAuth();
+    const { userToken, user } = useAuth();
     const [users, setUsers] = useState([]);
     const [allRemittance, setAllRemittance] = useState<RemittanceType[] | null>(null);
 
@@ -29,13 +29,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
     const axiosConfig = {
         baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
-        timeout: 5000,
         headers: {
-            'Content-Type': 'application/json',
-            ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
+          'Content-Type': 'application/json',
+          ...((!!user || !!userToken) && { 'Authorization': `Bearer ${userToken || (user && user.token)}` }),
         },
-    };
-
+      };
 
     const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
