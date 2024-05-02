@@ -47,7 +47,7 @@ const KycCompleted = () => {
         // document2Front: formData?.document2Front,
         // document2Back: formData?.document2Back,
         submitted: true,
-        verified: true,
+        verified: false,
       }
     }
     try {

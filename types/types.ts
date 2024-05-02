@@ -8,6 +8,7 @@ export type SellerType = {
     companyEmail?: string;
     companyId?: string;
     website?: string;
+    logo?: string;
   };
   entityType?: string;
   address?: string;
@@ -40,6 +41,14 @@ export type SellerType = {
     submitted?: boolean;
     verified?: boolean;
   };
+  billingAddress:{
+    address_line_1: string;
+    address_line_2: string;
+    pincode: string;
+    city: string;
+    state: string;
+    phone: string;
+  }
 };
 
 export type AuthType = {

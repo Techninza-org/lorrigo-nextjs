@@ -2,6 +2,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { LayoutDashboard, SquarePen, Wrench } from "lucide-react";
+import { formatDate } from "date-fns";
 
 export const AdminUsersListingCols: ColumnDef<any>[] = [
     {
@@ -75,7 +76,7 @@ export const AdminUsersListingCols: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{rowData.createdAt}</p>
+                    <p>{formatDate(`${rowData.createdAt}`, 'MMM dd, yyyy')}</p>
                 </div>
             )
         }

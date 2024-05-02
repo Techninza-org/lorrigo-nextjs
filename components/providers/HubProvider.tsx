@@ -184,8 +184,52 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
     const updateCompanyProfile = async (values: z.infer<typeof CompanyProfileSchema>) => {
 
+        // try {
+        //     const formData = new FormData();
+        //     const companyName = values?.companyName?.toString() || "";
+        //     const companyEmail = values?.companyEmail?.toString() || "";
+        //     const website = values?.website?.toString() || "";
+
+        //     if (!companyEmail.includes("@")) {
+        //         return toast({
+        //             variant: "destructive",
+        //             title: "Invalid email.",
+        //         });
+        //     }
+
+        //     const myHeaders = new Headers();
+        //     myHeaders.append("Authorization", `Bearer ${userToken}`);
+
+        //     const formdata = new FormData();
+        //     formdata.append("logo", companyLogo);
+        //     formdata.append("companyProfile", `\"{\\\"companyName\\\":\\\"${companyName}\\\",\\\"companyEmail\\\":\\\"${companyEmail}\\\",\\\"website\\\":\\\"${website}\\\"}\"\n`);
+
+
+        //     const requestOptions = {
+        //         method: "PUT",
+        //         headers: myHeaders,
+        //         body: formdata,
+        //         redirect: "follow"
+        //     };
+
+        //     fetch("http://localhost:4000/api/seller", { ...requestOptions, redirect: 'follow' })
+        //         .then((response) => response.json())
+        //         .then((result) => console.log(result))
+        //         .catch((error) => console.error(error));
+
+        //     toast({
+        //         title: "Success",
+        //         description: "Company Profile updated successfully.",
+        //     });
+
+        // } catch (error) {
+        //     toast({
+        //         variant: "destructive",
+        //         title: "Error",
+        //         description: "error.response.data.message",
+        //     });
+        // }
         try {
-            const formData = new FormData();
             const companyName = values?.companyName?.toString() || "";
             const companyEmail = values?.companyEmail?.toString() || "";
             const website = values?.website?.toString() || "";
@@ -197,30 +241,21 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 });
             }
 
-            const myHeaders = new Headers();
-            myHeaders.append("Authorization", `Bearer ${userToken}`);
+            const companyProfileData = {   ///not providing id and logo yet
+                companyProfile: {
+                    companyName,
+                    companyEmail,
+                    website,
+                }
+            }
 
-            const formdata = new FormData();
-            formdata.append("logo", companyLogo);
-            formdata.append("companyProfile", `\"{\\\"companyName\\\":\\\"${companyName}\\\",\\\"companyEmail\\\":\\\"${companyEmail}\\\",\\\"website\\\":\\\"${website}\\\"}\"\n`);
-
-
-            const requestOptions = {
-                method: "PUT",
-                headers: myHeaders,
-                body: formdata,
-                redirect: "follow"
-            };
-
-            fetch("http://localhost:4000/api/seller", { ...requestOptions, redirect: 'follow' })
-                .then((response) => response.json())
-                .then((result) => console.log(result))
-                .catch((error) => console.error(error));
-
-            toast({
-                title: "Success",
-                description: "Company Profile updated successfully.",
-            });
+            const userRes = await axiosIWAuth.put("/seller", companyProfileData);
+            if (userRes) {
+                toast({
+                    title: "Success",
+                    description: "Company Profile updated successfully.",
+                });
+            }
 
         } catch (error) {
             toast({

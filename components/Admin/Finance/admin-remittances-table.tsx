@@ -1,30 +1,20 @@
-
 "use client"
 
 import * as React from "react"
 import {
     ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -39,34 +29,14 @@ import {
 import { useSearchParams } from "next/navigation"
 
 export function RemittancesTableAdmin({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
-    const [sorting, setSorting] = React.useState<SortingState>([])
     const [filtering, setFiltering] = React.useState<string>("")
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
-    const searchParams = useSearchParams()
-    const isShipmentVisible = searchParams.get('status') !== 'new'
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-        "Shipment Details": isShipmentVisible,
-    });
-    const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
         data,
         columns,
-        // onSortingChange: setSorting,
-        // onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
-        // getPaginationRowModel: getPaginationRowModel(),
-        // getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        // onColumnVisibilityChange: setColumnVisibility,
-        // onRowSelectionChange: setRowSelection,
-        // enableSorting: false,
         state: {
-            // columnFilters,
-            // columnVisibility,
-            // rowSelection,
             globalFilter: filtering
         },
         onGlobalFilterChange: setFiltering

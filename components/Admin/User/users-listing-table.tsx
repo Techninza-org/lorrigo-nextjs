@@ -3,17 +3,11 @@
 import * as React from "react"
 import {
     ColumnDef,
-    ColumnFiltersState,
-    SortingState,
-    VisibilityState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { Download, Plus, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -28,46 +22,28 @@ import { useSearchParams } from "next/navigation"
 import { SellerType } from "@/types/types"
 
 export function UsersListingTable({ data, columns }: { data: SellerType[], columns: ColumnDef<any, any>[] }) {
-    console.log('table: ', data, columns);
-
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
-    const searchParams = useSearchParams()
-    //   const isShipmentVisible = searchParams.get('status') !== 'new'
-    //   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-    //     "Shipment Details": isShipmentVisible,
-    //   });
-    const [rowSelection, setRowSelection] = React.useState({})
+    const [filtering, setFiltering] = React.useState<string>("")
 
     const table = useReactTable({
         data,
         columns,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        // onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        enableSorting: false,
         state: {
-            columnFilters,
-            //   columnVisibility,
-            rowSelection,
+            globalFilter: filtering
         },
+        onGlobalFilterChange: setFiltering
     })
 
     return (
         <div className="w-full">
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Search by name / phone number / company name"
+                    placeholder="Search by Name or Email"
+                    value={filtering}
+                    onChange={(e) => setFiltering(e.target.value)}
                     className="max-w-sm"
                 />
-                <Button variant={"themeButton"} type="submit" className="ml-6">Search</Button>
             </div>
             <div className="rounded-md border mt-8">
                 <Table>

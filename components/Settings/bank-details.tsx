@@ -30,6 +30,8 @@ const BankDetailsForm = () => {
     const { onClose } = useModal();
     const { updateBankDetails } = useHubProvider();
     const { seller } = useSellerProvider();
+    console.log('seller: ',seller);
+    
 
     const form = useForm({
         resolver: zodResolver(BankDetailsSchema),
@@ -53,6 +55,8 @@ const BankDetailsForm = () => {
     const onSubmit = async (values: z.infer<typeof BankDetailsSchema>) => {
         try {
             updateBankDetails(values);
+            console.log('values updated: ',values);
+            
             form.reset();
             router.refresh();
             onClose();
