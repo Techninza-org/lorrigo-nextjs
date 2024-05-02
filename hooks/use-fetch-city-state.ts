@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSellerProvider } from "@/components/providers/SellerProvider";
 import { AxiosError } from 'axios';
 
-const useFetchCityState = (pincode: string) => {
+const useFetchCityState = (pincode?: string) => {
     const { getCityStateFPincode } = useSellerProvider();
 
     const [cityState, setCityState] = useState({
@@ -21,9 +21,9 @@ const useFetchCityState = (pincode: string) => {
         const fetchCityState = async () => {
             setLoading(true);
             try {
-                const response = await getCityStateFPincode(pincode);
+                const response = await getCityStateFPincode(pincode ?? '');
                 setCityState({ city: response.city, state: response.state });
-                
+
                 setError(null);
                 setRetryAttempts(0);
             } catch (error: AxiosError | any) {
@@ -38,7 +38,7 @@ const useFetchCityState = (pincode: string) => {
             clearTimeout(timer!);
             timer = setTimeout(() => {
                 if (input.length === 6 && retryAttempts < 3) {
-                    fetchCityState(); 
+                    fetchCityState();
                 }
                 setIsTyping(false); // Reset isTyping after debounce timeout
             }, 1500);
@@ -56,7 +56,7 @@ const useFetchCityState = (pincode: string) => {
         };
     }, [pincode, retryAttempts]);
 
-    return { cityState, loading, error, isTyping };
+    return { cityState, loading, error, setCityState, isTyping };
 };
 
 export default useFetchCityState;

@@ -31,6 +31,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import Image from "next/image";
+import { LoadingComponent } from "../loading-spinner";
 
 
 const rateCalcSchema = z.object({
@@ -50,6 +51,7 @@ const rateCalcSchema = z.object({
 export const RateCalcForm = () => {
     const { getCityStateFPincode, calcRate } = useSellerProvider();
     const [courierCalcRate, setCourierCalcRate] = useState([{}] as any);
+    const [isAPILoading, setIsAPILoading] = useState(false);
 
     const form = useForm({
         resolver: zodResolver(rateCalcSchema),
@@ -105,20 +107,26 @@ export const RateCalcForm = () => {
         return form.formState.isSubmitted && form.formState.errors[name] ? true : false;
     };
 
+
     const onSubmit = async (values: z.infer<typeof rateCalcSchema>) => {
-        const res = await calcRate({
-            pickupPincode: values.pickupPincode,
-            deliveryPincode: values.deliveryPincode,
-            weight: values.orderWeight,
-            weightUnit: "kg",
-            boxLength: values.orderBoxLength,
-            boxWidth: values.orderBoxWidth,
-            boxHeight: values.orderBoxHeight,
-            sizeUnit: "cm",
-            paymentType: values.payment_mode == "COD" ? 1 : 0,
-            collectableAmount: values.collectableAmount
-        })
-        setCourierCalcRate(res);
+        setIsAPILoading(true)
+        try {
+            const res = await calcRate({
+                pickupPincode: values.pickupPincode,
+                deliveryPincode: values.deliveryPincode,
+                weight: values.orderWeight,
+                weightUnit: "kg",
+                boxLength: values.orderBoxLength,
+                boxWidth: values.orderBoxWidth,
+                boxHeight: values.orderBoxHeight,
+                sizeUnit: "cm",
+                paymentType: values.payment_mode == "COD" ? 1 : 0,
+                collectableAmount: values.collectableAmount
+            })
+            setCourierCalcRate(res);
+        } finally {
+            setIsAPILoading(false)
+        }
     }
 
 
@@ -150,11 +158,13 @@ export const RateCalcForm = () => {
         return () => clearTimeout(timer);
     }, [form.watch("pickupPincode"), form.watch("deliveryPincode")])
 
-
+    console.log(courierCalcRate)
 
     return (
         <>
-
+            {
+                isAPILoading && <LoadingComponent />
+            }
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="grid grid-cols-4 gap-2">
@@ -442,13 +452,16 @@ export const RateCalcForm = () => {
                                 </TableHeader>
                                 <TableBody>
                                     {
-                                        courierCalcRate?.map((partner: any, i: number) => {
+                                        courierCalcRate.length > 1 && courierCalcRate?.map((partner: any, i: number) => {
                                             return <TableRow key={i}>
                                                 <TableCell>
                                                     <div className="flex items-center">
                                                         <Image className="mr-2 mix-blend-multiply"
                                                             src={getSvg(removeWhitespaceAndLowercase(partner?.name ?? ""))}
-                                                            width={55} height={55} alt="logo" /> {partner.name} | Min. weight: {partner.minWeight}kg</div>
+                                                            width={55} height={55} alt="logo" /> {partner.name}
+                                                        <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
+
+                                                    </div>
                                                     <div>RTO Charges : {formatCurrencyForIndia(partner.charge ?? 0)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>

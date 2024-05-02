@@ -65,7 +65,7 @@ export const DeliveryDetailsForm = ({ form, isLoading }: DeliveryDetailsFormProp
                         )}
                     />
                     <Button variant={"secondary"} size={"sm"} className="w-full mt-2 items-center" type="button" onClick={() => onOpen("addSeller")}>
-                        <UserRoundPlus size={15} className="mr-2" />{sellerCustomerForm.sellerForm.sellerName || "Add Seller"}
+                        <UserRoundPlus size={15} className="mr-2" />{sellerCustomerForm.sellerForm.sellerName || "Add Seller"}  <span className='text-red-500'>*</span>
                     </Button>
                     <Button variant={"secondary"} size={"sm"} className="w-full mt-2 items-center" type="button" onClick={() => onOpen("addCustomer")}>
                         <CircleUserRound size={15} className="mr-2" />{sellerCustomerForm.customerForm.name ||  "Add Customer"} <span className='text-red-500'>*</span>

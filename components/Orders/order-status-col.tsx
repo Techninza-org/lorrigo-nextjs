@@ -46,7 +46,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>Dead wt. 0.5kg</p>
+                     <p>Dead wt. {rowData.orderWeight} {rowData?.orderWeightUnit}</p>
                     <p>{rowData.orderBoxLength} x {rowData.orderBoxWidth} x {rowData.orderBoxHeight} ({rowData.orderSizeUnit})</p>
                     <p>Vol. weight: {((rowData?.orderBoxLength || 1) * (rowData?.orderBoxWidth || 1) * (rowData?.orderBoxHeight || 1)) / 5000} ({rowData?.orderWeightUnit})</p>
                 </div>
@@ -60,6 +60,9 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
+                    {/* (Number(form.watch('productDetails.taxableValue')) +
+                                            (Number(form.watch('productDetails.taxRate')) / 100) *
+                                            Number(form.watch('productDetails.taxableValue'))).toFixed(2) */}
                     <p>{formatCurrencyForIndia(Number(rowData.productId?.taxable_value))}</p>
                     <Badge variant={rowData.payment_mode == 0 ? "success" : "failure"}>{rowData.payment_mode == 0 ? "Prepaid" : "COD"}</Badge>
                 </div>

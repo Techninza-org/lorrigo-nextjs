@@ -115,6 +115,9 @@ export const B2CForm = () => {
     };
 
     const onSubmit = async (values: z.infer<typeof formDataSchema>) => {
+        
+        values.productDetails.taxableValue = (Number(form.watch('productDetails.taxableValue')) + (Number(form.watch('productDetails.taxRate')) / 100) * Number(form.watch('productDetails.taxableValue'))).toString(); 
+
         try {
             const isSuccess = await handleCreateOrder({
                 ...values,

@@ -236,26 +236,6 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                 <div className='grid grid-cols-2 gap-3'>
                     <FormField
                         control={form.control}
-                        name="customerDetails.country"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    Country
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        disabled={true}
-                                        className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                        placeholder="Enter the country"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
                         name="customerDetails.pincode"
                         render={({ field }) => (
                             <FormItem>
@@ -274,6 +254,27 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="customerDetails.country"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    Country
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        disabled={true}
+                                        className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                        placeholder="Enter the country"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
                     <FormField
                         control={form.control}
                         name="customerDetails.state"

@@ -1,18 +1,14 @@
 
 "use client"
 import { useParams } from "next/navigation"
-import { ClipboardList, Copy, Package2, ShoppingCartIcon, UserRound } from "lucide-react"
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils"
-import { formatPhoneNumberIntl } from "react-phone-number-input"
 import { Suspense, useEffect, useState } from "react"
 import { B2COrderType } from "@/types/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/components/providers/AuthProvider"
-import { useSellerProvider } from "@/components/providers/SellerProvider"
 import { LoadingComponent } from "@/components/loading-spinner"
 import { getBucketStatus } from "@/components/Orders/order-action-button"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { OrderTrackTimeline } from "@/components/Orders/order-track-timeline"
 import axios, { AxiosInstance } from "axios"
 

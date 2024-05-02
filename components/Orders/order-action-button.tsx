@@ -175,7 +175,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
         //     </DropdownMenu>
         // </div>
         <div className="flex gap-2 items-center">
-            <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("ndrOrder", { order: rowData })}>Reattempt</Button>
+            {/* <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("ndrOrder", { order: rowData })}>Reattempt</Button> */}
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -184,7 +184,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                <DropdownMenuItem onClick={() => onOpen("ndrRTOrder", { order: rowData })}>RTO</DropdownMenuItem>
+                <OrderCloneButton rowData={rowData} />
 
                 </DropdownMenuContent>
             </DropdownMenu>
