@@ -43,9 +43,9 @@ export const DataAnalysis = () => {
                         </div>
                         <div className="grid grid-cols-2 gap-x-2 ">
                             <div>Today&apos;s Revenue:</div>
-                            <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.todayRevenue)}</div>
+                            <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.todayRevenue || 0)}</div>
                             <div>Yestarday&apos;s Revenue:</div>
-                            <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.yesterdayRevenue)}</div>
+                            <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.yesterdayRevenue || 0)}</div>
                         </div>
                     </CardContent>
                 </Card>

@@ -158,8 +158,6 @@ export const RateCalcForm = () => {
         return () => clearTimeout(timer);
     }, [form.watch("pickupPincode"), form.watch("deliveryPincode")])
 
-    console.log(courierCalcRate)
-
     return (
         <>
             {
