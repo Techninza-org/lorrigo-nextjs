@@ -12,12 +12,15 @@ export type SellerType = {
   };
   entityType?: string;
   address?: string;
-  gstno?: string;
-  panno?: string;
+  gst?: string;
+  pan?: string;
+  aadhar?: string;
+  prefix?: string;
   margin?: number;
   vendors?: string[];
   codPrice?: number;
   isVerified: boolean;
+  isActive: boolean;
   bankDetails: {
     accHolderName?: string;
     accType?: string;
@@ -41,14 +44,14 @@ export type SellerType = {
     submitted?: boolean;
     verified?: boolean;
   };
-  billingAddress:{
+  billingAddress: {
     address_line_1: string;
     address_line_2: string;
     pincode: string;
     city: string;
     state: string;
     phone: string;
-  }
+  };
 };
 
 export type AuthType = {

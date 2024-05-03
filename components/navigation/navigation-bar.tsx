@@ -56,29 +56,39 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             href: "/admin/finance/remittance",
         },
         {
-            title: "Finance",
-            icon: HandCoins,
-            sublinks: [
-                {
-                    title: "Remittances",
-                    href: "/admin/finance/remittance",
-                },
-                {
-                    title: "Remittances",
-                    href: "/admin/finance/remittance",
-                },
-            ]
+            title: "Users List",
+            icon: Truck,
+            href: "/admin/users/users-list",
         },
         {
-            title: "Users",
-            icon: User,
-            sublinks: [
-                {
-                    title: "Users",
-                    href: "/admin/users/users-list",
-                }
-            ]
+            title: "Add User",
+            icon: Truck,
+            href: "/admin/users/add-user",
         },
+        // {
+        //     title: "Finance",
+        //     icon: HandCoins,
+        //     sublinks: [
+        //         {
+        //             title: "Remittances",
+        //             href: "/admin/finance/remittance",
+        //         },
+        //         {
+        //             title: "Remittances",
+        //             href: "/admin/finance/remittance",
+        //         },
+        //     ]
+        // },
+        // {
+        //     title: "Users",
+        //     icon: User,
+        //     sublinks: [
+        //         {
+        //             title: "Users",
+        //             href: "/admin/users/users-list",
+        //         }
+        //     ]
+        // },
         
     ];
 

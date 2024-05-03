@@ -7,8 +7,6 @@ import { AdminUsersListingCols } from './users-listing-cols';
 
 const UsersList = () => {
   const { users } = useAdminProvider();
-  console.log(users);
-  
 
   return (
     <>

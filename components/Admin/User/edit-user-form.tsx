@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -14,82 +14,90 @@ import {
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
-import { useAdminProvider } from '@/components/providers/AdminProvider';
+import { useAdminProvider } from "@/components/providers/AdminProvider";
+import { useSearchParams } from "next/navigation";
+import { Checkbox } from '@/components/ui/checkbox';
 
-export const AddUserSchema = z.object({
+export const EditUserSchema = z.object({
     name: z.string().min(1, "name is required"),
-    email: z.string().min(1, "email is required"),
-    password: z.string().min(1, "password is required"),
-    confirm_password: z.string().min(1, "confirm password is required"),
     phone: z.string().min(1, "phone is required"),
-    company: z.string().min(1, "company is required"),
+    companyEmail: z.string().min(1, "email is required"),
+    companyName: z.string().min(1, "company is required"),
     prefix: z.string().optional(),
     pan: z.string().optional(),
     aadhar: z.string().optional(),
-    gstin: z.string().optional(),
+    gst: z.string().optional(),
+    verified: z.boolean().optional(),
+    active: z.boolean().optional(),
 })
 
-const AddUserForm = () => {
+const EditUserForm = () => {
+    const searchParams = useSearchParams();
+    const sellerId = searchParams.get('sellerId');
+    const { users } = useAdminProvider();
+
+    const user = users.find((user: any) => user._id === sellerId);
+    console.log(user);
+
     const router = useRouter();
-    const { handleSignup } = useAdminProvider()
+    const { handleEditUser } = useAdminProvider()
 
     const form = useForm({
-        resolver: zodResolver(AddUserSchema),
+        resolver: zodResolver(EditUserSchema),
         defaultValues: {
             name: '',
-            email: '',
-            password: '',
-            confirm_password: '',
             phone: '',
-            company: '',
+            companyName: '',
+            companyEmail: '',
             prefix: '',
             pan: '',
             aadhar: '',
-            gstin: '',
+            gst: '',
+            verified: false,
+            active: true
         }
     });
 
-    const onSubmit = async (values: z.infer<typeof AddUserSchema>) => {
+    const onSubmit = async (values: z.infer<typeof EditUserSchema>) => {
         try {
-            if (values.password !== values.confirm_password) {
-                return toast({
-                    variant: 'destructive',
-                    title: 'Error',
-                    description: 'Passwords do not match'
-                })
-            }
-            const { name, email, password, phone, company, prefix, pan, aadhar, gstin } = values;
-            const credentials = {
-                'name': name,
-                'email': email,
-                'password': password
-            }
             const user = {
-                'billingAddress': {
-                    'phone': phone,
+                name: values.name,
+                billingAddress: {
+                    phone: values.phone
                 },
-                'companyProfile': {
-                    'companyName': company,
+                companyProfile: {
+                    companyName: values.companyName,
+                    companyEmail: values.companyEmail
                 },
-                'prefix': prefix,
-                'pan': pan,
-                'aadhar': aadhar,
-                'gst': gstin,
-                'kycDetails': {
-                    'submitted': true,
-                    'verified': true
-                }
+                prefix: values.prefix,
+                pan: values.pan,
+                aadhar: values.aadhar,
+                gst: values.gst,
+                isVerified: values.verified,
+                isActive: values.active
             }
-
-            handleSignup(credentials, user)
+            handleEditUser(sellerId ?? '', user)
             form.reset();
             router.refresh();
         } catch (error) {
             console.log(error);
         }
     }
+
+    useEffect(() => {
+        if (user) {
+            form.setValue('name', user.name || '')
+            form.setValue('phone', user.billingAddress?.phone || '')
+            form.setValue('companyName', user.companyProfile?.companyName || '')
+            form.setValue('companyEmail', user.companyProfile?.companyEmail || '')
+            form.setValue('prefix', user.prefix || '')
+            form.setValue('pan', user.pan || '')
+            form.setValue('aadhar', user.aadhar || '')
+            form.setValue('gst', user.gst || '')
+            form.setValue('verified', user.isVerified || false)
+            form.setValue('active', user.isActive || true)
+        }
+    }, [user, form])
 
     return (
         <Form {...form}>
@@ -102,54 +110,6 @@ const AddUserForm = () => {
                             <FormItem>
                                 <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
                                     Name <span className='text-red-600'>*</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                        {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    <FormField
-                        control={form.control}
-                        name={'email'}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    Email <span className='text-red-600'>*</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                        {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    <FormField
-                        control={form.control}
-                        name={'password'}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    Password <span className='text-red-600'>*</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                        {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    <FormField
-                        control={form.control}
-                        name={'confirm_password'}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    Confirm Password <span className='text-red-600'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Input
@@ -177,11 +137,27 @@ const AddUserForm = () => {
                         )} />
                     <FormField
                         control={form.control}
-                        name={'company'}
+                        name={'companyName'}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
                                     Company <span className='text-red-600'>*</span>
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    <FormField
+                        control={form.control}
+                        name={'companyEmail'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    Company Email <span className='text-red-600'>*</span>
                                 </FormLabel>
                                 <FormControl>
                                     <Input
@@ -241,7 +217,7 @@ const AddUserForm = () => {
                         )} />
                     <FormField
                         control={form.control}
-                        name={'gstin'}
+                        name={'gst'}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
@@ -255,11 +231,57 @@ const AddUserForm = () => {
                                 <FormMessage />
                             </FormItem>
                         )} />
+                    <FormField
+                        control={form.control}
+                        name={'verified'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id="verified"
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                        <label
+                                            htmlFor="verified"
+                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        >
+                                            isVerified
+                                        </label>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    <FormField
+                        control={form.control}
+                        name={'active'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox 
+                                            id="active" 
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                            />
+                                        <label
+                                            htmlFor="active"
+                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        >
+                                            isActive
+                                        </label>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                 </div>
-                <Button variant={'themeButton'} size={'lg'} type='submit' className='mt-6'><Plus size={16} /> Add User</Button>
+                <Button variant={'themeButton'} size={'lg'} type='submit' className='mt-6'> Edit User</Button>
             </form>
         </Form>
     )
 }
 
-export default AddUserForm;
+export default EditUserForm;
