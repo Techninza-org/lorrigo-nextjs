@@ -44,7 +44,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
     const { getHub } = useSellerProvider()
 
-    const { userToken } = useAuth();
+    const { userToken, user } = useAuth();
 
     const { toast } = useToast();
     const router = useRouter()
@@ -53,10 +53,10 @@ function HubProvider({ children }: { children: React.ReactNode }) {
     const axiosConfig = {
         baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
         headers: {
-            'Content-Type': 'application/json',
-            ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
+          'Content-Type': 'application/json',
+          ...((!!user || !!userToken) && { 'Authorization': `Bearer ${userToken || (user && user.token)}` }),
         },
-    };
+      };
 
     const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
@@ -165,6 +165,12 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                     description: "Hub has been created successfully",
                 });
                 router.refresh()
+            } else if (res.data.message.includes("Oops! Invalid Data")) {
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Please Try Again",
+                });
             } else {
                 toast({
                     variant: "destructive",
@@ -181,7 +187,6 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
         }
     }, [userToken, axiosIWAuth, getHub, router, toast])
-
     const updateCompanyProfile = async (values: z.infer<typeof CompanyProfileSchema>) => {
 
         // try {
@@ -408,13 +413,14 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
 
             const userRes = await axiosIWAuth.put(`/hub/${update_id}`, pickupLocationData);
-            console.log('userRes ', userRes);
 
-            if (userRes) {
+            if (userRes.data?.valid) {
+                getHub();
                 toast({
                     title: "Success",
                     description: "Pickup Location updated successfully.",
                 });
+
             }
 
         } catch (error) {

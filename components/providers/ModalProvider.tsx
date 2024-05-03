@@ -8,7 +8,6 @@ import { AddPickupLocationModal } from "../modal/add-pickup-location";
 import { SchedulePickupModal } from "../modal/schedule-pickup-modal";
 import { DownloadLableModal } from "../modal/download-label-modal";
 import { DownloadManifestModal } from "../modal/download-manifest-modal";
-import { EditPickupLocationModal } from "../modal/edit-pickup-location";
 import { CancelOrderDialog } from "../Orders/cancel-order-dialog";
 import { NDROrderDialog, NDRRTODialog } from "../Orders/ndr-order-dialog";
 
@@ -31,9 +30,7 @@ export const ModalProvider = () => {
         <SchedulePickupModal />
         <DownloadLableModal/>
         <DownloadManifestModal/>
-        <EditPickupLocationModal />
         <CancelOrderDialog/>
-        
 
         <NDROrderDialog/>
         <NDRRTODialog/>

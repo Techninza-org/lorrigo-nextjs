@@ -1,7 +1,6 @@
 'use client'
 import { ColumnDef } from "@tanstack/react-table";
 import { pickupAddressType } from "@/types/types";
-import { EditAddress } from "./edit-address-button";
 
 
 export const PickupAddressCol: ColumnDef<pickupAddressType>[] = [
@@ -35,7 +34,9 @@ export const PickupAddressCol: ColumnDef<pickupAddressType>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <EditAddress hub={rowData}/>
+                <div className="space-y-1 items-center">
+                    Action
+                </div>
             )
         }
     }
