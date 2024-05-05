@@ -2,12 +2,12 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import axios, { AxiosInstance } from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
 import { AdminType, RemittanceType, SellerType } from "@/types/types";
+import { useAxios } from "./AxiosProvider";
 
 interface AdminContextType {
     handleCreateHub: (hub: AdminType) => void;
@@ -21,21 +21,14 @@ const AdminContext = createContext<AdminContextType | null>(null);
 export default function AdminProvider({ children }: { children: React.ReactNode }) {
     const { getHub } = useSellerProvider()
     const { userToken, user } = useAuth();
+    const { axiosIWAuth } = useAxios();
+    
     const [users, setUsers] = useState([]);
     const [allRemittance, setAllRemittance] = useState<RemittanceType[] | null>(null);
 
     const { toast } = useToast();
     const router = useRouter()
 
-    const axiosConfig = {
-        baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
-        headers: {
-          'Content-Type': 'application/json',
-          ...((!!user || !!userToken) && { 'Authorization': `Bearer ${userToken || (user && user.token)}` }),
-        },
-      };
-
-    const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
     const handleCreateHub = useCallback(async (hub: AdminType) => {
         try {

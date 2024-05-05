@@ -85,6 +85,7 @@ export interface CustomerDetailsType {
 export interface pickupAddressType {
   _id: string;
   sellerId: string;
+  isActive: boolean
   name: string;
   pincode: number;
   email: string;

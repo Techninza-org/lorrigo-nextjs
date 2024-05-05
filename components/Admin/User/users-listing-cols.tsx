@@ -76,7 +76,9 @@ export const AdminUsersListingCols: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{formatDate(`${rowData.createdAt}`, 'MMM dd, yyyy')}</p>
+                    {
+                        rowData.createdAt ? <p>{formatDate(new Date(rowData.createdAt), 'dd/MM/yyyy')}</p> : <p>Not Available</p>
+                    }
                 </div>
             )
         }
