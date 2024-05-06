@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PickupAddresses from "@/components/Settings/pickup-addresses";
-import Image from "next/image";
 
 export default function ManagePickupAddresses() {
 
@@ -20,5 +19,3 @@ export default function ManagePickupAddresses() {
         </Card>
     )
 }
-// data:image/png;base64,
-export const Base64Data =""

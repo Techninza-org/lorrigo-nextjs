@@ -6,17 +6,20 @@ import {
   File,
   FileImage,
   FolderArchive,
+  Upload,
   UploadCloud,
   Video,
   X,
 } from "lucide-react";
 import { useCallback, useState } from "react";
-import  { FileRejection, useDropzone } from "react-dropzone";
+import { FileRejection, useDropzone } from "react-dropzone";
 import { Input } from "./ui/input";
-import { Progress } from "./ui/progress";
-import { ScrollArea } from "./ui/scroll-area";
+// import { Progress } from "./ui/progress";
+// import { ScrollArea } from "./ui/scroll-area";
 import { useToast } from "./ui/use-toast";
 import { useAxios } from "./providers/AxiosProvider";
+import { Button } from "./ui/button";
+import { DocumentUploadSchema } from "./Settings/DocumentUploadForm";
 
 interface FileUploadProgress {
   progress: number;
@@ -33,8 +36,8 @@ enum FileTypes {
 }
 
 const ImageColor = {
-  bgColor: "bg-purple-600",
-  fillColor: "fill-purple-600",
+  bgColor: "bg-red-400",
+  fillColor: "fill-red-400",
 };
 
 const PdfColor = {
@@ -57,7 +60,23 @@ const OtherColor = {
   fillColor: "fill-gray-400",
 };
 
-export default function ImageUpload({ maxFiles, uploadUrl }: { maxFiles: number, uploadUrl: string }) {
+export default function ImageUpload({ Label,
+  maxFiles = 1,
+  uploadUrl,
+  handleClose,
+  acceptFileTypes = { 'image/jpeg': ['.jpeg', '.png', '.jpg'] },
+  handleFileChange,
+  fieldName,
+}: {
+  Label?: string,
+  maxFiles?: number,
+  uploadUrl: string,
+  handleClose?: () => void,
+  acceptFileTypes?: { [key: string]: string[] },
+  handleFileChange?: ({ fieldName, file }: { fieldName: keyof DocumentUploadSchema, file: File }) => void
+  fieldName?: keyof DocumentUploadSchema
+}) {
+
   const { axiosIWAuth4Upload } = useAxios();
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
@@ -162,8 +181,6 @@ export default function ImageUpload({ maxFiles, uploadUrl }: { maxFiles: number,
   };
 
   const onDrop = useCallback(async (acceptedFiles: File[], fileRejections: FileRejection[]) => {
-    const currFile = acceptedFiles[acceptedFiles.length - 1]
-
     const FileErrorObj = {
       'file-invalid-type': 'Invalid file type',
       'file-too-large': 'File is too large',
@@ -182,7 +199,7 @@ export default function ImageUpload({ maxFiles, uploadUrl }: { maxFiles: number,
 
     setFilesToUpload((prevUploadProgress) => {
       return [
-        ...prevUploadProgress,
+        // ...prevUploadProgress,
         ...acceptedFiles.map((file) => {
           return {
             progress: 0,
@@ -193,62 +210,69 @@ export default function ImageUpload({ maxFiles, uploadUrl }: { maxFiles: number,
       ];
     });
 
+    if (fieldName && handleFileChange) {
+      handleFileChange({ fieldName, file: acceptedFiles[0] });
+    }
 
 
-    const fileUploadBatch = acceptedFiles.map((file) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append(
-        "upload_preset",
-        process.env.NEXT_PUBLIC_UPLOAD_PRESET as string
-      );
+  }, []);
 
-      const cancelSource = axios.CancelToken.source();
-      return uploadImageToDB(
-        formData,
-        (progressEvent) => onUploadProgress(progressEvent, file, cancelSource),
-        cancelSource
-      );
-    });
+  const handleUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const cancelSource = axios.CancelToken.source();
 
     try {
-      await Promise.all(fileUploadBatch);
-      toast({
-        variant: "default",
-        title: "Files uploaded successfully",
-      });
+      await uploadImageToDB(formData, (progressEvent) => {
+        onUploadProgress(progressEvent, file, cancelSource);
+      }, cancelSource);
+      if (handleClose) handleClose();
     } catch (error) {
-      console.error("Error uploading files: ", error);
+      toast({
+        variant: "destructive",
+        title: "Upload failed",
+        description: "Failed to upload file",
+      });
+
+      setFilesToUpload((prevUploadProgress) => {
+        return prevUploadProgress.filter((item) => item.File !== file);
+      });
     }
-  }, []);
+
+  }
 
   const { getRootProps, getInputProps } = useDropzone({
     maxFiles: maxFiles,
     maxSize: 1000 * 1000,
     onDrop,
-    accept: {
-      'image/jpeg': ['.jpeg', '.png', '.jpg'],
-    }
+    accept: acceptFileTypes
   });
 
   return (
     <div>
-      <div>
+      {Label && <p className="text-sm text-gray-600">{Label}</p>}
+      <div className="relative">
         <label
           {...getRootProps()}
-          className="relative flex flex-col items-center justify-center w-full py-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 "
+          className="relative h-36 overflow-hidden flex flex-col items-center justify-center w-full py-6 border-2 border-red-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 "
         >
           <div className=" text-center">
             <div className="border p-2 rounded-md max-w-min mx-auto">
-              <UploadCloud size={20} />
+              {filesToUpload.length > 0 ? getFileIconAndColor(filesToUpload[0].File).icon : <UploadCloud size={20} />}
             </div>
 
             <p className="mt-2 text-sm text-gray-600">
-              <span className="font-semibold">Drag files</span>
+              <span className="font-semibold"> {filesToUpload.length > 0 ? filesToUpload[0].File.name : "Drag files"} </span>
             </p>
-            <p className="text-xs text-gray-500">
-              Click to upload files &#40;files should be under 10 MB &#41;
-            </p>
+            {filesToUpload.length === 0 && <p className="text-xs text-gray-500 px-1 space-x-1">
+              <span>Click to upload files &#40;files should be under 1 MB &#41;</span>
+              <span>
+                {
+                  Object.values(acceptFileTypes).map((fileType) => fileType.join(', ')).join(', ')
+                }
+              </span>
+            </p>}
           </div>
         </label>
 
@@ -259,9 +283,31 @@ export default function ImageUpload({ maxFiles, uploadUrl }: { maxFiles: number,
           className="hidden"
         />
 
+        {filesToUpload.length > 0 && <button
+          onClick={() => {
+            if (filesToUpload[0].source)
+              filesToUpload[0].source.cancel("Upload cancelled");
+            removeFile(filesToUpload[0].File);
+          }}
+          className="bg-red-500 text-white transition-all cursor-pointer p-1 absolute -top-2 -right-2 rounded-full"
+        >
+          <X size={14} />
+        </button>}
       </div>
 
-      {filesToUpload.length > 0 && (
+      {
+        !handleFileChange && <Button
+          disabled={filesToUpload.length > 0 ? false : true}
+          onClick={() => handleUpload(filesToUpload[0].File)}
+          variant={"webPageBtn"}
+          size={"sm"}
+          className="space-x-2 flex items-center ml-auto mt-2">
+          <span>Upload </span><Upload size={20} />
+        </Button>
+      }
+
+      {/* Below code is commented becoz not need as now */}
+      {/* {filesToUpload.length > 0 && (
         <div>
           <ScrollArea className="h-40">
             <p className="font-medium my-2 mt-6 text-muted-foreground text-sm">
@@ -313,7 +359,6 @@ export default function ImageUpload({ maxFiles, uploadUrl }: { maxFiles: number,
           </ScrollArea>
         </div>
       )}
-
       {uploadedFiles.length > 0 && (
         <div>
           <p className="font-medium my-2 mt-6 text-muted-foreground text-sm">
@@ -349,7 +394,7 @@ export default function ImageUpload({ maxFiles, uploadUrl }: { maxFiles: number,
             })}
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

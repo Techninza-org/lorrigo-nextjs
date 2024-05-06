@@ -12,7 +12,7 @@ interface KycContextType {
     onHandleNext: () => void;
     onHandleBack: () => void;
     businessType: string;
-    photoUrl: string;   
+    photoUrl: string;
     gstin: string;
     pan: string;
     document1Front: string;
@@ -60,7 +60,25 @@ function KycProvider({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <KycContext.Provider value={{ formData, step, photoUrl: "", gstin: '', pan: '', verifyOtpOpen, setVerifyOtpOpen, onHandleNext, onHandleBack, setFormData: setFormData as React.Dispatch<React.SetStateAction<KycFormType | null>>, businessType: "", document1Front: "", document1Back: "", document2Front: "", document2Back: "", submitted: false, verified: false }}>
+        <KycContext.Provider value={{
+            formData,
+            step,
+            photoUrl: "",
+            gstin: '',
+            pan: '',
+            verifyOtpOpen,
+            setVerifyOtpOpen,
+            onHandleNext,
+            onHandleBack,
+            setFormData: setFormData as React.Dispatch<React.SetStateAction<KycFormType | null>>,
+            businessType: "",
+            document1Front: "",
+            document1Back: "",
+            document2Front: "",
+            document2Back: "",
+            submitted: false,
+            verified: false
+        }}>
             {children}
         </KycContext.Provider>
     );

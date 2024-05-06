@@ -64,7 +64,7 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
 
   const handleFileDownload = () => {
     const url = '/pickup_bulk_sample.xlsx';
-    window.open(url);
+    window.open(url, "_blank");
   }
 
   return (

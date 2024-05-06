@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useModal } from '@/hooks/use-model-store';
 import { useToast } from "@/components/ui/use-toast";
 import { Camera } from 'lucide-react';
+import Image from 'next/image';
 
 type PhotoSchema = {
     photoUrl: string;
@@ -17,48 +18,74 @@ const PhotoIdentification = () => {
     const { onClose } = useModal();
     const { onHandleBack, onHandleNext, formData, setFormData } = useKycProvider();
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
-    const [photoURL, setPhotoURL] = useState('')
+    const [photoURL, setPhotoURL] = useState('');
     const [cameraOn, setCameraOn] = useState<boolean>(false);
     const { toast } = useToast();
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        handleStartCamera();
+        return () => {
+            handleStopCamera();
+        };
+    }, []);
 
     const handleStartCamera = async () => {
+        if (photoURL) {
+            setPhotoURL('');
+        }
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    width: 1280,
+                    height: 720,
+                }
+            });
             setMediaStream(stream);
+            if (videoRef.current) {
+                videoRef.current.srcObject = stream;
+                videoRef.current.play();
+            }
             setCameraOn(true);
         } catch (error) {
-            console.error('Error accessing camera:', error);
+            return toast({
+                variant: "destructive",
+                title: "Camera Access Required",
+                description: "Please grant access to the camera to continue.",
+            })
         }
     };
 
     const handleTakePhoto = async () => {
         if (!mediaStream) return;
 
-        const video = document.createElement('video');
-        video.srcObject = mediaStream;
-        video.onloadedmetadata = () => {
-            video.play();
-        };
+        const video = videoRef.current;
+        if (!video) {
+            return;
+        }
 
-        video.onplay = () => {
-            const canvas = canvasRef.current;
-            if (!canvas) return;
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
+        const canvas = canvasRef.current;
+        if (!canvas) {
+            return;
+        }
 
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return;
+        const { videoWidth, videoHeight } = video;
+        canvas.width = videoWidth;
+        canvas.height = videoHeight;
 
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            return;
+        }
 
-            const newPhotoURL = canvas.toDataURL('image/jpeg');
-            setPhotoURL(newPhotoURL); 
-            console.log('photo: ', newPhotoURL);
-            
-            handleStopCamera();
-        };
+        ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+        const newPhotoURL = canvas.toDataURL('image/jpeg');
+        setPhotoURL(newPhotoURL);
+
+        handleStopCamera();
     };
 
     const handleStopCamera = async () => {
@@ -67,12 +94,6 @@ const PhotoIdentification = () => {
             setMediaStream(null);
         }
     };
-
-    useEffect(() => {
-        if (formData?.photoUrl) {
-            setPhotoURL(formData.photoUrl) 
-        }
-    }, [formData]);
 
     const handleSubmit = async (values: PhotoSchema) => {
         try {
@@ -86,24 +107,36 @@ const PhotoIdentification = () => {
             }
             setFormData((prev: any) => ({ ...prev, ...values }));
             onHandleNext();
-            router.refresh();
-            onClose();
         } catch (error) {
-            console.log(error);
+            console.error(`Error: [PhotoIdentification] ${error}`);
         }
-    }
+    };
 
     return (
         <Card className='p-10'>
             <CardTitle>Photo Identification</CardTitle>
             <div className='grid place-content-center m-4'>
                 <canvas ref={canvasRef} className='border-2 border-black w-full h-full hidden' />
-                {!photoURL && <div className='border-2 border-dashed border-[#be0c34] rounded-lg w-[640px] h-[480px] grid place-content-center bg-[#F7F7F7]'>
-                    <div className='flex justify-center'><Camera size={50} color='#be0c34' /></div>
-                    {cameraOn && <p>Please look at the camera and then Capture Selfie</p>}
+                {!photoURL && <div className='border-2 border-dashed border-[#be0c34] rounded-lg w-full h-96'>
+                    {cameraOn && <video ref={videoRef} autoPlay={true} className='min-w-full h-96 p-2'></video>}
+                    {!cameraOn && <>
+                        <div className='flex justify-center'>
+                            <Camera size={50} color='#be0c34' />
+                        </div>
+                        <p>Please look at the camera and then Capture Selfie</p>
+                    </>}
                 </div>}
-                {/* {photoURL && <img src={photoURL} alt="Captured" />} */}
-                <div className='flex justify-center mt-6'>{!mediaStream && <Button variant={'themeButton'} className='w-fit' onClick={handleStartCamera}>Start Camera</Button>}</div>
+                {
+                    photoURL && <Image src={photoURL} alt='photo' width={640} height={360} className='rounded-lg' />
+
+                }
+                <div className='flex justify-center mt-6'>
+                    {!mediaStream && (
+                        <Button variant={'themeButton'} className='w-fit' onClick={handleStartCamera}>
+                            Start Camera
+                        </Button>
+                    )}
+                </div>
                 <div className='flex justify-center'>{mediaStream && <Button variant={'themeButton'} className='w-fit' onClick={handleTakePhoto}>Capture Selfie</Button>}</div>
             </div>
             <div className='flex justify-between'>

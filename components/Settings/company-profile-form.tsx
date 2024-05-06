@@ -95,8 +95,9 @@ export const CompanyProfileForm = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                      className="bg-zinc-300/50  dark:bg-zinc-700 dark:text-white focus-visible:ring-1 text-black focus-visible:ring-offset-1 border-2 shadow-sm"
                       readOnly={true}
+                      disabled={true}
                       {...field} />
                   </FormControl>
                   <FormMessage />

@@ -403,7 +403,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         getSellerDashboardDetails();
         getAllOrdersByStatus(status || "all");
-        // revalidatePath('/')
         router.refresh();
         return true;
       } else {
