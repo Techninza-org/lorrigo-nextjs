@@ -227,7 +227,7 @@ export default function ImageUpload({ maxFiles, uploadUrl }: { maxFiles: number,
     maxSize: 1000 * 1000,
     onDrop,
     accept: {
-      'image/jpeg': ['.jpeg', '.png', '.jpg'],
+      'image/jpeg': ['.jpeg', '.png', '.jpg', '.csv'],
     }
   });
 

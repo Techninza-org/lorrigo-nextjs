@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { OrderStatusTable } from '@/components/Orders/order-status-table';
-import { OrderStatusCol } from '@/components/Orders/order-status-col';
 import { useAuth } from '@/components/providers/AuthProvider';
 import axios, { AxiosInstance } from 'axios';
 import { OrderType } from '@/types/types';
+import { OrderStatusColAdmin } from '@/components/Orders/order-status-col-admin';
 
 const SellerOrdersAdmin = () => {
     const [orders, setOrderDetails] = useState<OrderType[]>([]);
@@ -46,7 +46,7 @@ const SellerOrdersAdmin = () => {
                     Shipments
                 </CardTitle>
                 <CardContent className="pl-2">
-                    <OrderStatusTable columns={OrderStatusCol} data={orders} />
+                    <OrderStatusTable columns={OrderStatusColAdmin} data={orders} />
                 </CardContent>
             </CardHeader>
         </Card>

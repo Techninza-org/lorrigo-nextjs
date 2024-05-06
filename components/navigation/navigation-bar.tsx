@@ -1,7 +1,7 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, HandIcon, Home, Settings, ShoppingCart, TrendingUpIcon, Truck, User } from "lucide-react";
+import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -51,44 +51,42 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             href: "/admin/shipment-listing",
         },
         {
-            title: "Remittances",
-            icon: Truck,
-            href: "/admin/finance/remittance",
+            title: "Finance",
+            icon: HandCoins,
+            subLinks: [
+                {
+                    title: "Remittances",
+                    href: "/admin/finance/remittance",
+                },
+                {
+                    title: "Vendor Billing",
+                    href: "/admin/finance/vendor-billing",  
+                },
+                {
+                    title: "Client Billing",
+                    href: "/admin/finance/client-billing",  
+                },
+            ]
         },
         {
-            title: "Users List",
-            icon: Truck,
-            href: "/admin/users/users-list",
+            title: "Upload Pincodes",
+            icon: MapPin,
+            href: "/admin/pincodes/upload-pincodes",
         },
         {
-            title: "Add User",
-            icon: Truck,
-            href: "/admin/users/add-user",
+            title: "Users",
+            icon: User,
+            subLinks: [
+                {
+                    title: "Users List",
+                    href: "/admin/users/users-list",
+                },
+                {
+                    title: "Add User",
+                    href: "/admin/users/add-user",
+                }
+            ]
         },
-        // {
-        //     title: "Finance",
-        //     icon: HandCoins,
-        //     sublinks: [
-        //         {
-        //             title: "Remittances",
-        //             href: "/admin/finance/remittance",
-        //         },
-        //         {
-        //             title: "Remittances",
-        //             href: "/admin/finance/remittance",
-        //         },
-        //     ]
-        // },
-        // {
-        //     title: "Users",
-        //     icon: User,
-        //     sublinks: [
-        //         {
-        //             title: "Users",
-        //             href: "/admin/users/users-list",
-        //         }
-        //     ]
-        // },
         
     ];
 

@@ -1,7 +1,7 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { LayoutDashboard, SquarePen, Wrench } from "lucide-react";
+import { BadgeCheck, LayoutDashboard, SquarePen, Wrench } from "lucide-react";
 import { formatDate } from "date-fns";
 
 export const AdminUsersListingCols: ColumnDef<any>[] = [
@@ -38,7 +38,7 @@ export const AdminUsersListingCols: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{rowData.name}</p>
+                    <p className="flex">{rowData.name}{rowData.isVerified ? <div className="grid place-content-center ml-2"><BadgeCheck size={16} color="blue" /></div> : ''}</p>
                 </div>
             )
         }

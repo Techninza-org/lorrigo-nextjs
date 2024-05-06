@@ -21,4 +21,3 @@ export default function ManagePickupAddresses() {
     )
 }
 // data:image/png;base64,
-export const Base64Data =""
