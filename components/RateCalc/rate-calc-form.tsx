@@ -450,7 +450,7 @@ export const RateCalcForm = () => {
                                 </TableHeader>
                                 <TableBody>
                                     {
-                                        courierCalcRate.length > 1 && courierCalcRate?.map((partner: any, i: number) => {
+                                         (courierCalcRate) && (courierCalcRate?.length > 1) && courierCalcRate?.map((partner: any, i: number) => {
                                             return <TableRow key={i}>
                                                 <TableCell>
                                                     <div className="flex items-center">

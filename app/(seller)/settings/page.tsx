@@ -4,6 +4,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { ChevronRight } from 'lucide-react';
 
+import CarPNG from '@/components/SVGs/car.png'
+import CompanyPNG from '@/components/SVGs/company.png'
+import PrinterPNG from '@/components/SVGs/printer.png'
+import UserPNG from '@/components/SVGs/user.png'
+
 interface LinkItem {
   href: string;
   label: string;
@@ -20,7 +25,7 @@ const SettingsCard: React.FC<SettingsCardProps> = ({ title, links, logo }) => (
     <CardContent className='pt-4 h-[187px]'>
       <div className='flex'>
         <div className="mr-3">
-          <Image src={logo} alt="Settings Icon" width={30} height={30}/>
+          <Image src={logo} alt="Settings Icon" width={30} height={30} />
         </div>
         <div className='grid place-content-center'>
           <h3 className="font-medium text-lg">{title}</h3>
@@ -31,7 +36,7 @@ const SettingsCard: React.FC<SettingsCardProps> = ({ title, links, logo }) => (
           <Link key={index} href={href}>
             <div className='flex justify-between text-sm hover:text-gray-500'>
               <p>{label}</p>
-              <ChevronRight size={18}/>
+              <ChevronRight size={18} />
             </div>
           </Link>
         ))}
@@ -49,15 +54,14 @@ const Settings = () => {
         { href: '/settings/company/kyc', label: 'KYC' },
         { href: '/settings/company/change-password', label: 'Change Password' }
       ],
-      logo: '/assets/clarity_building-line.png'
+      logo: CompanyPNG
     },
     {
       title: 'COD Payments',
       links: [
         { href: '/settings/cod-payments/bank-details', label: 'Bank Details' },
-        // { href: '/settings/cod-payments/postpaid', label: 'Postpaid' }
       ],
-      logo: '/assets/cod.png'
+      logo: UserPNG
     },
     {
       title: 'Billing',
@@ -65,14 +69,14 @@ const Settings = () => {
         { href: '/settings/billing/gstin-invoicing', label: 'GSTIN Invoicing' },
         { href: '/settings/billing/billing-address', label: 'Billing Address' }
       ],
-      logo: '/assets/billing.png'
+      logo: PrinterPNG
     },
     {
       title: 'Pickup Address',
       links: [
         { href: '/settings/pickup-address/manage-pickup-addresses', label: 'Manage Pickup Addresses' }
       ],
-      logo: '/assets/pickup.png'
+      logo: CarPNG
     }
   ];
 
@@ -81,7 +85,7 @@ const Settings = () => {
       <h1 className='py-5 text-2xl font-semibold'>Settings</h1>
       <div className='grid grid-cols-3 gap-14 pb-5'>
         {settingsData.map((data, index) => (
-          <SettingsCard key={index} title={data.title} links={data.links} logo={data.logo}/>
+          <SettingsCard key={index} title={data.title} links={data.links} logo={data.logo.src} />
         ))}
       </div>
     </div>

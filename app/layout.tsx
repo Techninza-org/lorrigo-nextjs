@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { DrawerProvider } from "@/components/providers/DrawerProvider";
 import KycProvider from "@/components/providers/KycProvider";
 import AdminProvider from "@/components/providers/AdminProvider";
+import AxiosProvider from "@/components/providers/AxiosProvider";
 
 const inter = IBM_Plex_Sans_Condensed({
   subsets: ["cyrillic-ext"],
@@ -33,18 +34,20 @@ export default function RootLayout({
       <body className={cn("antialiased", inter.className)}>
         <LoadingProvider>
           <AuthProvider>
-            <SellerProvider>
-              <AdminProvider>
-                <HubProvider>
-                  <KycProvider>
-                    <Toaster />
-                    <ModalProvider />
-                    <DrawerProvider />
-                    {children}
-                  </KycProvider>
-                </HubProvider>
-              </AdminProvider>
-            </SellerProvider>
+            <AxiosProvider>
+              <SellerProvider>
+                <AdminProvider>
+                  <HubProvider>
+                    <KycProvider>
+                      <Toaster />
+                      <ModalProvider />
+                      <DrawerProvider />
+                      {children}
+                    </KycProvider>
+                  </HubProvider>
+                </AdminProvider>
+              </SellerProvider>
+            </AxiosProvider>
           </AuthProvider>
         </LoadingProvider>
       </body>

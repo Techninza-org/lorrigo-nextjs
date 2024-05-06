@@ -2,7 +2,6 @@
 
 import React, { createContext, useCallback, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
-import axios, { AxiosInstance } from "axios";
 import * as XLSX from 'xlsx';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
@@ -13,6 +12,7 @@ import { CompanyProfileSchema } from "../Settings/company-profile-form";
 import { BillingAddressSchema } from "../Settings/billing-address-form";
 import { GstinFormSchema } from "../Settings/gstin-form";
 import { pickupAddressFormSchema } from "../modal/add-pickup-location";
+import { useAxios } from "./AxiosProvider";
 
 interface reqPayload {
     name: string;
@@ -43,22 +43,12 @@ const HubContext = createContext<HubContextType | null>(null);
 function HubProvider({ children }: { children: React.ReactNode }) {
 
     const { getHub } = useSellerProvider()
-
-    const { userToken, user } = useAuth();
+    const { userToken } = useAuth();
+    const { axiosIWAuth } = useAxios();
 
     const { toast } = useToast();
     const router = useRouter()
     const [companyLogo, setCompanyLogo] = useState("");
-
-    const axiosConfig = {
-        baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
-        headers: {
-          'Content-Type': 'application/json',
-          ...((!!user || !!userToken) && { 'Authorization': `Bearer ${userToken || (user && user.token)}` }),
-        },
-      };
-
-    const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
 
     const handleCreateHubs = useCallback(async (hubs: reqPayload[]) => {

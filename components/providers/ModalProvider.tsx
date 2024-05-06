@@ -10,32 +10,34 @@ import { DownloadLableModal } from "../modal/download-label-modal";
 import { DownloadManifestModal } from "../modal/download-manifest-modal";
 import { CancelOrderDialog } from "../Orders/cancel-order-dialog";
 import { NDROrderDialog, NDRRTODialog } from "../Orders/ndr-order-dialog";
+import { BulkHubUploadModal } from "../modal/bulk-hub-upload-modal";
 
 export const ModalProvider = () => {
-    const [isMounted, setIsMounted] = useState(false);
-  
-    useEffect(() => {
-      setIsMounted(true);
-    }, []);
-  
-    if (!isMounted) return null;
-  
+  const [isMounted, setIsMounted] = useState(false);
 
-    return (
-      <>
-        <RechargeModal />
-        <AddCustomerModal />
-        <AddSellerModal />
-        <AddPickupLocationModal/>
-        <SchedulePickupModal />
-        <DownloadLableModal/>
-        <DownloadManifestModal/>
-        <CancelOrderDialog/>
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-        <NDROrderDialog/>
-        <NDRRTODialog/>
-        
-      </>
-    );
-  };
-  
+  if (!isMounted) return null;
+
+
+  return (
+    <>
+      <RechargeModal />
+      <AddCustomerModal />
+      <AddSellerModal />
+      <AddPickupLocationModal />
+      <SchedulePickupModal />
+      <DownloadLableModal />
+      <DownloadManifestModal />
+      <CancelOrderDialog />
+
+      <NDROrderDialog />
+      <NDRRTODialog />
+
+      <BulkHubUploadModal />
+
+    </>
+  );
+};

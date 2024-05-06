@@ -3,7 +3,6 @@
 import { z } from "zod";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import axios, { AxiosInstance } from "axios";
 
 import { useToast } from "@/components/ui/use-toast";
 
@@ -14,6 +13,7 @@ import { cloneFormSchema } from "../drawer/clone-order-drawer";
 import { EditFormSchema } from "../drawer/edit-order-drawer";
 import { ReattemptOrderSchema } from "../Orders/ndr-order-dialog";
 import { unstable_noStore } from "next/cache";
+import { useAxios } from "./AxiosProvider";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -70,6 +70,8 @@ const SellerContext = createContext<SellerContextType | null>(null);
 
 function SellerProvider({ children }: { children: React.ReactNode }) {
   const { userToken, user } = useAuth();
+  const { axiosIWAuth } = useAxios();
+
   const [seller, setSeller] = useState<SellerType | null>(null);
   const [sellerRemittance, setSellerRemittance] = useState<RemittanceType[] | null>(null);
   const [sellerDashboard, setSellerDashboard] = useState<any>(null);
@@ -109,14 +111,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const status = useSearchParams().get("status");
 
-  const axiosConfig = {
-    baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
-    headers: {
-      'Content-Type': 'application/json',
-      ...((!!user || !!userToken) && { 'Authorization': `Bearer ${userToken || (user && user.token)}` }),
-    },
-  };
-  const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
 
   const getHub = () => {
     axiosIWAuth.get('/hub')
