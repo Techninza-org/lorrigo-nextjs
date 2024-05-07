@@ -18,4 +18,5 @@ export default function ManagePickupAddresses() {
             </CardContent>
         </Card>
     )
+}
 // data:image/png;base64,
