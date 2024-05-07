@@ -46,7 +46,7 @@ function KycProvider({ children }: { children: React.ReactNode }) {
     const { seller } = useSellerProvider();
 
     useEffect(() => {
-        if (seller?.kycDetails?.verified === true || seller?.kycDetails?.submitted === true) {
+        if (seller?.isVerified === true || seller?.kycDetails?.verified === true || seller?.kycDetails?.submitted === true) {
             setStep(4);
         }
     }, [seller]);

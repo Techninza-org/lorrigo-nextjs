@@ -2,27 +2,23 @@ import React, { useState, useEffect } from 'react'
 import { useKycProvider } from '../providers/KycProvider';
 import { Card, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
-import { toast } from '../ui/use-toast';
-import { useRouter } from 'next/navigation';
 import { useSellerProvider } from '../providers/SellerProvider';
-import { useAxios } from '../providers/AxiosProvider';
 
 const KycCompleted = () => {
   const [submitted, setSubmitted] = useState(false);
   const [verified, setVerified] = useState(false);
   const { formData } = useKycProvider();
-  const { axiosIWAuth4Upload } = useAxios();
-  const router = useRouter()
   const { seller } = useSellerProvider();
 
   useEffect(() => {
+
     if (seller?.kycDetails?.submitted === true) {
       setSubmitted(true);
     }
-    if (seller?.kycDetails?.verified === true) {
+    if ( seller?.isVerified === true) {
       setVerified(true);
     }
-  }, []);
+  }, [seller]);
 
   const handleCompleteKyc = async () => {
     const kycDetails = {

@@ -31,6 +31,7 @@ const BankDetailsForm = () => {
     const { updateBankDetails } = useHubProvider();
     const { seller } = useSellerProvider();
     console.log('seller: ',seller);
+    console.log(seller);
     
 
     const form = useForm({
