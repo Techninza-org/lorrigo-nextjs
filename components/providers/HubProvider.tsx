@@ -236,7 +236,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 });
             }
 
-            const companyProfileData = {   ///not providing id and logo yet
+            const companyProfileData = {
                 companyProfile: {
                     companyName,
                     companyEmail,

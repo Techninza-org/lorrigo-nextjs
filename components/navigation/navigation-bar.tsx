@@ -1,7 +1,7 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User } from "lucide-react";
+import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -41,6 +41,11 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                     href: "/finance/remittances",
                 },
             ],
+        },
+        {
+            title: "Settings",
+            icon: LucideSettings,
+            href: "/settings",
         },
     ];
 
@@ -87,7 +92,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 }
             ]
         },
-        
+
     ];
 
     const navLinks = isAdmin ? ADMIN_NAV_LINKS : SELLER_NAV_LINKS;

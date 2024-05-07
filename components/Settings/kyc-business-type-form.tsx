@@ -11,10 +11,8 @@ import {
     FormItem,
     FormLabel,
 } from "@/components/ui/form";
-import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
 
-import { useModal } from '@/hooks/use-model-store';
 import { useKycProvider } from '../providers/KycProvider';
 import { Card, CardDescription, CardTitle } from '../ui/card';
 
@@ -25,8 +23,6 @@ const BusinessTypeSchema = z.object({
 })
 
 export const KycBusinessTypeForm = () => {
-    const router = useRouter();
-    const { onClose } = useModal();
     const { formData, onHandleNext, setFormData } = useKycProvider();
 
     const form = useForm<z.infer<typeof BusinessTypeSchema>>({
@@ -35,20 +31,18 @@ export const KycBusinessTypeForm = () => {
 
     const onSubmit = async (values: z.infer<typeof BusinessTypeSchema>) => {
         try {
-            setFormData((prev: any) => ({ ...prev, ...values }));   
+            setFormData((prev: any) => ({ ...prev, ...values }));
             onHandleNext();
-            router.refresh();
-            onClose();
         } catch (error) {
             console.log(error);
         }
     }
 
     useEffect(() => {
-        if(formData?.businessType){
+        if (formData?.businessType) {
             form.setValue('businessType', formData.businessType as "individual" | "sole" | "company")
         }
-    }, [formData]);
+    }, [form, formData]);
 
 
     return (
@@ -63,7 +57,7 @@ export const KycBusinessTypeForm = () => {
                                 <FormControl>
                                     <RadioGroup
                                         onValueChange={field.onChange}
-                                        defaultValue={formData?.businessType ||field.value}
+                                        defaultValue={formData?.businessType || field.value}
                                         className="flex flex-col space-y-1"
                                     >
                                         <Card className="px-10 py-4 flex hover:shadow-md hover:shadow-slate-200">
@@ -106,7 +100,7 @@ export const KycBusinessTypeForm = () => {
                         )}
                     />
                     <div className='flex justify-end'>
-                    <Button type="submit" variant={'themeButton'} className='mt-6'>Next</Button>
+                        <Button type="submit" variant={'themeButton'} className='mt-6'>Next</Button>
                     </div>
                 </form>
             </Form>
