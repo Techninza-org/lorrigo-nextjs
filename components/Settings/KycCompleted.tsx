@@ -3,6 +3,9 @@ import { useKycProvider } from '../providers/KycProvider';
 import { Card, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { useSellerProvider } from '../providers/SellerProvider';
+import { useAxios } from '../providers/AxiosProvider';
+import { useRouter } from 'next/router';
+import { toast } from '../ui/use-toast';
 
 const KycCompleted = () => {
   const { formData } = useKycProvider();
@@ -13,10 +16,6 @@ const KycCompleted = () => {
 
   const [submitted, setSubmitted] = useState(false);
   const [verified, setVerified] = useState(false);
-  const { formData } = useKycProvider();
-  const { axiosIWAuth4Upload } = useAxios();
-  const router = useRouter()
-  const { seller } = useSellerProvider();
 
   useEffect(() => {
 

@@ -29,6 +29,10 @@ export const EditUserSchema = z.object({
     gst: z.string().optional(),
     verified: z.boolean().optional(),
     active: z.boolean().optional(),
+    accHolderName: z.string().optional(),
+    accType: z.string().optional(),
+    accNumber: z.string().optional(),
+    ifscNumber: z.string().optional(),
 })
 
 const EditUserForm = () => {
@@ -54,7 +58,11 @@ const EditUserForm = () => {
             aadhar: '',
             gst: '',
             verified: false,
-            active: true
+            active: true,
+            accHolderName: '',
+            accType: '',
+            accNumber: '',
+            ifscNumber: '',
         }
     });
 
@@ -74,7 +82,13 @@ const EditUserForm = () => {
                 aadhar: values.aadhar,
                 gst: values.gst,
                 isVerified: values.verified,
-                isActive: values.active
+                isActive: values.active,
+                bankDetails: {
+                    accHolderName: values.accHolderName,
+                    accType: values.accType,
+                    accNumber: values.accNumber,
+                    ifscNumber: values.ifscNumber
+                }
             }
             handleEditUser(sellerId ?? '', user)
             form.reset();
@@ -96,6 +110,10 @@ const EditUserForm = () => {
             form.setValue('gst', user.gst || '')
             form.setValue('verified', user.isVerified || false)
             form.setValue('active', user.isActive || true)
+            form.setValue('accHolderName', user.bankDetails?.accHolderName || '')
+            form.setValue('accType', user.bankDetails?.accType || '')
+            form.setValue('accNumber', user.bankDetails?.accNumber || '')
+            form.setValue('ifscNumber', user.bankDetails?.ifscNumber || '')
         }
     }, [user, form])
 
@@ -233,6 +251,70 @@ const EditUserForm = () => {
                         )} />
                     <FormField
                         control={form.control}
+                        name={'accHolderName'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    Account Holder Name
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    <FormField
+                        control={form.control}
+                        name={'accType'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    Account Type
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    <FormField
+                        control={form.control}
+                        name={'accNumber'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    Account Number
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    <FormField
+                        control={form.control}
+                        name={'ifscNumber'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    IFSC Number
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    <FormField
+                        control={form.control}
                         name={'verified'}
                         render={({ field }) => (
                             <FormItem>
@@ -247,7 +329,7 @@ const EditUserForm = () => {
                                             htmlFor="verified"
                                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                         >
-                                            isVerified
+                                            Verified
                                         </label>
                                     </div>
                                 </FormControl>
@@ -270,7 +352,7 @@ const EditUserForm = () => {
                                             htmlFor="active"
                                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                         >
-                                            isActive
+                                            Active
                                         </label>
                                     </div>
                                 </FormControl>
