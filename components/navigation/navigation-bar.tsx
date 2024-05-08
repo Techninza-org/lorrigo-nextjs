@@ -1,7 +1,7 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, Home, LucideSettings, ShoppingCart, Truck, User } from "lucide-react";
+import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -56,31 +56,39 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             href: "/admin/shipment-listing",
         },
         {
-            title: "Remittances",
-            icon: Truck,
-            href: "/admin/finance/remittance",
-        },
-        {
             title: "Finance",
             icon: HandCoins,
-            sublinks: [
+            subLinks: [
                 {
                     title: "Remittances",
                     href: "/admin/finance/remittance",
                 },
                 {
-                    title: "Remittances",
-                    href: "/admin/finance/remittance",
+                    title: "Vendor Billing",
+                    href: "/admin/finance/vendor-billing",  
+                },
+                {
+                    title: "Client Billing",
+                    href: "/admin/finance/client-billing",  
                 },
             ]
         },
         {
+            title: "Upload Pincodes",
+            icon: MapPin,
+            href: "/admin/pincodes/upload-pincodes",
+        },
+        {
             title: "Users",
             icon: User,
-            sublinks: [
+            subLinks: [
                 {
-                    title: "Users",
+                    title: "Users List",
                     href: "/admin/users/users-list",
+                },
+                {
+                    title: "Add User",
+                    href: "/admin/users/add-user",
                 }
             ]
         },

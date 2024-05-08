@@ -20,10 +20,15 @@ export type SellerType = {
     logo?: string;
   };
   address?: string;
+  gst?: string;
+  pan?: string;
+  aadhar?: string;
+  prefix?: string;
   margin?: number;
   vendors?: string[];
   codPrice?: number;
   isVerified: boolean;
+  isActive: boolean;
   bankDetails: {
     accHolderName?: string;
     accType?: string;
@@ -47,7 +52,7 @@ export type SellerType = {
     submitted?: boolean;
     verified?: boolean;
   };
-  billingAddress: {
+  billingAddress:  {
     address_line_1: string;
     address_line_2: string;
     pincode: string;
@@ -57,9 +62,6 @@ export type SellerType = {
   }
 };
 
-/**
- * Till B2COrderType types is used in while Creating and managing all B2COrderType
- * ***/
 export interface ProductDetailsType {
   _id: string;
   name: string;

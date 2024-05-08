@@ -64,7 +64,7 @@ export default function ImageUpload({ Label,
   maxFiles = 1,
   uploadUrl,
   handleClose,
-  acceptFileTypes = { 'image/jpeg': ['.jpeg', '.png', '.jpg'] },
+  acceptFileTypes = { 'image/jpeg': ['.jpeg', '.png', '.jpg', '.csv'] },
   handleFileChange,
   fieldName,
 }: {

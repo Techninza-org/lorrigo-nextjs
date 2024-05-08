@@ -19,3 +19,4 @@ export default function ManagePickupAddresses() {
         </Card>
     )
 }
+// data:image/png;base64,

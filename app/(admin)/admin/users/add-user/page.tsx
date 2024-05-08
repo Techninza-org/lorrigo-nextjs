@@ -1,6 +1,4 @@
 import AddUserForm from "@/components/Admin/User/add-user-form";
-import { AdminUsersListingCols } from "@/components/Admin/User/users-listing-cols";
-import { UsersListingTable } from "@/components/Admin/User/users-listing-table";
 import AdminProvider from "@/components/providers/AdminProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 

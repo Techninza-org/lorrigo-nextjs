@@ -11,6 +11,7 @@ import { DownloadManifestModal } from "../modal/download-manifest-modal";
 import { CancelOrderDialog } from "../Orders/cancel-order-dialog";
 import { NDROrderDialog, NDRRTODialog } from "../Orders/ndr-order-dialog";
 import { BulkHubUploadModal } from "../modal/bulk-hub-upload-modal";
+import { BulkPincodeUploadModal } from "../modal/bulk-pincode-upload-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -37,6 +38,7 @@ export const ModalProvider = () => {
       <NDRRTODialog />
 
       <BulkHubUploadModal />
+      <BulkPincodeUploadModal />
 
     </>
   );

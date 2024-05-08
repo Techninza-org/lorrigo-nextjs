@@ -13,6 +13,8 @@ interface AdminContextType {
     handleCreateHub: (hub: AdminType) => void;
     users: SellerType[];
     allRemittance: RemittanceType[] | null;
+    handleSignup: (credentials: any, user: any) => void;
+    handleEditUser: (sellerId: string, user: any) => void;
 
 }
 
@@ -64,13 +66,63 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const getAllRemittance = async () => {
         try {
             const res = await axiosIWAuth.get('/admin/all-remittances');
-            
+
             if (res.data?.valid) {
                 setAllRemittance(res.data.remittanceOrders);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
         }
+    }
+
+    const handleSignup = async (credentials: any, user: any) => {
+        try {
+            const response = await axiosIWAuth.post('/auth/signup', credentials);
+            if (response.data.user) {
+                const sellerId = response.data.user.id;
+                console.log('sellerId', sellerId);
+                const res = await axiosIWAuth.put(`/admin/seller?sellerId=${sellerId}`, user);
+                if (res.data.seller) {
+                    return toast({
+                        variant: "default",
+                        title: "Signup Success",
+                        description: "User has been created successfully.",
+                    });
+                }
+            } else if (response.data.message === "user already exists") {
+                return toast({
+                    variant: "destructive",
+                    title: "Signup Error",
+                    description: "User already exists.",
+                });
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "error.response.data.message",
+            });
+        }
+    }
+
+    const handleEditUser = async (sellerId: string, user: any) => {
+        try {
+            const res = await axiosIWAuth.put(`/admin/seller?sellerId=${sellerId}`, user);
+            if (res.data.seller) {
+                return toast({
+                    variant: "default",
+                    title: "User updated",
+                    description: "User has been updated successfully.",
+                });
+            }
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "error.response.data.message",
+            });
+        }
+    
     }
 
     useEffect(() => {
@@ -84,7 +136,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             value={{
                 handleCreateHub,
                 users,
-                allRemittance
+                allRemittance,
+                handleSignup,
+                handleEditUser
             }}
         >
             {children}
