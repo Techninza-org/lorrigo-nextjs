@@ -4,6 +4,8 @@ import { pickupAddressType } from "@/types/types";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import HoverCardToolTip from "../hover-card-tooltip";
+import { useHubProvider } from "../providers/HubProvider";
+import { useState } from "react";
 
 
 export const PickupAddressCol: ColumnDef<pickupAddressType>[] = [
@@ -65,12 +67,25 @@ export const PickupAddressCol: ColumnDef<pickupAddressType>[] = [
 ]
 
 const ToggleSwitch = ({ hub }: { hub: pickupAddressType }) => {
+    const [checked, setChecked] = useState(hub.isActive)
+    const { handleUpdateHub } = useHubProvider();
+    const handleToggle = async (checked: boolean) => {
+        try {
+            const res = await handleUpdateHub(checked, hub._id)
+            if (res) {
+                setChecked(checked)
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <div className="flex items-center space-x-2">
             <Switch
                 className={"bg-red-500"}
-                defaultChecked={hub.isActive}
-                onCheckedChange={(checked) => console.log(checked, hub._id, "checked")}
+                defaultChecked={checked}
+                onCheckedChange={(checked) => handleToggle(checked)}
                 id="toggel-hub-active"
             />
         </div>

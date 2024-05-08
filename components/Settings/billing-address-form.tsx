@@ -12,12 +12,12 @@ import {
     FormLabel,
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
-import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
-import { useModal } from '@/hooks/use-model-store';
 import { useSellerProvider } from '../providers/SellerProvider';
-import { useHubProvider } from '../providers/HubProvider';
+import useFetchCityState from '@/hooks/use-fetch-city-state';
+import { LoadingSpinner } from '../loading-spinner';
+import { PhoneInput } from '../ui/phone-input';
 
 export const BillingAddressSchema = z.object({
     address_line_1: z.string().min(1, "Address Line 1 is required"),
@@ -28,15 +28,8 @@ export const BillingAddressSchema = z.object({
     phone: z.string().min(1, "Phone is required")
 })
 const BillingAddressForm = () => {
-    const router = useRouter();
-    const { onClose } = useModal();
-    const { updateBillingAddress } = useHubProvider();
-    const {getCityStateFPincode} = useSellerProvider();
-    const [billingCityState, setCityState] = useState({
-        city: "",
-        state: ""
-    })
-
+    const { seller, updateBillingAddress } = useSellerProvider();
+    
     const form = useForm({
         resolver: zodResolver(BillingAddressSchema),
         defaultValues: {
@@ -49,40 +42,38 @@ const BillingAddressForm = () => {
         }
     });
 
-    useEffect(() => {
-        let timer: string | number | NodeJS.Timeout | undefined;
+    const pincode = form.watch('pincode');
 
-        const fetchCityState = async () => {
-            if (form.watch("pincode").length > 4) {
-                const cityStateRes = await getCityStateFPincode(form.watch("pincode"))
+    const { cityState, isTyping, loading } = useFetchCityState(pincode);
 
-                setCityState({
-                    city: cityStateRes.city,
-                    state: cityStateRes.state
-                })
-            }
-        };
-
-        // Debouncing the function
-        clearTimeout(timer);
-        timer = setTimeout(fetchCityState, 500); // Adjust the delay as per your preference
-
-        return () => clearTimeout(timer);
-    }, [form.watch("pincode")])
+    const isLoading = loading
 
     useEffect(() => {
-        if (billingCityState) {
-            form.setValue('city', billingCityState.city || '');
-            form.setValue('state', billingCityState.state || '');
+        if (seller?.billingAddress) {
+            form.setValue('address_line_1', seller.billingAddress.address_line_1 || '');
+            form.setValue('address_line_2', seller.billingAddress.address_line_2 || '');
+            form.setValue('pincode', seller.billingAddress.pincode.toString() || '');
+            form.setValue('city', seller.billingAddress.city || '');
+            form.setValue('state', seller.billingAddress.state || '');
+            form.setValue('phone', seller.billingAddress.phone || '');
+
         }
-    }, [billingCityState, form]);   
+    }, [seller?.billingAddress, form]);
+
+    useEffect(() => {
+        if (seller?.billingAddress?.city && (seller?.billingAddress?.pincode.toString() !== pincode?.toString())) {
+            form.setValue('city', cityState.city);
+            form.setValue('state', cityState.state);
+        }
+        form.setValue('city', cityState.city);
+        form.setValue('state', cityState.state);
+
+    }, [cityState.city, cityState.state, pincode]);
+
 
     const onSubmit = async (values: z.infer<typeof BillingAddressSchema>) => {
         try {
             updateBillingAddress(values);
-            form.reset();
-            router.refresh();
-            onClose();
         } catch (error) {
             console.log(error);
         }
@@ -102,8 +93,10 @@ const BillingAddressForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            disabled={isLoading}
                                             className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm "
-                                            {...field} />
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -120,8 +113,10 @@ const BillingAddressForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            disabled={isLoading}
                                             className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                            {...field} />
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -137,8 +132,10 @@ const BillingAddressForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm "
-                                        {...field} />
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -152,9 +149,14 @@ const BillingAddressForm = () => {
                                     City <span className='text-red-600'>*</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm "
-                                        {...field} />
+                                    <div className='flex items-center rounded-md'>
+                                        <Input
+                                            disabled={isLoading || isTyping}
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm "
+                                            {...field}
+                                        />
+                                        {isTyping && <LoadingSpinner />}
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -168,35 +170,45 @@ const BillingAddressForm = () => {
                                     State <span className='text-red-600'>*</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                        {...field} />
+                                    <div className='flex items-center rounded-md'>
+                                        <Input
+                                            disabled={isLoading || isTyping}
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                            {...field}
+                                        />
+                                        {isTyping && <LoadingSpinner />}
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
-                    <FormField
-                        control={form.control}
-                        name={'phone'}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    Phone <span className='text-red-600'>*</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                        {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
+                       <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                        Contact Number
+                                    </FormLabel>
+                                    <FormControl>
+                                        <PhoneInput
+                                            disabled={isLoading}
+                                            className="border-2 rounded-md dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                            defaultCountry='IN'
+                                            placeholder='Enter the contact number'
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     <div className='flex'>
-                            <Button variant={'themeButton'} type='submit' className='pr-0 mt-6'>
-                                Save
-                                <div className='bg-red-800 h-10 w-10 grid place-content-center rounded-r-md ml-4' ><Save /></div>
-                            </Button>
-                        </div>
+                        <Button variant={'themeButton'} type='submit' className='pr-0 mt-6'>
+                            Save
+                            <div className='bg-red-800 h-10 w-10 grid place-content-center rounded-r-md ml-4' ><Save /></div>
+                        </Button>
+                    </div>
                 </div>
             </form>
         </Form>

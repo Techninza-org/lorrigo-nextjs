@@ -12,7 +12,6 @@ import {
     FormLabel,
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
-import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
 import { useAuth } from '../providers/AuthProvider';
 
@@ -23,9 +22,8 @@ export const ChangePasswordSchema = z.object({
 })
 
 const ChangePasswordForm = () => {
-    const {handleChangePassword, userToken} = useAuth();
-    const token = userToken;
-    
+    const { handleChangePassword } = useAuth();
+
     const form = useForm({
         resolver: zodResolver(ChangePasswordSchema),
         defaultValues: {
@@ -35,14 +33,18 @@ const ChangePasswordForm = () => {
         }
     });
 
-    const handleSubmit = (formData: FormData) => {
-        handleChangePassword(formData, token)
+    const onSubmit = async (formData: z.infer<typeof ChangePasswordSchema>) => {
+        try {
+            const isPassChanged = await handleChangePassword(formData)
+        } catch (error) {
+            console.log(error, "error[ChangePasswordForm]")
+        }
     }
 
 
     return (
         <Form {...form}>
-            <form action={handleSubmit}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="space-y-5 ">
                     <div className='grid gap-y-6  py-5'>
                         <FormField
@@ -58,7 +60,7 @@ const ChangePasswordForm = () => {
                                             className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
                                             {...field} />
                                     </FormControl>
-                                    <FormMessage /> 
+                                    <FormMessage />
                                 </FormItem>
                             )} />
                         <FormField
@@ -74,7 +76,7 @@ const ChangePasswordForm = () => {
                                             className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
                                             {...field} />
                                     </FormControl>
-                                    <FormMessage /> 
+                                    <FormMessage />
                                 </FormItem>
                             )} />
                         <FormField
@@ -82,7 +84,7 @@ const ChangePasswordForm = () => {
                             name={'confirmPassword'}
                             render={({ field }) => (
                                 <FormItem>
-                                   <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
                                         Re-Type new password
                                     </FormLabel>
                                     <FormControl>
@@ -90,7 +92,7 @@ const ChangePasswordForm = () => {
                                             className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
                                             {...field} />
                                     </FormControl>
-                                    <FormMessage /> 
+                                    <FormMessage />
                                 </FormItem>
                             )} />
                     </div>

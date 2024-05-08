@@ -1,3 +1,12 @@
+export type AuthType = {
+  token: string;
+  isVerified?: boolean;
+  id: string;
+  name: string;
+  email: string;
+  role?: string;
+};
+
 export type SellerType = {
   id: string;
   name: string;
@@ -10,7 +19,6 @@ export type SellerType = {
     website?: string;
     logo?: string;
   };
-  entityType?: string;
   address?: string;
   gst?: string;
   pan?: string;
@@ -35,7 +43,6 @@ export type SellerType = {
   kycDetails: {
     businessType?: string;
     photoUrl?: string;
-    gstin?: string;
     pan?: string;
     document1Front?: string;
     document1Back?: string;
@@ -44,23 +51,14 @@ export type SellerType = {
     submitted?: boolean;
     verified?: boolean;
   };
-  billingAddress: {
+  billingAddress:  {
     address_line_1: string;
     address_line_2: string;
     pincode: string;
     city: string;
     state: string;
     phone: string;
-  };
-};
-
-export type AuthType = {
-  token: string;
-  isVerified?: boolean;
-  id: string;
-  name: string;
-  email: string;
-  role?: string;
+  }
 };
 
 export interface ProductDetailsType {
@@ -154,21 +152,7 @@ export interface B2COrderType {
   __v?: number;
 }
 
-export interface AdminType {
-  partner?: string;
-  upload_sheet?: string;
-  name?: string;
-  email?: string;
-  password?: string;
-  confirm_password?: string;
-  phone?: string;
-  company?: string;
-  prefix?: string;
-  pan?: string;
-  aadhar?: string;
-  gstin?: string;
-}
-
+// Order Response
 export interface OrderType {
   valid: boolean;
   orderDetails: B2COrderType;
@@ -194,6 +178,23 @@ export interface RemittanceType {
   orders: B2COrderType[];
   BankTransactionId: string;
   sellerId: SellerType;
+}
+
+
+// Admin Types Started
+export interface AdminType {
+  partner?: string;
+  upload_sheet?: string;
+  name?: string;
+  email?: string;
+  password?: string;
+  confirm_password?: string;
+  phone?: string;
+  company?: string;
+  prefix?: string;
+  pan?: string;
+  aadhar?: string;
+  gstin?: string;
 }
 
 // export interface RemittanceTypeAdmin {

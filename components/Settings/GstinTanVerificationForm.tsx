@@ -1,10 +1,8 @@
 'use client'
-import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormMessage } from '@/components/ui/form';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
     FormControl,
     FormField,
@@ -13,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardDescription, CardTitle } from '../ui/card';
 
 import { useModal } from '@/hooks/use-model-store';
 import { useKycProvider } from '../providers/KycProvider';

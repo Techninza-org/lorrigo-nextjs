@@ -14,6 +14,9 @@ import { EditFormSchema } from "../drawer/edit-order-drawer";
 import { ReattemptOrderSchema } from "../Orders/ndr-order-dialog";
 import { unstable_noStore } from "next/cache";
 import { useAxios } from "./AxiosProvider";
+import { BankDetailsSchema } from "../Settings/bank-details";
+import { GstinFormSchema } from "../Settings/gstin-form";
+import { BillingAddressSchema } from "../Settings/billing-address-form";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -24,7 +27,6 @@ interface SellerContextType {
   handlebusinessDropdown: (value: string) => void;
   sellerCustomerForm: sellerCustomerFormType;
   setSellerCustomerForm: React.Dispatch<React.SetStateAction<sellerCustomerFormType>>;
-  getHub: () => void;
   handleCreateOrder: (order: z.infer<typeof cloneFormSchema>) => boolean | Promise<boolean>;
   handleUpdateOrder: (order: z.infer<typeof EditFormSchema>) => boolean | Promise<boolean>;
   orders: B2COrderType[];
@@ -41,6 +43,15 @@ interface SellerContextType {
   getOrderDetails: (orderId: string) => Promise<B2COrderType | undefined>;
   getSeller: () => void;
   handleOrderNDR: (orderId: string, type: string, ndrInfo: z.infer<typeof ReattemptOrderSchema>) => boolean | Promise<boolean>;
+  getHub: (type?: string) => Promise<pickupAddressType[]> | void
+
+
+  // Seller Bank Details
+  updateBankDetails: (bankInfos: z.infer<typeof BankDetailsSchema>) => Promise<boolean>;
+  uploadGstinInvoicing: (values: z.infer<typeof GstinFormSchema>) => boolean | Promise<boolean>;
+  updateBillingAddress: (values: z.infer<typeof BillingAddressSchema>) => boolean | Promise<boolean>;
+
+
 }
 
 interface sellerCustomerFormType {
@@ -112,16 +123,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const status = useSearchParams().get("status");
 
 
-  const getHub = () => {
-    axiosIWAuth.get('/hub')
-      .then((res) => {
-        if (res.data?.valid) {
-          setSellerFacilities(res.data.hubs);
-        }
-      })
-      .catch((err) => {
-        console.error('Error fetching data:', err);
-      });
+  const getHub = async (type?: string) => {
+    try {
+      if (type) {
+        const sellerAllFacilites = await axiosIWAuth.get(`/hub?type=${type}`)
+        return sellerAllFacilites.data.hubs
+      }
+      const sellerFacilties = await axiosIWAuth.get(`/hub`)
+      if (sellerFacilties.data.valid) setSellerFacilities(sellerFacilties.data.hubs)
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }
 
   const getAllOrdersByStatus = async (status: string) => {
@@ -637,6 +649,81 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   }
 
+
+  const updateBankDetails = async (bankInfos: z.infer<typeof BankDetailsSchema>) => {
+    try {
+
+      const userRes = await axiosIWAuth.put("/seller", { bankDetails: { ...bankInfos } });
+      if (userRes?.data?.valid) {
+        setSeller(userRes.data.seller);
+        toast({
+          title: "Success",
+          description: "Bank Details submitted successfully.",
+        });
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Sorry! Something went wrong. Please try again.",
+      });
+      return false
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Sorry! Something went wrong. Please try again.",
+      });
+      return false;
+    }
+  }
+
+  const uploadGstinInvoicing = async (values: z.infer<typeof GstinFormSchema>) => {
+    try {
+
+      const userRes = await axiosIWAuth.put("/seller", { gstinData: { ...values } });
+      if (userRes?.data?.valid) {
+        toast({
+          title: "Success",
+          description: "GSTIN Details updated successfully.",
+        });
+
+        return true;
+      }
+      return false
+
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.response.data.message || "Something went wrong",
+      });
+      return false;
+    }
+  }
+
+  const updateBillingAddress = async (values: z.infer<typeof BillingAddressSchema>) => {
+    try {
+      const userRes = await axiosIWAuth.put("/seller", { billingAddress: { ...values } });
+      if (userRes?.data?.valid) {
+        toast({
+          title: "Success",
+          description: "Billing Address updated successfully.",
+        });
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.response.data.message || "Something wrong, Please try again!",
+      });
+      return false
+    }
+  }
+
+
   useEffect(() => {
     if (!!user || !!userToken) {
       getHub();
@@ -680,7 +767,13 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         sellerRemittance,
         getOrderDetails,
         getSeller,
-        handleOrderNDR
+        handleOrderNDR,
+
+        updateBankDetails,
+        uploadGstinInvoicing,
+        updateBillingAddress,
+
+
 
 
       }}

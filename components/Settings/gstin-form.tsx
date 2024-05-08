@@ -12,49 +12,41 @@ import {
     FormLabel,
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
-import { useHubProvider } from '../providers/HubProvider';
-import { useModal } from '@/hooks/use-model-store';
-import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
-import { Label } from '../ui/label';
+import { useSellerProvider } from '../providers/SellerProvider';
 
 export const GstinFormSchema = z.object({
-    gstin: z.string().min(1, "Gst number is required"),
-    tan: z.string().min(1, "Tan number is required"),
-    deductTDS: z.string(),
-})
+    gstin: z.string().min(1, "GST number is required").max(15, "GST number must be 15 characters"),
+    tan: z.string().min(1, "TAN number is required"),
+    deductTDS: z.enum(["yes", "no"]),
+});
 
 const GstinForm = () => {
-    const { onClose } = useModal();
-    const router = useRouter();
-    const [selectedValue, setSelectedValue] = useState('yes');
-    const { uploadGstinInvoicing } = useHubProvider();
-
-    const handleChange = (value: string) => {
-        setSelectedValue(value);
-    };
+    const { uploadGstinInvoicing } = useSellerProvider();
+    const { seller } = useSellerProvider();
 
     const form = useForm({
         resolver: zodResolver(GstinFormSchema),
         defaultValues: {
             gstin: '',
-            deductTDS: selectedValue,
+            deductTDS: 'yes' as 'yes' | 'no',
             tan: '',
         }
     });
 
     useEffect(() => {
-        form.setValue('deductTDS', selectedValue);
-    }, [selectedValue]);
+        if (seller?.gstInvoice) {
+            form.setValue('gstin', seller.gstInvoice.gstin || "");
+            form.setValue('deductTDS', seller.gstInvoice.deductTDS === "yes" || seller.gstInvoice.deductTDS === "no" ? seller.gstInvoice.deductTDS : "yes");
+            form.setValue('tan', seller.gstInvoice.tan || "");
+        }
+    }, [form, seller]);
 
     const onSubmit = async (values: z.infer<typeof GstinFormSchema>) => {
         try {
-            uploadGstinInvoicing(values);
-            form.reset();
-            router.refresh();
-            onClose();
+            const isGSTUpdated = await uploadGstinInvoicing(values);
         } catch (error) {
             console.log(error);
         }
@@ -82,22 +74,32 @@ const GstinForm = () => {
                         )} />
                     <FormField
                         control={form.control}
-                        name={'deductTDS'}
+                        name="deductTDS"
                         render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    I want to deduct TDS payment <span className='text-red-600'>*</span>
-                                </FormLabel>
+                            <FormItem className="space-y-3">
+                                <FormLabel>I want to Deduct TDS payment <span className='text-red-600'>*</span></FormLabel>
                                 <FormControl>
-                                    <RadioGroup defaultValue={selectedValue} className='flex' onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChange(e.target.value)}>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="yes" id="yes" />
-                                            <Label htmlFor="yes">Yes</Label>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <RadioGroupItem value="no" id="no" />
-                                            <Label htmlFor="no">No</Label>
-                                        </div>
+                                    <RadioGroup
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        className="flex space-x-1"
+                                    >
+                                        <FormItem className="flex items-center space-x-3 space-y-0">
+                                            <FormControl>
+                                                <RadioGroupItem value="yes" />
+                                            </FormControl>
+                                            <FormLabel className="font-normal">
+                                                Yes
+                                            </FormLabel>
+                                        </FormItem>
+                                        <FormItem className="flex items-center space-x-3 space-y-0">
+                                            <FormControl>
+                                                <RadioGroupItem value="no" />
+                                            </FormControl>
+                                            <FormLabel className="font-normal">
+                                                No
+                                            </FormLabel>
+                                        </FormItem>
                                     </RadioGroup>
                                 </FormControl>
                                 <FormMessage />

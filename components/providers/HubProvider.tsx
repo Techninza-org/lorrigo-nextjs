@@ -6,11 +6,8 @@ import * as XLSX from 'xlsx';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
-import { BankDetailsSchema } from "../Settings/bank-details";
 import { z } from "zod";
 import { CompanyProfileSchema } from "../Settings/company-profile-form";
-import { BillingAddressSchema } from "../Settings/billing-address-form";
-import { GstinFormSchema } from "../Settings/gstin-form";
 import { pickupAddressFormSchema } from "../modal/add-pickup-location";
 import { useAxios } from "./AxiosProvider";
 
@@ -28,13 +25,12 @@ interface reqPayload {
 
 interface HubContextType {
     handleCreateHub: (hub: reqPayload) => void;
-    updateCompanyProfile: (values: z.infer<typeof CompanyProfileSchema>) => void;
-    updateBankDetails: (values: z.infer<typeof BankDetailsSchema>) => void;
-    updateBillingAddress: (values: z.infer<typeof BillingAddressSchema>) => void;
-    uploadGstinInvoicing: (values: z.infer<typeof GstinFormSchema>) => void;
     editPickupLocation: (values: z.infer<typeof pickupAddressFormSchema>, id: string) => void;
+    handleUpdateHub: (status: boolean, hubID: string) => Promise<boolean> | boolean;
     addBulkAddresses: (event: React.ChangeEvent<HTMLInputElement>) => void;
     handleCreateHubs: (hubs: reqPayload[]) => Promise<any>;
+
+    updateCompanyProfile: (values: z.infer<typeof CompanyProfileSchema>) => void;
     handleCompanyLogoChange: (logo: any) => void;
 }
 
@@ -261,108 +257,6 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    const updateBankDetails = async (values: z.infer<typeof BankDetailsSchema>) => {
-        try {
-            const accHolderName = values?.accHolderName?.toString() || "";
-            const accType = values?.accType?.toString() || "";
-            const accNumber = values?.accNumber?.toString() || "";
-            const ifscNumber = values?.ifscNumber?.toString() || "";
-
-            const bankDetails = {
-                bankDetails: {
-                    accHolderName,
-                    accType,
-                    accNumber,
-                    ifscNumber,
-                }
-            }
-
-            const userRes = await axiosIWAuth.put("/seller", bankDetails);
-            if (userRes) {
-                toast({
-                    title: "Success",
-                    description: "Bank Details submitted successfully.",
-                });
-            }
-
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "error.response.data.message",
-            });
-        }
-    }
-
-    const updateBillingAddress = async (values: z.infer<typeof BillingAddressSchema>) => {
-        try {
-            const address_line_1 = values?.address_line_1?.toString() || "";
-            const address_line_2 = values?.address_line_2?.toString() || "";
-            const pincode = values?.pincode?.toString() || "";
-            const city = values?.city?.toString() || "";
-            const state = values?.state?.toString() || "";
-            const phone = values?.phone?.toString() || "";
-
-            const billingAddress = {
-                billingAddress: {
-                    address_line_1,
-                    address_line_2,
-                    pincode,
-                    city,
-                    state,
-                    phone,
-                }
-            }
-
-            const userRes = await axiosIWAuth.put("/seller", billingAddress);
-            if (userRes) {
-                toast({
-                    title: "Success",
-                    description: "Billing Address updated successfully.",
-                });
-            }
-
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "error.response.data.message",
-            });
-        }
-    }
-
-    const uploadGstinInvoicing = async (values: z.infer<typeof GstinFormSchema>) => {
-        try {
-            const gstin = values?.gstin?.toString() || "";
-            const tan = values?.tan?.toString() || "";
-            const deductTDS = values?.deductTDS?.toString() || "";
-
-
-            const gstinData = {
-                gstInvoice: {
-                    gstin,
-                    tan,
-                    deductTDS,
-                }
-            }
-
-            const userRes = await axiosIWAuth.put("/seller", gstinData);
-            if (userRes) {
-                toast({
-                    title: "Success",
-                    description: "GSTIN Details updated successfully.",
-                });
-            }
-
-        } catch (error) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "error.response.data.message",
-            });
-        }
-    }
-
     const editPickupLocation = async (values: z.infer<typeof pickupAddressFormSchema>, id: string) => {
         const update_id = id;
 
@@ -422,6 +316,28 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const handleUpdateHub = async (status: boolean, hubID: string) => {
+        try {
+            const userRes = await axiosIWAuth.put(`/hub/${hubID}`, { isActive: status });
+            if (userRes?.data?.valid) {
+                toast({
+                    title: "Success",
+                    description: "Hub updated successfully.",
+                });
+                getHub();
+                return true;
+            }
+            return false;
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.response.data.message || "Something went wrong. Please try again later.",
+            });
+            return false;
+        }
+    }
+
     const handleCompanyLogoChange = (logo: any) => {
         console.log(logo);
         setCompanyLogo(logo);
@@ -431,10 +347,8 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         <HubContext.Provider
             value={{
                 handleCreateHub,
+                handleUpdateHub,
                 updateCompanyProfile,
-                updateBankDetails,
-                updateBillingAddress,
-                uploadGstinInvoicing,
                 editPickupLocation,
                 addBulkAddresses,
                 handleCreateHubs,

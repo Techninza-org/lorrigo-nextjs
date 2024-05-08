@@ -3,30 +3,18 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useSellerProvider } from "./SellerProvider";
 
-interface KycContextType {
+interface KycContextType extends KycFormType {
     formData: KycFormType | null;
     setFormData: React.Dispatch<React.SetStateAction<KycFormType | null>>;
     step: number;
-    verifyOtpOpen: boolean;
     setVerifyOtpOpen: React.Dispatch<React.SetStateAction<boolean>>;
     onHandleNext: () => void;
     onHandleBack: () => void;
-    businessType: string;
-    photoUrl: string;
-    gstin: string;
-    pan: string;
-    document1Front: string;
-    document1Back: string;
-    document2Front: string;
-    document2Back: string;
-    submitted: boolean;
-    verified: boolean;
 }
 
 interface KycFormType {
     businessType: string;
     photoUrl: string;
-    gstin: string;
     pan: string;
     verifyOtpOpen: boolean;
     document1Front: string;
@@ -40,7 +28,7 @@ interface KycFormType {
 const KycContext = createContext<KycContextType | null>(null);
 
 function KycProvider({ children }: { children: React.ReactNode }) {
-    const [formData, setFormData] = useState<KycContextType | null>(null);
+    const [formData, setFormData] = useState<KycFormType | null>(null);
     const [step, setStep] = useState(1);
     const [verifyOtpOpen, setVerifyOtpOpen] = useState(false);
     const { seller } = useSellerProvider();
@@ -64,13 +52,12 @@ function KycProvider({ children }: { children: React.ReactNode }) {
             formData,
             step,
             photoUrl: "",
-            gstin: '',
             pan: '',
             verifyOtpOpen,
             setVerifyOtpOpen,
             onHandleNext,
             onHandleBack,
-            setFormData: setFormData as React.Dispatch<React.SetStateAction<KycFormType | null>>,
+            setFormData,
             businessType: "",
             document1Front: "",
             document1Back: "",
