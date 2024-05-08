@@ -24,7 +24,7 @@ const KycCompleted = () => {
     if (seller?.kycDetails?.verified === true) {
       setVerified(true);
     }
-  }, []);
+  }, [seller]);
 
   const handleCompleteKyc = async () => {
 
