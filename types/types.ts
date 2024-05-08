@@ -39,6 +39,7 @@ export type SellerType = {
     businessType?: string;
     photoUrl?: string;
     pan?: string;
+    adhaar?: string;
     document1Front?: string;
     document1Back?: string;
     document2Front?: string;
