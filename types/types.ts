@@ -17,7 +17,7 @@ export type SellerType = {
     companyEmail?: string;
     companyId?: string;
     website?: string;
-    logo?: string;
+    companyLogo?: string;
   };
   address?: string;
 // below feild need to remove

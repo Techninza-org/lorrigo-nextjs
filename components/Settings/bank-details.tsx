@@ -15,6 +15,7 @@ import { Input } from '../ui/input';
 import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useSellerProvider } from '../providers/SellerProvider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 export const BankDetailsSchema = z.object({
     accHolderName: z.string().min(1, "Account holder's name is required"),
@@ -36,6 +37,9 @@ const BankDetailsForm = () => {
         }
     });
 
+    const isLoading = form.formState.isSubmitting;
+    const isDisabled = !seller?.isVerified;
+
     useEffect(() => {
         if (seller && seller.bankDetails) {
             form.setValue('accHolderName', seller.bankDetails.accHolderName || '');
@@ -44,7 +48,7 @@ const BankDetailsForm = () => {
             form.setValue('ifscNumber', seller.bankDetails.ifscNumber || '');
         }
     }, [seller, form]);
-    
+
     const onSubmit = async (values: z.infer<typeof BankDetailsSchema>) => {
         try {
             const updateBankDetailsAPI = await updateBankDetails(values);
@@ -67,8 +71,10 @@ const BankDetailsForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            disabled={isLoading || isDisabled}
                                             className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                            {...field} />
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -82,9 +88,24 @@ const BankDetailsForm = () => {
                                         Account type<span className='text-red-600'>*</span>
                                     </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                            {...field} />
+                                        <Select
+                                            disabled={isLoading || isDisabled}
+                                            onValueChange={field.onChange}
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger
+                                                    className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                                >
+                                                    <SelectValue
+                                                        placeholder={seller?.bankDetails.accType ?? "Please select Account type"}
+                                                    />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value={'Saving'}>Saving</SelectItem>
+                                                <SelectItem value={'Current'}>Current</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -99,8 +120,10 @@ const BankDetailsForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            disabled={isLoading || isDisabled}
                                             className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                            {...field} />
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -115,8 +138,10 @@ const BankDetailsForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            disabled={isLoading || isDisabled}
                                             className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                            {...field} />
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

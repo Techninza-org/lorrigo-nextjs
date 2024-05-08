@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
 import { useHubProvider } from '../providers/HubProvider';
-import { useRouter } from 'next/navigation';
-import { Save } from 'lucide-react';
+import { Save, Trash2, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useSellerProvider } from '../providers/SellerProvider';
 import ImageUpload from '../file-upload';
+import Image from 'next/image';
 
 export const CompanyProfileSchema = z.object({
   companyId: z.string().optional(),
@@ -31,7 +31,8 @@ export const CompanyProfileForm = () => {
 
   const { seller, getSeller } = useSellerProvider();
   const { updateCompanyProfile } = useHubProvider();
-  const router = useRouter();
+
+  const [isLogoUploaded, setIsLogoUploaded] = React.useState(false);
 
   const form = useForm({
     resolver: zodResolver(CompanyProfileSchema),
@@ -50,6 +51,8 @@ export const CompanyProfileForm = () => {
       form.setValue('companyName', seller.companyProfile?.companyName || '');
       form.setValue('companyEmail', seller.companyProfile?.companyEmail || '');
       form.setValue('website', seller.companyProfile?.website || '');
+      // form.setValue('logo', seller.companyProfile?.logo || '');
+      setIsLogoUploaded(!!seller.companyProfile?.companyLogo || false);
     }
 
   }, [seller, form]);
@@ -58,8 +61,6 @@ export const CompanyProfileForm = () => {
     try {
       updateCompanyProfile(values);
       getSeller();
-
-      router.push('/settings');
     } catch (error) {
       console.log(error);
     }
@@ -69,7 +70,7 @@ export const CompanyProfileForm = () => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="space-y-5 ">
-          <div className='grid grid-cols-2 gap-y-6 gap-x-20 py-5'>
+          <div className='grid grid-cols-2 gap-y-6 gap-x-20'>
             <FormField
               control={form.control}
               name={'companyId'}
@@ -145,16 +146,31 @@ export const CompanyProfileForm = () => {
                     Website / Company Logo
                   </FormLabel>
                   <FormControl>
-                    <ImageUpload
-                      uploadUrl={'/seller'}
-                    />
+                    {isLogoUploaded ?
+                      (<>
+                        <Image src={`data:image/jpeg;base64,${seller?.companyProfile?.companyLogo}`} width={80} height={80} alt="Company logo" />
+                        <Button
+                          variant={'destructive'}
+                          size={"icon"}
+                          type='button'
+                          onClick={() => setIsLogoUploaded(!isLogoUploaded)}
+                          className='ml-auto'>
+                          {isLogoUploaded ? <Trash2 size={16} /> : 'Upload Logo'}
+                        </Button>
+                      </>
+                      )
+                      : <ImageUpload
+                        uploadUrl={'/seller'}
+                      />
+                    }
+
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )} />
           </div>
           <div className='flex'>
-            <Button variant={'themeButton'} type='submit' className='pr-0 mt-6'>
+            <Button variant={'themeButton'} type='submit' className='pr-0'>
               Save
               <div className='bg-red-800 h-10 w-10 grid place-content-center rounded-r-md ml-4' ><Save /></div>
             </Button>
