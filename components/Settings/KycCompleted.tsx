@@ -9,7 +9,7 @@ import { useAxios } from '../providers/AxiosProvider';
 
 const KycCompleted = () => {
   const { formData } = useKycProvider();
-  const { seller } = useSellerProvider();
+  const { seller, getSeller } = useSellerProvider();
   const { axiosIWAuth4Upload } = useAxios();
 
   const router = useRouter();
@@ -32,7 +32,7 @@ const KycCompleted = () => {
     form.append('businessType', formData?.businessType || '');
     form.append('photoUrl', formData?.photoUrl || '');  //Base64 (String) image
     form.append('gstin', seller?.gstInvoice?.gstin || '');
-    form.append('pan', formData?.pan || '1');
+    form.append('pan', formData?.pan || '');
     form.append('document1Front', formData?.document1Front || '');
     form.append('document1Back', formData?.document1Back || '');
     form.append('document2Front', formData?.document2Front || '');
@@ -44,10 +44,12 @@ const KycCompleted = () => {
       const userRes = await axiosIWAuth4Upload.put("/seller/kyc", form);
 
       if (userRes?.data?.valid) {
+
         toast({
           title: "Success",
           description: "KYC Documents submitted successfully.",
         });
+        getSeller()
       }
       router.push('/settings')
     } catch (error: any) {
