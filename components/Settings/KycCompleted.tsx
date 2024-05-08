@@ -8,12 +8,14 @@ import { useSellerProvider } from '../providers/SellerProvider';
 import { useAxios } from '../providers/AxiosProvider';
 
 const KycCompleted = () => {
+  const { formData } = useKycProvider();
+  const { seller } = useSellerProvider();
+  const { axiosIWAuth4Upload } = useAxios();
+
+  const router = useRouter();
+
   const [submitted, setSubmitted] = useState(false);
   const [verified, setVerified] = useState(false);
-  const { formData } = useKycProvider();
-  const { axiosIWAuth4Upload } = useAxios();
-  const router = useRouter()
-  const { seller } = useSellerProvider();
 
   useEffect(() => {
     if (seller?.kycDetails?.submitted === true) {
@@ -25,46 +27,36 @@ const KycCompleted = () => {
   }, []);
 
   const handleCompleteKyc = async () => {
-    const kycDetails = {
-      kycDetails: {
-        businessType: formData?.businessType,
-        photoUrl: formData?.photoUrl,
-        gstin: formData?.gstin,
-        pan: formData?.pan,
-        document1Front: formData?.document1Front,
-        document1Back: formData?.document1Back,
-        document2Front: formData?.document2Front,
-        document2Back: formData?.document2Back,
-        submitted: true,
-        verified: false,
-      }
-    }
+
+    const form = new FormData();
+    form.append('businessType', formData?.businessType || '');
+    form.append('photoUrl', formData?.photoUrl || '');  //Base64 (String) image
+    form.append('gstin', seller?.gstInvoice?.gstin || '');
+    form.append('pan', formData?.pan || '1');
+    form.append('document1Front', formData?.document1Front || '');
+    form.append('document1Back', formData?.document1Back || '');
+    form.append('document2Front', formData?.document2Front || '');
+    form.append('document2Back', formData?.document2Back || '');
+    form.append('submitted', 'true');
+    form.append('verified', 'false');
+
     try {
-      console.log(kycDetails, "kycDetails")
+      const userRes = await axiosIWAuth4Upload.put("/seller/kyc", form);
 
-      // const userRes = await axiosIWAuth4Upload.put("/seller", kycDetails);
-
-      // if (userRes.data.message == 'request entity too large') {
-      //   toast({
-      //     variant: "destructive",
-      //     title: "Error",
-      //     description: "File size too large. Please upload a file less than 2MB.",
-      //   });
-      // }
-      // if (userRes) {
-      //   toast({
-      //     title: "Success",
-      //     description: "KYC Documents submitted successfully.",
-      //   });
-      // }
-      // router.push('/settings')
-    } catch (error) {
+      if (userRes?.data?.valid) {
+        toast({
+          title: "Success",
+          description: "KYC Documents submitted successfully.",
+        });
+      }
+      router.push('/settings')
+    } catch (error: any) {
       console.log(error)
-      // toast({
-      //   variant: "destructive",
-      //   title: "Error",
-      //   description: "error.response.data.message",
-      // });
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error?.response?.data?.message || "Something went wrong",
+      });
     }
   }
 

@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
 import { useHubProvider } from '../providers/HubProvider';
-import { useModal } from '@/hooks/use-model-store';
 import { useRouter } from 'next/navigation';
 import { Save, Upload } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -29,11 +28,10 @@ export const CompanyProfileSchema = z.object({
 
 export const CompanyProfileForm = () => {
 
+  const { seller } = useSellerProvider();
+  const { updateCompanyProfile, handleCompanyLogoChange } = useHubProvider();
   const hiddenFileInput = useRef<HTMLInputElement>(null);
 
-  const { updateCompanyProfile, handleCompanyLogoChange } = useHubProvider();
-  const { seller } = useSellerProvider();
-  const { onClose } = useModal();
   const router = useRouter();
 
   const form = useForm({
@@ -61,9 +59,6 @@ export const CompanyProfileForm = () => {
     try {
       updateCompanyProfile(values);
 
-      form.reset();
-      router.refresh();
-      onClose();
       router.push('/settings');
     } catch (error) {
       console.log(error);

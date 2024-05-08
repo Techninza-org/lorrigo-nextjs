@@ -12,12 +12,9 @@ import {
     FormLabel,
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
-import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
-import { useHubProvider } from '../providers/HubProvider';
 import { useSellerProvider } from '../providers/SellerProvider';
-import { useModal } from '@/hooks/use-model-store';
 
 export const BankDetailsSchema = z.object({
     accHolderName: z.string().min(1, "Account holder's name is required"),
@@ -26,12 +23,8 @@ export const BankDetailsSchema = z.object({
     ifscNumber: z.string().min(1, "IFSC Number is required"),
 })
 const BankDetailsForm = () => {
-    const router = useRouter();
-    const { onClose } = useModal();
-    const { updateBankDetails } = useHubProvider();
+    const { updateBankDetails } = useSellerProvider();
     const { seller } = useSellerProvider();
-    console.log('seller: ',seller);
-    
 
     const form = useForm({
         resolver: zodResolver(BankDetailsSchema),
@@ -54,12 +47,7 @@ const BankDetailsForm = () => {
     
     const onSubmit = async (values: z.infer<typeof BankDetailsSchema>) => {
         try {
-            updateBankDetails(values);
-            console.log('values updated: ',values);
-            
-            form.reset();
-            router.refresh();
-            onClose();
+            const updateBankDetailsAPI = await updateBankDetails(values);
         } catch (error) {
             console.log(error);
         }

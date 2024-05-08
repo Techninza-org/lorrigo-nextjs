@@ -9,6 +9,9 @@ import { AuthType } from "@/types/types";
 
 import { useToast } from "@/components/ui/use-toast";
 import { useOrigin } from "@/hooks/use-origin";
+import { ChangePasswordSchema } from "../Settings/change-password-form";
+import { z } from "zod";
+
 
 
 interface AuthContextType {
@@ -20,8 +23,9 @@ interface AuthContextType {
     handleSignOut: () => void;
     handleForgetPassword: (formData: FormData) => void;
     handleResetPassword: (formData: FormData, token: string) => void;
-    handleChangePassword: (formData: FormData, token: string) => void;
 
+    // Logged in user functions
+    handleChangePassword: (userPassInfo: z.infer<typeof ChangePasswordSchema>) => boolean | Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -241,60 +245,41 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             });
         }
     }
-    
-    const handleChangePassword = async (formData: FormData, token: string) => {
+
+    const handleChangePassword = async (userPassInfo: z.infer<typeof ChangePasswordSchema>) => {
         try {
-            const old_password = formData.get("old_password")?.toString() || "";
-            const password = formData.get("password")?.toString() || "";
-            const confirmPassword = formData.get("confirmPassword")?.toString() || "";
-
+            const { old_password, confirmPassword, password } = userPassInfo;
             if (password !== confirmPassword) {
-                return toast({
+                toast({
                     variant: "destructive",
-                    title: "Passwords do not match.",
+                    title: "Password and confirm password must be same.",
                 });
+                return false;
             }
 
-            if (!password || !token) {
-                return toast({
-                    variant: "destructive",
-                    title: "Invalid password or token.",
-                });
-            }
-
-            const userData = {
+            const response = await axiosWOAuth.post("/auth/change-password", {
+                token: userToken,
                 old_password,
                 password,
-                token
-            };
+            })
 
-            const response = await axiosWOAuth.post("/auth/change-password", userData)
-
-            if (response.data.message === "user not found") {
-                return toast({
-                    variant: "destructive",
-                    title: "User not found",
-                    description: "Please enter a valid email address.",
-                });
-            }else if(response.data.message === "incorrect old password"){
-                    return toast({
-                        variant: "destructive",
-                        title: "Incorrect Password",
-                        description: "Please enter correct old password",
-                    });
-            } else if (response.data.valid) {
-
+            if (response.data.valid) {
+                deleteCookie('user');
+                setUser(null as any);
                 toast({
                     title: "Success",
-                    description: "Password reset successfully.",
+                    description: "Password reset successfully, Please login again.",
                 });
-                return router.push("/login");
+                router.push("/login");
+                return true;
             }
-        } catch (error) {
-            return toast({
+            return false;
+        } catch (error: any) {
+            toast({
                 variant: "destructive",
-                title: "An error occurred during password reset.",
+                title: error?.response?.data?.message || "Something went wrong, Please try again.",
             });
+            return false;
         }
     }
 

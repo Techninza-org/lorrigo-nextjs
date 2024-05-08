@@ -156,7 +156,6 @@ export function EditOrderDrawer() {
 
 
     useEffect(() => {
-
         if (customerCityState.city && (order?.customerDetails?.pincode.toString() !== customerPincode?.toString())) {
             form.setValue('customerDetails.city', customerCityState.city);
             form.setValue('customerDetails.state', customerCityState.state);
