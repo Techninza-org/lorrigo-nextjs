@@ -20,9 +20,11 @@ export type SellerType = {
     logo?: string;
   };
   address?: string;
+// below feild need to remove
   gst?: string;
   pan?: string;
   aadhar?: string;
+
   prefix?: string;
   margin?: number;
   vendors?: string[];

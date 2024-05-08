@@ -14,9 +14,10 @@ import {
 import { Input } from '../ui/input';
 import { useHubProvider } from '../providers/HubProvider';
 import { useRouter } from 'next/navigation';
-import { Save, Upload } from 'lucide-react';
+import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useSellerProvider } from '../providers/SellerProvider';
+import ImageUpload from '../file-upload';
 
 export const CompanyProfileSchema = z.object({
   companyId: z.string().optional(),
@@ -28,10 +29,8 @@ export const CompanyProfileSchema = z.object({
 
 export const CompanyProfileForm = () => {
 
-  const { seller } = useSellerProvider();
-  const { updateCompanyProfile, handleCompanyLogoChange } = useHubProvider();
-  const hiddenFileInput = useRef<HTMLInputElement>(null);
-
+  const { seller, getSeller } = useSellerProvider();
+  const { updateCompanyProfile } = useHubProvider();
   const router = useRouter();
 
   const form = useForm({
@@ -46,34 +45,25 @@ export const CompanyProfileForm = () => {
   });
 
   useEffect(() => {
-    if (seller) {
+    if (seller?.companyProfile) {
       form.setValue('companyId', seller.companyProfile?.companyId || '');
       form.setValue('companyName', seller.companyProfile?.companyName || '');
       form.setValue('companyEmail', seller.companyProfile?.companyEmail || '');
       form.setValue('website', seller.companyProfile?.website || '');
     }
-    
+
   }, [seller, form]);
 
   const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {
     try {
       updateCompanyProfile(values);
+      getSeller();
 
       router.push('/settings');
     } catch (error) {
       console.log(error);
     }
   }
-
-  const handleClick = () => {
-    hiddenFileInput.current?.click();
-  };
-
-  const handleChange = (event: any) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    handleCompanyLogoChange(file);
-  };
 
   return (
     <Form {...form}>
@@ -155,11 +145,9 @@ export const CompanyProfileForm = () => {
                     Website / Company Logo
                   </FormLabel>
                   <FormControl>
-                    <button className='border-2 flex h-full w-1/3 justify-between rounded-lg' type='button' onClick={handleClick}>
-                      <div className='grid place-content-center text-red-600 w-full h-full'><p>Upload</p></div>
-                      <div className='bg-slate-200 h-full w-1/3 grid place-content-center'><Upload size={20} color='red' /></div>
-                      <input type='file' className='hidden' onChange={handleChange} ref={hiddenFileInput} accept='.jpg, .jpeg, .png' />
-                    </button>
+                    <ImageUpload
+                      uploadUrl={'/seller'}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

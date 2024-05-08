@@ -19,7 +19,7 @@ import { useSellerProvider } from '../providers/SellerProvider';
 
 export const GstinFormSchema = z.object({
     gstin: z.string().min(1, "GST number is required").max(15, "GST number must be 15 characters"),
-    tan: z.string().min(1, "TAN number is required"),
+    tan: z.string().min(1, "TAN number is required").max(10, "TAN number must be 10 characters"),
     deductTDS: z.enum(["yes", "no"]),
 });
 
@@ -67,7 +67,9 @@ const GstinForm = () => {
                                 <FormControl>
                                     <Input
                                         className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
-                                        {...field} />
+                                        {...field}
+                                        maxLength={15}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -117,7 +119,10 @@ const GstinForm = () => {
                                 <FormControl>
                                     <Input
                                         className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
-                                        {...field} />
+                                        {...field}
+
+                                        maxLength={10}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

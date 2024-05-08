@@ -97,7 +97,6 @@ export const DocumentUploadForm = () => {
                                     <div className='w-60'>
                                         <ImageUpload
                                             Label={"Front Side"}
-                                            uploadUrl=''
                                             handleFileChange={handleFileChange}
                                             fieldName={`document${index}Front` as keyof DocumentUploadSchema}
                                         />
@@ -106,7 +105,6 @@ export const DocumentUploadForm = () => {
                                     <div className='w-60'>
                                         <ImageUpload
                                             Label={"Back Side"}
-                                            uploadUrl=''
                                             handleFileChange={handleFileChange}
                                             fieldName={`document${index}Back` as keyof DocumentUploadSchema}
                                         />

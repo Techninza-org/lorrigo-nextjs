@@ -27,9 +27,8 @@ export const BulkHubUploadModal = () => {
                 </DialogHeader>
 
                 <ImageUpload
-                    uploadUrl={''}
                     handleClose={handleClose}
-                    acceptFileTypes={{ "text/csv": [".csv"] }}
+                    acceptFileTypes={{ "text/csv": [".csv" ,".xlsx"] }}
                 />
             </DialogContent>
         </Dialog>

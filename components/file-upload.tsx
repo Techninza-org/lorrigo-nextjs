@@ -64,13 +64,13 @@ export default function ImageUpload({ Label,
   maxFiles = 1,
   uploadUrl,
   handleClose,
-  acceptFileTypes = { 'image/jpeg': ['.jpeg', '.png', '.jpg', '.csv'] },
+  acceptFileTypes = { 'image/jpeg': ['.jpeg', '.png', '.jpg'] },
   handleFileChange,
   fieldName,
 }: {
   Label?: string,
   maxFiles?: number,
-  uploadUrl: string,
+  uploadUrl?: string,
   handleClose?: () => void,
   acceptFileTypes?: { [key: string]: string[] },
   handleFileChange?: ({ fieldName, file }: { fieldName: keyof DocumentUploadSchema, file: File }) => void
@@ -160,6 +160,10 @@ export default function ImageUpload({ Label,
     onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
     cancelSource: CancelTokenSource
   ) => {
+    if (!uploadUrl) {
+      return;
+    }
+
     return await axiosIWAuth4Upload.put(
       uploadUrl,
       formData,
@@ -298,6 +302,7 @@ export default function ImageUpload({ Label,
       {
         !handleFileChange && <Button
           disabled={filesToUpload.length > 0 ? false : true}
+          type="button"
           onClick={() => handleUpload(filesToUpload[0].File)}
           variant={"webPageBtn"}
           size={"sm"}

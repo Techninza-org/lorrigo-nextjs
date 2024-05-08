@@ -8,7 +8,7 @@ import { useAuth } from '../providers/AuthProvider';
 
 const PickupAddresses = () => {
   const { getHub } = useSellerProvider();
-  const {userToken} = useAuth()
+  const { userToken } = useAuth()
   const [sellerAllFacilites, setAllFacilities] = useState<pickupAddressType[]>([])
 
   useEffect(() => {

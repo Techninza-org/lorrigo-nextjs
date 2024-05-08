@@ -681,7 +681,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const uploadGstinInvoicing = async (values: z.infer<typeof GstinFormSchema>) => {
     try {
 
-      const userRes = await axiosIWAuth.put("/seller", { gstinData: { ...values } });
+      const userRes = await axiosIWAuth.put("/seller", { gstInvoice: { ...values } });
       if (userRes?.data?.valid) {
         toast({
           title: "Success",

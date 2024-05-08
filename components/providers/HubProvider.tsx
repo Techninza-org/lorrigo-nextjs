@@ -31,7 +31,6 @@ interface HubContextType {
     handleCreateHubs: (hubs: reqPayload[]) => Promise<any>;
 
     updateCompanyProfile: (values: z.infer<typeof CompanyProfileSchema>) => void;
-    handleCompanyLogoChange: (logo: any) => void;
 }
 
 const HubContext = createContext<HubContextType | null>(null);
@@ -337,12 +336,6 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             return false;
         }
     }
-
-    const handleCompanyLogoChange = (logo: any) => {
-        console.log(logo);
-        setCompanyLogo(logo);
-    }
-
     return (
         <HubContext.Provider
             value={{
@@ -352,7 +345,6 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 editPickupLocation,
                 addBulkAddresses,
                 handleCreateHubs,
-                handleCompanyLogoChange
             }}
         >
             {children}
