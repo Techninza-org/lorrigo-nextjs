@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
@@ -26,7 +26,7 @@ const PhotoIdentification = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
-        handleStartCamera();
+        handleStartCamera(); // Call handleStartCamera when component mounts
         return () => {
             handleStopCamera();
         };
@@ -118,7 +118,7 @@ const PhotoIdentification = () => {
             <div className='grid place-content-center m-4'>
                 <canvas ref={canvasRef} className='border-2 border-black w-full h-full hidden' />
                 {!photoURL && <div className='border-2 border-dashed border-[#be0c34] rounded-lg w-full h-96'>
-                    {cameraOn && <video ref={videoRef} autoPlay={true} className='min-w-full h-96 p-2'></video>}
+                  <video ref={videoRef} autoPlay={true} className='min-w-full h-96 p-2'></video>
                     {!cameraOn && <>
                         <div className='flex justify-center'>
                             <Camera size={50} color='#be0c34' />
