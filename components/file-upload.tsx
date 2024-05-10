@@ -231,6 +231,10 @@ export default function ImageUpload({ Label,
       await uploadImageToDB(formData, (progressEvent) => {
         onUploadProgress(progressEvent, file, cancelSource);
       }, cancelSource);
+      toast({
+        variant: "default",
+        title: "File Uploaded Successfully",
+      });
       if (handleClose) handleClose();
     } catch (error) {
       toast({

@@ -51,7 +51,6 @@ export const CompanyProfileForm = () => {
       form.setValue('companyName', seller.companyProfile?.companyName || '');
       form.setValue('companyEmail', seller.companyProfile?.companyEmail || '');
       form.setValue('website', seller.companyProfile?.website || '');
-      // form.setValue('logo', seller.companyProfile?.logo || '');
       setIsLogoUploaded(!!seller.companyProfile?.companyLogo || false);
     }
 
@@ -161,6 +160,7 @@ export const CompanyProfileForm = () => {
                       )
                       : <ImageUpload
                         uploadUrl={'/seller'}
+                        handleClose={() => setIsLogoUploaded(!isLogoUploaded)}
                       />
                     }
 

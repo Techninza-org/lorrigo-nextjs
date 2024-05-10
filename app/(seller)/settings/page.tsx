@@ -1,4 +1,3 @@
-import React from 'react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
@@ -8,7 +7,6 @@ import CarPNG from '@/components/SVGs/car.png'
 import CompanyPNG from '@/components/SVGs/company.png'
 import PrinterPNG from '@/components/SVGs/printer.png'
 import UserPNG from '@/components/SVGs/user.png'
-
 interface LinkItem {
   href: string;
   label: string;

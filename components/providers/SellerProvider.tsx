@@ -41,7 +41,7 @@ interface SellerContextType {
   getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
   sellerRemittance: RemittanceType[] | null;
   getOrderDetails: (orderId: string) => Promise<B2COrderType | undefined>;
-  getSeller: () => void;
+  getSeller: () => Promise<void>;
   handleOrderNDR: (orderId: string, type: string, ndrInfo: z.infer<typeof ReattemptOrderSchema>) => boolean | Promise<boolean>;
   getHub: (type?: string) => Promise<pickupAddressType[]> | void
 
