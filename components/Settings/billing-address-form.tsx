@@ -52,7 +52,7 @@ const BillingAddressForm = () => {
         if (seller?.billingAddress) {
             form.setValue('address_line_1', seller.billingAddress.address_line_1 || '');
             form.setValue('address_line_2', seller.billingAddress.address_line_2 || '');
-            form.setValue('pincode', seller.billingAddress.pincode.toString() || '');
+            form.setValue('pincode', seller.billingAddress.pincode?.toString() || '');
             form.setValue('city', seller.billingAddress.city || '');
             form.setValue('state', seller.billingAddress.state || '');
             form.setValue('phone', seller.billingAddress.phone || '');

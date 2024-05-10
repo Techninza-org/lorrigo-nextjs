@@ -20,8 +20,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 export const BankDetailsSchema = z.object({
     accHolderName: z.string().min(1, "Account holder's name is required"),
     accType: z.string().min(1, "Account type is required"),
-    accNumber: z.string().min(1, "Account number is required"),
-    ifscNumber: z.string().min(1, "IFSC Number is required"),
+    accNumber: z.string().min(1, "Account number is required").max(16, "Account number should be 16 digits"),
+    ifscNumber: z.string().min(1, "IFSC Number is required").max(11, "IFSC Number should be 11 characters")
 })
 const BankDetailsForm = () => {
     const { updateBankDetails } = useSellerProvider();
@@ -38,7 +38,7 @@ const BankDetailsForm = () => {
     });
 
     const isLoading = form.formState.isSubmitting;
-    const isDisabled = !seller?.isVerified;
+    const isDisabled = !!(seller?.bankDetails?.accHolderName || seller?.bankDetails?.accType || seller?.bankDetails?.accNumber || seller?.bankDetails?.ifscNumber);
 
     useEffect(() => {
         if (seller && seller.bankDetails) {
@@ -97,7 +97,7 @@ const BankDetailsForm = () => {
                                                     className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                                 >
                                                     <SelectValue
-                                                        placeholder={seller?.bankDetails.accType ?? "Please select Account type"}
+                                                        placeholder={seller?.bankDetails?.accType ?? "Please select Account type"}
                                                     />
                                                 </SelectTrigger>
                                             </FormControl>
@@ -120,6 +120,7 @@ const BankDetailsForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                            maxLength={16}
                                             disabled={isLoading || isDisabled}
                                             className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                             {...field}
@@ -138,6 +139,7 @@ const BankDetailsForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
+                                        maxLength={11}
                                             disabled={isLoading || isDisabled}
                                             className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                             {...field}
