@@ -17,7 +17,7 @@ import { useKycProvider } from '../providers/KycProvider';
 import { Card, CardDescription, CardTitle } from '../ui/card';
 
 const BusinessTypeSchema = z.object({
-    businessType: z.enum(["individual", "sole", "company"], {
+    businessType: z.enum(["Individual", "Sole Proprietor", "Company"], {
         required_error: "You need to select a business type.",
     }),
 })
@@ -40,7 +40,7 @@ export const KycBusinessTypeForm = () => {
 
     useEffect(() => {
         if (formData?.businessType) {
-            form.setValue('businessType', formData.businessType as "individual" | "sole" | "company")
+            form.setValue('businessType', formData.businessType as "Individual" | "Sole Proprietor" | "Company")
         }
     }, [form, formData]);
 
@@ -63,7 +63,7 @@ export const KycBusinessTypeForm = () => {
                                         <Card className="px-10 py-4 flex hover:shadow-md hover:shadow-slate-200">
                                             <FormItem className='flex gap-x-5'>
                                                 <FormControl>
-                                                    <RadioGroupItem value="individual" className='mt-3' />
+                                                    <RadioGroupItem value="Individual" className='mt-3' />
                                                 </FormControl>
                                                 <FormLabel className="font-normal cursor-pointer">
                                                     <CardTitle>Individual</CardTitle>
@@ -74,7 +74,7 @@ export const KycBusinessTypeForm = () => {
                                         <Card className="px-10 py-4 flex hover:shadow-md hover:shadow-slate-200">
                                             <FormItem className='flex gap-x-5'>
                                                 <FormControl>
-                                                    <RadioGroupItem value="sole" className='mt-3' />
+                                                    <RadioGroupItem value="Sole Proprietor" className='mt-3' />
                                                 </FormControl>
                                                 <FormLabel className="font-normal cursor-pointer">
                                                     <CardTitle>Sole Proprietor</CardTitle>
@@ -85,7 +85,7 @@ export const KycBusinessTypeForm = () => {
                                         <Card className="px-10 py-4 flex hover:shadow-md hover:shadow-slate-200">
                                             <FormItem className='flex gap-x-5'>
                                                 <FormControl>
-                                                    <RadioGroupItem value="company" className='mt-3' />
+                                                    <RadioGroupItem value="Company" className='mt-3' />
                                                 </FormControl>
                                                 <FormLabel className="font-normal cursor-pointer">
                                                     <CardTitle>Company</CardTitle>

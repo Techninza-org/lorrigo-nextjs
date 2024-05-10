@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import { useKycProvider } from '../providers/KycProvider';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { useAxios } from '../providers/AxiosProvider';
@@ -29,7 +29,7 @@ const KycCompleted = () => {
     if (seller?.kycDetails?.submitted === true) {
       setSubmitted(true);
     }
-    if (seller?.isVerified === true) {
+    if (seller?.kycDetails.verified === true) {
       setVerified(true);
     }
   }, [seller]);
@@ -41,10 +41,15 @@ const KycCompleted = () => {
     form.append('photoUrl', formData?.photoUrl || '');  //Base64 (String) image
     form.append('gstin', seller?.gstInvoice?.gstin || '');
     form.append('pan', formData?.pan || '');
+    form.append('document1Feild', formData?.document1Feild || '');
     form.append('document1Front', formData?.document1Front || '');
     form.append('document1Back', formData?.document1Back || '');
+    form.append('document2Feild', formData?.document2Feild || '');
     form.append('document2Front', formData?.document2Front || '');
     form.append('document2Back', formData?.document2Back || '');
+    form.append('document1Type', formData?.document1Type || '');
+    form.append('document2Type', formData?.document2Type || '');
+
     form.append('submitted', 'true');
     form.append('verified', 'false');
 
@@ -77,9 +82,9 @@ const KycCompleted = () => {
       <CardHeader>
         <CardTitle>KYC Status</CardTitle>
       </CardHeader>
-      {!verified && submitted && (
+      {submitted && (
         <CardContent>
-          <Alert className='bg-amber-300'>
+          <Alert className={cn(verified ? 'bg-green-300' : 'bg-amber-300')}>
             <StatusIcon size={26} className='animate-pulse' />
             <AlertTitle className='text-lg'>{verified ? "Congratulation" : "Pending"}</AlertTitle>
             <AlertDescription>
@@ -101,21 +106,21 @@ const KycCompleted = () => {
                 <div className='w-full'>
                   <div className='grid grid-cols-2'>
                     <div>Document 1 Type:</div>
-                    <div>{seller?.kycDetails.pan || formData?.pan || 1}</div>
+                    <div className='capitalize'>{seller?.kycDetails.document1Type || formData?.document1Type}</div>
                   </div>
                   <div className='grid grid-cols-2'>
-                    <div>Document 1 Type:</div>
-                    <div>{seller?.kycDetails.pan || formData?.pan || 1}</div>
+                    <div>Document 1 No:</div>
+                    <div className='capitalize'>{seller?.kycDetails.document1Feild || formData?.document1Feild || 1}</div>
                   </div>
                 </div>
                 <div className='w-full'>
                   <div className='grid grid-cols-2'>
                     <div>Document 2 Type:</div>
-                    <div>{seller?.kycDetails.pan || formData?.pan || 2}</div>
+                    <div className='capitalize'>{seller?.kycDetails.document2Type || formData?.document2Type || 2}</div>
                   </div>
                   <div className='grid grid-cols-2'>
-                    <div>Document 2 Type:</div>
-                    <div>{seller?.kycDetails.pan || formData?.pan || 2}</div>
+                    <div>Document 2 No:</div>
+                    <div className='capitalize'>{seller?.kycDetails.document2Feild || formData?.document2Feild || 2}</div>
                   </div>
                 </div>
               </div>
@@ -125,9 +130,10 @@ const KycCompleted = () => {
 
         </CardContent>
       )}
-      {verified && <p>KYC is completed.</p>}
-      {!submitted && !verified && <p>Submit your KYC details</p>}
-      {!submitted && !verified && <Button variant={'themeButton'} type="button" onClick={handleCompleteKyc} className='mt-6'>Complete KYC</Button>}
+      {!submitted && !verified && <p className='pl-5'>Submit your KYC details</p>}
+      <CardFooter>
+        {!submitted && !verified && <Button variant={'themeButton'} type="button" onClick={handleCompleteKyc} className='mt-6'>Submit your KYC details</Button>}
+      </CardFooter>
     </Card>
   )
 }

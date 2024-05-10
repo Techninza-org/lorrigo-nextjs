@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Form, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '../ui/button';
 import { Card, CardDescription, CardTitle } from '../ui/card';
 import { useKycProvider } from '../providers/KycProvider';
@@ -9,6 +9,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { ChevronsUpDown } from 'lucide-react';
 import { toast } from '../ui/use-toast';
 import ImageUpload from '../file-upload';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export type DocumentUploadSchema = {
     document1Front: File | string | null,
@@ -17,13 +21,39 @@ export type DocumentUploadSchema = {
     document2Back: File | string | null,
 }
 
+export const DocumentUploadFormSchema = z.object({
+    document1Feild: z.string().min(1, "Required"),
+    document1Front: z.instanceof(File),
+    document1Back: z.instanceof(File),
+    document2Feild: z.string().min(1, "Required"),
+    document2Front: z.instanceof(File),
+    document2Back: z.instanceof(File),
+    document1Type: z.string().min(1, "Required"),
+    document2Type: z.string().min(1, "Required"),
+})
+
+
 export const DocumentUploadForm = () => {
     const { formData, setFormData, verifyOtpOpen, setVerifyOtpOpen, onHandleNext } = useKycProvider();
     const businessType = formData?.businessType;
 
-    const form = useForm<DocumentUploadSchema>();
+    const form = useForm({
+        resolver: zodResolver(DocumentUploadFormSchema),
+        defaultValues: {
+            document1Feild: "",
+            document1Front: typeof File,
+            document1Back: typeof File,
+            document2Feild: "",
+            document2Front: typeof File,
+            document2Back: typeof File,
+        }
+    });
+
 
     const onSubmit = async (values: DocumentUploadSchema) => {
+        console.log(values,
+            "document1Front", values.document1Front instanceof File,
+        )
         try {
             const { document1Front, document2Front } = values;
 
@@ -43,11 +73,11 @@ export const DocumentUploadForm = () => {
     }
 
     const handleFileChange = ({ fieldName, file }: { fieldName: keyof DocumentUploadSchema, file: File }) => {
-        form.setValue(fieldName, file);
+        form.setValue(fieldName, file as any);
     };
 
     const renderDocumentTypeOptions = () => {
-        if (businessType === 'company') {
+        if (businessType === 'Company') {
             return (
                 <SelectGroup>
                     <SelectItem value="coi">Certificate of Incorporation </SelectItem>
@@ -84,15 +114,58 @@ export const DocumentUploadForm = () => {
                     <hr />
                     <div className='grid grid-cols-2 p-10 h-full'>
                         {[1, 2].map((index) => (
-                            <div key={index}>
-                                <h1 className='font-semibold mb-4'>Document Type</h1>
-                                <Select>
-                                    <SelectTrigger className="w-2/3">
+                            <div key={index} className='w-2/3 space-y-3'>
+                                {/* <Select onValueChange={field.onChange}>
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Select document type" />
                                     </SelectTrigger>
                                     <SelectContent>{renderDocumentTypeOptions()}</SelectContent>
-                                </Select>
-                                <h1 className='font-semibold my-4'>Document Image</h1>
+                                </Select> */}
+                                <FormField
+                                    control={form.control}
+                                    name={`document${index}Type` as keyof DocumentUploadSchema}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel
+                                                className="font-bold"
+                                            >
+                                                Document Type <span className='text-red-500'>*</span>
+                                            </FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger className='capitalize'>
+                                                        <SelectValue placeholder={"Select a Document Type"} />
+                                                    </SelectTrigger>
+                                                </FormControl>  
+                                                <SelectContent>
+                                                    {renderDocumentTypeOptions()}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`document${index}Feild` as keyof DocumentUploadSchema}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className='font-semibold'>
+                                                Document {index} <span className='text-red-500'>*</span>
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Enter the Document Number"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Label className='font-semibold'>Document Image <span className='text-red-500'>*</span></Label>
                                 <div className='flex gap-8'>
                                     <div className='w-60'>
                                         <ImageUpload

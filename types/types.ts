@@ -47,10 +47,17 @@ export type SellerType = {
     photoUrl?: string;
     pan?: string;
     adhaar?: string;
+    
+    document1Type?: string;
+    document1Feild?: string;
     document1Front?: string;
     document1Back?: string;
+    
+    document2Type?: string;
+    document2Feild?: string;
     document2Front?: string;
     document2Back?: string;
+    
     submitted?: boolean;
     verified?: boolean;
   };

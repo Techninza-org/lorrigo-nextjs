@@ -24,23 +24,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useSearchParams } from "next/navigation"
 import { useModal } from "@/hooks/use-model-store"
-import { useHubProvider } from "../providers/HubProvider"
+
 
 export function PickupAddressTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const { onOpen } = useModal();
-  const { addBulkAddresses } = useHubProvider();
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
-  const searchParams = useSearchParams()
-  const hiddenFileInput = React.useRef<HTMLInputElement>(null);
-  //   const isShipmentVisible = searchParams.get('status') !== 'new'
-  //   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-  //     "Shipment Details": isShipmentVisible,
-  //   });
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
@@ -63,8 +55,11 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
   })
 
   const handleFileDownload = () => {
-    const url = '/pickup_bulk_sample.xlsx';
-    window.open(url, "_blank");
+    const url = '/pickup_bulk_sample.csv';
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'pickup_bulk_sample.csv';
+    anchor.click();
   }
 
   return (

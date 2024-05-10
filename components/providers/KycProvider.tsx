@@ -17,10 +17,16 @@ interface KycFormType {
     photoUrl: string;
     pan: string;
     verifyOtpOpen: boolean;
+    document1Type: string;
+    document1Feild: string;
     document1Front: string;
     document1Back: string;
+
+    document2Type: string;
+    document2Feild: string;
     document2Front: string;
     document2Back: string;
+
     submitted: boolean;
     verified: boolean;
 }
@@ -59,10 +65,15 @@ function KycProvider({ children }: { children: React.ReactNode }) {
             onHandleBack,
             setFormData,
             businessType: "",
+            document1Type: "",
             document1Front: "",
             document1Back: "",
+            document2Type: "",
             document2Front: "",
             document2Back: "",
+
+            document1Feild: "",
+            document2Feild: "",
             submitted: false,
             verified: false
         }}>

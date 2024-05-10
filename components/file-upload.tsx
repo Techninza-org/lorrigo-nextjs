@@ -243,7 +243,6 @@ export default function ImageUpload({ Label,
         return prevUploadProgress.filter((item) => item.File !== file);
       });
     }
-
   }
 
   const { getRootProps, getInputProps } = useDropzone({

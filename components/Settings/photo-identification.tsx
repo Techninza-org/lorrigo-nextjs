@@ -3,20 +3,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { useKycProvider } from '../providers/KycProvider';
-import { useRouter } from 'next/navigation';
-import { useModal } from '@/hooks/use-model-store';
 import { useToast } from "@/components/ui/use-toast";
 import { Camera } from 'lucide-react';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 type PhotoSchema = {
     photoUrl: string;
 }
 
 const PhotoIdentification = () => {
-    const router = useRouter();
-    const { onClose } = useModal();
-    const { onHandleBack, onHandleNext, formData, setFormData } = useKycProvider();
+    const { onHandleBack, onHandleNext, setFormData } = useKycProvider();
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
     const [photoURL, setPhotoURL] = useState('');
     const [cameraOn, setCameraOn] = useState<boolean>(false);
@@ -26,7 +23,7 @@ const PhotoIdentification = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
-        handleStartCamera(); // Call handleStartCamera when component mounts
+        handleStartCamera();
         return () => {
             handleStopCamera();
         };
@@ -43,12 +40,12 @@ const PhotoIdentification = () => {
                     height: 720,
                 }
             });
+            setCameraOn(true);
             setMediaStream(stream);
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
                 videoRef.current.play();
             }
-            setCameraOn(true);
         } catch (error) {
             return toast({
                 variant: "destructive",
@@ -105,6 +102,7 @@ const PhotoIdentification = () => {
                 })
                 return;
             }
+            handleStopCamera();
             setFormData((prev: any) => ({ ...prev, ...values }));
             onHandleNext();
         } catch (error) {
@@ -118,7 +116,7 @@ const PhotoIdentification = () => {
             <div className='grid place-content-center m-4'>
                 <canvas ref={canvasRef} className='border-2 border-black w-full h-full hidden' />
                 {!photoURL && <div className='border-2 border-dashed border-[#be0c34] rounded-lg w-full h-96'>
-                  <video ref={videoRef} autoPlay={true} className='min-w-full h-96 p-2'></video>
+                  <video ref={videoRef} autoPlay={true} className={cn('min-w-full p-2 hidden', cameraOn && "h-96 block")}></video>
                     {!cameraOn && <>
                         <div className='flex justify-center'>
                             <Camera size={50} color='#be0c34' />

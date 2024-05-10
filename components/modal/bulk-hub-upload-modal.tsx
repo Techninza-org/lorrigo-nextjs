@@ -7,9 +7,11 @@ import {
 import ImageUpload from "../file-upload"
 
 import { useModal } from "@/hooks/use-model-store";
+import { useSellerProvider } from "../providers/SellerProvider";
 
 export const BulkHubUploadModal = () => {
     const { isOpen, onClose, type } = useModal();
+    const { getHub } = useSellerProvider();
 
     const isModalOpen = isOpen && type === "BulkHubUpload";
 
@@ -27,8 +29,13 @@ export const BulkHubUploadModal = () => {
                 </DialogHeader>
 
                 <ImageUpload
-                    handleClose={handleClose}
-                    acceptFileTypes={{ "text/csv": [".csv" ,".xlsx"] }}
+                    handleClose={()=>{
+                        getHub();
+                        handleClose();
+                    
+                    }}
+                    uploadUrl="/hub/bulk-hub-upload"
+                    acceptFileTypes={{ "text/csv": [".csv"] }}
                 />
             </DialogContent>
         </Dialog>
