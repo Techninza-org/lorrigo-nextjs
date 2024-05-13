@@ -32,10 +32,12 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useSearchParams } from "next/navigation"
+import { useSellerProvider } from "../providers/SellerProvider"
 
 
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
+  const { handleOrderSync } = useSellerProvider()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [filtering, setFiltering] = React.useState<string>("")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -71,39 +73,14 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 justify-between">
         <Input
           placeholder="Filter by AWB or Order Reference ID"
           value={filtering}
           onChange={(e) => setFiltering(e.target.value)}
           className="max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
       </div>
       <div className="rounded-md border">
         <Table>

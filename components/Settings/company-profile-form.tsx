@@ -18,12 +18,13 @@ import { Button } from '../ui/button';
 import { useSellerProvider } from '../providers/SellerProvider';
 import ImageUpload from '../file-upload';
 import Image from 'next/image';
+import { LoadingComponent } from '../loading-spinner';
 
 export const CompanyProfileSchema = z.object({
   companyId: z.string().optional(),
   companyName: z.string().min(1, "Company Name is required"),
   companyEmail: z.string().email("Invalid email address"),
-  website: z.string().optional(),
+  website: z.string().url().min(1, "Store Url is required"),
   logo: z.string().optional(),
 })
 
@@ -58,8 +59,8 @@ export const CompanyProfileForm = () => {
 
   const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {
     try {
-      updateCompanyProfile(values);
-      getSeller();
+      await updateCompanyProfile(values);
+      await getSeller();
     } catch (error) {
       console.log(error);
     }
@@ -68,6 +69,7 @@ export const CompanyProfileForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
+      {form.formState.isSubmitting && <LoadingComponent />}
         <div className="space-y-5 ">
           <div className='grid grid-cols-2 gap-y-6 gap-x-20'>
             <FormField
@@ -81,6 +83,7 @@ export const CompanyProfileForm = () => {
                   <FormControl>
                     <Input
                       className="bg-zinc-300/50  dark:bg-zinc-700 dark:text-white focus-visible:ring-1 text-black focus-visible:ring-offset-1 border-2 shadow-sm"
+                      placeholder='Company ID'
                       readOnly={true}
                       disabled={true}
                       {...field} />
@@ -99,7 +102,9 @@ export const CompanyProfileForm = () => {
                   <FormControl>
                     <Input
                       className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                      {...field} />
+                      {...field}
+                      placeholder='Company Name'
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,6 +120,7 @@ export const CompanyProfileForm = () => {
                   <FormControl>
                     <Input
                       className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                      placeholder='https://www.example.com'
                       {...field} />
                   </FormControl>
                   <FormMessage />
@@ -131,6 +137,7 @@ export const CompanyProfileForm = () => {
                   <FormControl>
                     <Input
                       className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                      placeholder='Email'
                       {...field} />
                   </FormControl>
                   <FormMessage />
@@ -160,7 +167,11 @@ export const CompanyProfileForm = () => {
                       )
                       : <ImageUpload
                         uploadUrl={'/seller'}
-                        handleClose={() => setIsLogoUploaded(!isLogoUploaded)}
+                        handleClose={() => {
+                          setIsLogoUploaded(!isLogoUploaded)
+                          getSeller()
+
+                        }}
                       />
                     }
 

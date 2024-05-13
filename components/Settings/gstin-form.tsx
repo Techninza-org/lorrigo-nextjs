@@ -16,6 +16,7 @@ import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { useSellerProvider } from '../providers/SellerProvider';
+import { LoadingComponent } from '../loading-spinner';
 
 export const GstinFormSchema = z.object({
     gstin: z.string().min(1, "GST number is required").max(15, "GST number must be 15 characters"),
@@ -24,25 +25,27 @@ export const GstinFormSchema = z.object({
 });
 
 const GstinForm = () => {
-    const { uploadGstinInvoicing } = useSellerProvider();
-    const { seller } = useSellerProvider();
+    const { uploadGstinInvoicing, seller } = useSellerProvider();
 
     const form = useForm({
         resolver: zodResolver(GstinFormSchema),
         defaultValues: {
             gstin: '',
-            deductTDS: 'yes' as 'yes' | 'no',
+            deductTDS: 'no' as 'yes' | 'no',
             tan: '',
         }
     });
 
     useEffect(() => {
-        if (seller?.gstInvoice) {
-            form.setValue('gstin', seller.gstInvoice.gstin || "");
-            form.setValue('deductTDS', seller.gstInvoice.deductTDS === "yes" || seller.gstInvoice.deductTDS === "no" ? seller.gstInvoice.deductTDS : "yes");
-            form.setValue('tan', seller.gstInvoice.tan || "");
-        }
-    }, [form, seller]);
+        const setFormValues = async () => {
+            if (seller?.gstInvoice) {
+                form.setValue('gstin', seller.gstInvoice.gstin || "");
+                form.setValue('tan', seller.gstInvoice.tan || "");
+                form.setValue('deductTDS', (seller?.gstInvoice?.deductTDS as 'yes' | 'no') || "no" );
+            }
+        };
+        setFormValues();
+    }, [seller, form]);
 
     const onSubmit = async (values: z.infer<typeof GstinFormSchema>) => {
         try {
@@ -50,11 +53,12 @@ const GstinForm = () => {
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
+            {form.formState.isSubmitting && <LoadingComponent />}
                 <div className="space-y-5">
                     <FormField
                         control={form.control}
@@ -82,8 +86,8 @@ const GstinForm = () => {
                                 <FormLabel>I want to Deduct TDS payment <span className='text-red-600'>*</span></FormLabel>
                                 <FormControl>
                                     <RadioGroup
+                                        {...field}
                                         onValueChange={field.onChange}
-                                        defaultValue={field.value}
                                         className="flex space-x-1"
                                     >
                                         <FormItem className="flex items-center space-x-3 space-y-0">
@@ -120,7 +124,6 @@ const GstinForm = () => {
                                     <Input
                                         className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
                                         {...field}
-
                                         maxLength={10}
                                     />
                                 </FormControl>

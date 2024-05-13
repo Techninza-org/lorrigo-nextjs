@@ -16,6 +16,7 @@ import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { LoadingComponent } from '../loading-spinner';
 
 export const BankDetailsSchema = z.object({
     accHolderName: z.string().min(1, "Account holder's name is required"),
@@ -59,6 +60,7 @@ const BankDetailsForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
+            {form.formState.isSubmitting && <LoadingComponent />}
                 <div className="space-y-5 ">
                     <div className='grid grid-cols-2 gap-y-6 gap-x-28 py-5 mt-6'>
                         <FormField
@@ -149,7 +151,7 @@ const BankDetailsForm = () => {
                                 </FormItem>
                             )} />
                         <div className='flex'>
-                            <Button variant={'themeButton'} type='submit' className='pr-0 mt-6'>
+                            <Button disabled={isDisabled} variant={'themeButton'} type='submit' className='pr-0 mt-6'>
                                 Save
                                 <div className='bg-red-800 h-10 w-10 grid place-content-center rounded-r-md ml-4' ><Save /></div>
                             </Button>

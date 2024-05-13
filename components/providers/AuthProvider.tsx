@@ -45,6 +45,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             const userData = JSON.parse(userC);
             setUser(userData);
             setUserToken(userData.token);
+        }else{
+            setUser(null);
+            setUserToken("");
         }
     }, []);
 
@@ -136,7 +139,6 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
                 setCookie('user', userData.user, { expires: expiresDate });
                 router.push("/dashboard");
-                // Redirect to dashboard or perform any other action
             } else {
                 return toast({
                     variant: "destructive",
@@ -154,6 +156,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     const handleSignOut = useCallback(async () => {
         try {
             deleteCookie('user');
+            setUserToken("");
             setUser(null as any);
             toast({
                 className: "bg-black text-white",

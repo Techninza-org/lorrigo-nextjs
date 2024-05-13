@@ -14,6 +14,7 @@ import {
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { useAuth } from '../providers/AuthProvider';
+import { LoadingComponent } from '../loading-spinner';
 
 export const ChangePasswordSchema = z.object({
     old_password: z.string().min(1, "Old password is required"),
@@ -45,6 +46,7 @@ const ChangePasswordForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
+            {form.formState.isSubmitting && <LoadingComponent />}
                 <div className="space-y-5 ">
                     <div className='grid gap-y-6  py-5'>
                         <FormField

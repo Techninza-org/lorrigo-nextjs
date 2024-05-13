@@ -1,5 +1,5 @@
 'use client'
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '../ui/button';
@@ -48,6 +48,17 @@ export const DocumentUploadForm = () => {
             document2Back: typeof File,
         }
     });
+
+    // console.log(form.formState.errors, "errors")
+
+    useEffect(() => {
+        console.log(form.formState.errors, "errors")
+        Object.keys(form.formState.errors).some((field) => toast({
+            variant: 'destructive',
+            title: "Documents not uploaded",
+            description: `Please upload document ${field} is missing`,
+        }))
+    }, [form.formState.errors])
 
 
     const onSubmit = async (values: DocumentUploadSchema) => {
@@ -138,7 +149,7 @@ export const DocumentUploadForm = () => {
                                                     <SelectTrigger className='capitalize'>
                                                         <SelectValue placeholder={"Select a Document Type"} />
                                                     </SelectTrigger>
-                                                </FormControl>  
+                                                </FormControl>
                                                 <SelectContent>
                                                     {renderDocumentTypeOptions()}
                                                 </SelectContent>

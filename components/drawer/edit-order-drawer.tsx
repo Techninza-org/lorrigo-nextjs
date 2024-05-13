@@ -223,7 +223,7 @@ export function EditOrderDrawer() {
                         </Button>
                         <span>Edit Order</span>
                         <span className="font-medium underline underline-offset-4 text-blue-800">
-                            #{order?.order_reference_id}
+                            {order?.order_reference_id}
                         </span>
                     </DrawerTitle>
                     {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}

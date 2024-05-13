@@ -17,6 +17,7 @@ import { useAxios } from "./AxiosProvider";
 import { BankDetailsSchema } from "../Settings/bank-details";
 import { GstinFormSchema } from "../Settings/gstin-form";
 import { BillingAddressSchema } from "../Settings/billing-address-form";
+import { ChannelFormSchema } from "../Channel/channel-integration-form";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -50,6 +51,9 @@ interface SellerContextType {
   updateBankDetails: (bankInfos: z.infer<typeof BankDetailsSchema>) => Promise<boolean>;
   uploadGstinInvoicing: (values: z.infer<typeof GstinFormSchema>) => boolean | Promise<boolean>;
   updateBillingAddress: (values: z.infer<typeof BillingAddressSchema>) => boolean | Promise<boolean>;
+  createChannel: (values: z.infer<typeof ChannelFormSchema>) => boolean | Promise<boolean>;
+  updateChannel: (id: string, isOrderSync: boolean) => boolean | Promise<boolean>;
+  handleOrderSync: () => boolean | Promise<boolean>;
 
 
 }
@@ -723,6 +727,71 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const createChannel = async (values: z.infer<typeof ChannelFormSchema>) => {
+    try {
+      const userRes = await axiosIWAuth.post("/seller/channels", { channel: { ...values } });
+      if (userRes?.data?.valid) {
+        toast({
+          title: "Success",
+          description: "Channel added successfully.",
+        });
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      const message = error.response.data.message.includes("duplicate key error") ? "API Key must be Unique " : error.response.data.message;
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: message || "Something wrong, Please try again!",
+      });
+      return false
+    }
+  }
+
+  const updateChannel = async (id: string, isOrderSync: boolean) => {
+    try {
+      const userRes = await axiosIWAuth.put(`/seller/channels/${id}`, { channel: { isOrderSync } });
+      if (userRes?.data?.valid) {
+        toast({
+          title: "Success",
+          description: "Channel updated successfully.",
+        });
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error?.response?.data?.message || "Something wrong, Please try again!",
+      });
+      return false
+    }
+  }
+
+  const handleOrderSync = async () => {
+    try {
+      const userRes = await axiosIWAuth.get(`/order/channels`);
+
+      if (userRes?.data?.valid) {
+        toast({
+          title: "Success",
+          description: "Order Sync successfully.",
+        });
+        getAllOrdersByStatus(status || "all")
+        return true;
+      }
+      return false;
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error?.response?.data?.message || "Something wrong, Please try again!",
+      });
+      return false
+    }
+  }
 
   useEffect(() => {
     if (!!user || !!userToken) {
@@ -772,6 +841,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         updateBankDetails,
         uploadGstinInvoicing,
         updateBillingAddress,
+        createChannel,
+        updateChannel,
+        handleOrderSync
 
 
 

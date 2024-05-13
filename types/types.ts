@@ -20,7 +20,7 @@ export type SellerType = {
     companyLogo?: string;
   };
   address?: string;
-// below feild need to remove
+  // below feild need to remove
   gst?: string;
   pan?: string;
   aadhar?: string;
@@ -47,28 +47,39 @@ export type SellerType = {
     photoUrl?: string;
     pan?: string;
     adhaar?: string;
-    
+
     document1Type?: string;
     document1Feild?: string;
     document1Front?: string;
     document1Back?: string;
-    
+
     document2Type?: string;
     document2Feild?: string;
     document2Front?: string;
     document2Back?: string;
-    
+
     submitted?: boolean;
     verified?: boolean;
   };
-  billingAddress:  {
+  billingAddress: {
     address_line_1: string;
     address_line_2: string;
     pincode: string;
     city: string;
     state: string;
     phone: string;
-  }
+  },
+  channelPartners: [
+    {
+      _id: string;
+      channelName: string;
+      isOrderSync: boolean;
+      storeUrl: string;
+      apiKey: string;
+      apiSk: string;
+      sharedSecret: string;
+    }
+  ];
 };
 
 export interface ProductDetailsType {
@@ -96,6 +107,7 @@ export interface CustomerDetailsType {
 export interface pickupAddressType {
   _id: string;
   sellerId: string;
+  isPrimary: boolean;
   isActive: boolean
   name: string;
   pincode: number;
@@ -130,6 +142,7 @@ export interface SellerDetailsType {
 export interface B2COrderType {
   _id: string;
   awb?: string;
+  channelName: string;
   carrierName?: string;
   sellerId: string;
   bucket?: number;

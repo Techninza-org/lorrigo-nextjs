@@ -82,6 +82,7 @@ const KycCompleted = () => {
       <CardHeader>
         <CardTitle>KYC Status</CardTitle>
       </CardHeader>
+
       {submitted && (
         <CardContent>
           <Alert className={cn(verified ? 'bg-green-300' : 'bg-amber-300')}>
@@ -130,6 +131,7 @@ const KycCompleted = () => {
 
         </CardContent>
       )}
+
       {!submitted && !verified && <p className='pl-5'>Submit your KYC details</p>}
       <CardFooter>
         {!submitted && !verified && <Button variant={'themeButton'} type="button" onClick={handleCompleteKyc} className='mt-6'>Submit your KYC details</Button>}

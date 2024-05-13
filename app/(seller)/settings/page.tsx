@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { ChevronRight } from 'lucide-react';
+import Workflow from '@/components/SVGs/channel.svg'
 
 import CarPNG from '@/components/SVGs/car.png'
 import CompanyPNG from '@/components/SVGs/company.png'
@@ -75,6 +76,13 @@ const Settings = () => {
         { href: '/settings/pickup-address/manage-pickup-addresses', label: 'Manage Pickup Addresses' }
       ],
       logo: CarPNG
+    },
+    {
+      title: 'Channels',
+      links: [
+        { href: '/settings/manage-channels', label: 'Manage Channels' }
+      ],
+      logo: Workflow
     }
   ];
 

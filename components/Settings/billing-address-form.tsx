@@ -16,7 +16,7 @@ import { Save } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useSellerProvider } from '../providers/SellerProvider';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
-import { LoadingSpinner } from '../loading-spinner';
+import { LoadingComponent, LoadingSpinner } from '../loading-spinner';
 import { PhoneInput } from '../ui/phone-input';
 
 export const BillingAddressSchema = z.object({
@@ -29,7 +29,7 @@ export const BillingAddressSchema = z.object({
 })
 const BillingAddressForm = () => {
     const { seller, updateBillingAddress } = useSellerProvider();
-    
+
     const form = useForm({
         resolver: zodResolver(BillingAddressSchema),
         defaultValues: {
@@ -46,7 +46,7 @@ const BillingAddressForm = () => {
 
     const { cityState, isTyping, loading } = useFetchCityState(pincode);
 
-    const isLoading = loading
+    const isLoading = loading || form.formState.isSubmitting 
 
     useEffect(() => {
         if (seller?.billingAddress) {
@@ -73,14 +73,17 @@ const BillingAddressForm = () => {
 
     const onSubmit = async (values: z.infer<typeof BillingAddressSchema>) => {
         try {
-            updateBillingAddress(values);
+          
+            await updateBillingAddress(values) 
         } catch (error) {
             console.log(error);
         }
     }
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
+                {form.formState.isSubmitting && <LoadingComponent />}
                 <div className="grid gap-y-6 gap-x-16 py-5 grid-cols-2">
                     <div className='col-span-2'>
                         <FormField
@@ -182,27 +185,27 @@ const BillingAddressForm = () => {
                                 <FormMessage />
                             </FormItem>
                         )} />
-                       <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                        Contact Number
-                                    </FormLabel>
-                                    <FormControl>
-                                        <PhoneInput
-                                            disabled={isLoading}
-                                            className="border-2 rounded-md dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                            defaultCountry='IN'
-                                            placeholder='Enter the contact number'
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    Contact Number
+                                </FormLabel>
+                                <FormControl>
+                                    <PhoneInput
+                                        disabled={isLoading}
+                                        className="border-2 rounded-md dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                        defaultCountry='IN'
+                                        placeholder='Enter the contact number'
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <div className='flex'>
                         <Button variant={'themeButton'} type='submit' className='pr-0 mt-6'>
                             Save
