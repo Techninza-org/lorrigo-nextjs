@@ -21,12 +21,17 @@ interface reqPayload {
     phone: string;
     city: string;
     state: string;
+    isRTOAddressSame: boolean;
+    rtoAddress?: string;
+    rtoCity?: string;
+    rtoState?: string;
+    rtoPincode?: string;    
 }
 
 interface HubContextType {
     handleCreateHub: (hub: reqPayload) => void;
     editPickupLocation: (values: z.infer<typeof pickupAddressFormSchema>, id: string) => void;
-    handleUpdateHub: (status: boolean, hubID: string) => Promise<boolean> | boolean;
+    handleUpdateHub: (status: boolean, hubID: string, isPrimary?: boolean) => Promise<boolean> | boolean;
 
     updateCompanyProfile: (values: z.infer<typeof CompanyProfileSchema>) => void;
 }
@@ -76,53 +81,9 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
         }
     }, [userToken, axiosIWAuth, getHub, router, toast])
+    
     const updateCompanyProfile = async (values: z.infer<typeof CompanyProfileSchema>) => {
 
-        // try {
-        //     const formData = new FormData();
-        //     const companyName = values?.companyName?.toString() || "";
-        //     const companyEmail = values?.companyEmail?.toString() || "";
-        //     const website = values?.website?.toString() || "";
-
-        //     if (!companyEmail.includes("@")) {
-        //         return toast({
-        //             variant: "destructive",
-        //             title: "Invalid email.",
-        //         });
-        //     }
-
-        //     const myHeaders = new Headers();
-        //     myHeaders.append("Authorization", `Bearer ${userToken}`);
-
-        //     const formdata = new FormData();
-        //     formdata.append("logo", companyLogo);
-        //     formdata.append("companyProfile", `\"{\\\"companyName\\\":\\\"${companyName}\\\",\\\"companyEmail\\\":\\\"${companyEmail}\\\",\\\"website\\\":\\\"${website}\\\"}\"\n`);
-
-
-        //     const requestOptions = {
-        //         method: "PUT",
-        //         headers: myHeaders,
-        //         body: formdata,
-        //         redirect: "follow"
-        //     };
-
-        //     fetch("http://localhost:4000/api/seller", { ...requestOptions, redirect: 'follow' })
-        //         .then((response) => response.json())
-        //         .then((result) => console.log(result))
-        //         .catch((error) => console.error(error));
-
-        //     toast({
-        //         title: "Success",
-        //         description: "Company Profile updated successfully.",
-        //     });
-
-        // } catch (error) {
-        //     toast({
-        //         variant: "destructive",
-        //         title: "Error",
-        //         description: "error.response.data.message",
-        //     });
-        // }
         try {
             const companyName = values?.companyName?.toString() || "";
             const companyEmail = values?.companyEmail?.toString() || "";
@@ -219,9 +180,9 @@ function HubProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    const handleUpdateHub = async (status: boolean, hubID: string) => {
+    const handleUpdateHub = async (status: boolean, hubID: string, isPrimary?: boolean) => {
         try {
-            const userRes = await axiosIWAuth.put(`/hub/${hubID}`, { isActive: status });
+            const userRes = await axiosIWAuth.put(`/hub/${hubID}`, { isActive: status, isPrimary });
             if (userRes?.data?.valid) {
                 toast({
                     title: "Success",
@@ -247,7 +208,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 handleUpdateHub,
                 updateCompanyProfile,
                 editPickupLocation,
-                
+
             }}
         >
             {children}

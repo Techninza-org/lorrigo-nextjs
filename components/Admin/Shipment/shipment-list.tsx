@@ -23,8 +23,6 @@ export const ShipmentList = () => {
             const res = await axiosIWAuth.get(url);
             if (res.data?.valid) {
                 setOrders(res.data.response.orders);
-                console.log(orders);
-                
                 return res.data.response.orders
             }
         } catch (error) {
@@ -34,8 +32,6 @@ export const ShipmentList = () => {
     useEffect(() => {
         if (!userToken) return;
         getAllOrders("all")
-        console.log(orders);
-        
     }, [userToken]);
 
     return (

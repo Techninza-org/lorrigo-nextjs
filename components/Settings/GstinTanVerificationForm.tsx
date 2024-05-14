@@ -56,7 +56,6 @@ export const GstinTanVerificationForm = () => {
                 description: "Please enter valid GSTIN number.",
             });
         }
-        console.log("GSTIN Verification: ", gstinValue);
     }
 
     const handleTanVerification = () => {
@@ -72,7 +71,6 @@ export const GstinTanVerificationForm = () => {
                 description: "Please enter valid TAN number.",
             });
         }
-        console.log('Tan Verification: ', tanValue);
     }
 
     function handleOpen() {

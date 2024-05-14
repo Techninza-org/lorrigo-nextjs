@@ -59,7 +59,6 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             setUsers(res.data.sellers);
         } catch (error) {
             console.log('Error fetching sellers: ', error);
-
         }
     };
 
@@ -80,7 +79,6 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             const response = await axiosIWAuth.post('/auth/signup', credentials);
             if (response.data.user) {
                 const sellerId = response.data.user.id;
-                console.log('sellerId', sellerId);
                 const res = await axiosIWAuth.put(`/admin/seller?sellerId=${sellerId}`, user);
                 if (res.data.seller) {
                     return toast({

@@ -25,7 +25,6 @@ const KycCompleted = () => {
   const [verified, setVerified] = useState(false);
 
   useEffect(() => {
-
     if (seller?.kycDetails?.submitted === true) {
       setSubmitted(true);
     }
@@ -35,6 +34,60 @@ const KycCompleted = () => {
   }, [seller]);
 
   const handleCompleteKyc = async () => {
+
+    if (!formData?.photoUrl || !formData?.document1Front || !formData?.document1Back || !formData?.document2Front || !formData?.document2Back) {
+      toast({
+        variant: 'destructive',
+        title: "Documents not uploaded",
+        description: "Please upload all documents",
+      })
+      return;
+    }
+
+    if (!formData?.businessType || !formData?.document1Type || !formData?.document2Type) {
+      toast({
+        variant: 'destructive',
+        title: "Details not filled",
+        description: "Please fill all details",
+      })
+      return;
+    }
+
+    if (!formData?.document1Feild || !formData?.document2Feild) {
+      toast({
+        variant: 'destructive',
+        title: "Document number not found",
+        description: "Please fill document numbers",
+      })
+      return;
+    }
+
+    if (formData?.document1Type === formData?.document2Type) {
+      toast({
+        variant: 'destructive',
+        title: "Document type is same",
+        description: "Please select different document types",
+      })
+      return;
+    }
+
+    if (formData?.document1Feild === formData?.document2Feild) {
+      toast({
+        variant: 'destructive',
+        title: "Document number is same",
+        description: "Please enter different document numbers",
+      })
+      return;
+    }
+
+    // if (!seller?.gstInvoice?.gstin || !formData?.pan) {
+    //   toast({
+    //     variant: 'destructive',
+    //     title: "GSTIN or PAN not found",
+    //     description: "Please fill GSTIN and PAN",
+    //   })
+    //   return;
+    // }
 
     const form = new FormData();
     form.append('businessType', formData?.businessType || '');

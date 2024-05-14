@@ -58,7 +58,6 @@ export const AadharPanVerificationForm = () => {
                 description: "Please enter valid Aadhar number.",
             });
         }
-        console.log("Aadhar Verification: ", aadharValue);
     }
 
     const handlePanVerification = () => {
@@ -74,7 +73,6 @@ export const AadharPanVerificationForm = () => {
                 description: "Please enter valid PAN number.",
             });
         }
-        console.log('Pan Verification: ', panValue);
     }
 
     function handleOpen() {

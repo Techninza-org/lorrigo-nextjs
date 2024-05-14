@@ -49,8 +49,6 @@ export const DocumentUploadForm = () => {
         }
     });
 
-    // console.log(form.formState.errors, "errors")
-
     useEffect(() => {
         console.log(form.formState.errors, "errors")
         Object.keys(form.formState.errors).some((field) => toast({
@@ -62,9 +60,6 @@ export const DocumentUploadForm = () => {
 
 
     const onSubmit = async (values: DocumentUploadSchema) => {
-        console.log(values,
-            "document1Front", values.document1Front instanceof File,
-        )
         try {
             const { document1Front, document2Front } = values;
 

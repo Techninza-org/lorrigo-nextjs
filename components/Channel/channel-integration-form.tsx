@@ -46,7 +46,6 @@ export const ChannelIntegrationForm = () => {
 
     const onSubmit = async (values: z.infer<typeof ChannelFormSchema>) => {
         try {
-            console.log("Form Values: ", values);
             const response = await createChannel(values) ? setIsSubmitted(true) : setIsSubmitted(false);
 
         } catch (error) {

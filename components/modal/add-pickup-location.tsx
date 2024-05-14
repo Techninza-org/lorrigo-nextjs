@@ -110,7 +110,12 @@ export const AddPickupLocationModal = () => {
                 phone: values.phone,
                 city: values.city,
                 state: values.state,
-                contactPersonName: values.contactPersonName
+                contactPersonName: values.contactPersonName,
+                isRTOAddressSame: values.isRTOAddressSame || false,
+                rtoAddress: values.rtoAddress,
+                rtoCity: values.rtoCity,
+                rtoState: values.rtoState,
+                rtoPincode: values.rtoPincode,
             });
 
             cityState({ city: "", state: "" })

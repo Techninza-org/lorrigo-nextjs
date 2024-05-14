@@ -41,8 +41,6 @@ export const OrderTrackInfoAdmin = () => {
     useEffect(() => {
         if (!userToken) return;
         getOrderDetailsAdmin(orderId) 
-        console.log(order);
-
     }, [userToken, orderId]);
 
     if (!order) return (

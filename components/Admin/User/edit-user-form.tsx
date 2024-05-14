@@ -41,8 +41,6 @@ const EditUserForm = () => {
     const { users } = useAdminProvider();
 
     const user = users.find((user: any) => user._id === sellerId);
-    console.log(user);
-
     const router = useRouter();
     const { handleEditUser } = useAdminProvider()
 

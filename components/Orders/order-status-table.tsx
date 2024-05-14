@@ -37,7 +37,7 @@ import { useSellerProvider } from "../providers/SellerProvider"
 
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
-  const { handleOrderSync } = useSellerProvider()
+  const { handleOrderSync, seller } = useSellerProvider()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [filtering, setFiltering] = React.useState<string>("")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -80,7 +80,9 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
           onChange={(e) => setFiltering(e.target.value)}
           className="max-w-sm"
         />
-        <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
+        {
+          seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
+        }
       </div>
       <div className="rounded-md border">
         <Table>
