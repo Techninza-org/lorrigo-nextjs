@@ -20,6 +20,7 @@ import { useToast } from "./ui/use-toast";
 import { useAxios } from "./providers/AxiosProvider";
 import { Button } from "./ui/button";
 import { DocumentUploadSchema } from "./Settings/DocumentUploadForm";
+import { downloadFile } from "@/lib/utils";
 
 interface FileUploadProgress {
   progress: number;
@@ -155,24 +156,68 @@ export default function ImageUpload({ Label,
     });
   };
 
+  // const uploadImageToDB = async (
+  //   formData: FormData,
+  //   onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
+  //   cancelSource: CancelTokenSource
+  // ) => {
+  //   if (!uploadUrl) {
+  //     return;
+  //   }
+
+  //   return await axiosIWAuth4Upload.put(
+  //     uploadUrl,
+  //     formData,
+  //     {
+  //       onUploadProgress,
+  //       cancelToken: cancelSource.token,
+  //     }
+  //   );
+  // };
+
+
   const uploadImageToDB = async (
     formData: FormData,
     onUploadProgress: (progressEvent: AxiosProgressEvent) => void,
     cancelSource: CancelTokenSource
   ) => {
-    if (!uploadUrl) {
-      return;
-    }
-
-    return await axiosIWAuth4Upload.put(
-      uploadUrl,
-      formData,
-      {
-        onUploadProgress,
-        cancelToken: cancelSource.token,
+    try {
+      if (!uploadUrl) {
+        throw new Error('Upload URL is not provided');
       }
-    );
+
+      const response = await axiosIWAuth4Upload.put(
+        uploadUrl,
+        formData,
+        {
+          onUploadProgress,
+          cancelToken: cancelSource.token,
+          responseType: "blob"
+        }
+      );
+
+      const contentType = response.headers['content-type'];
+      if (contentType === 'text/csv') {
+        toast({
+          variant: "destructive",
+          title: "Error report generated",
+        });
+        downloadFile(response.data, 'Error_Report.csv');
+        return;
+      }
+
+      toast({
+        variant: "default",
+        title: "File Uploaded Successfully",
+      });
+  
+      return response;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
   };
+
 
   const removeFile = (file: File) => {
     setFilesToUpload((prevUploadProgress) => {
@@ -231,10 +276,7 @@ export default function ImageUpload({ Label,
       await uploadImageToDB(formData, (progressEvent) => {
         onUploadProgress(progressEvent, file, cancelSource);
       }, cancelSource);
-      toast({
-        variant: "default",
-        title: "File Uploaded Successfully",
-      });
+      
       if (handleClose) handleClose();
     } catch (error) {
       toast({

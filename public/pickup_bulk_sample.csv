@@ -1,1 +1,1 @@
-FacilityName* , ContactPersonName*, PickupLocationContact*, Email, Address1*, Address2*, Pincode*, City*, State*
+FacilityName* , ContactPersonName*, PickupLocationContact*, Email*, Address1*, Address2*, Pincode*, City*, State*,IsRTOAddressSame*,RTOAddress*,RTOCity*,RTOState*,RTOPincode*

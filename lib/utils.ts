@@ -106,3 +106,18 @@ const generateOrderID = (platformName: string, financialYear: string, hubName: s
   return uniqueOrderID;
 };
 
+export const downloadFile = (blobData: Blob, fileName: string) => {
+  const url = window.URL.createObjectURL(blobData);
+  // Create an anchor element to trigger the download
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', fileName);
+  
+  // Append the anchor element to the body and click it
+  document.body.appendChild(link);
+  link.click();
+  
+  // Cleanup
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
