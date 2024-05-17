@@ -19,6 +19,8 @@ import { useSellerProvider } from '../providers/SellerProvider';
 import { Button } from '../ui/button';
 import { BoxDetails } from './box-details';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../providers/AuthProvider';
+import { generateOrderID } from '@/lib/utils';
 
 
 // Define the schema for product details
@@ -53,7 +55,8 @@ export const formDataSchema = z.object({
 
 
 export const B2CForm = () => {
-    const { handleCreateOrder } = useSellerProvider();
+    const { handleCreateOrder, seller } = useSellerProvider();
+    const { user } = useAuth()
     const router = useRouter();
 
     const [collectableFeild, setCollectableFeild] = useState(false);
@@ -64,7 +67,7 @@ export const B2CForm = () => {
     const form = useForm({
         resolver: zodResolver(formDataSchema),
         defaultValues: {
-            order_reference_id: "",
+            order_reference_id: `${user?.name}`,
             fragile_items: false,
             payment_mode: "",
             orderWeight: "",
@@ -94,6 +97,10 @@ export const B2CForm = () => {
     const isCOD = form.watch('payment_mode') === "COD";
 
     useEffect(() => {
+        setValue('order_reference_id', generateOrderID(user?.name || "", "LS2425TAS0001"))
+    }, [currentDate, setValue, user?.name])
+
+    useEffect(() => {
         if (isCOD) {
             setCollectableFeild(true);
         } else {
@@ -115,8 +122,8 @@ export const B2CForm = () => {
     };
 
     const onSubmit = async (values: z.infer<typeof formDataSchema>) => {
-        
-        values.productDetails.taxableValue = (Number(form.watch('productDetails.taxableValue')) + (Number(form.watch('productDetails.taxRate')) / 100) * Number(form.watch('productDetails.taxableValue'))).toString(); 
+
+        values.productDetails.taxableValue = (Number(form.watch('productDetails.taxableValue')) + (Number(form.watch('productDetails.taxRate')) / 100) * Number(form.watch('productDetails.taxableValue'))).toString();
 
         try {
             const isSuccess = await handleCreateOrder({

@@ -98,11 +98,24 @@ const calculateFinancialYear = () => {
   return financialYear;
 };
 
-const generateOrderID = (platformName: string, financialYear: string, hubName: string, orderID: number): string => {
-  const paddedOrderID: string = orderID.toString().padStart(5, '0');
-  
-  const uniqueOrderID: string = `${platformName}${financialYear}-${hubName}${paddedOrderID}`;
-  
+export const generateOrderID = (hubName: string, lastOrderId: string) => {
+  const platformName = "LS";
+
+  const currentYear = new Date().getFullYear();
+  const financialYearStart = new Date(currentYear, 3, 1); 
+  const financialYear = new Date() >= financialYearStart 
+    ? `${currentYear.toString().slice(2)}${(currentYear + 1).toString().slice(2)}`
+    : `${(currentYear - 1).toString().slice(2)}${currentYear.toString().slice(2)}`;
+
+  // const regex = new RegExp(`^${platformName}${financialYear}[A-Z]{3}\\d{4}$`);
+  // if (!regex.test(lastOrderId)) {
+  //   throw new Error("Invalid lastOrderId format.");
+
+  const lastOrderIDNumber = parseInt(lastOrderId.slice(-4), 10);
+  const nextOrderID = (lastOrderIDNumber + 1).toString().padStart(4, '0');
+  const hubNameAbbreviation = hubName?.split(" ").map(word => word.charAt(0).toUpperCase()).join("");
+  const uniqueOrderID = `${platformName}${financialYear}${hubNameAbbreviation}${nextOrderID}`;
+
   return uniqueOrderID;
 };
 

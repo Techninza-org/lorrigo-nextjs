@@ -140,7 +140,7 @@ export function CloneOrderDrawer() {
         form.setValue('customerDetails.name', order?.customerDetails?.name || "");
         form.setValue('customerDetails.phone', order?.customerDetails?.phone || "");
         form.setValue('customerDetails.address', order?.customerDetails?.address || "");
-        form.setValue('customerDetails.pincode', order?.customerDetails?.pincode.toString() || "");
+        form.setValue('customerDetails.pincode', order?.customerDetails?.pincode?.toString() || "");
         form.setValue('customerDetails.state', order?.customerDetails?.state || "");
         form.setValue('customerDetails.city', order?.customerDetails?.city || "");
 
