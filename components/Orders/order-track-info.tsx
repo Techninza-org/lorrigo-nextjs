@@ -60,7 +60,7 @@ export const OrderTrackInfo = () => {
                                 <Badge variant={order?.bucket == -1 ? "failure" : "success"}>{getBucketStatus(order?.bucket ?? 0)}</Badge>
                             </div>
                             <div>
-                                {order && <OrderButton rowData={order} />}
+                                {(order && userToken) && <OrderButton rowData={order} />}
                             </div>
                         </CardTitle>
                     </CardHeader>

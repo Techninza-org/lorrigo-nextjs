@@ -67,9 +67,9 @@ const SVGMAP = {
 
 export function getSvg(name: string) {
   for (const key in SVGMAP) {
-      if (name?.includes(key) ) {
-          return SVGMAP[key as keyof typeof SVGMAP];
-      }
+    if (name?.includes(key)) {
+      return SVGMAP[key as keyof typeof SVGMAP];
+    }
   }
   return LogoPNG;
 }
@@ -81,20 +81,20 @@ const calculateFinancialYear = () => {
   const currentYear = currentDate.getFullYear();
   let financialYearStart;
   let financialYearEnd;
-  
+
   if (currentMonth >= 3) {
-      // Financial year starts from April
-      financialYearStart = currentYear;
-      financialYearEnd = currentYear + 1;
+    // Financial year starts from April
+    financialYearStart = currentYear;
+    financialYearEnd = currentYear + 1;
   } else {
-      // Financial year starts from April of the previous year
-      financialYearStart = currentYear - 1;
-      financialYearEnd = currentYear;
+    // Financial year starts from April of the previous year
+    financialYearStart = currentYear - 1;
+    financialYearEnd = currentYear;
   }
-  
+
   // Format financial year as 'YYYY-YY' (e.g., '2023-24')
   const financialYear = `${financialYearStart}-${String(financialYearEnd).slice(2)}`;
-  
+
   return financialYear;
 };
 
@@ -102,8 +102,8 @@ export const generateOrderID = (hubName: string, lastOrderId: string) => {
   const platformName = "LS";
 
   const currentYear = new Date().getFullYear();
-  const financialYearStart = new Date(currentYear, 3, 1); 
-  const financialYear = new Date() >= financialYearStart 
+  const financialYearStart = new Date(currentYear, 3, 1);
+  const financialYear = new Date() >= financialYearStart
     ? `${currentYear.toString().slice(2)}${(currentYear + 1).toString().slice(2)}`
     : `${(currentYear - 1).toString().slice(2)}${currentYear.toString().slice(2)}`;
 
@@ -111,7 +111,8 @@ export const generateOrderID = (hubName: string, lastOrderId: string) => {
   // if (!regex.test(lastOrderId)) {
   //   throw new Error("Invalid lastOrderId format.");
 
-  const lastOrderIDNumber = parseInt(lastOrderId.slice(-4), 10);
+  // const lastOrderIDNumber = parseInt(lastOrderId.slice(-4), 10);
+  const lastOrderIDNumber = parseInt(lastOrderId);
   const nextOrderID = (lastOrderIDNumber + 1).toString().padStart(4, '0');
   const hubNameAbbreviation = hubName?.split(" ").map(word => word.charAt(0).toUpperCase()).join("");
   const uniqueOrderID = `${platformName}${financialYear}${hubNameAbbreviation}${nextOrderID}`;
@@ -125,12 +126,20 @@ export const downloadFile = (blobData: Blob, fileName: string) => {
   const link = document.createElement('a');
   link.href = url;
   link.setAttribute('download', fileName);
-  
+
   // Append the anchor element to the body and click it
   document.body.appendChild(link);
   link.click();
-  
+
   // Cleanup
   document.body.removeChild(link);
   window.URL.revokeObjectURL(url);
 };
+
+export const handleFileDownload = (fileName: string) => {
+  const url = '/${fileName}';
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = fileName;
+  anchor.click();
+}

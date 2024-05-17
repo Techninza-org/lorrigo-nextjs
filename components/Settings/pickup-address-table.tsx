@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useModal } from "@/hooks/use-model-store"
+import { handleFileDownload } from "@/lib/utils"
 
 
 export function PickupAddressTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
@@ -54,13 +55,6 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
     },
   })
 
-  const handleFileDownload = () => {
-    const url = '/pickup_bulk_sample.csv';
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = 'pickup_bulk_sample.csv';
-    anchor.click();
-  }
 
   return (
     <div className="w-full">
@@ -78,7 +72,7 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
             <Button variant={'webPageBtn'} size={'icon'} onClick={() => onOpen("BulkHubUpload")}>
               <Upload size={18} />
             </Button>
-            <Button variant={'webPageBtn'} size={'icon'} onClick={handleFileDownload}>
+            <Button variant={'webPageBtn'} size={'icon'} onClick={()=>handleFileDownload("pickup_bulk_sample.csv")}>
               <Download size={18} />
             </Button>
             <Button onClick={() => onOpen("addPickupLocation")} variant={'themeButton'}>

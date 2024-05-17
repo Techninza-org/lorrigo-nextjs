@@ -14,13 +14,14 @@ import {
 } from "@/components/ui/card"
 import { OrderDetailForm } from './b2c-order-form';
 import { DeliveryDetailsForm } from './delivery-details-form';
-import { MapPin, PackageOpen, Undo2 } from 'lucide-react';
+import { Download, MapPin, PackageOpen, Undo2 } from 'lucide-react';
 import { useSellerProvider } from '../providers/SellerProvider';
 import { Button } from '../ui/button';
 import { BoxDetails } from './box-details';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../providers/AuthProvider';
-import { generateOrderID } from '@/lib/utils';
+import { generateOrderID, handleFileDownload } from '@/lib/utils';
+import ImageUpload from '../file-upload';
 
 
 // Define the schema for product details
@@ -55,7 +56,7 @@ export const formDataSchema = z.object({
 
 
 export const B2CForm = () => {
-    const { handleCreateOrder, seller } = useSellerProvider();
+    const { handleCreateOrder, seller, orders, getAllOrdersByStatus } = useSellerProvider();
     const { user } = useAuth()
     const router = useRouter();
 
@@ -97,7 +98,7 @@ export const B2CForm = () => {
     const isCOD = form.watch('payment_mode') === "COD";
 
     useEffect(() => {
-        setValue('order_reference_id', generateOrderID(user?.name || "", "LS2425TAS0001"))
+        setValue('order_reference_id', generateOrderID((seller?.companyProfile.companyName || user?.name) || "@@", `${orders?.length || 0}`))
     }, [currentDate, setValue, user?.name])
 
     useEffect(() => {
@@ -120,6 +121,7 @@ export const B2CForm = () => {
             setValue('productDetails.quantity', (currentValue - 1).toString());
         }
     };
+
 
     const onSubmit = async (values: z.infer<typeof formDataSchema>) => {
 
@@ -194,6 +196,20 @@ export const B2CForm = () => {
                             <BoxDetails
                                 form={form}
                                 isLoading={isLoading}
+                            />
+                        </Card>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className='flex justify-between items-center'><PackageOpen size={23} className='mr-3' />Bulk Uplaod
+                                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("order-bulk-sample.csv")}>
+                                        <Download size={18} />
+                                    </Button>
+                                </CardTitle>
+                            </CardHeader>
+                            <ImageUpload
+                                uploadUrl='/order/b2c/bulk'
+                                handleClose={()=>getAllOrdersByStatus("all")}
+                                acceptFileTypes={{ "text/csv": [".csv"] }}
                             />
                         </Card>
                     </div>
