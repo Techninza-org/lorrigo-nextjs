@@ -137,7 +137,7 @@ export const downloadFile = (blobData: Blob, fileName: string) => {
 };
 
 export const handleFileDownload = (fileName: string) => {
-  const url = '/${fileName}';
+  const url = `/${fileName}`;
   const anchor = document.createElement('a');
   anchor.href = url;
   anchor.download = fileName;

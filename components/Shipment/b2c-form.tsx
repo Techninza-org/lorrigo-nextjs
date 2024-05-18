@@ -98,7 +98,7 @@ export const B2CForm = () => {
     const isCOD = form.watch('payment_mode') === "COD";
 
     useEffect(() => {
-        setValue('order_reference_id', generateOrderID((seller?.companyProfile.companyName || user?.name) || "@@", `${orders?.length || 0}`))
+        setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name) || "@@", `${orders?.length || 0}`))
     }, [currentDate, setValue, user?.name])
 
     useEffect(() => {
@@ -201,7 +201,7 @@ export const B2CForm = () => {
                         <Card>
                             <CardHeader>
                                 <CardTitle className='flex justify-between items-center'><PackageOpen size={23} className='mr-3' />Bulk Uplaod
-                                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("order-bulk-sample.csv")}>
+                                    <Button type='button' variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("order-bulk-sample.csv")}>
                                         <Download size={18} />
                                     </Button>
                                 </CardTitle>
