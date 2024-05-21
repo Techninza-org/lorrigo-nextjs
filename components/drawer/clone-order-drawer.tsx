@@ -149,14 +149,14 @@ export function CloneOrderDrawer() {
 
     useEffect(() => {
 
-        if (customerCityState.city && (order?.customerDetails?.pincode.toString() !== customerPincode?.toString())) {
+        if (customerCityState.city) {
             form.setValue('customerDetails.city', customerCityState.city);
             form.setValue('customerDetails.state', customerCityState.state);
         }
     }, [customerCityState.city, customerCityState.state, form, order?.customerDetails?.city]);
 
     useEffect(() => {
-        if (sellerCityState.city && (order?.sellerDetails?.sellerPincode?.toString() !== sellerPincode?.toString())) {
+        if (sellerCityState.city) {
             form.setValue('sellerDetails.sellerCity', sellerCityState.city);
             form.setValue('sellerDetails.sellerState', sellerCityState.state);
         }

@@ -776,8 +776,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const handleOrderSync = async () => {
     try {
-      const userRes = await axiosIWAuth.get(`/order/channels`);
-
+      const userRes = await axiosIWAuth.get(`/order/b2c/channels`);
+console.log("asdfas")
       if (userRes?.data?.valid) {
         toast({
           title: "Success",

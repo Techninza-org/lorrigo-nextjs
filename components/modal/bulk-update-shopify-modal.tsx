@@ -44,7 +44,6 @@ export const BulkUpdateShopifyModal = () => {
     });
 
     const { isLoading, errors } = form.formState;
-    console.log(errors);
 
     const { isOpen, onClose, type, data } = useModal();
     const { orders } = data ?? {};
@@ -54,7 +53,6 @@ export const BulkUpdateShopifyModal = () => {
     const onSubmit = async (values: z.infer<typeof BulkUpdateShopifyOrdersSchema>) => {
         try {
             const orderIds = orders?.map((order: any) => order._id) || [];
-            console.log(orderIds, values);
             const res = await handleBulkUpdateShopifyOrders({
                 orderIds,
                 values: {

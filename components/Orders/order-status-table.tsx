@@ -92,7 +92,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   const { onOpen } = useModal();
   const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
   const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 0)
-  console.log(allNewStageOrders)
+  const newOrders = allNewStageOrders.map(row => row.original)
   const handleMultiLableDownload = () => {
     onOpen("downloadLabels", { orders: selectedRows })
     router.push('/print/invoices')
@@ -121,7 +121,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
                   size: "sm"
                 }))}>Bulk Actions</DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => onOpen("updateShopifyOrders", { orders: (allNewStageOrders as unknown as B2COrderType[]) })}>Update shopify orders</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onOpen("updateShopifyOrders", { orders: (newOrders as unknown as B2COrderType[]) })}>Update shopify orders</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => onOpen("BulkPickupUpdate", { orders: selectedRows })}>Change pickup location</DropdownMenuItem>
                   <DropdownMenuItem onClick={handleMultiLableDownload}>Download Label</DropdownMenuItem>
