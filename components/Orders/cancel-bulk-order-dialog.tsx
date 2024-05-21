@@ -13,18 +13,19 @@ import { Button } from "../ui/button"
 import { CircleAlert, TriangleAlertIcon } from "lucide-react"
 import { useModal } from "@/hooks/use-model-store"
 import { useState } from "react"
+import { B2COrderType } from "@/types/types"
 
 
-export const CancelOrderDialog = () => {
+export const CancelBulkOrderDialog = () => {
     const { handleCancelOrder } = useSellerProvider()
     const { onClose, type, isOpen, data } = useModal();
     const [isLoading, setIsLoading] = useState(false)
-    const { order } = data
-    const isModalOpen = isOpen && type === "cancelOrder";
+    const { orders } = data
+    const isModalOpen = isOpen && type === "cancelBulkOrder";
 
-    const handleOrder = async (orderId: string, type: "order" | "shipment") => {
+    const handleOrder = async (orderIds: string[], type: "order" | "shipment") => {
         setIsLoading(true)
-        const res = await handleCancelOrder([orderId], type);
+        const res = await handleCancelOrder(orderIds, type);
         if (res) {
             setIsLoading(false)
             handleClose();
@@ -34,6 +35,10 @@ export const CancelOrderDialog = () => {
     const handleClose = () => {
         onClose();
     }
+
+    const isAllOrdersHasAwb = orders?.every((order: B2COrderType) => order.awb);
+    const isAllWOAwb = orders?.every((order: B2COrderType) => !order.awb);
+    const orderIds = orders?.map((order: B2COrderType) => order._id);
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
             <DialogContent className="space-y-6">
@@ -52,15 +57,25 @@ export const CancelOrderDialog = () => {
                     </div>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant={"destructive"} disabled={isLoading} className="w-full" onClick={() => handleOrder(order?._id ?? "", "order")}>
-                        Cancel Order
-                    </Button>
-
                     {
-                        order?.awb ? (
-                            <Button variant={"secondary"} disabled={isLoading} className="w-full" onClick={() => handleOrder(order?._id ?? "", "shipment")}>
+                        isAllWOAwb ? (
+                            <Button variant={"destructive"} disabled={isLoading} className="w-full" onClick={() => handleOrder(orderIds || [], "order")}>
+                                Cancel Order
+                            </Button>
+                        ) : null
+                    }
+                    {
+                        isAllOrdersHasAwb ? (
+                            <Button variant={"destructive"} disabled={isLoading} className="w-full" onClick={() => handleOrder(orderIds || [], "shipment")}>
                                 Cancel Shipment
                             </Button>
+                        ) : null
+                    }
+                    {
+                        !isAllWOAwb && !isAllOrdersHasAwb ? (
+                            <p className=" text-center">
+                                <span className="text-lg">Note*:</span> <span className="text-red-500">You can only cancel orders or shipments in bulk. Please select orders with or without AWB to proceed.</span>
+                            </p>
                         ) : null
                     }
 

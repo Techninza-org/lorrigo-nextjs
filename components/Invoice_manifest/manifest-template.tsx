@@ -8,9 +8,9 @@ import { formatPhoneNumberIntl } from "react-phone-number-input";
 export default function GenerateManifestTemplate({ order }: { order?: B2COrderType }) {
 
     return (
-        <div className="w-full p-4 border-black border-double border-2">
+        <div className="w-full p-4 border-black border-double border-2 h-full">
             <div>
-                <LorrigoLogo height={140} width={140} className="fixed" />
+                <LorrigoLogo height={140} width={140} />
                 <div className="text-center w-full">
                     <div className="text-xl">
                         Lorrigo Manifest

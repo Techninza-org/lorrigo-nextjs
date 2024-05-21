@@ -18,6 +18,7 @@ import { BankDetailsSchema } from "../Settings/bank-details";
 import { GstinFormSchema } from "../Settings/gstin-form";
 import { BillingAddressSchema } from "../Settings/billing-address-form";
 import { ChannelFormSchema } from "../Channel/channel-integration-form";
+import { BulkUpdateShopifyOrdersSchema } from "../modal/bulk-update-shopify-modal";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -35,7 +36,7 @@ interface SellerContextType {
   getCourierPartners: (orderId: string) => Promise<any>;
   courierPartners: OrderType | undefined;
   handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName }: { orderId: string, carrierNickName: string, carrierId: Number }) => boolean | Promise<boolean>;
-  handleCancelOrder: (orderId: string, type: string) => boolean | Promise<boolean>;
+  handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
   calcRate: (order: any) => Promise<any>;
@@ -54,6 +55,9 @@ interface SellerContextType {
   createChannel: (values: z.infer<typeof ChannelFormSchema>) => boolean | Promise<boolean>;
   updateChannel: (id: string, isOrderSync: boolean) => boolean | Promise<boolean>;
   handleOrderSync: () => boolean | Promise<boolean>;
+
+  handleBulkPickupChange: (orderIds: string[], pickupAddress: string) => boolean | Promise<boolean>;
+  handleBulkUpdateShopifyOrders: ({ orderIds, values }: { orderIds: string[], values: z.infer<typeof BulkUpdateShopifyOrdersSchema> }) => boolean | Promise<boolean>;
 
 
 }
@@ -476,10 +480,10 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, toast])
 
-  const handleCancelOrder = async (orderId: string, type: string) => {
+  const handleCancelOrder = async (orderId: string[], type: string) => {
     try {
       const res = await axiosIWAuth.post(`/shipment/cancel`, {
-        orderId: orderId,
+        orderIds: orderId,
         type: type
       });
       if (res.data?.valid) {
@@ -793,6 +797,72 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const handleBulkPickupChange = async (orderIds: string[], pickupAddress: string) => {
+    try {
+      const res = await axiosIWAuth.put(`/order/b2c/bulk-pickup`, {
+        orderIds,
+        pickupAddress
+      });
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "Orders",
+          description: "Orders pickup address updated",
+        });
+        getAllOrdersByStatus(status || "all")
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Orders",
+        description: "Orders Already updated",
+      });
+      return false
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong",
+      });
+      return false
+    }
+  }
+
+  const handleBulkUpdateShopifyOrders = async ({ orderIds, values }: { orderIds: string[], values: z.infer<typeof BulkUpdateShopifyOrdersSchema> }) => {
+    try {
+      const res = await axiosIWAuth.patch(`/order/update/b2c/shopify`, {
+        orderIds: orderIds,
+        pickupAddressId: values.pickupAddressId,
+        orderSizeUnit: "cm",
+        orderBoxHeight: values.orderBoxHeight,
+        orderBoxWidth: values.orderBoxWidth,
+        orderBoxLength: values.orderBoxLength,
+        orderWeight: values.orderWeight,
+      });
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "Orders",
+          description: "Orders updated Successfully",
+        });
+        getAllOrdersByStatus(status || "all")
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Orders",
+        description: "Orders Already updated",
+      });
+      return false
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong",
+      });
+      return false
+    }
+  }
   useEffect(() => {
     if (!!user || !!userToken) {
       getHub();
@@ -843,7 +913,10 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         updateBillingAddress,
         createChannel,
         updateChannel,
-        handleOrderSync
+        handleOrderSync,
+
+        handleBulkPickupChange,
+        handleBulkUpdateShopifyOrders
 
 
 

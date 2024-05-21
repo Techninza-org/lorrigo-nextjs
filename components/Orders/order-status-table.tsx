@@ -15,11 +15,19 @@ import {
 } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -31,8 +39,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useSellerProvider } from "../providers/SellerProvider"
+import { cn } from "@/lib/utils"
+import { useModal } from "@/hooks/use-model-store"
+import { B2COrderType } from "@/types/types"
 
 
 
@@ -49,6 +60,10 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     "Shipment Details": isShipmentVisible,
   });
   const [rowSelection, setRowSelection] = React.useState({})
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0, //initial page index
+    pageSize: 25, //default page size
+  });
 
   const table = useReactTable({
     data,
@@ -56,20 +71,37 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     // onSortingChange: setSorting,
     // onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     // getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     // onColumnVisibilityChange: setColumnVisibility,
-    // onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: setRowSelection,
     // enableSorting: false,
+    onPaginationChange: setPagination,
     state: {
       // columnFilters,
       // columnVisibility,
-      // rowSelection,
+      pagination,
+      rowSelection,
       globalFilter: filtering
     },
     onGlobalFilterChange: setFiltering
   })
+
+  const router = useRouter()
+  const { onOpen } = useModal();
+  const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
+  const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 0)
+  console.log(allNewStageOrders)
+  const handleMultiLableDownload = () => {
+    onOpen("downloadLabels", { orders: selectedRows })
+    router.push('/print/invoices')
+  }
+
+  const handleMultiManifestDownload = () => {
+    onOpen("downloadManifests", { orders: selectedRows })
+    router.push('/print/manifest')
+  }
 
   return (
     <div className="w-full">
@@ -80,9 +112,30 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
           onChange={(e) => setFiltering(e.target.value)}
           className="max-w-sm"
         />
-        {
-          seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
-        }
+        <div>
+          {
+            selectedRows.length > 0 && (
+              <DropdownMenu >
+                <DropdownMenuTrigger className={cn("mr-3", buttonVariants({
+                  variant: "webPageBtn",
+                  size: "sm"
+                }))}>Bulk Actions</DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => onOpen("updateShopifyOrders", { orders: (allNewStageOrders as unknown as B2COrderType[]) })}>Update shopify orders</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onOpen("BulkPickupUpdate", { orders: selectedRows })}>Change pickup location</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleMultiLableDownload}>Download Label</DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleMultiManifestDownload}>Download Manifest</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onOpen("cancelBulkOrder", { orders: selectedRows })}>Cancel</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>)
+          }
+
+
+          {
+            seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
+          }
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>

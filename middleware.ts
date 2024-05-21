@@ -9,7 +9,6 @@ export async function middleware(request: NextRequest) {
     '/new',
     '/orders',
     '/settings',
-    '/track',
     '/rate-calc',
     '/print',
     '/admin',
@@ -19,6 +18,12 @@ export async function middleware(request: NextRequest) {
     '/order-bulk-sample.csv',
   ];
 
+  const publicRoutes = [
+    '/about',
+    '/contact',
+    '/track', // Making '/track' accessible to all users
+  ];
+
   const { pathname } = request.nextUrl;
 
   // Exclude favicon.ico from authentication checks
@@ -26,6 +31,10 @@ export async function middleware(request: NextRequest) {
     return;
   }
 
+  // Allow access to public routes without authentication
+  if (publicRoutes.some(route => pathname.startsWith(route))) {
+    return NextResponse.next();
+  }
 
   if (!isAuthenticated && !unauthenticatedPaths.some(path => pathname.startsWith(path))) {
     return NextResponse.redirect(new URL('/login', request.url));
@@ -35,7 +44,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  return;
+  return NextResponse.next();
 }
 
 export const config = {

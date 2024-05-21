@@ -6,6 +6,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Button } from "../ui/button";
 import GenerateManifestTemplate from "./manifest-template";
+import { usePDF } from 'react-to-pdf';
 
 export const InvoicePage = ({ order }: { order?: B2COrderType }) => {
     const printDocument = () => {
@@ -35,7 +36,7 @@ export const GenerateManifest = ({ order }: { order?: B2COrderType }) => {
         html2canvas(input!)?.then((canvas) => {
             const imgData = canvas.toDataURL("image/png");
             const pdf = new jsPDF();
-            pdf.addImage(imgData, "JPEG", 3,3, canvas.width * 0.155, canvas.height * 0.155);
+            pdf.addImage(imgData, "JPEG", 3, 3, canvas.width * 0.155, canvas.height * 0.155);
             pdf.save(`label_${order?.order_invoice_number}.pdf`);
             pdf.autoPrint();
         });
@@ -49,3 +50,38 @@ export const GenerateManifest = ({ order }: { order?: B2COrderType }) => {
         </>
     )
 }
+
+
+
+export const InvoiceBulk = ({ orders }: { orders: B2COrderType[] }) => {
+    const { toPDF, targetRef } = usePDF({ filename: 'bulk_lable.pdf' });
+    return (
+        <>
+            <Button size={"sm"} variant={"webPageBtn"} onClick={() => toPDF()}>Download Label</Button>
+            <div ref={targetRef} className="mx-auto grid grid-cols-2 gap-14 px-10">
+                {
+                    orders.map((order: B2COrderType) => (
+                        <InvoiceTemplate key={order._id} order={order} />
+                    ))
+                }
+            </div>
+        </>
+    );
+};
+export const GenerateBulkManifest = ({ orders }: { orders: B2COrderType[] }) => {
+    const { toPDF, targetRef } = usePDF({ filename: 'bulk_Manifest.pdf' });
+    return (
+        <>
+            <Button size={"sm"} variant={"webPageBtn"} onClick={() => toPDF()}>Download Manifest</Button>
+            <div ref={targetRef} className="mx-auto w-full h-full flex flex-col gap-16 p-10  justify-center">
+                {
+                    orders.map((order, index) => (
+                        <div key={order._id} className={`${index % 3 === 2 ? 'mt-[410px]' : ''}`}>
+                            <GenerateManifestTemplate order={order} />
+                        </div>
+                    ))
+                }
+            </div>
+        </>
+    );
+};

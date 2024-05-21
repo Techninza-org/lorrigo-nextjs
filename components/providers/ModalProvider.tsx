@@ -12,6 +12,9 @@ import { CancelOrderDialog } from "../Orders/cancel-order-dialog";
 import { NDROrderDialog, NDRRTODialog } from "../Orders/ndr-order-dialog";
 import { BulkHubUploadModal } from "../modal/bulk-hub-upload-modal";
 import { BulkPincodeUploadModal } from "../modal/bulk-pincode-upload-modal";
+import { BulkPickupUpdateModal } from "../modal/bulk-pickup-update-modal";
+import { CancelBulkOrderDialog } from "../Orders/cancel-bulk-order-dialog";
+import { BulkUpdateShopifyModal } from "../modal/bulk-update-shopify-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -39,6 +42,9 @@ export const ModalProvider = () => {
 
       <BulkHubUploadModal />
       <BulkPincodeUploadModal />
+      <BulkPickupUpdateModal/>
+      <CancelBulkOrderDialog/>
+      <BulkUpdateShopifyModal/>
 
     </>
   );

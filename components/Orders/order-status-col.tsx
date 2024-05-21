@@ -10,8 +10,31 @@ import { OrderButton, getBucketStatus } from "./order-action-button";
 import Link from "next/link";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card";
 import HoverCardToolTip from "../hover-card-tooltip";
+import { Checkbox } from "../ui/checkbox";
 
 export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
+    {
+        id: "order",
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
     {
         header: 'Order Details',
         accessorKey: 'order_reference_id',

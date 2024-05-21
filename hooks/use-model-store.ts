@@ -2,11 +2,12 @@ import { B2COrderType, CustomerDetailsType, SellerType, pickupAddressType } from
 import { create } from "zustand";
 
 
-export type ModalType = "wallet" | "addPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest" | "ndrOrder" | "ndrRTOrder" | "BulkHubUpload" | "BulkPincodeUpload";
+export type ModalType = "wallet" | "addPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest" | "ndrOrder" | "ndrRTOrder" | "BulkHubUpload" | "BulkPincodeUpload" | 'downloadLabels'  | "BulkPickupUpdate" | 'cancelBulkOrder' | "downloadManifests" | "updateShopifyOrders";
 interface ModalData {
   form?: any;
   customer?: CustomerDetailsType;
   order?: B2COrderType;
+  orders?: B2COrderType[];
   seller?: SellerType;
   hub?: pickupAddressType;
   apiUrl?: string;
