@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { AuthType } from './types/types';
 
 export async function middleware(request: NextRequest) {
-  const currentUser = request.cookies.get('user')?.value;
-  const isAuthenticated = !!currentUser;
-  const unauthenticatedPaths = ['/login', '/signup', '/forgot-password', '/reset-password'];
+  const currentUserToken = request.cookies.get('user')?.value;
+  let user: AuthType | null = null;
+  if (currentUserToken) {
+    try {
+      user = JSON.parse(currentUserToken) as AuthType;
+    } catch (error) {
+      console.error('Invalid token:', error);
+    }
+  }
+  let isAuthenticated = user !== null;
+  let userRole = user?.role;
+
+  const unauthenticatedPaths = ['/login', '/signup', '/forgot-password', '/reset-password', '/admin/login'];
   const authenticatedRoutes = [
     '/dashboard',
     '/new',
@@ -11,11 +22,15 @@ export async function middleware(request: NextRequest) {
     '/settings',
     '/rate-calc',
     '/print',
-    '/admin',
     '/finance',
     '/bulk-sample.csv',
     '/pickup_bulk_sample.csv',
     '/order-bulk-sample.csv',
+  ];
+
+  const adminRoutes = [
+    '/admin',
+    '/admin/shipment-listing',
   ];
 
   const publicRoutes = [
@@ -28,7 +43,7 @@ export async function middleware(request: NextRequest) {
 
   // Exclude favicon.ico from authentication checks
   if (pathname === '/favicon.ico') {
-    return;
+    return NextResponse.next();
   }
 
   // Allow access to public routes without authentication
@@ -36,12 +51,37 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Redirect unauthenticated users to login page
   if (!isAuthenticated && !unauthenticatedPaths.some(path => pathname.startsWith(path))) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (isAuthenticated && !authenticatedRoutes.some(route => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  if (isAuthenticated) {
+    // Role-based access control
+    if (userRole === 'seller') {
+      if (adminRoutes.some(route => pathname.startsWith(route))) {
+        return NextResponse.redirect(new URL('/access-denied', request.url));
+      }
+      if (pathname === '/login') {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
+    } else if (userRole === 'admin') {
+      if (authenticatedRoutes.some(route => pathname.startsWith(route))) {
+        return NextResponse.redirect(new URL('/access-denied', request.url));
+      }
+      if (pathname === '/login') {
+        return NextResponse.redirect(new URL('/admin', request.url));
+      }
+    }
+
+    // Redirect authenticated users to the appropriate dashboard if they try to access unauthenticated paths
+    if (!authenticatedRoutes.some(route => pathname.startsWith(route)) && !adminRoutes.some(route => pathname.startsWith(route))) {
+      if (userRole === 'seller') {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      } else if (userRole === 'admin') {
+        return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
+      }
+    }
   }
 
   return NextResponse.next();

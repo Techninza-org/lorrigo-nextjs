@@ -62,7 +62,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   const [rowSelection, setRowSelection] = React.useState({})
   const [pagination, setPagination] = React.useState({
     pageIndex: 0, //initial page index
-    pageSize: 25, //default page size
+    pageSize: 20, //default page size
   });
 
   const table = useReactTable({

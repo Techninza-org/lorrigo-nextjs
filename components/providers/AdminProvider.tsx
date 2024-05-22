@@ -6,15 +6,17 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
-import { AdminType, RemittanceType, SellerType } from "@/types/types";
+import { AdminType, B2COrderType, RemittanceType, SellerType } from "@/types/types";
 import { useAxios } from "./AxiosProvider";
 
 interface AdminContextType {
-    handleCreateHub: (hub: AdminType) => void;
     users: SellerType[];
     allRemittance: RemittanceType[] | null;
+    shippingOrders: B2COrderType[];
+    handleCreateHub: (hub: AdminType) => void;
     handleSignup: (credentials: any, user: any) => void;
     handleEditUser: (sellerId: string, user: any) => void;
+
 
 }
 
@@ -24,8 +26,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const { getHub } = useSellerProvider()
     const { userToken, user } = useAuth();
     const { axiosIWAuth } = useAxios();
-    
+
     const [users, setUsers] = useState([]);
+    const [shippingOrders, setOrders] = useState<B2COrderType[]>([]);
     const [allRemittance, setAllRemittance] = useState<RemittanceType[] | null>(null);
 
     const { toast } = useToast();
@@ -120,21 +123,36 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 description: "error.response.data.message",
             });
         }
-    
+
+    }
+
+    const getAllOrders = async (status: string) => {
+        let url = status === "all" ? `/admin/all-orders` : `/admin/?status=${status}`
+        try {
+            const res = await axiosIWAuth.get(url);
+            if (res.data?.valid) {
+                setOrders(res.data.response.orders);
+                return res.data.response.orders
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
     }
 
     useEffect(() => {
-        if (!userToken) return;
-        getAllSellers();
-        getAllRemittance();
-    }, [userToken]);
-
+        if ((!!user || !!userToken) && user?.role === "admin") {
+            getAllOrders("all")
+            getAllSellers();
+            getAllRemittance();
+        }
+    }, [user, userToken])
     return (
         <AdminContext.Provider
             value={{
-                handleCreateHub,
                 users,
                 allRemittance,
+                shippingOrders,
+                handleCreateHub,
                 handleSignup,
                 handleEditUser
             }}

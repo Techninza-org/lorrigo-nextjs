@@ -49,6 +49,16 @@
   }
 }
 
+
+@media print {
+  .page-break {
+      page-break-after: always;
+  }
+  .page-break:last-of-type {
+      page-break-after: auto;
+  }
+}
+
 html,body, :root{
   height: 100%;
 }

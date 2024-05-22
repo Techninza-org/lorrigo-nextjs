@@ -777,7 +777,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const handleOrderSync = async () => {
     try {
       const userRes = await axiosIWAuth.get(`/order/b2c/channels`);
-console.log("asdfas")
       if (userRes?.data?.valid) {
         toast({
           title: "Success",
@@ -864,7 +863,7 @@ console.log("asdfas")
     }
   }
   useEffect(() => {
-    if (!!user || !!userToken) {
+    if ((!!user || !!userToken) && user?.role === "seller") {
       getHub();
       getSeller();
       getSellerDashboardDetails()
@@ -873,7 +872,7 @@ console.log("asdfas")
   }, [user, userToken])
 
   useEffect(() => {
-    if (!!user || !!userToken) {
+    if ((!!user || !!userToken) && user?.role === "seller") {
       getAllOrdersByStatus(status || "all")
     }
 

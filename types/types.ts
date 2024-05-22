@@ -4,7 +4,7 @@ export type AuthType = {
   id: string;
   name: string;
   email: string;
-  role?: string;
+  role?: "admin" | "seller";
 };
 
 export type SellerType = {

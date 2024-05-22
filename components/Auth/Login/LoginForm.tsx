@@ -13,13 +13,15 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/providers/AuthProvider";
 import SubmitButton from "../SubmitButton";
 import { buttonVariants } from "@/components/ui/button";
-import Image from "next/image";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { LorrigoLogo } from "@/components/Logos";
+import { usePathname } from "next/navigation";
 
 const LoginForm = () => {
-  const { handleUserLogin } = useAuth();
+  const { handleUserLogin, handleAdminLogin } = useAuth();
+  const pathname = usePathname()
+  const isAdminLogin = pathname.includes("/admin");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const passwordType = isPasswordVisible ? "text" : "password";
   const PasswordIcon = isPasswordVisible ? Eye : EyeOff;
@@ -29,7 +31,7 @@ const LoginForm = () => {
         <CardTitle className="text-2xl mx-auto"><LorrigoLogo /></CardTitle>
       </CardHeader>
       <CardContent>
-        <form action={handleUserLogin}>
+        <form action={isAdminLogin ? handleAdminLogin : handleUserLogin}>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
               <Label htmlFor="email">Email</Label>

@@ -53,21 +53,43 @@ export const GenerateManifest = ({ order }: { order?: B2COrderType }) => {
 
 
 
-export const InvoiceBulk = ({ orders }: { orders: B2COrderType[] }) => {
-    const { toPDF, targetRef } = usePDF({ filename: 'bulk_lable.pdf' });
+export const InvoiceBulk = ({ orders }: {orders: B2COrderType[]}) => {
+    const { toPDF, targetRef } = usePDF({ filename: 'bulk_label.pdf' });
+
+    const chunkArray = (array: B2COrderType[], size: number) => {
+        const chunkedArray = [];
+        for (let i = 0; i < array.length; i += size) {
+            chunkedArray.push(array.slice(i, i + size));
+        }
+        return chunkedArray;
+    };
+
+    const chunkedOrders = chunkArray(orders, 4);
+
     return (
         <>
             <Button size={"sm"} variant={"webPageBtn"} onClick={() => toPDF()}>Download Label</Button>
-            <div ref={targetRef} className="mx-auto grid grid-cols-2 gap-14 px-10">
+            <div ref={targetRef} className="mx-auto w-full h-full flex flex-col gap-16 p-10 justify-center">
                 {
-                    orders.map((order: B2COrderType) => (
-                        <InvoiceTemplate key={order._id} order={order} />
+                    chunkedOrders.map((orderChunk, pageIndex) => (
+                        <div key={pageIndex} className={`page-break grid grid-cols-2 gap-14 justify-items-center ${pageIndex > 0 ? 'mt-[650px]' : ''}`}>
+                            {
+                                orderChunk.map((order:B2COrderType) => (
+                                    <div key={order._id} className="w-full">
+                                        <InvoiceTemplate order={order} />
+                                    </div>
+                                ))
+                            }
+                        </div>
                     ))
                 }
             </div>
         </>
     );
 };
+
+
+
 export const GenerateBulkManifest = ({ orders }: { orders: B2COrderType[] }) => {
     const { toPDF, targetRef } = usePDF({ filename: 'bulk_Manifest.pdf' });
     return (
@@ -76,7 +98,7 @@ export const GenerateBulkManifest = ({ orders }: { orders: B2COrderType[] }) => 
             <div ref={targetRef} className="mx-auto w-full h-full flex flex-col gap-16 p-10  justify-center">
                 {
                     orders.map((order, index) => (
-                        <div key={order._id} className={`${index % 3 === 2 ? 'mt-[410px]' : ''}`}>
+                        <div key={order._id} className={` ${index % 2 === 1 ? 'mt-[410px]' : ''}`}>
                             <GenerateManifestTemplate order={order} />
                         </div>
                     ))

@@ -26,6 +26,10 @@ interface AuthContextType {
 
     // Logged in user functions
     handleChangePassword: (userPassInfo: z.infer<typeof ChangePasswordSchema>) => boolean | Promise<boolean>;
+
+    // Admin auth 
+
+    handleAdminLogin: (formData: FormData) => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -286,6 +290,48 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const handleAdminLogin = async (formData: FormData) => {
+        try {
+            const email = formData.get("email")?.toString() || "";
+            const password = formData.get("password")?.toString() || "";
+
+            if (!email.includes("@") || !password) {
+                return toast({
+                    variant: "destructive",
+                    title: "Invalid email or password.",
+                });
+            }
+
+            const userCred = {
+                email: email,
+                password: password,
+            };
+
+            const userRes = await axiosWOAuth.post("/admin/login", userCred);
+            const userData = userRes.data;
+
+            if (userData.user && userData.valid) {
+                setUser(userData.user);
+
+                const expiresDate = new Date();
+                expiresDate.setDate(expiresDate.getDate() + 1);
+
+                setCookie('user', userData.user, { expires: expiresDate });
+                router.push("/admin/shipment-listing");
+            } else {
+                return toast({
+                    variant: "destructive",
+                    title: "Invalid email or password.",
+                });
+            }
+        } catch (error) {
+            return toast({
+                variant: "destructive",
+                title: "An error occurred during login.",
+            });
+        }
+    }
+
     return (
         <AuthContext.Provider
             value={{
@@ -297,7 +343,10 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                 handleSignOut,
                 handleForgetPassword,
                 handleResetPassword,
-                handleChangePassword
+                handleChangePassword,
+
+                // Admin auth
+                handleAdminLogin,
 
             }}
         >

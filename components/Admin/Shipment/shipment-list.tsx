@@ -1,39 +1,12 @@
 'use client'
 import { AdminShipmentListingCol } from "@/components/Admin/Shipment/shipment-listing-col";
 import { ShipmentListingTable } from "@/components/Admin/Shipment/shipment-listing-table";
-import { useAuth } from "@/components/providers/AuthProvider";
+import { useAdminProvider } from "@/components/providers/AdminProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import axios, { AxiosInstance } from "axios";
-import { useEffect, useState } from "react";
 
 export const ShipmentList = () => {
-    const [orders, setOrders] = useState<any[]>([]);
-    const { userToken } = useAuth();
-    const axiosConfig = {
-        baseURL: process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:4000/api',
-        headers: {
-            'Content-Type': 'application/json',
-            ...(userToken && { 'Authorization': `Bearer ${userToken}` }),
-        },
-    };
-    const axiosIWAuth: AxiosInstance = axios.create(axiosConfig);
-    const getAllOrders = async (status: string) => {
-        let url = status === "all" ? `/admin/all-orders` : `/admin/?status=${status}`
-        try {
-            const res = await axiosIWAuth.get(url);
-            if (res.data?.valid) {
-                setOrders(res.data.response.orders);
-                return res.data.response.orders
-            }
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
-    useEffect(() => {
-        if (!userToken) return;
-        getAllOrders("all")
-    }, [userToken]);
 
+    const { shippingOrders } = useAdminProvider()
     return (
         <Card className="col-span-4">
             <CardHeader>
@@ -44,7 +17,7 @@ export const ShipmentList = () => {
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-                <ShipmentListingTable columns={AdminShipmentListingCol} data={orders} />
+                <ShipmentListingTable columns={AdminShipmentListingCol} data={shippingOrders} />
             </CardContent>
         </Card>
     )
