@@ -1,5 +1,4 @@
 import UsersList from "@/components/Admin/User/UsersList";
-import { useAdminProvider } from "@/components/providers/AdminProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function UsersListing() {

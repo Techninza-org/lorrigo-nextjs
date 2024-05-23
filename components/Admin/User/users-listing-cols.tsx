@@ -62,10 +62,10 @@ export const AdminUsersListingCols: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 rowData.billingAddress ?
-                <HoverCardToolTip label="Address" >
-                    <p>{rowData.billingAddress?.address_line_1}, {rowData.billingAddress?.city}, {rowData.billingAddress?.state}, {rowData.billingAddress?.pincode} </p>
-                </HoverCardToolTip>
-                : ''
+                    <HoverCardToolTip label="Address" >
+                        <p>{rowData.billingAddress?.address_line_1}, {rowData.billingAddress?.city}, {rowData.billingAddress?.state}, {rowData.billingAddress?.pincode} </p>
+                    </HoverCardToolTip>
+                    : ''
             )
         }
     },
@@ -86,32 +86,32 @@ export const AdminUsersListingCols: ColumnDef<any>[] = [
             )
         }
     },
-{
-    header: 'Creation Date',
+    {
+        header: 'Creation Date',
         accessorKey: 'createdAt',
-            cell: ({ row }) => {
-                const rowData = row.original;
-                return (
-                    <div className="space-y-1 items-center">
-                        {
-                            rowData.createdAt ? <p>{formatDate(new Date(rowData.createdAt), 'dd/MM/yyyy')}</p> : <p>Not Available</p>
-                        }
-                    </div>
-                )
-            }
-},
-{
-    header: 'Action',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <div className="space-y-1 items-center">
+                    {
+                        rowData.createdAt ? <p>{formatDate(new Date(rowData.createdAt), 'dd/MM/yyyy')}</p> : <p>Not Available</p>
+                    }
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Action',
         cell: ({ row }) => {
             const rowData = row.original;
             const sellerId = rowData._id;
             return (
                 <div className="flex gap-x-6 text-[#be0c34]">
-                    <Link href={`#`}><Wrench /></Link>
+                    <Link href={`/admin/users/courier-configure`}><Wrench /></Link>
                     <Link href={`/admin/users/edit-user?sellerId=${sellerId}`}><SquarePen /></Link>
                     <Link href={`/admin/orders?sellerId=${sellerId}`}><LayoutDashboard /></Link>
                 </div>
             )
         }
-},
+    },
 ];

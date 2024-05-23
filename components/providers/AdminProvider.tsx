@@ -8,15 +8,16 @@ import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";
 import { AdminType, B2COrderType, RemittanceType, SellerType } from "@/types/types";
 import { useAxios } from "./AxiosProvider";
+import { ShippingRate } from "@/types/AdminTypes";
 
 interface AdminContextType {
     users: SellerType[];
     allRemittance: RemittanceType[] | null;
     shippingOrders: B2COrderType[];
+    allCouriers: ShippingRate[];
     handleCreateHub: (hub: AdminType) => void;
     handleSignup: (credentials: any, user: any) => void;
     handleEditUser: (sellerId: string, user: any) => void;
-
 
 }
 
@@ -30,6 +31,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [users, setUsers] = useState([]);
     const [shippingOrders, setOrders] = useState<B2COrderType[]>([]);
     const [allRemittance, setAllRemittance] = useState<RemittanceType[] | null>(null);
+    const [allCouriers, setAllCouriers] = useState<ShippingRate[]>([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -139,6 +141,16 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const getAllCouriers = async () => {
+        try {
+            // TODO: endpoint to /admin/all-couriers
+            const res = await axiosIWAuth.get('/admin/all-couriers');
+            return res.data.couriers
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
             getAllOrders("all")
@@ -152,6 +164,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 users,
                 allRemittance,
                 shippingOrders,
+                allCouriers,
                 handleCreateHub,
                 handleSignup,
                 handleEditUser
