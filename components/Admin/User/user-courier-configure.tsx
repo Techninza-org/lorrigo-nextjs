@@ -47,86 +47,130 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { useAdminProvider } from "@/components/providers/AdminProvider"
+import { useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 
 
 
 export const CourierPriceConfigureSchema = z.object({
-    courierId: z.string().min(1, "Name is required"),
+    vendorId: z.string().min(1, "Name is required"),
     withinCity: z.object({
-        basePrice: z.number().min(1, "Base Price is required"),
-        incrementPrice: z.number().min(1, "Increment Price is required"),
+        basePrice: z.string().min(1, "Base Price is required"),
+        incrementPrice: z.string().min(1, "Increment Price is required"),
     }),
     withinZone: z.object({
-        basePrice: z.number().min(1, "Base Price is required"),
-        incrementPrice: z.number().min(1, "Increment Price is required"),
+        basePrice: z.string().min(1, "Base Price is required"),
+        incrementPrice: z.string().min(1, "Increment Price is required"),
     }),
     withinMetro: z.object({
-        basePrice: z.number().min(1, "Base Price is required"),
-        incrementPrice: z.number().min(1, "Increment Price is required"),
+        basePrice: z.string().min(1, "Base Price is required"),
+        incrementPrice: z.string().min(1, "Increment Price is required"),
     }),
     withinRoi: z.object({
-        basePrice: z.number().min(1, "Base Price is required"),
-        incrementPrice: z.number().min(1, "Increment Price is required"),
+        basePrice: z.string().min(1, "Base Price is required"),
+        incrementPrice: z.string().min(1, "Increment Price is required"),
     }),
     northEast: z.object({
-        basePrice: z.number().min(1, "Base Price is required"),
-        incrementPrice: z.number().min(1, "Increment Price is required"),
+        basePrice: z.string().min(1, "Base Price is required"),
+        incrementPrice: z.string().min(1, "Increment Price is required"),
     }),
 });
 
 export const UserCourierConfigure = () => {
 
-    const { allCouriers } = useAdminProvider()
-
-    const couriers = [
-        { label: "English", value: "en" },
-        { label: "French", value: "fr" },
-        { label: "German", value: "de" },
-        { label: "Spanish", value: "es" },
-        { label: "Portuguese", value: "pt" },
-        { label: "Russian", value: "ru" },
-        { label: "Japanese", value: "ja" },
-        { label: "Korean", value: "ko" },
-        { label: "Chinese", value: "zh" },
-    ]
-
-
+    const { assignedCouriers, updateSellerCourierPrice } = useAdminProvider()
+    const searchParams = useSearchParams()
 
     const form = useForm<z.infer<typeof CourierPriceConfigureSchema>>({
         resolver: zodResolver(CourierPriceConfigureSchema),
         defaultValues: {
             withinCity: {
-                basePrice: 0,
-                incrementPrice: 0,
+                basePrice: "0",
+                incrementPrice: "0",
             },
             withinZone: {
-                basePrice: 0,
-                incrementPrice: 0,
+                basePrice: "0",
+                incrementPrice: "0",
             },
             withinMetro: {
-                basePrice: 0,
-                incrementPrice: 0,
+                basePrice: "0",
+                incrementPrice: "0",
             },
             withinRoi: {
-                basePrice: 0,
-                incrementPrice: 0,
+                basePrice: "0",
+                incrementPrice: "0",
             },
             northEast: {
-                basePrice: 0,
-                incrementPrice: 0,
+                basePrice: "0",
+                incrementPrice: "0",
             },
         }
     })
 
+    useEffect(() => {
+        if (assignedCouriers.length > 0) {
+            const initialCourier = assignedCouriers[0];
+            form.setValue('vendorId', initialCourier._id);
+            form.setValue('withinCity', {
+                basePrice: initialCourier.withinCity.basePrice.toString(),
+                incrementPrice: initialCourier.withinCity.incrementPrice.toString(),
+            });
+            form.setValue('withinZone', {
+                basePrice: initialCourier.withinZone.basePrice.toString(),
+                incrementPrice: initialCourier.withinZone.incrementPrice.toString(),
+            });
+            form.setValue('withinMetro', {
+                basePrice: initialCourier.withinMetro.basePrice.toString(),
+                incrementPrice: initialCourier.withinMetro.incrementPrice.toString(),
+            });
+            form.setValue('withinRoi', {
+                basePrice: initialCourier.withinRoi.basePrice.toString(),
+                incrementPrice: initialCourier.withinRoi.incrementPrice.toString(),
+            });
+            form.setValue('northEast', {
+                basePrice: initialCourier.northEast.basePrice.toString(),
+                incrementPrice: initialCourier.northEast.incrementPrice.toString(),
+            });
+        }
+    }, [assignedCouriers, form]);
+
+
     const isLoading = form.formState.isSubmitting
 
-    function onSubmit(data: z.infer<typeof CourierPriceConfigureSchema>) {
+    async function onSubmit(value: z.infer<typeof CourierPriceConfigureSchema>) {
         try {
-            console.log(data)
+            const sellerId = searchParams.get("sellerId") || ""; // Set a default value of an empty string if sellerId is null
+            updateSellerCourierPrice({ value, sellerId })
         } catch (error) {
-
+            console.log(error)
         }
     }
+
+    const handleCourierChange = (vendorId: string) => {
+        const selectedCourier = assignedCouriers.find(courier => courier._id === vendorId);
+        if (selectedCourier) {
+            form.setValue('withinCity', {
+                basePrice: selectedCourier.withinCity.basePrice.toString(),
+                incrementPrice: selectedCourier.withinCity.incrementPrice.toString(),
+            });
+            form.setValue('withinZone', {
+                basePrice: selectedCourier.withinZone.basePrice.toString(),
+                incrementPrice: selectedCourier.withinZone.incrementPrice.toString(),
+            });
+            form.setValue('withinMetro', {
+                basePrice: selectedCourier.withinMetro.basePrice.toString(),
+                incrementPrice: selectedCourier.withinMetro.incrementPrice.toString(),
+            });
+            form.setValue('withinRoi', {
+                basePrice: selectedCourier.withinRoi.basePrice.toString(),
+                incrementPrice: selectedCourier.withinRoi.incrementPrice.toString(),
+            });
+            form.setValue('northEast', {
+                basePrice: selectedCourier.northEast.basePrice.toString(),
+                incrementPrice: selectedCourier.northEast.incrementPrice.toString(),
+            });
+        }
+    };
     return (
         <div>
 
@@ -134,10 +178,10 @@ export const UserCourierConfigure = () => {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
                         control={form.control}
-                        name="courierId"
+                        name="vendorId"
                         render={({ field }) => (
                             <FormItem className="flex flex-col">
-                                <FormLabel>Courier </FormLabel>
+                                <FormLabel>Courier</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -150,37 +194,38 @@ export const UserCourierConfigure = () => {
                                                 )}
                                             >
                                                 {field.value
-                                                    ? couriers.find(
-                                                        (courier) => courier.value === field.value
-                                                    )?.label
-                                                    : "Select language"}
+                                                    ? assignedCouriers.find(
+                                                        (courier) => courier._id === field.value
+                                                    )?.nameWithNickname
+                                                    : "Select Courier"}
                                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
                                     <PopoverContent className="w-[280px] p-0">
                                         <Command>
-                                            <CommandInput placeholder="Search language..." />
-                                            <CommandEmpty>No language found.</CommandEmpty>
+                                            <CommandInput placeholder="Search Courier..." />
+                                            <CommandEmpty>No Courier found.</CommandEmpty>
                                             <CommandGroup>
                                                 <CommandList>
-                                                    {couriers.map((language) => (
+                                                    {assignedCouriers.map((courier) => (
                                                         <CommandItem
-                                                            value={language.label}
-                                                            key={language.value}
+                                                            value={courier._id}
+                                                            key={courier._id}
                                                             onSelect={() => {
-                                                                form.setValue("courierId", language.value)
+                                                                form.setValue("vendorId", courier._id)
+                                                                handleCourierChange(courier._id);
                                                             }}
                                                         >
                                                             <Check
                                                                 className={cn(
                                                                     "mr-2 h-4 w-4",
-                                                                    language.value === field.value
+                                                                    courier._id === field.value
                                                                         ? "opacity-100"
                                                                         : "opacity-0"
                                                                 )}
                                                             />
-                                                            {language.label}
+                                                            {courier.nameWithNickname}
                                                         </CommandItem>
                                                     ))}
                                                 </CommandList>
@@ -251,7 +296,7 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <Button variant={'themeNavActiveBtn'}>Save changes</Button>
+                                    <SubmitButton isLoading={isLoading} />
                                     <TabsList className="">
                                         <TabsTrigger value="withinZone" className={buttonVariants({
                                             variant: "webPageBtn",
@@ -311,7 +356,7 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <Button variant={'themeNavActiveBtn'}>Save changes</Button>
+                                    <SubmitButton isLoading={isLoading} />
                                     <TabsList className="">
                                         <TabsTrigger value="withinZone" className={buttonVariants({
                                             variant: "webPageBtn",
@@ -371,7 +416,7 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <Button variant={'themeNavActiveBtn'}>Save changes</Button>
+                                    <SubmitButton isLoading={isLoading} />
                                     <TabsList className="">
                                         <TabsTrigger value="withinZone" className={buttonVariants({
                                             variant: "webPageBtn",
@@ -431,7 +476,7 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <Button variant={'themeNavActiveBtn'}>Save changes</Button>
+                                    <SubmitButton isLoading={isLoading} />
                                     <TabsList className="">
                                         <TabsTrigger value="withinZone" className={buttonVariants({
                                             variant: "webPageBtn",
@@ -491,7 +536,7 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <Button variant={'themeNavActiveBtn'}>Save changes</Button>
+                                    <SubmitButton isLoading={isLoading} />
                                     <TabsList className="">
                                         <TabsTrigger value="withinZone" className={buttonVariants({
                                             variant: "webPageBtn",
@@ -503,8 +548,18 @@ export const UserCourierConfigure = () => {
                     </Tabs>
                 </form>
             </Form>
-
-
         </div>
+    )
+}
+
+const SubmitButton = ({ isLoading }: { isLoading: boolean }) => {
+    return (
+        <Button
+            type="submit"
+            variant="themeNavActiveBtn"
+            disabled={isLoading}
+        >
+            {isLoading ? "Loading..." : "Save Changes"}
+        </Button>
     )
 }

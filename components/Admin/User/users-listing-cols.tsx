@@ -107,7 +107,7 @@ export const AdminUsersListingCols: ColumnDef<any>[] = [
             const sellerId = rowData._id;
             return (
                 <div className="flex gap-x-6 text-[#be0c34]">
-                    <Link href={`/admin/users/courier-configure`}><Wrench /></Link>
+                    <Link href={`/admin/users/courier-configure?sellerId=${sellerId}`}><Wrench /></Link>
                     <Link href={`/admin/users/edit-user?sellerId=${sellerId}`}><SquarePen /></Link>
                     <Link href={`/admin/orders?sellerId=${sellerId}`}><LayoutDashboard /></Link>
                 </div>

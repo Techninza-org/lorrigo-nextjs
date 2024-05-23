@@ -24,7 +24,9 @@ export interface ShippingRate {
     northEast: PriceDetails;
     isActive: boolean;
     carrierID: number;
-    vendor_channel_id: string;
+    vendor_channel_id?: string;
+    nickname?: string;
+    nameWithNickname?: string;
     createdAt?: string;
     updatedAt?: string;
     __v: number;
