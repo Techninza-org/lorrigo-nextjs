@@ -8,7 +8,7 @@ export type AuthType = {
 };
 
 export type SellerType = {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   walletBalance?: number;
@@ -80,6 +80,8 @@ export type SellerType = {
       sharedSecret: string;
     }
   ];
+  createdAt: string;
+  updatedAt: string;
 };
 
 export interface ProductDetailsType {

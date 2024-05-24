@@ -7,9 +7,7 @@ const UsersList = () => {
   const { users } = useAdminProvider();
 
   return (
-    <>
-      <UsersListingTable columns={AdminUsersListingCols} data={users} />
-    </>
+    <UsersListingTable columns={AdminUsersListingCols} data={users} />
   )
 }
 

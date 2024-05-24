@@ -17,10 +17,12 @@ import { Input } from '@/components/ui/input';
 import { useAdminProvider } from "@/components/providers/AdminProvider";
 import { useSearchParams } from "next/navigation";
 import { Checkbox } from '@/components/ui/checkbox';
+import { PhoneInput } from '@/components/ui/phone-input';
+
 
 export const EditUserSchema = z.object({
     name: z.string().min(1, "name is required"),
-    phone: z.string().min(1, "phone is required"),
+    phone: z.string().optional(),
     companyEmail: z.string().min(1, "email is required"),
     companyName: z.string().min(1, "company is required"),
     prefix: z.string().optional(),
@@ -64,6 +66,8 @@ const EditUserForm = () => {
         }
     });
 
+    const isLoading = form.formState.isSubmitting;
+
     const onSubmit = async (values: z.infer<typeof EditUserSchema>) => {
         try {
             const user = {
@@ -89,8 +93,6 @@ const EditUserForm = () => {
                 }
             }
             handleEditUser(sellerId ?? '', user)
-            form.reset();
-            router.refresh();
         } catch (error) {
             console.log(error);
         }
@@ -107,7 +109,7 @@ const EditUserForm = () => {
             form.setValue('aadhar', user.aadhar || '')
             form.setValue('gst', user.gst || '')
             form.setValue('verified', user.isVerified || false)
-            form.setValue('active', user.isActive || true)
+            form.setValue('active', user.isActive || false)
             form.setValue('accHolderName', user.bankDetails?.accHolderName || '')
             form.setValue('accType', user.bankDetails?.accType || '')
             form.setValue('accNumber', user.bankDetails?.accNumber || '')
@@ -129,6 +131,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -144,9 +147,18 @@ const EditUserForm = () => {
                                     Phone <span className='text-red-600'>*</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
+                                    {/* <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                        {...field} />
+                                        {...field} /> */}
+                                    <PhoneInput
+                                        disabled={isLoading}
+                                        className="bg-white border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                        inputComponent={Input}
+                                        defaultCountry='IN'
+                                        placeholder='Enter the contact number'
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -161,6 +173,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -177,6 +190,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -193,6 +207,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -209,6 +224,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -225,6 +241,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -241,6 +258,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -257,6 +275,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -273,6 +292,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -289,6 +309,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -305,6 +326,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
+                                    disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -341,11 +363,11 @@ const EditUserForm = () => {
                             <FormItem>
                                 <FormControl>
                                     <div className="flex items-center space-x-2">
-                                        <Checkbox 
-                                            id="active" 
+                                        <Checkbox
+                                            id="active"
                                             checked={field.value}
                                             onCheckedChange={field.onChange}
-                                            />
+                                        />
                                         <label
                                             htmlFor="active"
                                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

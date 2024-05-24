@@ -1,19 +1,33 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { BadgeCheck, LayoutDashboard, SquarePen, Wrench } from "lucide-react";
+import { BadgeCheck, ImagesIcon, LayoutDashboard, SquarePen, Wrench } from "lucide-react";
 import { formatDate } from "date-fns";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
+import { useModal } from "@/hooks/use-model-store";
+import { SellerType } from "@/types/types";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 
-export const AdminUsersListingCols: ColumnDef<any>[] = [
+export const AdminUsersListingCols: ColumnDef<SellerType>[] = [
     {
         header: 'Name',
         accessorKey: 'name',
         cell: ({ row }) => {
             const rowData = row.original;
+            const ICON_SIZE = 18;
             return (
                 <div className="space-y-1 items-center">
-                    <p className="flex">{rowData.name}{rowData.isVerified ? <div className="grid place-content-center ml-2"><BadgeCheck size={16} color="blue" /></div> : ''}</p>
+                    <p className="flex gap-2">{rowData.name}
+                        {
+                            rowData.isVerified ? <div className="grid place-content-center ml-2">
+                                <BadgeCheck size={ICON_SIZE} color="blue" />
+                            </div>
+                                :
+                                null
+                        }
+                        {rowData?.kycDetails.submitted && <ViewSellerDocsBtn seller={rowData} />}
+
+                    </p>
                 </div>
             )
         }
@@ -38,7 +52,7 @@ export const AdminUsersListingCols: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{rowData.billingAddress?.phone}</p>
+                    <p>{formatPhoneNumberIntl(`${rowData?.billingAddress?.phone}`)}</p>
                 </div>
             )
         }
@@ -115,3 +129,11 @@ export const AdminUsersListingCols: ColumnDef<any>[] = [
         }
     },
 ];
+
+export const ViewSellerDocsBtn = ({ seller }: { seller: SellerType }) => {
+    const { onOpen } = useModal()
+
+    return (
+        <ImagesIcon size={18} className="cursor-pointer" onClick={() => onOpen("ViewUserDocsAdmin", { seller })} />
+    )
+}
