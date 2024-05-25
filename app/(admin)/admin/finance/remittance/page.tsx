@@ -12,7 +12,7 @@ export default function RemittancesPageAdmin() {
                     COD Remittances
                 </CardTitle>
             </CardHeader>
-            <CardContent className="pl-2">
+            <CardContent>
                 <Suspense fallback={<LoadingComponent/>}>
                     <Remittances />
                 </Suspense>

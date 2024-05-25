@@ -6,6 +6,7 @@ import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
+    getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table"
 import { ChevronDown } from "lucide-react"
@@ -26,20 +27,26 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useSearchParams } from "next/navigation"
 
 export function RemittancesTableAdmin({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
     const [filtering, setFiltering] = React.useState<string>("")
+    const [pagination, setPagination] = React.useState({
+        pageIndex: 0, //initial page index
+        pageSize: 20, //default page size
+    });
 
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
+        onGlobalFilterChange: setFiltering,
+        getPaginationRowModel: getPaginationRowModel(),
+        onPaginationChange: setPagination,
         state: {
+            pagination,
             globalFilter: filtering
         },
-        onGlobalFilterChange: setFiltering
     })
 
     return (

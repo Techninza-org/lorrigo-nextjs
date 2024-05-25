@@ -18,6 +18,7 @@ interface AdminContextType {
     shippingOrders: B2COrderType[];
     allCouriers: ShippingRate[];
     assignedCouriers: ShippingRate[];
+    futureRemittance: RemittanceType[] | null;
     handleCreateHub: (hub: AdminType) => void;
     handleSignup: (credentials: any, user: any) => void;
     handleEditUser: (sellerId: string, user: any) => void;
@@ -25,6 +26,8 @@ interface AdminContextType {
     updateSellerCourierPrice: ({ value, sellerId }: { value: z.infer<typeof CourierPriceConfigureSchema>, sellerId: string }) => void;
     getSellerAssignedCouriers: () => void;
     upateSellerAssignedCouriers: ({ couriers }: { couriers: string[] }) => void;
+    getSellerRemittanceID: (sellerId: string, remittanceId: string) => Promise<RemittanceType> | null;
+
 
 }
 
@@ -38,6 +41,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [users, setUsers] = useState([]);
     const [shippingOrders, setOrders] = useState<B2COrderType[]>([]);
     const [allRemittance, setAllRemittance] = useState<RemittanceType[] | null>(null);
+    const [futureRemittance, setFutureRemittance] = useState<RemittanceType[] | null>(null);
     const [allCouriers, setAllCouriers] = useState<ShippingRate[]>([]);
     const [assignedCouriers, setAssignedCouriers] = useState<ShippingRate[]>([]);
 
@@ -83,6 +87,18 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
             if (res.data?.valid) {
                 setAllRemittance(res.data.remittanceOrders);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    const getFutureRemittance = async () => {
+        try {
+            const res = await axiosIWAuth.get('/admin/remittances/future');
+
+            if (res.data?.valid) {
+                setFutureRemittance(res.data.remittanceOrders);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -222,6 +238,18 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const getSellerRemittanceID = async (sellerId: string, remittanceId: string) => {
+        try {
+            const res = await axiosIWAuth.get(`/admin/seller-remittance?sellerId=${sellerId}&remittanceId=${remittanceId}`);
+            console.log(res.data)
+            if (res.data?.valid) {
+                return res.data.remittance;
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
             getAllOrders("all")
@@ -229,7 +257,8 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getAllRemittance();
 
             getAllCouriers(),
-            getSellerAssignedCouriers()
+                getSellerAssignedCouriers()
+            getFutureRemittance()
         }
     }, [user, userToken])
 
@@ -238,11 +267,13 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getSellerAssignedCouriers()
         }
     }, [user, userToken, sellerId])
+
     return (
         <AdminContext.Provider
             value={{
                 users,
                 allRemittance,
+                futureRemittance,
                 shippingOrders,
                 allCouriers,
                 assignedCouriers,
@@ -252,7 +283,8 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
                 updateSellerCourierPrice,
                 getSellerAssignedCouriers,
-                upateSellerAssignedCouriers
+                getSellerRemittanceID,
+                upateSellerAssignedCouriers,
             }}
         >
             {children}

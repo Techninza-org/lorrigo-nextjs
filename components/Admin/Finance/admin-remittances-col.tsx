@@ -13,9 +13,10 @@ export const AdminRemittancesCols: ColumnDef<RemittanceType>[] = [
         accessorKey: 'remittanceId',
         cell: ({ row }) => {
             const rowData = row.original;
+            console.log(rowData.sellerId, 'remittanceId')
             return (
                 <div className="space-y-1 items-center uppercase flex">
-                    <Link href={`/finance/remittances/${rowData._id}`} className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
+                    <Link href={`/admin/finance/remittance/${rowData?.sellerId?._id}/${rowData.remittanceId}`} className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
                         {rowData.remittanceId}
                     </Link>
                     <Copy className="ml-2 cursor-pointer" size={15} onClick={() => handleCopyText(`${rowData.remittanceId}`)} />
