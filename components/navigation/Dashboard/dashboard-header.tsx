@@ -56,9 +56,13 @@ export const DashboardHeader = () => {
                     variant: "themeButton"
                 })}>Create Forward Shipment</Link>
 
-                <Button disabled={true} className={buttonVariants({
+                <Link href="/new/b2c/reverse" className={buttonVariants({
                     variant: "themeButton"
-                })}>Create Reverse Shipment</Button>
+                })}>Create Reverse Shipment</Link>
+
+                {/* <Button  className={buttonVariants({
+                    variant: "themeButton"
+                })}>Create Reverse Shipment</Button> */}
             </div>
 
         </div>

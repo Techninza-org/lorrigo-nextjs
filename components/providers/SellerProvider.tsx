@@ -32,6 +32,7 @@ interface SellerContextType {
   handleCreateOrder: (order: z.infer<typeof cloneFormSchema>) => boolean | Promise<boolean>;
   handleUpdateOrder: (order: z.infer<typeof EditFormSchema>) => boolean | Promise<boolean>;
   orders: B2COrderType[];
+  reverseOrders: B2COrderType[];
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
   getCourierPartners: (orderId: string) => Promise<any>;
   courierPartners: OrderType | undefined;
@@ -96,6 +97,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [sellerDashboard, setSellerDashboard] = useState<any>(null);
   const [sellerFacilities, setSellerFacilities] = useState([]);
   const [orders, setOrders] = useState<any[]>([]);
+  const [reverseOrders, setReverseOrders] = useState<any[]>([]);
   const [isOrderCreated, setIsOrderCreated] = useState<boolean>(false);
   const [courierPartners, setCourierPartners] = useState<OrderType>();
 
@@ -149,8 +151,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
-        setOrders(res.data.response.orders);
-        return res.data.response.orders
+        const orders = res.data.response.orders;
+        const filteredOrders = orders.filter((order: any) => !order.isReverseOrder);
+        const reverseOrders = orders.filter((order: any) => order.isReverseOrder);
+        setOrders(filteredOrders);
+        setReverseOrders(reverseOrders);
+        return orders;
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -268,7 +274,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           taxableValue: order.productDetails.taxableValue,
         },
         pickupAddress: order.pickupAddress,
-        sellerDetails: sellerDetailsPayload
+        sellerDetails: sellerDetailsPayload,
+        isReverseOrder: order.isReverseOrder
       }
 
       const res = await axiosIWAuth.post('/order/b2c', payload);
@@ -891,6 +898,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getHub,
         handleCreateOrder,
         orders,
+        reverseOrders,
         getAllOrdersByStatus,
         getCourierPartners,
         courierPartners,

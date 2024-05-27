@@ -52,11 +52,11 @@ export const formDataSchema = z.object({
     amount2Collect: z.string().optional(),
     productDetails: productDetailsSchema,
     pickupAddress: z.string().min(1, "Pickup address is required"),
-    isReverseOrder: z.boolean().default(false).optional()
+    isReverseOrder: z.boolean().default(true).optional()
 });
 
 
-export const B2CForm = () => {
+export const B2CReverseForm = () => {
     const { handleCreateOrder, seller, orders, getAllOrdersByStatus } = useSellerProvider();
     const { user } = useAuth()
     const router = useRouter();
@@ -90,7 +90,7 @@ export const B2CForm = () => {
                 taxableValue: "",
             },
             pickupAddress: "",
-            isReverseOrder: false
+            isReverseOrder: true
         }
     });
 
@@ -143,7 +143,8 @@ export const B2CForm = () => {
                 },
                 sellerDetails: {
                     sellerName: ''
-                }
+                },
+                isReverseOrder: true
             });
             if (isSuccess == true) {
                 form.reset();
@@ -176,7 +177,7 @@ export const B2CForm = () => {
                             collectableFeild={collectableFeild}
                         />
                         <CardFooter className='flex-row-reverse gap-3'>
-                            <Button disabled={isLoading} type='submit' variant={'themeButton'} >Create Shipment</Button>
+                            <Button disabled={isLoading} type='submit' variant={'themeButton'} >Create Reverse Shipment</Button>
                             <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => router.push("/dashboard")}>Go to dashboard</Button>
                         </CardFooter>
                     </Card>
