@@ -19,7 +19,7 @@ export default function RefundPage() {
                 <h3 className="text-lg font-semibold mb-2">Refund Process</h3>
                 <p>To request a refund, customers must contact us at logistics@lorrigo.com.</p>
                 <p>Customers must provide their account details and a brief explanation of the refund request.</p>
-                <p>We will review the request and verify the eligibility criteria. If eligible, refunds will be processed within [number] business days via the original payment method used.</p>
+                <p>We will review the request and verify the eligibility criteria. If eligible, refunds will be processed within 5-7 business days via the original payment method used.</p>
             </div>
             <div className="mb-8">
                 <h3 className="text-lg font-semibold mb-2">Non-Refundable Items</h3>
