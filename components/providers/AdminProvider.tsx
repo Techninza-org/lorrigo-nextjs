@@ -27,6 +27,7 @@ interface AdminContextType {
     getSellerAssignedCouriers: () => void;
     upateSellerAssignedCouriers: ({ couriers }: { couriers: string[] }) => void;
     getSellerRemittanceID: (sellerId: string, remittanceId: string) => Promise<RemittanceType> | null;
+    clientBills: any;
 
 
 }
@@ -44,6 +45,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [futureRemittance, setFutureRemittance] = useState<RemittanceType[] | null>(null);
     const [allCouriers, setAllCouriers] = useState<ShippingRate[]>([]);
     const [assignedCouriers, setAssignedCouriers] = useState<ShippingRate[]>([]);
+    const [clientBills, setClientBills] = useState<any>([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -250,6 +252,16 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const getClientBillingData = async () => {
+        try {
+            const res = await axiosIWAuth.get('/admin/billing/client');
+            setClientBills(res.data.data)
+            return res.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
             getAllOrders("all")
@@ -257,8 +269,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getAllRemittance();
 
             getAllCouriers(),
-                getSellerAssignedCouriers()
-            getFutureRemittance()
+                getSellerAssignedCouriers(),
+                getFutureRemittance()
+            getClientBillingData();
         }
     }, [user, userToken])
 
@@ -285,6 +298,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 getSellerAssignedCouriers,
                 getSellerRemittanceID,
                 upateSellerAssignedCouriers,
+                clientBills
             }}
         >
             {children}

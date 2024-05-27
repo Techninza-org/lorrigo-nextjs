@@ -10,10 +10,9 @@ import {
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
-    getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import { Download, UploadCloudIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,11 +24,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useSearchParams } from "next/navigation"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select"
+import { useModal } from "@/hooks/use-model-store"
+import { handleFileDownload } from "@/lib/utils"
 
 export function ClientBillingTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
-    const [page, setPage] = React.useState(1)
+    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [filtering, setFiltering] = React.useState<string>("")
+
+    const [rowSelection, setRowSelection] = React.useState({})
+    const [pagination, setPagination] = React.useState({
+        pageIndex: 0, //initial page index
+        pageSize: 20, //default page size
+    });
     const table = useReactTable({
         data,
         columns,
@@ -37,41 +43,52 @@ export function ClientBillingTable({ data, columns }: { data: any[], columns: Co
         // onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
+        // getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         // onColumnVisibilityChange: setColumnVisibility,
-        // onRowSelectionChange: setRowSelection,
-        enableSorting: false,
-        // state: {
-        //     columnFilters,
-        //     columnVisibility,
-        //     rowSelection,
-        // },
+        onRowSelectionChange: setRowSelection,
+        // enableSorting: false,
+        onPaginationChange: setPagination,
+        state: {
+            // columnFilters,
+            // columnVisibility,
+            pagination,
+            rowSelection,
+            globalFilter: filtering
+        },
+        onGlobalFilterChange: setFiltering
     })
-    const totalPages = 5
-    function incrementPage() {
-        setPage(prevPage => Math.min(prevPage + 1, totalPages));
-    }
-    function decrementPage() {
-        setPage(prevPage => Math.max(prevPage - 1, 1));
-    }
+
+    const { onOpen } = useModal()
+
+
     return (
         <div className="w-full">
-            <div className="flex items-center py-4">
+            <div className="flex items-center py-4 justify-between">
                 <Input
-                    placeholder="Search by order ID / AWB no."
+                    placeholder="Filter by AWB or Order Reference ID"
+                    value={filtering}
+                    onChange={(e) => setFiltering(e.target.value)}
                     className="max-w-sm"
                 />
-                <Button variant={"themeButton"} type="submit" className="ml-6">Search</Button>
+                <div className="space-x-3">
+                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("client_billing_sample_format.csv")}>
+                        <Download size={18} />
+                    </Button>
+                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => onOpen("ClientBillingUpload")}>
+                        <UploadCloudIcon size={18} />
+                    </Button>
+                </div>
             </div>
-            <div className="rounded-md border mt-8">
+
+            <div className="rounded-md border">
                 <Table>
-                    <TableHeader >
+                    <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id} >
+                            <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} className="text-center ">
+                                        <TableHead key={header.id}>
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -84,30 +101,58 @@ export function ClientBillingTable({ data, columns }: { data: any[], columns: Co
                             </TableRow>
                         ))}
                     </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && "selected"}
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    No results.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
                 </Table>
             </div>
-            <div className='flex mt-10'>
-                <div className='flex align-center w-1/2'>
-                    <p className='grid place-content-center'>Show </p>
-                    <Select>
-                        <SelectTrigger className='w-[70px] mx-4'>
-                            <SelectValue
-                                placeholder="15"
-                            />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value={'15'}>15</SelectItem>
-                            <SelectItem value={'20'}>20</SelectItem>
-                            <SelectItem value={'25'}>25</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <p className='grid place-content-center'> items per page</p>
+            <div className="flex items-center justify-end space-x-2 py-4">
+                <div className="flex-1 text-sm text-muted-foreground">
+                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                    {table.getFilteredRowModel().rows.length} row(s) selected.
                 </div>
-
-                <div className='flex gap-x-4 justify-center h-full -ml-36'>
-                    <Button variant={'themeIconBtn'} size={'icon'} onClick={decrementPage}><ChevronLeft size={28} /></Button>
-                    <p className='grid place-content-center'>{page} of {totalPages} pages</p>
-                    <Button variant={'themeIconBtn'} size={'icon'} onClick={incrementPage}><ChevronRight size={28} /></Button>
+                <div className="space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                    >
+                        Previous
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                    >
+                        Next
+                    </Button>
                 </div>
             </div>
         </div>
