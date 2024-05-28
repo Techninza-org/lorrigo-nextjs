@@ -61,6 +61,8 @@ interface SellerContextType {
   handleBulkUpdateShopifyOrders: ({ orderIds, values }: { orderIds: string[], values: z.infer<typeof BulkUpdateShopifyOrdersSchema> }) => boolean | Promise<boolean>;
 
 
+  sellerBilling: any; // Type should be updated
+
 }
 
 interface sellerCustomerFormType {
@@ -100,6 +102,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [reverseOrders, setReverseOrders] = useState<any[]>([]);
   const [isOrderCreated, setIsOrderCreated] = useState<boolean>(false);
   const [courierPartners, setCourierPartners] = useState<OrderType>();
+  const [sellerBilling, setSellerBilling] = useState<any>(null);  // Type should be updated
 
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
@@ -869,12 +872,26 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       return false
     }
   }
+
+  const getSellerBillingDetails = async () => {
+    try {
+      const res = await axiosIWAuth.get('/seller/billing');
+      if (res.data?.valid) {
+        setSellerBilling(res.data?.billing);
+        return res.data.billing;
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
       getHub();
       getSeller();
       getSellerDashboardDetails()
       getSellerRemittance();
+      getSellerBillingDetails();
     }
   }, [user, userToken])
 
@@ -923,10 +940,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         handleOrderSync,
 
         handleBulkPickupChange,
-        handleBulkUpdateShopifyOrders
+        handleBulkUpdateShopifyOrders,
 
-
-
+        sellerBilling
 
       }}
     >

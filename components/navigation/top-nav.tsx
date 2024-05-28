@@ -43,7 +43,7 @@ export function TopNav() {
                             <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
                         </ActionTooltip>
                         <span>{formatCurrencyForIndia(0)}</span>
-                        <Button variant={"themeButton"} size={"sm"} onClick={()=>onOpen("wallet")} disabled={true}>Recharge Wallet</Button>
+                        <Button variant={"themeButton"} size={"sm"} onClick={()=>onOpen("wallet")}>Recharge Wallet</Button>
                     </div>
 
                     <Separator orientation="vertical" className="w-[1px] bg-gray-400" />

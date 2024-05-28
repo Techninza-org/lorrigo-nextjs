@@ -28,6 +28,7 @@ interface AdminContextType {
     upateSellerAssignedCouriers: ({ couriers }: { couriers: string[] }) => void;
     getSellerRemittanceID: (sellerId: string, remittanceId: string) => Promise<RemittanceType> | null;
     clientBills: any;
+    getClientBillingData: () => void;
 
 
 }
@@ -298,7 +299,8 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 getSellerAssignedCouriers,
                 getSellerRemittanceID,
                 upateSellerAssignedCouriers,
-                clientBills
+                clientBills,
+                getClientBillingData
             }}
         >
             {children}

@@ -2,7 +2,6 @@
 
 import React, { createContext, useCallback, useContext } from "react";
 import { useRouter } from "next/navigation";
-import * as XLSX from 'xlsx';
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthProvider";
 import { useSellerProvider } from "./SellerProvider";

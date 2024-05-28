@@ -2,7 +2,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
 
-export const AdminClientBillingCols: ColumnDef<B2COrderType>[] = [
+export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
     {
         header: 'Order ID',
         accessorKey: 'orderRefId',

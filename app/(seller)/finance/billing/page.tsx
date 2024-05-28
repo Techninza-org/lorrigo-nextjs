@@ -1,17 +1,19 @@
-import { ClientBilling } from "@/components/Admin/Finance/client-billing";
+import { Billing } from "@/components/finance/billing-page";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function VendorBilling() {
+export default function BillingPage() {
+
     return (
         <Card className="col-span-4">
             <CardHeader>
                 <CardTitle className="md:flex justify-between space-y-3">
-                    Client Billing
+                    Billing
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <ClientBilling />
+                <Billing />
             </CardContent>
         </Card>
-    )
+    );
+
 }

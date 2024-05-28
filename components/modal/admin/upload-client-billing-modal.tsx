@@ -1,4 +1,5 @@
 import ImageUpload from "@/components/file-upload";
+import { useAdminProvider } from "@/components/providers/AdminProvider";
 import {
     Dialog,
     DialogContent,
@@ -9,6 +10,7 @@ import {
 import { useModal } from "@/hooks/use-model-store";
 
 export const ClientBillingUploadModal = () => {
+    const { getClientBillingData } = useAdminProvider();
     const { isOpen, onClose, type } = useModal();
 
     const isModalOpen = isOpen && type === "ClientBillingUpload";
@@ -29,6 +31,10 @@ export const ClientBillingUploadModal = () => {
                 <ImageUpload
                     uploadUrl='/admin/billing/client-billing/upload-csv'
                     acceptFileTypes={{ "text/csv": [".csv"] }}
+                    handleClose={() =>{
+                        getClientBillingData()
+                        handleClose();
+                    }}
                 />
             </DialogContent>
         </Dialog>
