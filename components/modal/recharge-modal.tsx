@@ -34,6 +34,7 @@ import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-model-store";
 import { formatCurrencyForIndia } from '@/lib/utils';
 import { Tag } from 'lucide-react';
+import { usePaymentGateway } from '../providers/PaymentGatewayProvider';
 
 const schema = z.object({
     rechargeAmount: z.string().refine(
@@ -50,6 +51,7 @@ const schema = z.object({
 export const RechargeModal = () => {
     const { isOpen, onClose, type, data } = useModal();
     const router = useRouter();
+    const { rechargeWallet } = usePaymentGateway();
 
     const isModalOpen = isOpen && type === "wallet";
 
@@ -71,10 +73,11 @@ export const RechargeModal = () => {
         try {
 
             //   await createChannel(values, String(params?.serverId));
+            await rechargeWallet(Number(values.rechargeAmount));
             console.log(values);
-            form.reset();
-            router.refresh();
-            onClose();
+            // form.reset();
+            // router.refresh();
+            // onClose();
         } catch (error) {
             console.log(error);
         }

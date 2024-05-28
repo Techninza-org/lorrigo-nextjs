@@ -313,8 +313,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           }
         })
 
-
-
         getSellerDashboardDetails();
         getAllOrdersByStatus("all");
         router.refresh();
@@ -327,11 +325,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "An error occurred",
+        description: error.response.data.message || "An error occurred",
       });
       return false;
     }
