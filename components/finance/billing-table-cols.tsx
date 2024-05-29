@@ -1,6 +1,7 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
+import { formatCurrencyForIndia } from "@/lib/utils";
 
 export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
     {
@@ -93,6 +94,18 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
             return (
                 <div className="space-y-1 items-center">
                     <p>{row.getValue("chargedWeight")} Kg</p>
+                </div>
+            )
+        }
+
+    },
+    {
+        header: 'Charged Amount',
+        accessorKey: 'billingAmount',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{formatCurrencyForIndia(Number(row.getValue("billingAmount")) || 0)}</p>
                 </div>
             )
         }
