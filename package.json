@@ -46,6 +46,7 @@
     "next-nprogress-bar": "^2.3.9",
     "react": "^18",
     "react-barcode": "^1.5.1",
+    "react-csv-downloader": "^3.1.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",

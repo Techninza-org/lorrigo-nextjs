@@ -165,7 +165,7 @@ export const B2CReverseForm = () => {
                                 {/* <Button type='button' size={"icon"} variant={"secondary"} onClick={()=>router.back()}>
                                     <Undo2 size={20} />
                                 </Button> */}
-                                <span>Create a new shipment (D2C)</span>
+                                <span>Create a Reverse shipment (D2C)</span>
                             </CardTitle>
                             <CardDescription>Order Details</CardDescription>
                         </CardHeader>

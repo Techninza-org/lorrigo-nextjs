@@ -4,30 +4,20 @@ import * as React from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
-  SortingState,
-  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown } from "lucide-react"
+import { DownloadIcon } from "lucide-react"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -39,48 +29,53 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useSellerProvider } from "../providers/SellerProvider"
 import { cn } from "@/lib/utils"
 import { useModal } from "@/hooks/use-model-store"
 import { B2COrderType } from "@/types/types"
-
-
+import { DatePickerWithRange } from "../DatePickerWithRange"
+import { DateRange } from "react-day-picker"
+import CsvDownloader from 'react-csv-downloader';
+import { getBucketStatus } from "./order-action-button"
+import { format } from "date-fns"
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const { handleOrderSync, seller } = useSellerProvider()
-  const [sorting, setSorting] = React.useState<SortingState>([])
   const [filtering, setFiltering] = React.useState<string>("")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
-  const searchParams = useSearchParams()
-  const isShipmentVisible = searchParams.get('status') !== 'new'
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-    "Shipment Details": isShipmentVisible,
-  });
   const [rowSelection, setRowSelection] = React.useState({})
   const [pagination, setPagination] = React.useState({
-    pageIndex: 0, //initial page index
-    pageSize: 20, //default page size
+    pageIndex: 0,
+    pageSize: 20,
   });
 
+  const defaultToDate = new Date();
+  const defaultFromDate = new Date(
+    defaultToDate.getFullYear(),
+    defaultToDate.getMonth(),
+  );
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: defaultFromDate,
+    to: defaultToDate,
+  })
+
+  const [filteredData, setFilteredData] = React.useState<any[]>(data)
+
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
-    // onSortingChange: setSorting,
-    // onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    // getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    // onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    // enableSorting: false,
     onPaginationChange: setPagination,
+
     state: {
-      // columnFilters,
-      // columnVisibility,
+      columnFilters,
       pagination,
       rowSelection,
       globalFilter: filtering
@@ -103,15 +98,104 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     router.push('/print/manifest')
   }
 
+  React.useEffect(() => {
+    setFilteredData(data)
+  }, [data])
+
+  React.useEffect(() => {
+    if ((!date?.from || !date?.to) || (date.from === date.to)) return
+    const a = data.filter((row) => {
+      if (date?.from && date?.to) {
+        return row.order_invoice_date > new Date(date.from).toISOString() && row.order_invoice_date < new Date(date.to).toISOString()
+      }
+      return false;
+    });
+    setFilteredData(a);
+  }, [data, date]);
+
+
+
+
+
+  const cols = [
+    {
+      id: "order_reference_id",
+      displayName: "Order Reference ID"
+    },
+    {
+      id: "awb",
+      displayName: "AWB"
+    },
+    {
+      id: "order_invoice_date",
+      displayName: "Order Invoice Date"
+    },
+    {
+      id: "channelName",
+      displayName: "Channel Name"
+    },
+    {
+      id: "customerName",
+      displayName: "Customer Name"
+    },
+    {
+      id: "customerPhone",
+      displayName: "Customer Phone"
+    },
+    {
+      id: "customerEmail",
+      displayName: "Customer Email"
+    },
+    {
+      id: "packageName",
+      displayName: "Package Name"
+    },
+    {
+      id: "packageDimensions",
+      displayName: "Package Dimensions"
+    },
+    {
+      id: "packageWeight",
+      displayName: "Package Weight"
+    },
+    {
+      id: "status",
+      displayName: "Status"
+    },
+  ]
+
+  const datas = filteredData.map((row) => {
+    return {
+      order_reference_id: row.order_reference_id,
+      awb: row.awb,
+      order_invoice_date: format(row.order_invoice_date, 'dd MM yyyy | HH:mm a'),
+      channelName: row.channelName || "Custom",
+      customerName: row.customerDetails.name,
+      customerEmail: row.customerDetails.email || "",
+      customerPhone: row?.customerDetails?.phone?.slice(3, 12),
+      packageName: row.productId.name,
+      packageDimensions: `${row.orderBoxLength} x ${row.orderBoxWidth} x ${row.orderBoxHeight}`,
+      packageWeight: `${row.orderWeight} ${row.orderWeightUnit}`,
+      status: getBucketStatus(row.bucket),
+    }
+  })
+
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
-        <Input
-          placeholder="Filter by AWB or Order Reference ID"
-          value={filtering}
-          onChange={(e) => setFiltering(e.target.value)}
-          className="max-w-sm"
-        />
+        <div className="flex gap-3">
+          <Input
+            placeholder="Filter by AWB or Order Reference ID"
+            value={filtering}
+            onChange={(e) => setFiltering(e.target.value)}
+            className="w-64"
+          />
+          <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
+          <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
+            <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
+          </CsvDownloader>;
+        </div>
         <div>
           {
             selectedRows.length > 0 && (
