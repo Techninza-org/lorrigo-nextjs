@@ -9,6 +9,7 @@ import { useAuth } from "../providers/AuthProvider";
 import { LorrigoLogo } from "../Logos";
 import { UserAvatar } from "../user-avatar";
 import { useSellerProvider } from "../providers/SellerProvider";
+import { usePaymentGateway } from "../providers/PaymentGatewayProvider";
 
 interface NavProps {
     isCollapsed: boolean;
@@ -22,8 +23,7 @@ interface NavProps {
 
 export function TopNav() {
     const { onOpen } = useModal();
-    const { seller } = useSellerProvider();
-    const walletBalance= seller?.walletBalance || 0;
+    const { walletBalance } = usePaymentGateway();
 
     return (
         <div
@@ -43,7 +43,7 @@ export function TopNav() {
                         >
                             <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
                         </ActionTooltip>
-                        <span>{formatCurrencyForIndia(walletBalance)}</span>
+                        <span>{formatCurrencyForIndia(walletBalance || 0)}</span>
                         <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("wallet")}>Recharge Wallet</Button>
                     </div>
 

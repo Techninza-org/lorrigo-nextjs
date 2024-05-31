@@ -1,14 +1,16 @@
 "use client"
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useAxios } from "./AxiosProvider";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
-import { useSellerProvider } from "./SellerProvider";
+import { useAuth } from "./AuthProvider";
 
 interface PaymentGatewayContextType {
+    walletBalance: number;
     rechargeWallet: (amount: number) => Promise<void>;
     confirmRecharge: ({ params }: { params: string }) => Promise<void>;
+    fetchWalletBalance: () => Promise<void>;
 }
 
 const PaymentGatewayContext = createContext<PaymentGatewayContextType | null>(null);
@@ -16,12 +18,36 @@ const PaymentGatewayContext = createContext<PaymentGatewayContextType | null>(nu
 function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
 
     const { axiosIWAuth } = useAxios();
-    const router = useRouter();
+    const { userToken, user } = useAuth();
     const { toast } = useToast();
+    const router = useRouter();
+
+    const [walletBalance, setWalletBalance] = useState(0);
+
+    const fetchWalletBalance = async () => {
+        try {
+            const response = await axiosIWAuth.get('/seller/wallet-balance');
+            setWalletBalance(response.data.walletBalance);
+        } catch (error: any) {
+            toast({
+                title: 'Error',
+                description: error.response.data.message,
+                variant: 'destructive'
+            });
+        }
+    }
 
     const rechargeWallet = async (amount: number) => {
-        const response = await axiosIWAuth.post('/seller/recharge-wallet', { amount });
-        router.push(response.data.url);
+        try {
+            const response = await axiosIWAuth.post('/seller/recharge-wallet', { amount });
+            router.push(response.data.url);
+        } catch (error: any) {
+            toast({
+                title: 'Error',
+                description: error.response.data.message,
+                variant: 'destructive'
+            });
+        }
     }
 
     const confirmRecharge = async ({ params }: { params: string }) => {
@@ -37,10 +63,18 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    useEffect(() => {
+        if ((!!user || !!userToken) && user?.role === "seller") {
+            fetchWalletBalance();
+        }
+    }, [confirmRecharge, user, userToken]);
+
     return (
         <PaymentGatewayContext.Provider value={{
+            walletBalance,
             rechargeWallet,
-            confirmRecharge
+            confirmRecharge,
+            fetchWalletBalance
         }}>
             {children}
         </PaymentGatewayContext.Provider>

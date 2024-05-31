@@ -31,6 +31,7 @@ interface AdminContextType {
     getClientBillingData: () => void;
 
 
+    manageRemittance: ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => Promise<boolean>;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -263,6 +264,30 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const manageRemittance = async ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => {
+        try {
+            const res = await axiosIWAuth.post(`/admin/manage-remittance`, {
+                remittanceId,
+                bankTransactionId,
+                status
+            });
+            if (res.data?.valid) {
+                toast({
+                    variant: "default",
+                    title: "Remittance Updated",
+                    description: "Remittance has been updated successfully.",
+                });
+                getFutureRemittance()
+                getAllRemittance()
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return false;
+        }
+    }
+
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
             getAllOrders("all")
@@ -300,7 +325,8 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 getSellerRemittanceID,
                 upateSellerAssignedCouriers,
                 clientBills,
-                getClientBillingData
+                getClientBillingData,
+                manageRemittance
             }}
         >
             {children}

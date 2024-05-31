@@ -19,6 +19,7 @@ import { GstinFormSchema } from "../Settings/gstin-form";
 import { BillingAddressSchema } from "../Settings/billing-address-form";
 import { ChannelFormSchema } from "../Channel/channel-integration-form";
 import { BulkUpdateShopifyOrdersSchema } from "../modal/bulk-update-shopify-modal";
+import { usePaymentGateway } from "./PaymentGatewayProvider";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -36,7 +37,7 @@ interface SellerContextType {
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
   getCourierPartners: (orderId: string) => Promise<any>;
   courierPartners: OrderType | undefined;
-  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName }: { orderId: string, carrierNickName: string, carrierId: Number }) => boolean | Promise<boolean>;
+  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
@@ -131,6 +132,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [business, setbusiness] = useState<string>("D2C");
 
   const { toast } = useToast();
+  const { fetchWalletBalance } = usePaymentGateway();
   const router = useRouter()
 
   const status = useSearchParams().get("status");
@@ -451,12 +453,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
-  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName }: { orderId: string, carrierId: Number, carrierNickName: string }) => {
-
+  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierId: Number, carrierNickName: string, charge: Number }) => {
     const payload = {
       orderId: orderId,
       carrierId: carrierId,
       carrierNickName,
+      charge: charge,
       orderType: 0,
     }
     try {
@@ -468,6 +470,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Order has been created successfully",
         });
         getAllOrdersByStatus(status || "all")
+        fetchWalletBalance();
         router.push('/orders')
         return true;
       }
@@ -501,6 +504,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Order cancellation request generated",
         });
         getAllOrdersByStatus(status || "all")
+        fetchWalletBalance();
         return true;
       }
       toast({

@@ -1,12 +1,13 @@
-import { B2COrderType, CustomerDetailsType, SellerType, pickupAddressType } from "@/types/types";
+import { B2COrderType, CustomerDetailsType, RemittanceType, SellerType, pickupAddressType } from "@/types/types";
 import { create } from "zustand";
 
 
-export type ModalType = "wallet" | "addPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest" | "ndrOrder" | "ndrRTOrder" | "BulkHubUpload" | "BulkPincodeUpload" | 'downloadLabels'  | "BulkPickupUpdate" | 'cancelBulkOrder' | "downloadManifests" | "updateShopifyOrders" | "ViewUserDocsAdmin" | "ClientBillingUpload";
+export type ModalType = "wallet" | "addPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest" | "ndrOrder" | "ndrRTOrder" | "BulkHubUpload" | "BulkPincodeUpload" | 'downloadLabels'  | "BulkPickupUpdate" | 'cancelBulkOrder' | "downloadManifests" | "updateShopifyOrders" | "ViewUserDocsAdmin" | "ClientBillingUpload" | "adminRemittanceManage";
 interface ModalData {
   form?: any;
   customer?: CustomerDetailsType;
   order?: B2COrderType;
+  remittance?: RemittanceType;
   orders?: B2COrderType[];
   seller?: SellerType;
   hub?: pickupAddressType;

@@ -17,6 +17,7 @@ import { CancelBulkOrderDialog } from "../Orders/cancel-bulk-order-dialog";
 import { BulkUpdateShopifyModal } from "../modal/bulk-update-shopify-modal";
 import { ViewUserDocsModal } from "../modal/admin/view-user-docs-modal";
 import { ClientBillingUploadModal } from "../modal/admin/upload-client-billing-modal";
+import { AdminRemittanceUpdateModal } from "../modal/admin/remittance-manage-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -49,6 +50,7 @@ export const ModalProvider = () => {
       <BulkUpdateShopifyModal/>
       <ViewUserDocsModal/>
       <ClientBillingUploadModal/>
+      <AdminRemittanceUpdateModal/>
 
     </>
   );
