@@ -66,11 +66,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
             getHub()
             router.refresh()
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "error.response.data.message",
+                description: error.response.data.message || "An error occurred",
             });
 
         }
@@ -129,11 +129,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                     description: "User already exists.",
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "error.response.data.message",
+                description: error.response.data.message || "An error occurred",
             });
         }
     }
@@ -148,11 +148,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                     description: "User has been updated successfully.",
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "error.response.data.message",
+                description: error.response.data.message || "An error occurred",
             });
         }
 
@@ -212,7 +212,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message
+                description:error.response.data.message || "An error occurred",
             });
             console.error('Error fetching data:', error);
         }
@@ -236,7 +236,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message
+                description:error.response.data.message || "An error occurred",
             });
             console.error('Error fetching data:', error);
         }

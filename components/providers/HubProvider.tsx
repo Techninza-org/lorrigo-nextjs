@@ -24,7 +24,7 @@ interface reqPayload {
     rtoAddress?: string;
     rtoCity?: string;
     rtoState?: string;
-    rtoPincode?: string;    
+    rtoPincode?: string;
 }
 
 interface HubContextType {
@@ -80,7 +80,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
         }
     }, [userToken, axiosIWAuth, getHub, router, toast])
-    
+
     const updateCompanyProfile = async (values: z.infer<typeof CompanyProfileSchema>) => {
 
         try {
@@ -111,11 +111,11 @@ function HubProvider({ children }: { children: React.ReactNode }) {
                 });
             }
 
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "error.response.data.message",
+                description: error.response.data.message || "An error occurred",
             });
         }
     }
@@ -170,11 +170,11 @@ function HubProvider({ children }: { children: React.ReactNode }) {
 
             }
 
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "error.response.data.message",
+                description: error.response.data.message || "An error occurred",
             });
         }
     }
