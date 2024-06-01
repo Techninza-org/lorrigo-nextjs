@@ -71,7 +71,7 @@ interface SellerContextType {
   getB2BOrders: () => Promise<void>;
   b2bOrders: any[];
   getB2bCourierPartners: (orderId: string) => Promise<any>;
-  handleCreateB2BShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number}) => boolean | Promise<boolean>;
+  handleCreateB2BShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => boolean | Promise<boolean>;
 }
 
 interface sellerCustomerFormType {
@@ -387,7 +387,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.response.data.message || "An error occurred",
+        description: error?.response?.data?.message || "An error occurred",
       });
       return false;
     }
@@ -771,7 +771,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.response.data.message || "Something went wrong",
+        description: error?.response?.data?.message || "Something went wrong",
       });
       return false;
     }
@@ -792,7 +792,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.response.data.message || "Something wrong, Please try again!",
+        description: error?.response?.data?.message || "Something wrong, Please try again!",
       });
       return false
     }
@@ -810,7 +810,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       }
       return false;
     } catch (error: any) {
-      const message = error.response.data.message.includes("duplicate key error") ? "API Key must be Unique " : error.response.data.message;
+      const message = error?.response?.data?.message.includes("duplicate key error") ? "API Key must be Unique " : error?.response?.data?.message;
       toast({
         variant: "destructive",
         title: "Error",
@@ -966,7 +966,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosIWAuth.get('/order/all/b2b');
       console.log(res.data, 'res data');
-      
+
       if (res.data?.valid) {
         setB2bOrders(res.data.response.orders);
       }

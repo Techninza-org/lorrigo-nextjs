@@ -70,7 +70,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
             });
 
         }
@@ -133,7 +133,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
             });
         }
     }
@@ -152,7 +152,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
             });
         }
 
@@ -212,7 +212,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description:error.response.data.message || "An error occurred",
+                description:error?.response?.data?.message || "An error occurred",
             });
             console.error('Error fetching data:', error);
         }
@@ -236,7 +236,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description:error.response.data.message || "An error occurred",
+                description:error?.response?.data?.message || "An error occurred",
             });
             console.error('Error fetching data:', error);
         }

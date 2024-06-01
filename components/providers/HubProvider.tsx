@@ -115,7 +115,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
             });
         }
     }
@@ -174,7 +174,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
             });
         }
     }
@@ -195,7 +195,7 @@ function HubProvider({ children }: { children: React.ReactNode }) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message || "Something went wrong. Please try again later.",
+                description: error?.response?.data?.message || "Something went wrong. Please try again later.",
             });
             return false;
         }

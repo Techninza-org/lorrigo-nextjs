@@ -207,7 +207,7 @@ export const B2CForm = () => {
                             </CardHeader>
                             <ImageUpload
                                 uploadUrl='/order/b2c/bulk'
-                                handleClose={()=>getAllOrdersByStatus("all")}
+                                handleClose={() => getAllOrdersByStatus("all")}
                                 acceptFileTypes={{ "text/csv": [".csv"] }}
                             />
                         </Card>

@@ -31,7 +31,7 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
         } catch (error: any) {
             toast({
                 title: 'Error',
-                description: error.response.data.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
                 variant: 'destructive'
             });
         }
@@ -44,7 +44,7 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
         } catch (error: any) {
             toast({
                 title: 'Error',
-                description: error.response.data.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
                 variant: 'destructive'
             });
         }
@@ -57,7 +57,7 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
         } catch (error: any) {
             toast({
                 title: 'Error',
-                description: error.response.data.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
                 variant: 'destructive'
             });
         }

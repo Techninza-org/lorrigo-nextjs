@@ -12,6 +12,9 @@ export default function ReverseOrders() {
 
     const DASHBOARD_LINKS = [
         {
+            label: "All",
+        },
+        {
             label: "New",
             bucket: 0
         },
@@ -41,9 +44,13 @@ export default function ReverseOrders() {
     const [reverseFilterOrders, setReverseFilterOrders] = useState<B2COrderType[]>(reverseOrders) // Provide the correct initial state
 
     const handleFilter = (bucket: number | undefined) => {
-        const filtered = reverseOrders.filter((order) => order.bucket === bucket)
-        setReverseFilterOrders(filtered)
-    }
+        if (bucket === undefined) {
+            setReverseFilterOrders(reverseOrders);
+        } else {
+            const filtered = reverseOrders.filter((order) => order.bucket === bucket);
+            setReverseFilterOrders(filtered);
+        }
+    };
 
     useEffect(() => {
         setReverseFilterOrders(reverseOrders)

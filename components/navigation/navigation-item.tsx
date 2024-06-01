@@ -30,10 +30,10 @@ export function NavigationItem({ links }: { links: { label: string; href: string
                                     className={cn(
                                         "group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900",
                                         isActive ? "text-red-500 font-medium bg-gray-100 shadow-sm" : "",
-                                        isLastItem ? cn(buttonVariants({
-                                            variant: "themeButton",
-                                            size: "sm",
-                                        }), "hover:text-white") : ""
+                                        // isLastItem ? cn(buttonVariants({
+                                        //     variant: "themeButton",
+                                        //     size: "sm",
+                                        // }), "hover:text-white") : ""
                                     )}
                                 >
                                     {link.label}
@@ -47,7 +47,7 @@ export function NavigationItem({ links }: { links: { label: string; href: string
     )
 }
 
-export function RevOrderFilter({ links, handleRevFilter }: { links: { label: string; bucket: number }[], handleRevFilter: (bucket: number | undefined) => void }) {
+export function RevOrderFilter({ links, handleRevFilter }: { links: { label: string; bucket?: number }[], handleRevFilter: (bucket: number | undefined) => void }) {
     return (
         <NavigationMenu>
             <NavigationMenuList>
