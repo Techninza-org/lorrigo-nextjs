@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/navigation-menu"
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 
 export function NavigationItem({ links }: { links: { label: string; href: string }[] }) {
     const pathname = usePathname()
@@ -20,13 +20,21 @@ export function NavigationItem({ links }: { links: { label: string; href: string
     return (
         <NavigationMenu>
             <NavigationMenuList>
-                {links.map((link) => {
+                {links.map((link, index) => {
                     const isActive = status ? link.href === `/orders?status=${status}` : link.href === pathname;
+                    const isLastItem = index === links.length - 1;
                     return (
                         <NavigationMenuItem key={link.label}>
                             <Link href={link.href} passHref legacyBehavior>
                                 <NavigationMenuLink
-                                    className={cn("group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900", isActive ? "text-red-500 font-medium bg-gray-100 shadow-sm" : "")}
+                                    className={cn(
+                                        "group inline-flex h-10 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-slate-100 hover:text-slate-900",
+                                        isActive ? "text-red-500 font-medium bg-gray-100 shadow-sm" : "",
+                                        isLastItem ? cn(buttonVariants({
+                                            variant: "themeButton",
+                                            size: "sm",
+                                        }), "hover:text-white") : ""
+                                    )}
                                 >
                                     {link.label}
                                 </NavigationMenuLink>

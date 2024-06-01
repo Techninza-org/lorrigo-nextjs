@@ -1,4 +1,4 @@
-import Orders from "@/components/Orders";
+import B2BOrders from "@/components/b2b/b2b-orders";
 import { LoadingComponent } from "@/components/loading-spinner";
 import { NavigationItem } from "@/components/navigation/navigation-item";
 import { Suspense } from "react";
@@ -32,18 +32,14 @@ export default function OrdersPage() {
         {
             label: "All Shipments",
             href: "/orders",
-        },
-        {
-            label: "Reverse Orders",
-            href: "/orders/reverse",
-        },
+        }
     ]
 
     return (
         <>
             <Suspense fallback={<LoadingComponent/>}>
             <NavigationItem links={DASHBOARD_LINKS}  />
-                <Orders />
+                <B2BOrders />
             </Suspense>
         </>
     );

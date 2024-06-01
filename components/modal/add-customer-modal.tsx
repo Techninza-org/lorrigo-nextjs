@@ -1,4 +1,4 @@
-"use client";
+// 'use client'
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,6 +31,7 @@ import { useEffect, useState } from 'react';
 import { useToast } from '../ui/use-toast';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
 import { LoadingSpinner } from '../loading-spinner';
+import { axiosIWAuth } from '@/lib/axiosConfig';
 
 export const customerDetailsSchema = z.object({
     customerDetails: z.object({
@@ -42,12 +43,13 @@ export const customerDetailsSchema = z.object({
         country: z.string().min(1, "Country is required"),
         city: z.string().min(1, "City is required"),
         pincode: z.string().min(1, "Pincode is required"),
+        gst: z.string().optional()
     })
 });
 
 
 export const AddCustomerModal = () => {
-    const { setSellerCustomerForm, sellerCustomerForm, isOrderCreated } = useSellerProvider()
+    const { setSellerCustomerForm, sellerCustomerForm, isOrderCreated, handleCreateCustomer } = useSellerProvider()
     const { isOpen, onClose, type } = useModal();
 
     const router = useRouter();
@@ -66,7 +68,8 @@ export const AddCustomerModal = () => {
                 country: "India",
                 state: "",
                 pincode: "",
-                city: ""
+                city: "",
+                gst: ""
             }
         }
     });
@@ -85,6 +88,10 @@ export const AddCustomerModal = () => {
 
     const onSubmit = async (values: z.infer<typeof customerDetailsSchema>) => {
         try {
+            //create customer
+            handleCreateCustomer(values)
+            
+
             setSellerCustomerForm({
                 ...sellerCustomerForm,
                 customerForm: {
@@ -96,7 +103,6 @@ export const AddCustomerModal = () => {
                 variant: "default",
                 title: "Customer Added",
                 description: "Customer added successfully"
-
             });
 
             if (isOrderCreated) {
@@ -312,6 +318,29 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                                             disabled={isLoading || isPinLoading}
                                             className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             placeholder="Enter the city"
+                                            {...field}
+                                        />
+                                        {isPinLoading && <LoadingSpinner />}
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="customerDetails.gst"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    GST
+                                </FormLabel>
+                                <FormControl>
+                                    <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                        <Input
+                                            disabled={isLoading || isPinLoading}
+                                            className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                            placeholder="Enter GST number"
                                             {...field}
                                         />
                                         {isPinLoading && <LoadingSpinner />}

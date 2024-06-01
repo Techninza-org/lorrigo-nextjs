@@ -61,9 +61,17 @@ interface SellerContextType {
   handleBulkPickupChange: (orderIds: string[], pickupAddress: string) => boolean | Promise<boolean>;
   handleBulkUpdateShopifyOrders: ({ orderIds, values }: { orderIds: string[], values: z.infer<typeof BulkUpdateShopifyOrdersSchema> }) => boolean | Promise<boolean>;
 
+  getB2BCustomers: () => Promise<void>;
+  b2bCustomers: any[];
+  handleCreateCustomer: (customer: any) => boolean | Promise<boolean>;
 
   sellerBilling: any; // Type should be updated
 
+  handleCreateB2BOrder: (order: any) => boolean | Promise<boolean>;
+  getB2BOrders: () => Promise<void>;
+  b2bOrders: any[];
+  getB2bCourierPartners: (orderId: string) => Promise<any>;
+  handleCreateB2BShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number}) => boolean | Promise<boolean>;
 }
 
 interface sellerCustomerFormType {
@@ -101,8 +109,10 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [sellerFacilities, setSellerFacilities] = useState([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [reverseOrders, setReverseOrders] = useState<any[]>([]);
+  const [b2bOrders, setB2bOrders] = useState<any[]>([]);
   const [isOrderCreated, setIsOrderCreated] = useState<boolean>(false);
   const [courierPartners, setCourierPartners] = useState<OrderType>();
+  const [b2bCustomers, setB2bCustomers] = useState<any[]>([]);
   const [sellerBilling, setSellerBilling] = useState<any>(null);  // Type should be updated
 
 
@@ -136,6 +146,40 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   const status = useSearchParams().get("status");
+
+  const getB2BCustomers = async () => {
+    try {
+      const res = await axiosIWAuth.get('/customer');
+      if (res.data?.valid) {
+        setB2bCustomers(res.data.customers);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  const handleCreateCustomer = async (customer: any) => {
+    try {
+      const res = await axiosIWAuth.post('/customer', customer);
+      if (res.data?.valid) {
+        getB2BCustomers();
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: res.data.message,
+      });
+      return false
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An error occurred",
+      });
+      return false
+    }
+  }
 
 
   const getHub = async (type?: string) => {
@@ -173,6 +217,18 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
       unstable_noStore()
       const res = await axiosIWAuth.get(`/order/courier/b2c/SR/${orderId}`);
+      if (res.data?.valid) {
+        setCourierPartners(res.data);
+        return res.data
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  const getB2bCourierPartners = async (orderId: string) => {
+    try {
+      const res = await axiosIWAuth.get(`/order/courier/b2b/${orderId}`);
       if (res.data?.valid) {
         setCourierPartners(res.data);
         return res.data
@@ -635,7 +691,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-
   const handleOrderNDR = async (orderId: string, type: string, ndrInfo: z.infer<typeof ReattemptOrderSchema>) => {
     try {
       const res = await axiosIWAuth.post('/shipment/order-reattempt', {
@@ -875,6 +930,88 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const handleCreateB2BOrder = async (order: any) => {
+    try {
+      const res = await axiosIWAuth.post('/order/b2b', order);
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "B2B order created successfully",
+          description: "Order has been created successfully",
+        });
+        // setIsOrderCreated(!isOrderCreated);
+        // getSellerDashboardDetails();
+        // getAllOrdersByStatus("all");
+        router.refresh();
+        return true;
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: res.data.message,
+        });
+        return false;
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An error occurred",
+      });
+      return false;
+    }
+  }
+
+  const getB2BOrders = async () => {
+    try {
+      const res = await axiosIWAuth.get('/order/all/b2b');
+      console.log(res.data, 'res data');
+      
+      if (res.data?.valid) {
+        setB2bOrders(res.data.response.orders);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  const handleCreateB2BShipment = useCallback(async ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => {
+
+    const payload = {
+      orderId: orderId,
+      carrierId: carrierId,
+    }
+    try {
+      const res = await axiosIWAuth.post('/shipment/b2b', payload);
+      if (res.data?.valid && res.data?.order.awb) {
+        toast({
+          variant: "default",
+          title: "Order created successfully",
+          description: "Order has been created successfully",
+        });
+        getAllOrdersByStatus(status || "all")
+        router.push('/orders/b2b')
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: res.data.message,
+      });
+      return false
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error?.message ?? "Something went wrong",
+      });
+      return false
+
+    }
+  }, [axiosIWAuth, router, toast])
+
+
+
   const getSellerBillingDetails = async () => {
     try {
       const res = await axiosIWAuth.get('/seller/billing');
@@ -891,6 +1028,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     if ((!!user || !!userToken) && user?.role === "seller") {
       getHub();
       getSeller();
+      getB2BCustomers();
       getSellerDashboardDetails()
       getSellerRemittance();
       getSellerBillingDetails();
@@ -899,7 +1037,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
-      getAllOrdersByStatus(status || "all")
+      getAllOrdersByStatus(status || "all");
+      getB2BOrders();
     }
 
   }, [user, userToken, status]);
@@ -944,8 +1083,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         handleBulkPickupChange,
         handleBulkUpdateShopifyOrders,
 
-        sellerBilling
+        sellerBilling,
 
+        getB2BCustomers,
+        b2bCustomers,
+        handleCreateCustomer,
+
+        handleCreateB2BOrder,
+        getB2BOrders,
+        b2bOrders,
+        getB2bCourierPartners,
+        handleCreateB2BShipment
       }}
     >
       {children}
