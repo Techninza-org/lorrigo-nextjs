@@ -44,7 +44,7 @@ interface SellerContextType {
   calcRate: (order: any) => Promise<any>;
   getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
   sellerRemittance: RemittanceType[] | null;
-  getOrderDetails: (orderId: string) => Promise<B2COrderType | undefined>;
+  getOrderDetails: (awbNumber: string) => Promise<B2COrderType | undefined>;
   getSeller: () => Promise<void>;
   handleOrderNDR: (orderId: string, type: string, ndrInfo: z.infer<typeof ReattemptOrderSchema>) => boolean | Promise<boolean>;
   getHub: (type?: string) => Promise<pickupAddressType[]> | void
@@ -624,9 +624,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const getOrderDetails = async (orderId: string) => {
+  const getOrderDetails = async (awbNumber: string) => {
     try {
-      const res = await axiosIWAuth.get(`/order/${orderId}`);
+      const res = await axiosIWAuth.get(`/order/${awbNumber}`);
       if (res.data?.valid) {
         return res.data.order;
       }

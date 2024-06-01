@@ -147,7 +147,7 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
                     <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
                     <CsvDownloader filename="Remittance" datas={datas} columns={cols}>
                         <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
-                    </CsvDownloader>;
+                    </CsvDownloader>
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

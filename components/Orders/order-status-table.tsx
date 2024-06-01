@@ -55,7 +55,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   const defaultToDate = new Date();
   const defaultFromDate = new Date(
     defaultToDate.getFullYear(),
-    defaultToDate.getMonth(),
+    defaultToDate.getMonth()-1,
   );
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
@@ -99,10 +99,6 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   }
 
   React.useEffect(() => {
-    setFilteredData(data)
-  }, [data])
-
-  React.useEffect(() => {
     if ((!date?.from || !date?.to) || (date.from === date.to)) return
     const a = data.filter((row) => {
       if (date?.from && date?.to) {
@@ -113,9 +109,9 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     setFilteredData(a);
   }, [data, date]);
 
-
-
-
+  React.useEffect(() => {
+    setFilteredData(data)
+  }, [data])
 
   const cols = [
     {
@@ -194,7 +190,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
           <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
           <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
             <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
-          </CsvDownloader>;
+          </CsvDownloader>
         </div>
         <div>
           {
