@@ -32,7 +32,11 @@ export default function OrdersPage() {
         {
             label: "All Shipments",
             href: "/orders",
-        }
+        },
+        {
+            label: "Reverse Orders",
+            href: "/orders/reverse",
+        },
     ]
 
     return (
