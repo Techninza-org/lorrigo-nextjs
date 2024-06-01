@@ -122,10 +122,6 @@ export const DataAnalysis = () => {
                                 <Label>Your reattempt request</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard?.NDRDetails?.yourReattempt}</span>
-                                <Label>Buyer Reattempt Request</Label>
-                            </div>
-                            <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
                             <span className="p-3">{sellerDashboard?.NDRDetails?.delivered || 0}</span>
                                 <Label>NDR Delivered</Label>
                             </div>

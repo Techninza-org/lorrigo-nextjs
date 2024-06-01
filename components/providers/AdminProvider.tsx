@@ -27,8 +27,11 @@ interface AdminContextType {
     getSellerAssignedCouriers: () => void;
     upateSellerAssignedCouriers: ({ couriers }: { couriers: string[] }) => void;
     getSellerRemittanceID: (sellerId: string, remittanceId: string) => Promise<RemittanceType> | null;
+    clientBills: any;
+    getClientBillingData: () => void;
 
 
+    manageRemittance: ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => Promise<boolean>;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -44,6 +47,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [futureRemittance, setFutureRemittance] = useState<RemittanceType[] | null>(null);
     const [allCouriers, setAllCouriers] = useState<ShippingRate[]>([]);
     const [assignedCouriers, setAssignedCouriers] = useState<ShippingRate[]>([]);
+    const [clientBills, setClientBills] = useState<any>([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -62,11 +66,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
             getHub()
             router.refresh()
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "error.response.data.message",
+                description: error.response.data.message || "An error occurred",
             });
 
         }
@@ -125,11 +129,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                     description: "User already exists.",
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "error.response.data.message",
+                description: error.response.data.message || "An error occurred",
             });
         }
     }
@@ -144,11 +148,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                     description: "User has been updated successfully.",
                 });
             }
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: "error.response.data.message",
+                description: error.response.data.message || "An error occurred",
             });
         }
 
@@ -208,7 +212,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message
+                description:error.response.data.message || "An error occurred",
             });
             console.error('Error fetching data:', error);
         }
@@ -232,7 +236,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description: error.response.data.message
+                description:error.response.data.message || "An error occurred",
             });
             console.error('Error fetching data:', error);
         }
@@ -250,6 +254,40 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const getClientBillingData = async () => {
+        try {
+            const res = await axiosIWAuth.get('/admin/billing/client');
+            setClientBills(res.data.data)
+            return res.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    const manageRemittance = async ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => {
+        try {
+            const res = await axiosIWAuth.post(`/admin/manage-remittance`, {
+                remittanceId,
+                bankTransactionId,
+                status
+            });
+            if (res.data?.valid) {
+                toast({
+                    variant: "default",
+                    title: "Remittance Updated",
+                    description: "Remittance has been updated successfully.",
+                });
+                getFutureRemittance()
+                getAllRemittance()
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return false;
+        }
+    }
+
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
             getAllOrders("all")
@@ -257,8 +295,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getAllRemittance();
 
             getAllCouriers(),
-                getSellerAssignedCouriers()
-            getFutureRemittance()
+                getSellerAssignedCouriers(),
+                getFutureRemittance()
+            getClientBillingData();
         }
     }, [user, userToken])
 
@@ -285,6 +324,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 getSellerAssignedCouriers,
                 getSellerRemittanceID,
                 upateSellerAssignedCouriers,
+                clientBills,
+                getClientBillingData,
+                manageRemittance
             }}
         >
             {children}

@@ -145,6 +145,7 @@ export interface B2COrderType {
   _id: string;
   awb?: string;
   channelName: string;
+  isReverseOrder?: boolean;
   carrierName?: string;
   sellerId: string;
   bucket?: number;

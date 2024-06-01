@@ -95,6 +95,7 @@ export function CloneOrderDrawer() {
                 pincode: "",
                 city: "",
             },
+            isReverseOrder: false
         }
     });
 
@@ -143,6 +144,8 @@ export function CloneOrderDrawer() {
         form.setValue('customerDetails.pincode', order?.customerDetails?.pincode?.toString() || "");
         form.setValue('customerDetails.state', order?.customerDetails?.state || "");
         form.setValue('customerDetails.city', order?.customerDetails?.city || "");
+        
+        form.setValue('isReverseOrder', order?.isReverseOrder || false)
 
 
     }, [form, order]);

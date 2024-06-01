@@ -138,6 +138,7 @@ export default function CourierPage() {
                                                                 orderId: courierPartners.orderDetails._id,
                                                                 carrierId: partner.carrierID,
                                                                 carrierNickName: partner.nickName,
+                                                                charge: partner.charge,
                                                             })
                                                         } finally {
                                                             setLoading(false)

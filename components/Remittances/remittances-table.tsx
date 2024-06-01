@@ -14,7 +14,7 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, DownloadIcon, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -37,6 +37,10 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useSearchParams } from "next/navigation"
+import { DatePickerWithRange } from "../DatePickerWithRange"
+import { DateRange } from "react-day-picker"
+import CsvDownloader from 'react-csv-downloader';
+import { format } from "date-fns"
 
 
 
@@ -50,10 +54,23 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
         "Shipment Details": isShipmentVisible,
     });
+
+    const defaultToDate = new Date();
+    const defaultFromDate = new Date(
+        defaultToDate.getFullYear(),
+        defaultToDate.getMonth() - 1,
+    );
+    const [date, setDate] = React.useState<DateRange | undefined>({
+        from: defaultFromDate,
+        to: defaultToDate,
+    })
+
+    const [filteredData, setFilteredData] = React.useState<any[]>(data)
+
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
-        data,
+        data: filteredData,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -71,17 +88,67 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
         },
     })
 
+    React.useEffect(() => {
+        if ((!date?.from || !date?.to) || (date.from === date.to)) return
+        const a = data.filter((row) => {
+            if (date?.from && date?.to) {
+                return row.remittanceDate > new Date(date.from).toISOString() && row.remittanceDate < new Date(date.to).toISOString()
+            }
+            return false;
+        });
+        setFilteredData(a);
+    }, [data, date]);
+
+
+    const cols = [
+        {
+            id: "remittanceId",
+            displayName: "Remittance Number"
+        },
+        {
+            id: "remittanceDate",
+            displayName: "Date"
+        },
+        {
+            id: "BankTransactionId",
+            displayName: "Bank Transaction ID"
+        },
+        {
+            id: "remittanceStatus",
+            displayName: "Status"
+        },
+        {
+            id: "remittanceAmount",
+            displayName: "Total Remittance Amount"
+        }
+    ]
+    const datas = filteredData.map((row) => {
+        return {
+            remittanceId: row.remittanceId,
+            remittanceDate: format(row.remittanceDate, 'dd MM yyyy'),
+            BankTransactionId: row.BankTransactionId,
+            remittanceStatus: row.remittanceStatus,
+            remittanceAmount: row.remittanceAmount
+        }
+    })
+
     return (
         <div className="w-full">
             <div className="flex items-center py-4">
-                <Input
-                    placeholder="Search by Remittance Number"
-                    value={(table.getColumn("remittanceId")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("remittanceId")?.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                />
+                <div className="flex gap-3">
+                    <Input
+                        placeholder="Search by Remittance Number"
+                        value={(table.getColumn("remittanceId")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn("remittanceId")?.setFilterValue(event.target.value)
+                        }
+                        className="w-64"
+                    />
+                    <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
+                    <CsvDownloader filename="Remittance" datas={datas} columns={cols}>
+                        <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
+                    </CsvDownloader>
+                </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">

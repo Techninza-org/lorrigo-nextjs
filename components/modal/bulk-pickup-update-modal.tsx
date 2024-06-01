@@ -21,7 +21,6 @@ export const BulkPickupUpdateSchema = z.object({
     pickupAddressId: z.string(),
 })
 
-
 export const BulkPickupUpdateModal = () => {
     const { handleBulkPickupChange, sellerFacilities } = useSellerProvider();
 

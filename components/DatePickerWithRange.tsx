@@ -1,30 +1,31 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import * as React from "react"
+import { format } from "date-fns"
+import { Calendar as CalendarIcon } from "lucide-react"
+import { DateRange, Matcher, SelectRangeEventHandler } from "react-day-picker"
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Matcher, SelectRangeEventHandler } from "react-day-picker";
+} from "@/components/ui/popover"
 
-export default function DatePickerWithRange({
+export function DatePickerWithRange({
   className,
   date,
   setDate,
-  disabledDates,
+  disabledDates
 }: {
-  className?: string;
-  date: { from: Date; to: Date } | null;
-  setDate:  SelectRangeEventHandler;
-  disabledDates?: Matcher | Matcher[] | undefined
+  className?: string
+  date: DateRange | undefined
+  setDate: (date: DateRange) => void
+  disabledDates: Matcher | Matcher[] 
 }) {
+
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -33,7 +34,7 @@ export default function DatePickerWithRange({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-full justify-start text-left font-normal",
+              "w-[300px] justify-start text-left font-normal",
               !date && "text-muted-foreground"
             )}
           >
@@ -55,15 +56,15 @@ export default function DatePickerWithRange({
         <PopoverContent className="w-auto p-0" align="end">
           <Calendar
             initialFocus
-            disabled={disabledDates}
             mode="range"
+            disabled={disabledDates}
             defaultMonth={date?.from}
-            selected={date || undefined} // Update the type to allow for null values
-            onSelect={setDate}
+            selected={date}
+            onSelect={setDate as SelectRangeEventHandler}
             numberOfMonths={2}
           />
         </PopoverContent>
       </Popover>
     </div>
-  );
+  )
 }

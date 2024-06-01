@@ -23,9 +23,14 @@ export async function middleware(request: NextRequest) {
     '/rate-calc',
     '/print',
     '/finance',
+    '/recharge-wallet/success',
+    '/recharge-wallet/failure',
+
+    // public files
     '/bulk-sample.csv',
     '/pickup_bulk_sample.csv',
     '/order-bulk-sample.csv',
+    '/client_billing_sample_format.csv',
   ];
 
   const adminRoutes = [

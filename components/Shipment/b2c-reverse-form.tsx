@@ -52,7 +52,7 @@ export const formDataSchema = z.object({
     amount2Collect: z.string().optional(),
     productDetails: productDetailsSchema,
     pickupAddress: z.string().min(1, "Pickup address is required"),
-    isReverseOrder: z.boolean().default(true).optional()
+    isReverseOrder: z.boolean().default(false).optional()
 });
 
 
@@ -90,7 +90,7 @@ export const B2CReverseForm = () => {
                 taxableValue: "",
             },
             pickupAddress: "",
-            isReverseOrder: true
+            isReverseOrder: false
         }
     });
 
@@ -148,7 +148,7 @@ export const B2CReverseForm = () => {
             });
             if (isSuccess == true) {
                 form.reset();
-                router.push('/orders');
+                router.push('/orders/reverse');
             }
         } catch (error) {
             console.log(error);
@@ -165,7 +165,7 @@ export const B2CReverseForm = () => {
                                 {/* <Button type='button' size={"icon"} variant={"secondary"} onClick={()=>router.back()}>
                                     <Undo2 size={20} />
                                 </Button> */}
-                                <span>Create a new shipment (D2C)</span>
+                                <span>Create a Reverse shipment (D2C)</span>
                             </CardTitle>
                             <CardDescription>Order Details</CardDescription>
                         </CardHeader>
@@ -177,7 +177,7 @@ export const B2CReverseForm = () => {
                             collectableFeild={collectableFeild}
                         />
                         <CardFooter className='flex-row-reverse gap-3'>
-                            <Button disabled={isLoading} type='submit' variant={'themeButton'} >Create Reverse Shipment</Button>
+                            <Button disabled={isLoading} type='submit' variant={'themeButton'}>Create Reverse Shipment</Button>
                             <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => router.push("/dashboard")}>Go to dashboard</Button>
                         </CardFooter>
                     </Card>

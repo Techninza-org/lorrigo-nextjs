@@ -4,28 +4,34 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import { 
-  CommandDialog, 
-  CommandEmpty, 
-  CommandGroup, 
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList
 } from "@/components/ui/command";
+import { Badge } from "./ui/badge";
 
 interface SearchPropsBar {
   data: {
     label: string;
-    type: "channel" | "member",
+    type: "hub" | "order",
     data: {
       icon: React.ReactNode;
       name: string;
       id: string;
+      subBadgeText: string;
+      badgeInfo?: {
+        variant: string;
+        text: string;
+      }
     }[] | undefined
   }[]
 }
 
-export default function  SearchBar ({
+export default function SearchBar({
   data
 }: SearchPropsBar) {
   const [open, setOpen] = useState(false);
@@ -44,16 +50,16 @@ export default function  SearchBar ({
     return () => document.removeEventListener("keydown", down)
   }, []);
 
-  const onClick = ({ id, type }: { id: string, type: "channel" | "member"}) => {
+  const onClick = ({ id, type }: { id: string, type: "hub" | "order" }) => {
     setOpen(false);
 
-    // if (type === "member") {
-    //   return router.push(`/server/${params?.serverId}/conversations/${id}`)
-    // }
+    if (type === "order") {
+      return router.push(`/track/${id}`)
+    }
 
-    // if (type === "channel") {
-    //   return router.push(`/server/${params?.serverId}/channels/${id}`)
-    // }
+    if (type === "hub") {
+      return router.push(`/settings/pickup-address/manage-pickup-addresses`)
+    }
   }
 
   return (
@@ -80,14 +86,16 @@ export default function  SearchBar ({
 
             return (
               <CommandGroup key={label} heading={label}>
-                  {data?.map(({ id, icon, name }) => {
-                    return (
-                      <CommandItem key={id} onSelect={() => onClick({ id, type })}>
-                        {icon}
-                        <span>{name}</span>
-                      </CommandItem>
-                    )
-                  })}
+                {data?.map(({ id, icon, name, subBadgeText, badgeInfo }) => {
+                  return (
+                    <CommandItem className="space-x-3" key={id} onSelect={() => onClick({ id, type })}>
+                      {icon}
+                      <span>{name}</span>
+                      <Badge variant={(badgeInfo?.variant || "secondary") as "default" | "secondary" | "destructive" | "outline" | "success" | "failure" | "warning" | null | undefined}>{badgeInfo?.text}</Badge>
+                      {subBadgeText  && <Badge variant={'secondary'}>{subBadgeText}</Badge>}
+                    </CommandItem>
+                  )
+                })}
               </CommandGroup>
             )
           })}

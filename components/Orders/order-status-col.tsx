@@ -49,6 +49,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
                     <p className="uppercase flex gap-1"><ShoppingCartIcon size={18} /> {rowData?.channelName?.toLowerCase() === "shopify" ? "Shopify" : "Custom"}</p>
                 </div>
             )
+
         }
     },
     {

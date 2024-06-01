@@ -101,7 +101,7 @@ export const B2CForm = () => {
 
     useEffect(() => {
         setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name) || "@@", `${orders?.length || 0}`))
-    }, [currentDate, setValue, user?.name])
+    }, [orders?.length, seller?.companyProfile?.companyName, user?.name])
 
     useEffect(() => {
         if (isCOD) {
@@ -161,9 +161,6 @@ export const B2CForm = () => {
                     <Card className='col-span-3 space-y-3'>
                         <CardHeader>
                             <CardTitle className='space-x-2'>
-                                {/* <Button type='button' size={"icon"} variant={"secondary"} onClick={()=>router.back()}>
-                                    <Undo2 size={20} />
-                                </Button> */}
                                 <span>Create a new shipment (D2C)</span>
                             </CardTitle>
                             <CardDescription>Order Details</CardDescription>
