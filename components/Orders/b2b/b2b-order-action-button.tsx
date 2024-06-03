@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link";
 import React from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { B2COrderType } from "@/types/types";
 import { useModal } from "@/hooks/use-model-store";
 import {
@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontalIcon } from "lucide-react";
+import { B2BOrderType } from "@/types/B2BTypes";
 
 export const getBucketStatus = (bucket: number) => {
     switch (bucket) {
@@ -41,7 +42,7 @@ export const getBucketStatus = (bucket: number) => {
 export const CANCELED = 6;
 
 
-export const B2BOrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
+export const B2BOrderButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData }) => {
     let orderStage = rowData.orderStages?.[rowData.orderStages.length - 1]?.stage as number;
 
     const orderStatusTillUs = [0, 1, 4, 6, 17, 24, 52, 67];
@@ -84,7 +85,7 @@ export const B2BOrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData })
     if (orderStage === 24 || orderStage === 52) {
         return (
             <div className="flex gap-2 items-center">
-                <Button variant={"themeButton"} size={"sm"} onClick={() => { onOpen("schedulePickup", { order: rowData }) }}>
+                <Button variant={"themeButton"} size={"sm"} onClick={() => { onOpen("schedulePickup", { b2bOrder: rowData }) }}>
                     Schedule Pickup
                 </Button>
                 <DropdownMenu>
@@ -108,14 +109,14 @@ export const B2BOrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData })
 
     if (orderStage === 6) {
         return (
-            <Button variant={"webPageBtn"} size={"sm"} onClick={() => onOpen("cloneOrder", { order: rowData })}>Clone Order</Button>
+            <Button variant={"webPageBtn"} size={"sm"} onClick={() => onOpen("cloneOrder", { b2bOrder: rowData })}>Clone Order</Button>
         );
     }
 
     if (orderStage === 67 || orderStage === 4) {
         return (
             <div className="flex gap-2 items-center">
-                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("downloadManifest", { order: rowData })}>Download Manifest</Button>
+                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("downloadManifest", { b2bOrder: rowData })}>Download Manifest</Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -137,7 +138,7 @@ export const B2BOrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData })
     if (orderStage == 3) {
         return (
             <div className="flex gap-2 items-center">
-                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("ndrOrder", { order: rowData })}>Reattempt</Button>
+                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("ndrOrder", { b2bOrder: rowData })}>Reattempt</Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -146,7 +147,7 @@ export const B2BOrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData })
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
-                        <DropdownMenuItem onClick={() => onOpen("ndrRTOrder", { order: rowData })}>RTO</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onOpen("ndrRTOrder", { b2bOrder: rowData })}>RTO</DropdownMenuItem>
                         <OrderCloneButton rowData={rowData} />
                         <DownloadLabelButton rowData={rowData} />
                     </DropdownMenuContent>
@@ -156,26 +157,7 @@ export const B2BOrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData })
     }
 
     return (
-        // <div className="flex gap-2 items-center">
-        //     {/* <Button variant={"themeNavActiveBtn"} size={"sm"} onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</Button> */}
-        //     <DropdownMenu>
-        //         <DropdownMenuTrigger asChild>
-        //             <Button variant="ghost" className="h-8 w-8 p-0">
-        //                 <span className="sr-only">Open menu</span>
-        //                 <MoreHorizontalIcon className="h-4 w-4" />
-        //             </Button>
-        //         </DropdownMenuTrigger>
-        //         <DropdownMenuContent align="start">
-        //             <OrderCloneButton rowData={rowData} />
-
-        //             <DropdownMenuSeparator />
-        //             <OrderCancelButton rowData={rowData} />ndr
-
-        //         </DropdownMenuContent>
-        //     </DropdownMenu>
-        // </div>
         <div className="flex gap-2 items-center">
-            {/* <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("ndrOrder", { order: rowData })}>Reattempt</Button> */}
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -192,30 +174,30 @@ export const B2BOrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData })
     );
 };
 
-export const OrderCancelButton = ({ rowData }: { rowData: B2COrderType }) => {
+export const OrderCancelButton = ({ rowData }: { rowData: B2BOrderType }) => {
     const { onOpen } = useModal();
     return (
-        <DropdownMenuItem onClick={() => onOpen("cancelOrder", { order: rowData })} className="text-red-500">Cancel Order</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onOpen("cancelOrder", { b2bOrder: rowData })} className="text-red-500">Cancel Order</DropdownMenuItem>
     );
 }
 
-export const OrderCloneButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
+export const OrderCloneButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData }) => {
     const { onOpen } = useModal();
     return (
-        <DropdownMenuItem onClick={() => onOpen("cloneOrder", { order: rowData })}>Clone Order</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onOpen("cloneB2BOrder", { b2bOrder: rowData })}>Clone Order</DropdownMenuItem>
     );
 }
 
-export const OrderEditButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
+export const OrderEditButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData }) => {
     const { onOpen } = useModal();
     return (
-        <DropdownMenuItem onClick={() => onOpen("editOrder", { order: rowData })}>Edit Order</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onOpen("editB2BOrder", { b2bOrder: rowData })}>Edit Order</DropdownMenuItem>
     );
 }
 
-export const DownloadLabelButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
+export const DownloadLabelButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData }) => {
     const { onOpen } = useModal();
     return (
-        <DropdownMenuItem onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onOpen("downloadLabel", { b2bOrder: rowData })}>Download Label</DropdownMenuItem>
     );
 }

@@ -40,7 +40,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useSellerProvider } from "../providers/SellerProvider"
+import { useSellerProvider } from "../../providers/SellerProvider"
 import { cn } from "@/lib/utils"
 import { useModal } from "@/hooks/use-model-store"
 import { B2COrderType } from "@/types/types"

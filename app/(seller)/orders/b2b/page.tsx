@@ -1,4 +1,4 @@
-import B2BOrders from "@/components/b2b/b2b-orders";
+import B2BOrders from "@/components/Orders/b2b/b2b-orders";
 import { LoadingComponent } from "@/components/loading-spinner";
 import { NavigationItem } from "@/components/navigation/navigation-item";
 import { Suspense } from "react";

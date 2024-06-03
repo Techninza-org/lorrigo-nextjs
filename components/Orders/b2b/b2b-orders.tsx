@@ -1,8 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { OrderStatusCol } from "../Orders/order-status-col";
-import { useSellerProvider } from "../providers/SellerProvider";
+import { useSellerProvider } from "../../providers/SellerProvider";
 import { B2BOrderStatusTable } from "./b2b-order-status-table";
 import { B2BOrderStatusCol } from "./b2b-order-status-col";
 

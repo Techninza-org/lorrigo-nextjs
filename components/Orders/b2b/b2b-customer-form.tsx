@@ -25,14 +25,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-model-store";
-import { PhoneInput } from '../ui/phone-input';
-import { useSellerProvider } from '../providers/SellerProvider';
-import { useEffect, useState } from 'react';
-import { useToast } from '../ui/use-toast';
+import { PhoneInput } from '@/components/ui/phone-input';
+import { useSellerProvider } from '@/components/providers/SellerProvider';
+import { useEffect } from 'react';
+import { useToast } from '@/components/ui/use-toast';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
-import { LoadingSpinner } from '../loading-spinner';
+import { LoadingSpinner } from '@/components/loading-spinner';
 
-export const customerDetailsSchema = z.object({
+export const B2BCustomerDetailsSchema = z.object({
     customerDetails: z.object({
         name: z.string().min(1, "Name is required"),
         phone: z.string().refine(isValidPhoneNumber, { message: "Phone number is required" }),
@@ -47,17 +47,17 @@ export const customerDetailsSchema = z.object({
 });
 
 
-export const AddCustomerModal = () => {
-    const { setSellerCustomerForm, sellerCustomerForm, isOrderCreated } = useSellerProvider()
+export const AddB2BCustomerModal = () => {
+    const { setSellerCustomerForm, sellerCustomerForm, isOrderCreated, handleCreateCustomer } = useSellerProvider()
     const { isOpen, onClose, type } = useModal();
 
     const router = useRouter();
     const { toast } = useToast();
 
-    const isModalOpen = isOpen && type === "addCustomer";
+    const isModalOpen = isOpen && type === "addB2BCustomer";
 
     const form = useForm({
-        resolver: zodResolver(customerDetailsSchema),
+        resolver: zodResolver(B2BCustomerDetailsSchema),
         defaultValues: {
             customerDetails: {
                 name: "",
@@ -68,6 +68,7 @@ export const AddCustomerModal = () => {
                 state: "",
                 pincode: "",
                 city: "",
+                gst: ""
             }
         }
     });
@@ -84,8 +85,12 @@ export const AddCustomerModal = () => {
     const { formState: { errors, isSubmitting }, reset, handleSubmit } = form;
     const isLoading = isSubmitting;
 
-    const onSubmit = async (values: z.infer<typeof customerDetailsSchema>) => {
+    const onSubmit = async (values: z.infer<typeof B2BCustomerDetailsSchema>) => {
         try {
+            //create customer
+            handleCreateCustomer(values)
+            
+
             setSellerCustomerForm({
                 ...sellerCustomerForm,
                 customerForm: {
@@ -312,6 +317,29 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                                             disabled={isLoading || isPinLoading}
                                             className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             placeholder="Enter the city"
+                                            {...field}
+                                        />
+                                        {isPinLoading && <LoadingSpinner />}
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="customerDetails.gst"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    GST
+                                </FormLabel>
+                                <FormControl>
+                                    <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                        <Input
+                                            disabled={isLoading || isPinLoading}
+                                            className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                            placeholder="Enter GST number"
                                             {...field}
                                         />
                                         {isPinLoading && <LoadingSpinner />}

@@ -20,6 +20,8 @@ import { BillingAddressSchema } from "../Settings/billing-address-form";
 import { ChannelFormSchema } from "../Channel/channel-integration-form";
 import { BulkUpdateShopifyOrdersSchema } from "../modal/bulk-update-shopify-modal";
 import { usePaymentGateway } from "./PaymentGatewayProvider";
+import { B2BOrderType } from "@/types/B2BTypes";
+import { b2bformDataSchema } from "../Orders/b2b/b2b-form";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -67,11 +69,12 @@ interface SellerContextType {
 
   sellerBilling: any; // Type should be updated
 
-  handleCreateB2BOrder: (order: any) => boolean | Promise<boolean>;
+  handleCreateB2BOrder: (order: z.infer<typeof b2bformDataSchema>) => boolean | Promise<boolean>;
   getB2BOrders: () => Promise<void>;
-  b2bOrders: any[];
+  b2bOrders: B2BOrderType[];
   getB2bCourierPartners: (orderId: string) => Promise<any>;
   handleCreateB2BShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => boolean | Promise<boolean>;
+  handleEditB2BOrder: (order: z.infer<typeof b2bformDataSchema>, orderId: string) => boolean | Promise<boolean>;
 }
 
 interface sellerCustomerFormType {
@@ -930,7 +933,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const handleCreateB2BOrder = async (order: any) => {
+  const handleCreateB2BOrder = async (order: z.infer<typeof b2bformDataSchema>) => {
     try {
       const res = await axiosIWAuth.post('/order/b2b', order);
       if (res.data?.valid) {
@@ -939,10 +942,36 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "B2B order created successfully",
           description: "Order has been created successfully",
         });
-        // setIsOrderCreated(!isOrderCreated);
-        // getSellerDashboardDetails();
-        // getAllOrdersByStatus("all");
-        router.refresh();
+        getB2BOrders();
+        return true;
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: res.data.message,
+        });
+        return false;
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An error occurred",
+      });
+      return false;
+    }
+  }
+
+  const handleEditB2BOrder = async (order: z.infer<typeof b2bformDataSchema>, orderId: string) => {
+    try {
+      const res = await axiosIWAuth.patch('/order/update/b2b', { order, orderId });
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "B2B order created successfully",
+          description: "Order has been created successfully",
+        });
+        getB2BOrders();
         return true;
       } else {
         toast({
@@ -965,8 +994,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const getB2BOrders = async () => {
     try {
       const res = await axiosIWAuth.get('/order/all/b2b');
-      console.log(res.data, 'res data');
-
       if (res.data?.valid) {
         setB2bOrders(res.data.response.orders);
       }
@@ -1009,7 +1036,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
     }
   }, [axiosIWAuth, router, toast])
-
 
 
   const getSellerBillingDetails = async () => {
@@ -1093,7 +1119,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getB2BOrders,
         b2bOrders,
         getB2bCourierPartners,
-        handleCreateB2BShipment
+        handleCreateB2BShipment,
+        handleEditB2BOrder
       }}
     >
       {children}

@@ -1,9 +1,9 @@
 'use client'
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { CardContent } from "../ui/card";
-import { FormField, FormItem, FormMessage } from "../ui/form";
-import { Input } from "../ui/input";
+import { Button } from "../../ui/button";
+import { CardContent } from "../../ui/card";
+import { FormField, FormItem, FormMessage } from "../../ui/form";
+import { Input } from "../../ui/input";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { PlusCircleIcon } from "lucide-react";
 
@@ -41,7 +41,7 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append }: BoxDetailsPro
     };
     
     useEffect(() => {
-        const totalQty = boxes.reduce((sum: number, box: any) => sum + Number(box.qty || 0), 0);
+        const totalQty = boxes?.reduce((sum: number, box: any) => sum + Number(box.qty || 0), 0);
         setBoxesLeft(total - totalQty);
     }, [total, boxes]);
     

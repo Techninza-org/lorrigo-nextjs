@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { EditOrderDrawer } from "../drawer/edit-order-drawer";
 import { CloneOrderDrawer } from "../drawer/clone-order-drawer";
+import { EditB2BOrderDrawer } from "../drawer/b2b/edit-b2b-order-drawer";
+import { CloneB2BOrderDrawer } from "../drawer/b2b/clone-order-drawer";
 
 
 export const DrawerProvider = () => {
@@ -18,6 +20,9 @@ export const DrawerProvider = () => {
       <>
         <EditOrderDrawer/>
         <CloneOrderDrawer/>
+
+        <EditB2BOrderDrawer/>
+        <CloneB2BOrderDrawer/>
         
       </>
     );

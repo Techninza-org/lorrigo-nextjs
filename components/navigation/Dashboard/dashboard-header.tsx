@@ -70,7 +70,7 @@ export const DashboardHeader = () => {
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem value="D2C">D2C</SelectItem>
-                    <SelectItem disabled={true} value="B2B">B2B</SelectItem>
+                    <SelectItem value="B2B">B2B</SelectItem>
                 </SelectContent>
             </Select>
             <SearchBar

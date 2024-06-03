@@ -1,19 +1,18 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { B2COrderType } from "@/types/types";
 import { Copy, ShoppingCartIcon } from "lucide-react";
 import { formatDate } from "date-fns";
 import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
-import { Badge } from "../ui/badge";
-// import { OrderButton, getBucketStatus } from "./order-action-button";
+import { Badge } from "../../ui/badge";
 import Link from "next/link";
-import HoverCardToolTip from "../hover-card-tooltip";
-import { Checkbox } from "../ui/checkbox";
-import { OrderButton, getBucketStatus } from "../Orders/order-action-button";
+import HoverCardToolTip from "../../hover-card-tooltip";
+import { Checkbox } from "../../ui/checkbox";
+import { OrderButton, getBucketStatus } from "../order-action-button";
 import { B2BOrderButton } from "./b2b-order-action-button";
+import { B2BOrderType } from "@/types/B2BTypes";
 
-export const B2BOrderStatusCol: ColumnDef<any>[] = [  ///Changed to any 
+export const B2BOrderStatusCol: ColumnDef<B2BOrderType>[] = [  ///Changed to any 
     {
         id: "order",
         header: ({ table }) => (
@@ -103,8 +102,8 @@ export const B2BOrderStatusCol: ColumnDef<any>[] = [  ///Changed to any
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center cursor-pointer">
-                    <HoverCardToolTip label={rowData.pickupAddress.name}>
-                        {`${rowData.pickupAddress.address1}, ${rowData.pickupAddress.address2}, ${rowData.pickupAddress.city}, ${rowData.pickupAddress.state}, ${rowData.pickupAddress.pincode}`}
+                    <HoverCardToolTip label={rowData.pickupAddress?.name ?? ''}>
+                        {`${rowData.pickupAddress?.address1 ?? ''}, ${rowData.pickupAddress?.address2 ?? ''}, ${rowData.pickupAddress?.city ?? ''}, ${rowData.pickupAddress?.state ?? ''}, ${rowData.pickupAddress?.pincode ?? ''}`}
                     </HoverCardToolTip>
                 </div>
             )

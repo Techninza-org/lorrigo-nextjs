@@ -17,9 +17,9 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { useSellerProvider } from "@/components/providers/SellerProvider"
 import { useEffect, useState } from "react"
-import { useAuth } from "../providers/AuthProvider"
+import { useAuth } from "../../providers/AuthProvider"
 import { useFormStatus } from "react-dom";
-import { LoadingComponent } from "../loading-spinner"
+import { LoadingComponent } from "../../loading-spinner"
 import { OrderType } from "@/types/types"
 
 export const dynamic = 'force-dynamic'

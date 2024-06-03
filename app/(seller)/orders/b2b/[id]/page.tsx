@@ -1,4 +1,4 @@
-import B2BCourierPage from "@/components/b2b/b2b-courier-page";
+import B2BCourierPage from "@/components/Orders/b2b/b2b-courier-page";
 import { LoadingComponent } from "@/components/loading-spinner";
 import { Suspense } from "react";
 
