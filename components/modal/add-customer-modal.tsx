@@ -84,6 +84,8 @@ export const AddCustomerModal = () => {
     const { formState: { errors, isSubmitting }, reset, handleSubmit } = form;
     const isLoading = isSubmitting;
 
+    console.log(errors, form.watch("customerDetails.phone"),  "erros");
+
     const onSubmit = async (values: z.infer<typeof customerDetailsSchema>) => {
         try {
             setSellerCustomerForm({
@@ -180,11 +182,11 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                                 </FormLabel>
                                 <FormControl>
                                     <PhoneInput
-                                        disabled={isLoading}
-                                        className="bg-zinc-300/10 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                        defaultCountry='IN'
-                                        placeholder='Enter the contact number'
                                         {...field}
+                                        defaultCountry='IN'
+                                        className="bg-zinc-300/10 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                        placeholder='Enter the contact number'
+                                        disabled={isLoading}
                                     />
                                 </FormControl>
                                 <FormMessage />
