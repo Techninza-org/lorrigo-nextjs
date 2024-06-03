@@ -45,7 +45,6 @@ export const B2BOrderStatusCol: ColumnDef<B2BOrderType>[] = [  ///Changed to any
                     <p className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
                         <Link href={`/track/${rowData._id}`}>{rowData.order_reference_id}</Link>
                         <Copy className="ml-2 cursor-pointer" size={15} onClick={() => handleCopyText(`${rowData.order_reference_id}`)} /></p>
-                    {rowData?.order_invoice_date && <p>{formatDate(`${rowData?.order_invoice_date}`, 'dd MM yyyy | HH:mm a')}</p>}
                     <p className="uppercase flex gap-1"><ShoppingCartIcon size={18} /> {rowData?.channelName?.toLowerCase() === "shopify" ? "Shopify" : "Custom"}</p>
                 </div>
             )
@@ -68,11 +67,11 @@ export const B2BOrderStatusCol: ColumnDef<B2BOrderType>[] = [  ///Changed to any
         header: 'Package Details',
         cell: ({ row }) => {
             const rowData = row.original;
-            const totalVolumetricWeight = rowData.packageDetails.reduce((total: number, item: any) => {
+            const totalVolumetricWeight = rowData.packageDetails?.reduce((total: number, item: any) => {
                 const volumetricWeight = ((item.orderBoxLength || 1) * (item.orderBoxWidth || 1) * (item.orderBoxHeight || 1)) / 5000;
                 return total + volumetricWeight;
             }, 0);
-            const vol = totalVolumetricWeight.toFixed(3);
+            const vol = totalVolumetricWeight?.toFixed(3);
             return (
                 <div className="space-y-1 items-center">
                     <p>Dead wt. {rowData.total_weight} kg</p>
