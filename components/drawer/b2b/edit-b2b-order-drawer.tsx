@@ -42,7 +42,7 @@ export function EditB2BOrderDrawer() {
 
 
     useEffect(() => {
-        form.setValue('client_name', seller?.companyProfile.companyName || user?.name || '');
+        form.setValue('client_name', seller?.companyProfile?.companyName || user?.name || '');
     }, [form, seller, user?.name])
 
     useEffect(() => {

@@ -39,11 +39,11 @@ export function CloneB2BOrderDrawer() {
     });
 
     useEffect(() => {
-        form.setValue('client_name', seller?.companyProfile.companyName || user?.name || '');
+        form.setValue('client_name', seller?.companyProfile?.companyName || user?.name || '');
     }, [form, seller, user?.name])
 
     useEffect(() => {
-        form.setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name) || "@@", `${orders?.length || 0}`))
+        form.setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name || "") || "@@", `${orders?.length || 0}`))
     }, [form, orders?.length, seller?.companyProfile?.companyName, user?.name])
 
     useEffect(() => {

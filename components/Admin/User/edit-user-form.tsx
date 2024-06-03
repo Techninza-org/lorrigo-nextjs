@@ -76,7 +76,7 @@ const EditUserForm = () => {
                     phone: values.phone
                 },
                 companyProfile: {
-                    companyName: values.companyName,
+                    companyName: values?.companyName,
                     companyEmail: values.companyEmail
                 },
                 prefix: values.prefix,

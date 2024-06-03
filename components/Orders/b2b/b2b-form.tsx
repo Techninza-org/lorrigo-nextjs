@@ -73,7 +73,7 @@ export default function B2BForm() {
     const isLoading = form.formState.isSubmitting;
 
     useEffect(() => {
-        form.setValue('client_name', seller?.companyProfile.companyName || user?.name || '');
+        form.setValue('client_name', seller?.companyProfile?.companyName || user?.name || '');
     }, [form, seller, user?.name])
 
     useEffect(() => {

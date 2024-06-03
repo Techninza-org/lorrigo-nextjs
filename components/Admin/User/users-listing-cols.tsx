@@ -64,7 +64,7 @@ export const AdminUsersListingCols: ColumnDef<SellerType>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{rowData.companyProfile?.companyName}</p>
+                    <p>{rowData.companyProfile?.companyName || ""}</p>
                 </div>
             )
         }
