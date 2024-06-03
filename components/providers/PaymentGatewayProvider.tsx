@@ -63,11 +63,11 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    useEffect(() => {
-        if ((!!user || !!userToken) && user?.role === "seller") {
-            fetchWalletBalance();
-        }
-    }, [confirmRecharge, user, userToken]);
+    // useEffect(() => {
+    //     if ((!!user || !!userToken) && user?.role === "seller") {
+    //         fetchWalletBalance();
+    //     }
+    // }, [confirmRecharge, user, userToken]);
 
     return (
         <PaymentGatewayContext.Provider value={{
