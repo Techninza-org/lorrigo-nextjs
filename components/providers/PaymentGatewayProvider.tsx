@@ -23,19 +23,12 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter();
 
     const [walletBalance, setWalletBalance] = useState(0);
-    const [isFetching, setIsFetching] = useState(false);
-    const [fetchError, setFetchError] = useState(false);
 
     const fetchWalletBalance = async () => {
         try {
-            setIsFetching(true);
-            setFetchError(false);
             const response = await axiosIWAuth.get('/seller/wallet-balance');
             setWalletBalance(response.data.walletBalance);
-            setIsFetching(false);
         } catch (error: any) {
-            setIsFetching(false);
-            setFetchError(true);
             toast({
                 title: 'Error',
                 description: error?.response?.data?.message || "An error occurred",
@@ -59,6 +52,7 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
     const confirmRecharge = async ({ params }: { params: string }) => {
         try {
             const response = await axiosIWAuth.post(`/seller/confirm-recharge-wallet?merchantTransactionId=${params}`);
+            await fetchWalletBalance();
             router.push('/dashboard')
         } catch (error: any) {
             toast({
@@ -70,10 +64,10 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
     }
 
     useEffect(() => {
-        if ((user || userToken) && user?.role === "seller" && !isFetching && !fetchError) {
+        if ((user || userToken) && user?.role === "seller") {
             fetchWalletBalance();
         }
-    }, [confirmRecharge, user, userToken, isFetching, fetchError]);
+    }, [user, userToken]);
 
     return (
         <PaymentGatewayContext.Provider value={{
