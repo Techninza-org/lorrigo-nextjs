@@ -56,7 +56,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
     if (orderStage === 0) {
         return (
             <div className="flex gap-2 items-center">
-                <Link href={`/orders/${rowData._id}`}>
+                <Link href={`/orders/b2c/${rowData._id}`}>
                     <Button variant={"themeButton"} size={"sm"} disabled={disabled}>
                         Ship now
                     </Button>
