@@ -13,13 +13,37 @@ import { Button } from "../ui/button"
 import { CircleAlert, TriangleAlertIcon } from "lucide-react"
 import { useModal } from "@/hooks/use-model-store"
 import { useState } from "react"
+import { B2COrderType } from "@/types/types"
+import { B2BOrderType } from "@/types/B2BTypes"
+
+// Type guard to check if an object is B2COrderType
+function isB2COrder(order: any): order is B2COrderType {
+    return order && typeof order._id === 'string';
+}
+
+// Type guard to check if an object is B2BOrderType
+function isB2BOrder(order: any): order is B2BOrderType {
+    return order && (typeof order._id === 'string' || order._id === undefined);
+}
 
 
 export const CancelOrderDialog = () => {
     const { handleCancelOrder } = useSellerProvider()
     const { onClose, type, isOpen, data } = useModal();
     const [isLoading, setIsLoading] = useState(false)
-    const { order } = data
+    let { order, b2bOrder } = data;
+    
+    let currentOrder: B2COrderType | B2BOrderType | undefined = order;
+
+    // Check if order is undefined and assign b2bOrder if it matches the type
+    if (!currentOrder) {
+        if (isB2COrder(b2bOrder)) {
+            currentOrder = b2bOrder;
+        } else if (isB2BOrder(b2bOrder)) {
+            currentOrder = b2bOrder;
+        }
+    }
+
     const isModalOpen = isOpen && type === "cancelOrder";
 
     const handleOrder = async (orderId: string, type: "order" | "shipment") => {
@@ -52,13 +76,13 @@ export const CancelOrderDialog = () => {
                     </div>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant={"destructive"} disabled={isLoading} className="w-full" onClick={() => handleOrder(order?._id ?? "", "order")}>
+                    <Button variant={"destructive"} disabled={isLoading} className="w-full" onClick={() => handleOrder(currentOrder?._id ?? "", "order")}>
                         Cancel Order
                     </Button>
 
                     {
-                        order?.awb ? (
-                            <Button variant={"secondary"} disabled={isLoading} className="w-full" onClick={() => handleOrder(order?._id ?? "", "shipment")}>
+                        currentOrder?.awb ? (
+                            <Button variant={"secondary"} disabled={isLoading} className="w-full" onClick={() => handleOrder(currentOrder?._id ?? "", "shipment")}>
                                 Cancel Shipment
                             </Button>
                         ) : null

@@ -26,7 +26,7 @@ export const dynamic = 'force-dynamic'
 
 export default function CourierPage() {
     const params = useParams()
-    const { getCourierPartners, handleCreateD2CShipment } = useSellerProvider()
+    const { getCourierPartners, handleCreateD2CShipment, handleCreateB2BShipment } = useSellerProvider()
     const { userToken } = useAuth()
     const { pending } = useFormStatus();
 
@@ -36,15 +36,14 @@ export default function CourierPage() {
 
     useEffect(() => {
         async function fetchCourierPartners() {
-            const res = await getCourierPartners(String(params.id))
+            const res = await getCourierPartners(String(params.id), String(params.type))
             setCourierPartners(res)
         }
         fetchCourierPartners()
         return () => {
             setCourierPartners(undefined)
         }
-
-    }, [userToken, params.id])
+    }, [userToken, params.type, params.id])
 
     if (!courierPartners) {
         return <LoadingComponent />
@@ -72,11 +71,12 @@ export default function CourierPage() {
                         </div>
                         <div>
                             <p className="text-sm font-semibold">Deliver To</p>
-                            <p className="text-sm"> {courierPartners.orderDetails?.customerDetails?.pincode}, {courierPartners.orderDetails?.customerDetails?.city ?? ""}</p>
+                            {<p className="text-sm"> {courierPartners.orderDetails?.customerDetails?.pincode}, {courierPartners.orderDetails?.customerDetails?.city ?? ""}</p>}
                         </div>
                         <div>
                             <p className="text-sm font-semibold">Order Value</p>
-                            <p className="text-sm"> {formatCurrencyForIndia(Number(courierPartners.orderDetails?.productId?.taxable_value))}</p>
+                            {courierPartners.orderDetails?.productId?.taxable_value && <p className="text-sm"> {formatCurrencyForIndia(Number(courierPartners.orderDetails?.productId?.taxable_value))}</p>}
+                            {courierPartners.orderDetails?.amount && <p className="text-sm"> {formatCurrencyForIndia(Number(courierPartners.orderDetails?.amount))}</p>}
                         </div>
                         <div>
                             <p className="text-sm font-semibold">Payment Mode</p>
@@ -134,12 +134,22 @@ export default function CourierPage() {
                                                     <Button disabled={pending} type="submit" variant={"themeButton"} size={"sm"} onClick={async () => {
                                                         setLoading(true)
                                                         try {
-                                                            const res = await handleCreateD2CShipment({
-                                                                orderId: courierPartners.orderDetails._id,
-                                                                carrierId: partner.carrierID,
-                                                                carrierNickName: partner.nickName,
-                                                                charge: partner.charge,
-                                                            })
+                                                            if (params.type == "b2c") {
+
+                                                                const res = await handleCreateD2CShipment({
+                                                                    orderId: courierPartners.orderDetails._id,
+                                                                    carrierId: partner.carrierID,
+                                                                    carrierNickName: partner.nickName,
+                                                                    charge: partner.charge,
+                                                                })
+                                                            } else {
+                                                                const res = await handleCreateB2BShipment({
+                                                                    orderId: courierPartners.orderDetails._id,
+                                                                    carrierId: partner.carrierID,
+                                                                    carrierNickName: partner.nickName,
+                                                                    charge: partner.charge,
+                                                                })
+                                                            }
                                                         } finally {
                                                             setLoading(false)
                                                         }

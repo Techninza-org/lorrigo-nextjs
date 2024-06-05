@@ -37,7 +37,7 @@ interface SellerContextType {
   orders: B2COrderType[];
   reverseOrders: B2COrderType[];
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
-  getCourierPartners: (orderId: string) => Promise<any>;
+  getCourierPartners: (orderId: string, type: string) => Promise<any>;
   courierPartners: OrderType | undefined;
   handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
@@ -72,8 +72,8 @@ interface SellerContextType {
   handleCreateB2BOrder: (order: z.infer<typeof b2bformDataSchema>) => boolean | Promise<boolean>;
   getB2BOrders: () => Promise<void>;
   b2bOrders: B2BOrderType[];
-  getB2bCourierPartners: (orderId: string) => Promise<any>;
-  handleCreateB2BShipment: ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => boolean | Promise<boolean>;
+  handleCreateB2BShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
+
   handleEditB2BOrder: (order: z.infer<typeof b2bformDataSchema>, orderId: string) => boolean | Promise<boolean>;
 }
 
@@ -215,27 +215,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const getCourierPartners = async (orderId: string) => {
+  const getCourierPartners = async (orderId: string, type: string) => {
     try {
 
       unstable_noStore()
-      const res = await axiosIWAuth.get(`/order/courier/b2c/SR/${orderId}`);
+      let url = type === "b2c" ? `/order/courier/${type}/SR/${orderId}` : `/order/courier/b2b/${orderId}`
+      const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
         setCourierPartners(res.data);
-        return res.data
+        return res.data;
       }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }
 
-  const getB2bCourierPartners = async (orderId: string) => {
-    try {
-      const res = await axiosIWAuth.get(`/order/courier/b2b/${orderId}`);
-      if (res.data?.valid) {
-        setCourierPartners(res.data);
-        return res.data
-      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -1001,12 +991,13 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       console.error('Error fetching data:', error);
     }
   }
-
-  const handleCreateB2BShipment = useCallback(async ({ orderId, carrierId }: { orderId: string, carrierId: Number }) => {
-
+  const handleCreateB2BShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierId: Number, carrierNickName: string, charge: Number }) => {
     const payload = {
       orderId: orderId,
       carrierId: carrierId,
+      carrierNickName,
+      charge: charge,
+      orderType: 0,
     }
     try {
       const res = await axiosIWAuth.post('/shipment/b2b', payload);
@@ -1016,6 +1007,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order created successfully",
           description: "Order has been created successfully",
         });
+        getB2BOrders();
+        fetchWalletBalance();
         getAllOrdersByStatus(status || "all")
         router.push('/orders/b2b')
         return true;
@@ -1023,7 +1016,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: res.data.message,
+        description: res?.data?.message || "Something went wrong",
       });
       return false
     } catch (error: any) {
@@ -1118,7 +1111,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         handleCreateB2BOrder,
         getB2BOrders,
         b2bOrders,
-        getB2bCourierPartners,
         handleCreateB2BShipment,
         handleEditB2BOrder
       }}

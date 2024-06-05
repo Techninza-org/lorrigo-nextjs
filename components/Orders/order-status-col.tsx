@@ -8,7 +8,6 @@ import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
 import { Badge } from "../ui/badge";
 import { OrderButton, getBucketStatus } from "./order-action-button";
 import Link from "next/link";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "../ui/hover-card";
 import HoverCardToolTip from "../hover-card-tooltip";
 import { Checkbox } from "../ui/checkbox";
 
@@ -94,7 +93,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
     },
 
     {
-        header: 'Pickup Address',
+        header: 'Warehouse Address',
         accessorKey: 'pickupAddress',
         cell: ({ row }) => {
             const rowData = row.original;

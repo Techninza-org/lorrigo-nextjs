@@ -176,6 +176,8 @@ export interface B2COrderType {
   createdAt?: string;
   updatedAt?: string;
   __v?: number;
+
+  amount?: number; // this is for B2B order
 }
 
 // Order Response

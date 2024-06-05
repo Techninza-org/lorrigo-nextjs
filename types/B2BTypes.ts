@@ -35,6 +35,7 @@ export interface B2BOrderType {
     sellerId?: string;
     freightType?: 0 | 1;
     pickupType?: 0 | 1;
+    payment_mode?: 0 | 1; // 0 for prepaid, 1 for COD
     InsuranceType?: 0 | 1;
     pickupAddress?: pickupAddressType;
     product_description?: string;
