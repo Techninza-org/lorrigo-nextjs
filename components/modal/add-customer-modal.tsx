@@ -84,8 +84,6 @@ export const AddCustomerModal = () => {
     const { formState: { errors, isSubmitting }, reset, handleSubmit } = form;
     const isLoading = isSubmitting;
 
-    console.log(errors, form.watch("customerDetails.phone"),  "erros");
-
     const onSubmit = async (values: z.infer<typeof customerDetailsSchema>) => {
         try {
             setSellerCustomerForm({

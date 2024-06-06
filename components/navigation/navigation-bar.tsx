@@ -28,9 +28,22 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             href: "/dashboard",
         },
         {
-            title: "Your Orders",
+            title: "Orders",
             icon: ShoppingCart,
-            href: "/orders",
+            subLinks: [
+                {
+                    title: "Forward Orders",
+                    href: "/orders",
+                },
+                {
+                    title: "Reverse Orders",
+                    href: "/orders/reverse",
+                },
+                {
+                    title: "B2B Orders",
+                    href: "/orders/b2b",
+                },
+            ],
         },
         {
             title: "Finance",
