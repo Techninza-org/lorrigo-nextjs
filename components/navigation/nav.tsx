@@ -27,21 +27,27 @@ interface NavProps {
 
 export function Nav({ links, isCollapsed }: NavProps) {
   const pathname = usePathname()
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false)
+  const [openDropdownIndex, setOpenDropdownIndex] = React.useState<number | null>(null)
 
-  const DropDownToggleIcon = isDropdownOpen ? ChevronUp : ChevronDown
   const isActive = (href: string) => {
     return pathname.includes(href.toLowerCase()) ? "themeNavActiveBtn" : "themeNavBtn"
-
   }
+
+  const handleDropdownToggle = (index: number) => {
+    setOpenDropdownIndex(openDropdownIndex === index ? null : index)
+  }
+
   return (
     <div
       data-collapsed={isCollapsed}
       className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2 w-full"
     >
       <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-        {links.map((link, index) =>
-          isCollapsed ? (
+        {links.map((link, index) => {
+          const isDropdownOpen = openDropdownIndex === index
+          const DropDownToggleIcon = isDropdownOpen ? ChevronUp : ChevronDown
+
+          return isCollapsed ? (
             <ActionTooltip
               key={index}
               side="right"
@@ -86,11 +92,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                   <link.icon className="mr-2 h-4 w-4" />
                   {link.title}
                   {link.label && (
-                    <span
-                      className={cn(
-                        "ml-auto",
-                      )}
-                    >
+                    <span className={cn("ml-auto")}>
                       {link.label}
                     </span>
                   )}
@@ -103,42 +105,45 @@ export function Nav({ links, isCollapsed }: NavProps) {
                       variant={isActive(link.title || "")}
                       size={"sm"}
                       className={"w-full justify-start"}
-                      onClick={() => { setIsDropdownOpen(!isDropdownOpen) }}
+                      onClick={() => handleDropdownToggle(index)}
                     >
                       <link.icon className="mr-2 h-4 w-4" /> {link.label || link.title}
                       <DropDownToggleIcon className="h-4 w-4 ml-auto transition-all" />
                     </Button>
                   </div>
                   {
-                    isDropdownOpen && (
-                      <div
-                        className="w-56"
-                      >
-                        <div className="py-1" role="none">
-                          {
-                            link.subLinks?.map((subLink, index) => (
-                              <Link
-                                key={index}
-                                href={subLink.href}
-                                className={cn(
-                                  buttonVariants({ variant: isActive(link.title || ""), size: "sm" }),
-                                  "justify-start w-full bg-opacity-50"
-                                )}
-                              >
-                                {subLink.title}
-                              </Link>
-                            ))
-                          }
-
-                        </div>
+                    <div
+                      className={cn(
+                        "overflow-hidden transition-[max-height] duration-300 ease-in-out bg-slate-50 bg-opacity-15 rounded-md mx-2 ",
+                        {
+                          "max-h-0": !isDropdownOpen,
+                          "max-h-96": isDropdownOpen,
+                        }
+                      )}
+                    >
+                      <div className="py-1" role="none">
+                        {
+                          link.subLinks?.map((subLink, subIndex) => (
+                            <Link
+                              key={subIndex}
+                              href={subLink.href}
+                              className={cn(
+                                buttonVariants({ variant: isActive(subLink.href || ""), size: "sm" }),
+                                "justify-start w-full bg-opacity-50"
+                              )}
+                            >
+                              {subLink.title}
+                            </Link>
+                          ))
+                        }
                       </div>
-                    )
+                    </div>
                   }
                 </div>
               )}
             </React.Fragment>
           )
-        )}
+        })}
       </nav>
     </div>
   )
