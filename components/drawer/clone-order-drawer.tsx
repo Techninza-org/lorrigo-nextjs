@@ -113,7 +113,7 @@ export function CloneOrderDrawer() {
         form.setValue('fragile_items', order?.isContainFragileItem || false);
         form.setValue('payment_mode', order?.payment_mode == 0 ? "Prepaid" : "COD");
         form.setValue('orderWeight', order?.orderWeight?.toString() || '');
-        form.setValue('order_invoice_date', new Date());  //order?.order_invoice_date || ''
+        form.setValue('order_invoice_date', new Date(order?.order_invoice_date || ''));
         form.setValue('order_invoice_number', order?.order_invoice_number || '');
         form.setValue('numberOfBoxes', order?.numberOfBoxes?.toString() as "1" | "2" | "3" | "4" | "5" || "1");
         form.setValue('orderSizeUnit', order?.orderSizeUnit || '');
@@ -133,6 +133,20 @@ export function CloneOrderDrawer() {
         form.setValue('sellerDetails.sellerName', order?.sellerDetails?.sellerName || "");
         form.setValue('sellerDetails.sellerGSTIN', order?.sellerDetails?.sellerGSTIN || "");
         form.setValue('sellerDetails.isSellerAddressAdded', order?.sellerDetails?.isSellerAddressAdded || false);
+        form.setValue('sellerDetails.sellerPincode', order?.sellerDetails?.sellerPincode?.toString() || "");
+        form.setValue('sellerDetails.sellerAddress', order?.sellerDetails?.sellerAddress || "");
+        form.setValue('sellerDetails.sellerPhone', order?.sellerDetails?.sellerPhone?.toString() || "");
+        form.setValue('sellerDetails.sellerCity', order?.sellerDetails?.sellerCity || "");
+        form.setValue('sellerDetails.sellerState', order?.sellerDetails?.sellerState || "");
+
+        form.setValue('customerDetails.name', order?.customerDetails?.name || "");
+        form.setValue('customerDetails.phone', order?.customerDetails?.phone || "");
+        form.setValue('customerDetails.address', order?.customerDetails?.address || "");
+        form.setValue('customerDetails.pincode', order?.customerDetails?.pincode?.toString() || "");
+        form.setValue('customerDetails.state', order?.customerDetails?.state || "");
+        form.setValue('customerDetails.city', order?.customerDetails?.city || "");
+
+        form.setValue('isReverseOrder', order?.isReverseOrder || false)
         form.setValue('ewaybill', order?.ewaybill?.toString() || "");
 
 
