@@ -101,6 +101,7 @@ export function EditOrderDrawer() {
                 pincode: "",
                 city: "",
             },
+            ewaybill: "",
             isReverseOrder: false
         }
     });
@@ -154,6 +155,7 @@ export function EditOrderDrawer() {
         form.setValue('customerDetails.city', order?.customerDetails?.city || "");
 
         form.setValue('isReverseOrder', order?.isReverseOrder || false)
+        form.setValue('ewaybill', order?.ewaybill?.toString() || "");
 
     }, [form, order]);
 

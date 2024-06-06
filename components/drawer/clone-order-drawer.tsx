@@ -95,6 +95,7 @@ export function CloneOrderDrawer() {
                 pincode: "",
                 city: "",
             },
+            ewaybill: "",
             isReverseOrder: false
         }
     });
@@ -132,20 +133,7 @@ export function CloneOrderDrawer() {
         form.setValue('sellerDetails.sellerName', order?.sellerDetails?.sellerName || "");
         form.setValue('sellerDetails.sellerGSTIN', order?.sellerDetails?.sellerGSTIN || "");
         form.setValue('sellerDetails.isSellerAddressAdded', order?.sellerDetails?.isSellerAddressAdded || false);
-        form.setValue('sellerDetails.sellerPincode', order?.sellerDetails?.sellerPincode?.toString() === "0" ? "" : order?.sellerDetails?.sellerPincode?.toString() || "");
-        form.setValue('sellerDetails.sellerAddress', order?.sellerDetails?.sellerAddress || "");
-        form.setValue('sellerDetails.sellerPhone', order?.sellerDetails?.sellerPhone?.toString() || "");
-        form.setValue('sellerDetails.sellerCity', order?.sellerDetails?.sellerCity || "");
-        form.setValue('sellerDetails.sellerState', order?.sellerDetails?.sellerState || "");
-
-        form.setValue('customerDetails.name', order?.customerDetails?.name || "");
-        form.setValue('customerDetails.phone', order?.customerDetails?.phone || "");
-        form.setValue('customerDetails.address', order?.customerDetails?.address || "");
-        form.setValue('customerDetails.pincode', order?.customerDetails?.pincode?.toString() || "");
-        form.setValue('customerDetails.state', order?.customerDetails?.state || "");
-        form.setValue('customerDetails.city', order?.customerDetails?.city || "");
-        
-        form.setValue('isReverseOrder', order?.isReverseOrder || false)
+        form.setValue('ewaybill', order?.ewaybill?.toString() || "");
 
 
     }, [form, order]);

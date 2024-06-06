@@ -252,7 +252,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
 
             <Separator orientation='horizontal' />
 
-            <div className='grid grid-cols-2 gap-5'>
+            <div className='grid grid-cols-3 gap-5'>
                 <FormField
                     control={form.control}
                     name="order_invoice_number"
@@ -318,6 +318,31 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                                     />
                                 </PopoverContent>
                             </Popover>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="ewaybill"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel
+                                className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
+                            >
+                                <p className='flex justify-between'>
+                                    Eway Bill
+                                    <span className='text-xs opacity-60' >Optional</span>
+                                </p>
+                            </FormLabel>
+                            <FormControl>
+                                <Input
+                                    disabled={isLoading}
+                                    className="bg-zinc-200/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                    placeholder="Enter the Eway Bill"
+                                    {...field}
+                                />
+                            </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}

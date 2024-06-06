@@ -51,6 +51,7 @@ export const formDataSchema = z.object({
     orderBoxLength: z.string().min(1, "Order box length is required"),
     amount2Collect: z.string().optional(),
     productDetails: productDetailsSchema,
+    ewaybill: z.string().optional(),
     pickupAddress: z.string().min(1, "Pickup address is required"),
     isReverseOrder: z.boolean().default(false).optional()
 });
@@ -89,6 +90,7 @@ export const B2CForm = () => {
                 taxRate: "",
                 taxableValue: "",
             },
+            ewaybill: "",
             pickupAddress: "",
             isReverseOrder: false
         }
@@ -130,6 +132,7 @@ export const B2CForm = () => {
         values.productDetails.taxableValue = (Number(form.watch('productDetails.taxableValue')) + (Number(form.watch('productDetails.taxRate')) / 100) * Number(form.watch('productDetails.taxableValue'))).toString();
 
         try {
+            console.log(values);
             const isSuccess = await handleCreateOrder({
                 ...values,
                 customerDetails: {

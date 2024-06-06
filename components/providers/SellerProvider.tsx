@@ -306,6 +306,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       }
 
       const payload = {
+        ewaybill: order.ewaybill,
         order_reference_id: order.order_reference_id,
         payment_mode: order.payment_mode === "COD" ? 1 : 0,
         orderWeight: Number(order.orderWeight),
