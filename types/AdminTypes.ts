@@ -27,6 +27,7 @@ export interface ShippingRate {
     vendor_channel_id?: string;
     nickname?: string;
     nameWithNickname?: string;
+    nameWNickname?: string;
     createdAt?: string;
     updatedAt?: string;
     __v: number;

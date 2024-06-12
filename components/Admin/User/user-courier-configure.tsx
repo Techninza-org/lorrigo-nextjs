@@ -108,7 +108,7 @@ export const UserCourierConfigure = () => {
     })
 
     useEffect(() => {
-        if (assignedCouriers.length > 0) {
+        if (assignedCouriers?.length > 0) {
             const initialCourier = assignedCouriers[0];
             form.setValue('vendorId', initialCourier._id);
             form.setValue('withinCity', {
@@ -208,7 +208,7 @@ export const UserCourierConfigure = () => {
                                             <CommandEmpty>No Courier found.</CommandEmpty>
                                             <CommandGroup>
                                                 <CommandList>
-                                                    {assignedCouriers.map((courier) => (
+                                                    {assignedCouriers?.map((courier) => (
                                                         <CommandItem
                                                             value={courier._id}
                                                             key={courier._id}

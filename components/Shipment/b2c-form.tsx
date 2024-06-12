@@ -132,7 +132,6 @@ export const B2CForm = () => {
         values.productDetails.taxableValue = (Number(form.watch('productDetails.taxableValue')) + (Number(form.watch('productDetails.taxRate')) / 100) * Number(form.watch('productDetails.taxableValue'))).toString();
 
         try {
-            console.log(values);
             const isSuccess = await handleCreateOrder({
                 ...values,
                 customerDetails: {

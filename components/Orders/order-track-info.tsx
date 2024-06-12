@@ -46,21 +46,15 @@ export const OrderTrackInfo = () => {
         </div>
     )
 
-
-
     return (
         <div className="grid grid-cols-6 gap-3">
             <Suspense fallback={<LoadingComponent />}>
-
                 <Card className="col-span-4">
                     <CardHeader>
                         <CardTitle className="flex justify-between">
                             <div className="flex gap-3 items-center">
                                 #{order?.order_reference_id}
                                 <Badge variant={order?.bucket == -1 ? "failure" : "success"}>{getBucketStatus(order?.bucket ?? 0)}</Badge>
-                            </div>
-                            <div>
-                                {(order && userToken) && <OrderButton rowData={order} />}
                             </div>
                         </CardTitle>
                     </CardHeader>

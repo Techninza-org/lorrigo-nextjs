@@ -33,7 +33,7 @@ export const UserCourierManager = () => {
     const { allCouriers, assignedCouriers, upateSellerAssignedCouriers } = useAdminProvider()
 
     const OPTIONS: Option[] = allCouriers.map((courier) => ({
-        label: courier.name || "",
+        label: courier.nameWNickname || "",
         value: courier._id,
     }));
 
@@ -43,7 +43,7 @@ export const UserCourierManager = () => {
     });
 
     React.useEffect(() => {
-        form.setValue('couriers', assignedCouriers.map((courier) => ({
+        form.setValue('couriers', assignedCouriers?.map((courier) => ({
             label: courier.nameWithNickname || "",
             value: courier._id,
         })));

@@ -305,6 +305,16 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
 
+      // For Ewaybill validation
+      if (Number(order.productDetails.taxableValue) > 50000) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "E-way bill is required for order value greater than 50,000",
+        });
+        return false;
+      }
+
       const payload = {
         ewaybill: order.ewaybill,
         order_reference_id: order.order_reference_id,
@@ -446,6 +456,15 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
 
+      if (order.ewaybill && Number(order.productDetails.taxableValue) > 50000) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "E-way bill is required for order value greater than 50,000",
+        });
+        return false;
+      }
+
       const payload = {
         orderId: order.orderId,
         order_reference_id: order.order_reference_id,
@@ -554,6 +573,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Order cancellation request generated",
         });
         getAllOrdersByStatus(status || "all")
+        getB2BOrders();
         fetchWalletBalance();
         return true;
       }
