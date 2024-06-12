@@ -1,7 +1,7 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Copy, PencilIcon } from "lucide-react";
-import { formatDate } from "date-fns";
+import { formatDate, parse } from "date-fns";
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { RemittanceType } from "@/types/types";
@@ -56,7 +56,7 @@ export const AdminRemittancesCols: ColumnDef<RemittanceType>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{formatDate(`${rowData.remittanceDate}`, 'MMM dd, yyyy')}</p>
+                    <p>{formatDate(parse(rowData.remittanceDate, 'yy-MM-dd', new Date()), 'MMM dd, yyyy')}</p>
 
                 </div>
             )

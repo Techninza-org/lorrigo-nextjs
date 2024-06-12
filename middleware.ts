@@ -68,12 +68,12 @@ export async function middleware(request: NextRequest) {
       if (adminRoutes.some(route => pathname.startsWith(route))) {
         return NextResponse.redirect(new URL('/access-denied', request.url));
       }
-      if (pathname === '/login') {
+      if (pathname.includes('/login')) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
       }
     } else if (userRole === 'admin') {
-      if (pathname === '/login') {
-        return NextResponse.redirect(new URL('/admin', request.url));
+      if (pathname.includes('/login')) {
+        return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
       }
     }
 

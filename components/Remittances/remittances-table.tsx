@@ -40,7 +40,7 @@ import { useSearchParams } from "next/navigation"
 import { DatePickerWithRange } from "../DatePickerWithRange"
 import { DateRange } from "react-day-picker"
 import CsvDownloader from 'react-csv-downloader';
-import { format } from "date-fns"
+import { format, formatDate, parse, parseISO } from "date-fns"
 
 
 
@@ -88,11 +88,13 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
         },
     })
 
+    // formatDate(parse(row.remittanceDate, 'yy-MM-dd', new Date()), 'MMM dd, yyyy'),
+
     React.useEffect(() => {
         if ((!date?.from || !date?.to) || (date.from === date.to)) return
         const a = data.filter((row) => {
             if (date?.from && date?.to) {
-                return row.remittanceDate > new Date(date.from).toISOString() && row.remittanceDate < new Date(date.to).toISOString()
+                return row.remittanceDate > formatDate(date.from, 'yy-MM-dd') && row.remittanceDate < format(date.to, 'yy-MM-dd')
             }
             return false;
         });
@@ -125,7 +127,7 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
     const datas = filteredData.map((row) => {
         return {
             remittanceId: row.remittanceId,
-            remittanceDate: format(row.remittanceDate, 'dd MM yyyy'),
+            remittanceDate: formatDate(parse(row.remittanceDate, 'yy-MM-dd', new Date()), 'dd MM yyyy'),
             BankTransactionId: row.BankTransactionId,
             remittanceStatus: row.remittanceStatus,
             remittanceAmount: row.remittanceAmount
