@@ -22,6 +22,7 @@ import { BulkUpdateShopifyOrdersSchema } from "../modal/bulk-update-shopify-moda
 import { usePaymentGateway } from "./PaymentGatewayProvider";
 import { B2BOrderType } from "@/types/B2BTypes";
 import { b2bformDataSchema } from "../Orders/b2b/b2b-form";
+import { B2BrateCalcSchema } from "../RateCalc/b2b-rate-calc-form";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -75,6 +76,7 @@ interface SellerContextType {
   handleCreateB2BShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
 
   handleEditB2BOrder: (order: z.infer<typeof b2bformDataSchema>, orderId: string) => boolean | Promise<boolean>;
+  B2BcalcRate: (values: z.infer<typeof B2BrateCalcSchema>) => Promise<OrderType>;
 }
 
 interface sellerCustomerFormType {
@@ -1064,6 +1066,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const B2BcalcRate = async (values: z.infer<typeof B2BrateCalcSchema>) => {
+    try {
+      const res = await axiosIWAuth.post('/ratecalculator/b2b', values);
+      if (res.data?.valid) {
+        return res.data.rates;
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
       getHub();
@@ -1133,7 +1146,10 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getB2BOrders,
         b2bOrders,
         handleCreateB2BShipment,
-        handleEditB2BOrder
+        handleEditB2BOrder,
+
+        B2BcalcRate
+
       }}
     >
       {children}

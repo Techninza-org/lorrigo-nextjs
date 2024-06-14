@@ -71,7 +71,7 @@ export const B2CReverseForm = () => {
         defaultValues: {
             order_reference_id: `${user?.name}`,
             fragile_items: false,
-            payment_mode: "",
+            payment_mode: "prepaid" as "prepaid" | "COD",
             orderWeight: "",
             order_invoice_date: currentDate,
             order_invoice_number: "",
@@ -90,7 +90,7 @@ export const B2CReverseForm = () => {
                 taxableValue: "",
             },
             pickupAddress: "",
-            isReverseOrder: false
+            isReverseOrder: true
         }
     });
 
@@ -104,12 +104,13 @@ export const B2CReverseForm = () => {
     }, [currentDate, setValue, user?.name])
 
     useEffect(() => {
-        if (isCOD) {
-            setCollectableFeild(true);
-        } else {
-            setCollectableFeild(false);
-        }
-    }, [isCOD]);
+
+        // if (isCOD) {
+        //     setCollectableFeild(true);
+        // } else {
+        //     setCollectableFeild(false);
+        // }
+    }, []);
 
 
     const handleIncrement = () => {

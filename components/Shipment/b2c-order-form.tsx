@@ -358,7 +358,7 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                                 Payment Mode <span className='text-red-500'>*</span>
                             </FormLabel>
                             <Select
-                                disabled={isLoading}
+                                disabled={isLoading || form.watch("isReverseOrder") === true }
                                 onValueChange={field.onChange}
                             >
                                 <FormControl>

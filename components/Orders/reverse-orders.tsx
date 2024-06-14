@@ -7,6 +7,10 @@ import { useSellerProvider } from "../providers/SellerProvider";
 import { RevOrderFilter } from "../navigation/navigation-item";
 import { useEffect, useState } from "react";
 import { B2COrderType } from "@/types/types";
+import Link from "next/link";
+import { BoxIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "../ui/button";
 
 export default function ReverseOrders() {
 
@@ -60,8 +64,16 @@ export default function ReverseOrders() {
             <RevOrderFilter links={DASHBOARD_LINKS} handleRevFilter={handleFilter} />
             <Card className="col-span-4">
                 <CardHeader>
-                    <CardTitle className="md:flex justify-between space-y-3">
+                    <CardTitle className="md:flex justify-between">
+                        <div>
                         View Reverse Shipment
+                        </div>
+                        <Link href="/new/b2c/reverse" className={cn(buttonVariants({
+                            variant: "themeNavActiveBtn",
+                            size: "sm",
+                        }), "gap-1")}>
+                            <BoxIcon size={18} /> Create Reverse Shipment
+                        </Link>
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">

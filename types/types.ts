@@ -187,7 +187,9 @@ export interface OrderType {
   courierPartner: {
     name: string;
     nickName: string;
+    rtoCharges?: number;
     minWeight: number;
+    isReversedCourier?: boolean
     charge: number;
     type?: string;
     expectedPickup: string;
@@ -235,3 +237,21 @@ export interface AdminType {
 //   BankTransactionId: string;
 //   sellerId: SellerType;
 // }
+
+
+interface Stage {
+  action: string;
+  dateTime: Date;
+}
+
+export interface PaymentTransaction {
+  _id: string;
+  sellerId: string;
+  merchantTransactionId: string;
+  amount: string;
+  code: string;
+  data: Record<string, any>;
+  stage: Stage[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}

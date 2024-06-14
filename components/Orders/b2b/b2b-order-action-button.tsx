@@ -109,7 +109,7 @@ export const B2BOrderButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData })
 
     if (orderStage === 6) {
         return (
-            <Button variant={"webPageBtn"} size={"sm"} onClick={() => onOpen("cloneOrder", { b2bOrder: rowData })}>Clone Order</Button>
+            <Button variant={"webPageBtn"} size={"sm"} onClick={() => onOpen("cloneB2BOrder", { b2bOrder: rowData })}>Clone Order</Button>
         );
     }
 

@@ -10,6 +10,7 @@ import { LorrigoLogo } from "../Logos";
 import { UserAvatar } from "../user-avatar";
 import { useSellerProvider } from "../providers/SellerProvider";
 import { usePaymentGateway } from "../providers/PaymentGatewayProvider";
+import Link from "next/link";
 
 interface NavProps {
     isCollapsed: boolean;
@@ -36,13 +37,15 @@ export function TopNav() {
                 </div>
                 <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-3">
-                        <ActionTooltip
-                            side="bottom"
-                            align="center"
-                            label="wallet"
-                        >
-                            <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
-                        </ActionTooltip>
+                        <Link href="/wallet/txn">
+                            <ActionTooltip
+                                side="bottom"
+                                align="center"
+                                label="wallet"
+                            >
+                                <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
+                            </ActionTooltip>
+                        </Link>
                         <span>{formatCurrencyForIndia(walletBalance || 0)}</span>
                         <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("wallet")}>Recharge Wallet</Button>
                     </div>
@@ -51,7 +54,7 @@ export function TopNav() {
 
                     <UserAvatar />
                 </div>
-            </nav>
-        </div>
+            </nav >
+        </div >
     );
 }

@@ -5,21 +5,24 @@ import { useAxios } from "./AxiosProvider";
 import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
 import { useAuth } from "./AuthProvider";
+import { useOrigin } from "@/hooks/use-origin";
+import { PaymentTransaction } from "@/types/types";
 
 interface PaymentGatewayContextType {
     walletBalance: number;
     rechargeWallet: (amount: number) => Promise<void>;
     confirmRecharge: ({ params }: { params: string }) => Promise<void>;
     fetchWalletBalance: () => Promise<void>;
+    getAllTransactions: () => Promise<PaymentTransaction[]>;
 }
 
 const PaymentGatewayContext = createContext<PaymentGatewayContextType | null>(null);
 
 function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
-
     const { axiosIWAuth } = useAxios();
     const { userToken, user } = useAuth();
     const { toast } = useToast();
+    const origin = useOrigin();
     const router = useRouter();
 
     const [walletBalance, setWalletBalance] = useState(0);
@@ -38,7 +41,7 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
     };
     const rechargeWallet = async (amount: number) => {
         try {
-            const response = await axiosIWAuth.post('/seller/recharge-wallet', { amount });
+            const response = await axiosIWAuth.post('/seller/recharge-wallet', { amount, origin });
             router.push(response.data.url);
         } catch (error: any) {
             toast({
@@ -63,6 +66,19 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const getAllTransactions = async () => {
+        try {
+            const response = await axiosIWAuth.get('/seller/transactions');
+            return response.data.transactions;
+        } catch (error: any) {
+            toast({
+                title: 'Error',
+                description: error?.response?.data?.message || "An error occurred",
+                variant: 'destructive'
+            });
+        }
+    }
+
     useEffect(() => {
         if ((user || userToken) && user?.role === "seller") {
             fetchWalletBalance();
@@ -74,7 +90,8 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
             walletBalance,
             rechargeWallet,
             confirmRecharge,
-            fetchWalletBalance
+            fetchWalletBalance,
+            getAllTransactions
         }}>
             {children}
         </PaymentGatewayContext.Provider>

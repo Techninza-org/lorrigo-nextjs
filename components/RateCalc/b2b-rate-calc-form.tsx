@@ -16,7 +16,6 @@ import { Button } from "../ui/button";
 import * as z from 'zod';
 import { Input } from "../ui/input";
 import { cn, formatCurrencyForIndia, getSvg, removeWhitespaceAndLowercase } from "@/lib/utils";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useEffect, useState } from "react";
 import { MapPin } from "lucide-react";
 import { Separator } from "../ui/separator";
@@ -34,43 +33,30 @@ import Image from "next/image";
 import { LoadingComponent } from "../loading-spinner";
 
 
-const rateCalcSchema = z.object({
+export const B2BrateCalcSchema = z.object({
     pickupPincode: z.string().min(6, "Please enter the valid pincode"),
     deliveryPincode: z.string().min(6, "Please enter the valid pincode"),
-    weight: z.string(),
-    orderBoxLength: z.string().min(1, "Please enter the length"),
-    orderBoxWidth: z.string().min(1, "Please enter the width"),
-    orderBoxHeight: z.string().min(1, "Please enter the height"),
     orderWeight: z.string().min(1, "Please enter the weight"),
-    payment_mode: z.string().min(1, "Payment mode is required"),
-    collectableAmount: z.string()
-
+    amount: z.string().min(1, "Please enter the amount"),
 });
 
 
-export const RateCalcForm = () => {
-    const { getCityStateFPincode, calcRate } = useSellerProvider();
-    const [courierCalcRate, setCourierCalcRate] = useState([{}] as any);
+export const B2BRateCalcForm = () => {
+    const { getCityStateFPincode, B2BcalcRate } = useSellerProvider();
+    const [courierCalcRate, setCourierCalcRate] = useState([] as any);
     const [isAPILoading, setIsAPILoading] = useState(false);
 
     const form = useForm({
-        resolver: zodResolver(rateCalcSchema),
+        resolver: zodResolver(B2BrateCalcSchema),
         defaultValues: {
             pickupPincode: "",
             deliveryPincode: "",
-            weight: "",
-            payment_mode: "",
-            orderBoxLength: "",
-            orderBoxWidth: "",
-            orderBoxHeight: "",
             orderWeight: "",
-            collectableAmount: ""
+            amount: "",
         }
     });
 
-    const { setValue } = form
     const isLoading = form.formState.isSubmitting;
-    const [collectableFeild, setCollectableFeild] = useState(false);
     const [pickupCityState, setCityState] = useState({
         city: "Pincode",
         state: "state"
@@ -80,16 +66,6 @@ export const RateCalcForm = () => {
         state: "state"
     })
 
-    const isCOD = form.watch('payment_mode') === "COD";
-
-
-    useEffect(() => {
-        if (isCOD) {
-            setCollectableFeild(true);
-        } else {
-            setCollectableFeild(false);
-        }
-    }, [isCOD]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let numericValue = e.target.value.replace(/[^0-9.]/g, '');
@@ -97,7 +73,7 @@ export const RateCalcForm = () => {
         if (parts.length > 2) {
             numericValue = parts[0] + '.' + parts.slice(1).join('');
         }
-        const field = e.target.name as keyof typeof rateCalcSchema; // Explicitly define the type of 'field'
+        const field = e.target.name as keyof typeof B2BrateCalcSchema; // Explicitly define the type of 'field'
         //@ts-ignore
         form.setValue(field, numericValue);
     };
@@ -108,21 +84,11 @@ export const RateCalcForm = () => {
     };
 
 
-    const onSubmit = async (values: z.infer<typeof rateCalcSchema>) => {
+    const onSubmit = async (values: z.infer<typeof B2BrateCalcSchema>) => {
         setIsAPILoading(true)
         try {
-            const res = await calcRate({
-                pickupPincode: values.pickupPincode,
-                deliveryPincode: values.deliveryPincode,
-                weight: values.orderWeight,
-                weightUnit: "kg",
-                boxLength: values.orderBoxLength,
-                boxWidth: values.orderBoxWidth,
-                boxHeight: values.orderBoxHeight,
-                sizeUnit: "cm",
-                paymentType: values.payment_mode == "COD" ? 1 : 0,
-                collectableAmount: values.collectableAmount
-            })
+            const res = await B2BcalcRate(values)
+            console.log(res, "res")
             setCourierCalcRate(res);
         } finally {
             setIsAPILoading(false)
@@ -168,7 +134,7 @@ export const RateCalcForm = () => {
                     <div className="grid grid-cols-4 gap-2">
                         <Card className='col-span-3 space-y-3'>
                             <CardHeader>
-                                <CardTitle>Shipping Rate Calculator</CardTitle>
+                                <CardTitle>B2B Shipping Rate Calculator</CardTitle>
                                 <CardDescription>Order Details</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
@@ -230,9 +196,13 @@ export const RateCalcForm = () => {
 
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-10">
+                                <div className="grid grid-cols-2 gap-10">
                                     <div>
-                                        <h4>Weight</h4>
+                                        <div
+                                            className="my-2 px-1 uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
+                                        >
+                                          Total Weight
+                                        </div>
                                         <FormField
                                             control={form.control}
                                             name="orderWeight"
@@ -260,144 +230,42 @@ export const RateCalcForm = () => {
                                             )}
                                         />
                                     </div>
-                                    <div className="col-span-2">
-                                        <h4>Dimension</h4>
-                                        <div className="flex gap-3">
-                                            <FormField
-                                                control={form.control}
-                                                name="orderBoxLength"
-                                                render={({ field }) => (
-                                                    <FormItem className='w-full'>
-                                                        <div className="flex flex-col space-y-4">
-                                                            <div className="flex flex-row justify-between items-center">
-                                                                <Input
-                                                                    disabled={isLoading}
-                                                                    className={cn("w-full bg-zinc-200/50  text-center dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                                        isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
-                                                                    )}
-                                                                    placeholder="L"
-                                                                    {...field}
-                                                                    onChange={handleChange}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="orderBoxWidth"
-                                                render={({ field }) => (
-                                                    <FormItem className='w-full'>
-                                                        <div className="flex flex-col space-y-4">
-                                                            <div className="flex flex-row justify-between items-center">
-                                                                <Input
-                                                                    disabled={isLoading}
-                                                                    className={cn("w-full bg-zinc-200/50 text-center dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                                        isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
-                                                                    )}
-                                                                    placeholder="B"
-                                                                    {...field}
-                                                                    onChange={handleChange}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="orderBoxHeight"
-                                                render={({ field }) => (
-                                                    <FormItem className='w-full'>
-                                                        <div className="flex flex-col space-y-4">
-                                                            <div className="flex flex-row justify-between items-center">
-                                                                <Input
-                                                                    disabled={isLoading}
-                                                                    className={cn("w-full bg-zinc-200/50 text-center dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                                        isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
-                                                                    )}
-                                                                    placeholder="H"
-                                                                    {...field}
-                                                                    onChange={handleChange}
-                                                                />
-                                                            </div>
+                                    <div>
+                                        <FormField
+                                            control={form.control}
+                                            name="amount"
+                                            render={({ field }) => (
+                                                <FormItem className="w-full">
+                                                    <FormLabel
+                                                        className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
+                                                    >
+                                                        Amount
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <div className="flex gap-3 items-center">
+                                                            <Input
+                                                                disabled={isLoading}
+                                                                className={cn("w-full bg-zinc-200/50 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
+                                                                    isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
+                                                                )}
+                                                                placeholder="Enter Order Amount"
+                                                                {...field}
+                                                            />
                                                         </div>
 
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <Button type='button' variant={"secondary"}>cm</Button>
-                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
                                     </div>
 
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-10">
-                                    <FormField
-                                        control={form.control}
-                                        name="payment_mode"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel
-                                                    className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
-                                                >
-                                                    Payment Mode
-                                                </FormLabel>
-                                                <Select
-                                                    disabled={isLoading}
-                                                    onValueChange={field.onChange}
-                                                >
-                                                    <FormControl>
-                                                        <SelectTrigger
-                                                            className="bg-zinc-300/50 dark:bg-zinc-700 dark:text-white border-0 focus:ring-0 text-black ring-offset-0 focus:ring-offset-0 capitalize outline-none"
-                                                        >
-                                                            <SelectValue placeholder="Select a payment mode" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value={"COD"}>Cash on Delivery</SelectItem>
-                                                        <SelectItem value={"Prepaid"}>Prepaid</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    {
-                                        collectableFeild && (
-                                            <FormField
-                                                control={form.control}
-                                                name="collectableAmount"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel
-                                                            className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
-                                                        >
-                                                            Collectable Amount
-                                                        </FormLabel>
-                                                        <FormControl>
-                                                            <Input
-                                                                disabled={isLoading}
-                                                                className="bg-zinc-200/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                                                placeholder="Enter the amount to collect"
-                                                                {...field}
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        )
-                                    }
-
-                                </div>
-
-
                             </CardContent>
                             <CardFooter className='flex-row-reverse gap-3'>
                                 <Button type='submit' variant={'themeButton'} >Calculate</Button>
-                                <Button variant={'secondary'} type='button' onClick={()=>form.reset()}>Reset</Button>
+                                <Button variant={'secondary'} type='button' onClick={() => form.reset()}>Reset</Button>
                             </CardFooter>
                         </Card>
                         <Card>
@@ -450,7 +318,7 @@ export const RateCalcForm = () => {
                                 </TableHeader>
                                 <TableBody>
                                     {
-                                         (courierCalcRate) && (courierCalcRate?.length > 1) && courierCalcRate?.map((partner: any, i: number) => {
+                                        (courierCalcRate) && (courierCalcRate?.length >= 1) && courierCalcRate?.map((partner: any, i: number) => {
                                             return <TableRow key={i}>
                                                 <TableCell>
                                                     <div className="flex items-center">
@@ -460,7 +328,7 @@ export const RateCalcForm = () => {
                                                         <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
 
                                                     </div>
-                                                    <div>RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>
+                                                    <div>RTO Charges : {formatCurrencyForIndia(partner.charge ?? 0)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
                                                 <TableCell>{partner.order_zone}</TableCell>

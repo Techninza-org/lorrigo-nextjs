@@ -23,8 +23,7 @@ export async function middleware(request: NextRequest) {
     '/rate-calc',
     '/print',
     '/finance',
-    '/recharge-wallet/success',
-    '/recharge-wallet/failure',
+    '/wallet',
 
     // public files
     '/bulk-sample.csv',

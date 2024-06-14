@@ -125,7 +125,7 @@ export default function CourierPage() {
                                                         {partner.name}
                                                         <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
                                                     </div>
-                                                    <div>RTO Charges : {formatCurrencyForIndia(partner.charge)}</div>
+                                                  {!partner.isReversedCourier &&  <div>RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>}
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
                                                 <TableCell>{partner.order_zone}</TableCell>

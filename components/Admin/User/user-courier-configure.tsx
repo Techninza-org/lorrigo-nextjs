@@ -54,6 +54,10 @@ import { useSearchParams } from "next/navigation"
 
 export const CourierPriceConfigureSchema = z.object({
     vendorId: z.string().min(1, "Name is required"),
+    codCharge: z.object({
+        hard: z.string().min(1, "Base Price is required"),
+        percent: z.string().min(1, "Increment Price is required"),
+    }),
     withinCity: z.object({
         basePrice: z.string().min(1, "Base Price is required"),
         incrementPrice: z.string().min(1, "Increment Price is required"),
@@ -84,6 +88,10 @@ export const UserCourierConfigure = () => {
     const form = useForm<z.infer<typeof CourierPriceConfigureSchema>>({
         resolver: zodResolver(CourierPriceConfigureSchema),
         defaultValues: {
+            codCharge: {
+                hard: "0",
+                percent: "0",
+            },
             withinCity: {
                 basePrice: "0",
                 incrementPrice: "0",
@@ -111,10 +119,14 @@ export const UserCourierConfigure = () => {
         if (assignedCouriers?.length > 0) {
             const initialCourier = assignedCouriers[0];
             form.setValue('vendorId', initialCourier._id);
-            form.setValue('withinCity', {
-                basePrice: initialCourier.withinCity.basePrice.toString(),
-                incrementPrice: initialCourier.withinCity.incrementPrice.toString(),
-            });
+            form.setValue('codCharge', {
+                hard: initialCourier.codCharge?.hard?.toString() || "",
+                percent: initialCourier.codCharge?.percent?.toString() || "",
+            }),
+                form.setValue('withinCity', {
+                    basePrice: initialCourier.withinCity.basePrice.toString(),
+                    incrementPrice: initialCourier.withinCity.incrementPrice.toString(),
+                });
             form.setValue('withinZone', {
                 basePrice: initialCourier.withinZone.basePrice.toString(),
                 incrementPrice: initialCourier.withinZone.incrementPrice.toString(),
@@ -149,10 +161,14 @@ export const UserCourierConfigure = () => {
     const handleCourierChange = (vendorId: string) => {
         const selectedCourier = assignedCouriers.find(courier => courier._id === vendorId);
         if (selectedCourier) {
-            form.setValue('withinCity', {
-                basePrice: selectedCourier.withinCity.basePrice.toString(),
-                incrementPrice: selectedCourier.withinCity.incrementPrice.toString(),
-            });
+            form.setValue('codCharge', {
+                hard: selectedCourier.codCharge?.hard?.toString() || "",
+                percent: selectedCourier.codCharge?.percent?.toString() || "",
+            }),
+                form.setValue('withinCity', {
+                    basePrice: selectedCourier.withinCity.basePrice.toString(),
+                    incrementPrice: selectedCourier.withinCity.incrementPrice.toString(),
+                });
             form.setValue('withinZone', {
                 basePrice: selectedCourier.withinZone.basePrice.toString(),
                 incrementPrice: selectedCourier.withinZone.incrementPrice.toString(),
@@ -237,6 +253,46 @@ export const UserCourierConfigure = () => {
                             </FormItem>
                         )}
                     />
+                    <div className="grid grid-cols-2 gap-3">
+                        <FormField
+                            control={form.control}
+                            name="codCharge.hard"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    COD Hard (₹)
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            disabled={isLoading}
+                                            placeholder="Enter the customer name"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="codCharge.percent"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                        COD Charge (%)
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            disabled={isLoading}
+                                            placeholder="Enter the customer name"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
                     <Tabs defaultValue="withinCity">
                         <TabsList className="grid w-full grid-cols-5">
                             <TabsTrigger value="withinCity">With in City</TabsTrigger>
