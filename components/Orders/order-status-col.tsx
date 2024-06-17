@@ -100,7 +100,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
             return (
                 <div className="space-y-1 items-center cursor-pointer">
                     <HoverCardToolTip label={rowData.pickupAddress?.name}>
-                        {`${rowData.pickupAddress.address1}, ${rowData.pickupAddress.address2}, ${rowData.pickupAddress.city}, ${rowData.pickupAddress.state}, ${rowData.pickupAddress.pincode}`}
+                        {`${rowData?.pickupAddress?.address1}, ${rowData.pickupAddress.address2}, ${rowData.pickupAddress.city}, ${rowData.pickupAddress.state}, ${rowData.pickupAddress.pincode}`}
                     </HoverCardToolTip>
                 </div>
             )

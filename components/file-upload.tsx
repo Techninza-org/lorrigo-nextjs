@@ -213,8 +213,12 @@ export default function ImageUpload({ Label,
   
       return response;
     } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Order not found or invalid order id",
+      });
+      return error;
     }
   };
 
