@@ -225,6 +225,8 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 sellerId
             });
             if (res.data?.valid) {
+                getAllCouriers()
+                getSellerAssignedCouriers()
                 toast({
                     variant: "default",
                     title: "Courier Price Updated",
