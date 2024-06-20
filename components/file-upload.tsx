@@ -21,6 +21,7 @@ import { useAxios } from "./providers/AxiosProvider";
 import { Button } from "./ui/button";
 import { DocumentUploadSchema } from "./Settings/DocumentUploadForm";
 import { downloadFile } from "@/lib/utils";
+import imageCompression from 'browser-image-compression';
 
 interface FileUploadProgress {
   progress: number;
@@ -59,6 +60,21 @@ const VideoColor = {
 const OtherColor = {
   bgColor: "bg-gray-400",
   fillColor: "fill-gray-400",
+};
+
+const compressFile = async (file: File) => {
+  const options = {
+    maxSizeMB: 0.5, // Maximum file size in MB (0.5 MB = 500 KB)
+    useWebWorker: true, // Use web worker for better performance
+  };
+
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error('Error compressing the file', error);
+    throw error;
+  }
 };
 
 export default function ImageUpload({ Label,
@@ -128,19 +144,19 @@ export default function ImageUpload({ Label,
     const progress = Math.round(
       (progressEvent.loaded / (progressEvent.total ?? 0)) * 100
     );
-
+  
     if (progress === 100) {
       setUploadedFiles((prevUploadedFiles) => {
         return [...prevUploadedFiles, file];
       });
-
+  
       setFilesToUpload((prevUploadProgress) => {
         return prevUploadProgress.filter((item) => item.File !== file);
       });
-
+  
       return;
     }
-
+  
     setFilesToUpload((prevUploadProgress) => {
       return prevUploadProgress.map((item) => {
         if (item.File.name === file.name) {
@@ -210,7 +226,7 @@ export default function ImageUpload({ Label,
         variant: "default",
         title: "File Uploaded Successfully",
       });
-  
+
       return response;
     } catch (error) {
       toast({
@@ -280,7 +296,7 @@ export default function ImageUpload({ Label,
       await uploadImageToDB(formData, (progressEvent) => {
         onUploadProgress(progressEvent, file, cancelSource);
       }, cancelSource);
-      
+
       if (handleClose) handleClose();
     } catch (error) {
       toast({

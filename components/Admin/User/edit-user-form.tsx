@@ -83,7 +83,9 @@ const EditUserForm = () => {
                 pan: values.pan,
                 aadhar: values.aadhar,
                 gst: values.gst,
-                isVerified: values.verified,
+                kycDetails: {
+                    verified: values.verified
+                },
                 isActive: values.active,
                 bankDetails: {
                     accHolderName: values.accHolderName,
@@ -108,7 +110,7 @@ const EditUserForm = () => {
             form.setValue('pan', user.pan || '')
             form.setValue('aadhar', user.aadhar || '')
             form.setValue('gst', user.gst || '')
-            form.setValue('verified', user.isVerified || false)
+            form.setValue('verified', user.kycDetails.verified || false)
             form.setValue('active', user.isActive || false)
             form.setValue('accHolderName', user.bankDetails?.accHolderName || '')
             form.setValue('accType', user.bankDetails?.accType || '')
@@ -131,7 +133,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -173,7 +175,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -190,7 +192,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -207,7 +209,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -224,7 +226,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -241,7 +243,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -258,7 +260,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -275,7 +277,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -292,7 +294,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -309,7 +311,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>
@@ -326,7 +328,7 @@ const EditUserForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                    disabled={isLoading}
+                                        disabled={isLoading}
                                         className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                         {...field} />
                                 </FormControl>

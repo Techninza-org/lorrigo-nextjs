@@ -80,8 +80,8 @@ const PhotoIdentification = () => {
         ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
 
         const newPhotoURL = canvas.toDataURL('image/jpeg');
+        
         setPhotoURL(newPhotoURL);
-
         handleStopCamera();
     };
 

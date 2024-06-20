@@ -23,11 +23,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-model-store";
 import { PhoneInput } from '../ui/phone-input';
 import { useSellerProvider } from '../providers/SellerProvider';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useToast } from '../ui/use-toast';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
 import { LoadingSpinner } from '../loading-spinner';
@@ -48,10 +48,11 @@ export const customerDetailsSchema = z.object({
 
 
 export const AddCustomerModal = () => {
-    const { setSellerCustomerForm, sellerCustomerForm, isOrderCreated } = useSellerProvider()
+    const { setSellerCustomerForm, sellerCustomerForm, isOrderCreated, handleCreateCustomer } = useSellerProvider()
     const { isOpen, onClose, type } = useModal();
 
     const router = useRouter();
+    const pathname = usePathname()
     const { toast } = useToast();
 
     const isModalOpen = isOpen && type === "addCustomer";
@@ -86,6 +87,10 @@ export const AddCustomerModal = () => {
 
     const onSubmit = async (values: z.infer<typeof customerDetailsSchema>) => {
         try {
+            if (pathname.includes('/b2b')) {
+                const isCustomerCreated = await handleCreateCustomer(values.customerDetails) ? onClose() : null;
+                return;
+            }
             setSellerCustomerForm({
                 ...sellerCustomerForm,
                 customerForm: {

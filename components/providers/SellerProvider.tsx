@@ -165,9 +165,14 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const handleCreateCustomer = async (customer: any) => {
     try {
-      const res = await axiosIWAuth.post('/customer', customer);
+      const res = await axiosIWAuth.post('/customer', { customerDetails: customer });
       if (res.data?.valid) {
         getB2BCustomers();
+        toast({
+          variant: "default",
+          title: "Customer Added",
+          description: "Customer added successfully"
+        });
         return true;
       }
       toast({

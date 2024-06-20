@@ -34,7 +34,7 @@ export const DocumentUploadFormSchema = z.object({
 
 
 export const DocumentUploadForm = () => {
-    const { formData, setFormData, verifyOtpOpen, setVerifyOtpOpen, onHandleNext } = useKycProvider();
+    const { onHandleBack, formData, setFormData, verifyOtpOpen, setVerifyOtpOpen, onHandleNext } = useKycProvider();
     const businessType = formData?.businessType;
 
     const form = useForm({
@@ -193,7 +193,10 @@ export const DocumentUploadForm = () => {
                             </div>
                         ))}
                     </div>
-                    <div className='flex justify-end mb-6 mr-6'><Button type='submit' variant={'themeButton'}>Submit Documents</Button></div>
+                    <div className='flex justify-between p-5'>
+                        <Button type="button" variant={'themeButton'} onClick={onHandleBack}>Back</Button>
+                        <Button type='submit' variant={'themeButton'}>Submit Documents</Button>
+                    </div>
                 </form>
             </Form>
         </Card>

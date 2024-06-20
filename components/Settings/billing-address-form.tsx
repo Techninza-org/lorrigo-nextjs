@@ -48,6 +48,7 @@ const BillingAddressForm = () => {
 
     const isLoading = loading || form.formState.isSubmitting 
 
+    let customDisabledFeild = Boolean(seller?.billingAddress?.city &&  seller?.billingAddress?.state) || form.formState.isSubmitSuccessful;
     useEffect(() => {
         if (seller?.billingAddress) {
             form.setValue('address_line_1', seller.billingAddress.address_line_1 || '');
@@ -154,7 +155,7 @@ const BillingAddressForm = () => {
                                 <FormControl>
                                     <div className='flex items-center rounded-md'>
                                         <Input
-                                            disabled={isLoading || isTyping}
+                                            disabled={isLoading || isTyping || customDisabledFeild}
                                             className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm "
                                             {...field}
                                         />
@@ -175,7 +176,7 @@ const BillingAddressForm = () => {
                                 <FormControl>
                                     <div className='flex items-center rounded-md'>
                                         <Input
-                                            disabled={isLoading || isTyping}
+                                            disabled={isLoading || isTyping || customDisabledFeild}
                                             className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                             {...field}
                                         />
