@@ -46,6 +46,10 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
   });
   const [rowSelection, setRowSelection] = React.useState({})
   const [selectedColumn, setSelectedColumn] = React.useState("order_reference_id");
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 20,
+  });
 
 
   const table = useReactTable({
@@ -62,6 +66,7 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
     enableSorting: false,
     state: {
       columnFilters,
+      pagination,
       columnVisibility,
       rowSelection,
     },
@@ -75,7 +80,7 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
     <div className="w-full">
       <div className="flex items-center py-4">
         <Select onValueChange={handleFilterChange}>
-          <SelectTrigger className='w-1/6 mx-4' >
+          <SelectTrigger className='w-40 mx-4' >
             <SelectValue placeholder='Shipment ID' />
           </SelectTrigger>
           <SelectContent>
@@ -84,7 +89,7 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
           </SelectContent>
         </Select>
         <Input
-          placeholder={`Filter by ${selectedColumn}`}
+          placeholder={`Filter by ${selectedColumn === "order_reference_id" ? "Order Ref ID" : "AWB"}`}
           value={(table.getColumn(selectedColumn)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn(selectedColumn)?.setFilterValue(event.target.value)

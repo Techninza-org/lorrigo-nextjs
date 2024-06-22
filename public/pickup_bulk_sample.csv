@@ -1,1 +1,2 @@
 FacilityName* , ContactPersonName*, PickupLocationContact*, Email*, Address1*, Address2*, Pincode*, City*, State*,IsRTOAddressSame*,RTOAddress*,RTOCity*,RTOState*,RTOPincode*
+Test RTO 1211,SONY,9955664477,test@test.com,"I-85, Saket, ",,110085,Delhi,Delhi,TRUE,,,,

@@ -32,6 +32,7 @@ import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
 import { LoadingSpinner } from '../loading-spinner';
+import { useToast } from '../ui/use-toast';
 
 export const pickupAddressFormSchema = z.object({
     facilityName: z.string().min(1, "Facility name is required"),
@@ -55,8 +56,9 @@ export const pickupAddressFormSchema = z.object({
 
 export const AddPickupLocationModal = () => {
     const { handleCreateHub } = useHubProvider();
-    const { getCityStateFPincode } = useSellerProvider();
     const { isOpen, onClose, type } = useModal();
+    const { toast } = useToast();
+
     const router = useRouter();
 
     const isModalOpen = isOpen && type === "addPickupLocation";
@@ -101,7 +103,16 @@ export const AddPickupLocationModal = () => {
     const onSubmit = async (values: z.infer<typeof pickupAddressFormSchema>) => {
         try {
 
-            handleCreateHub({
+            if (!values.isRTOAddressSame && ((values.rtoAddress?.length ?? 0) < 5 || (values.rtoPincode?.length !== 6))) {
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "RTO Address must be at least 5 characters long and RTO Pincode must be 6 characters long.",
+                });
+                return;
+            }
+
+            await handleCreateHub({
                 name: values.facilityName,
                 email: values.email,
                 pincode: values.pincode,

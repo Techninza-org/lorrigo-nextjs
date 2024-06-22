@@ -2,14 +2,16 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
 import { formatDate } from "date-fns";
-import { formatCurrencyForIndia } from "@/lib/utils";
+import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { CopyCheck } from "lucide-react";
+import HoverCardToolTip from "@/components/hover-card-tooltip";
 
 export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
     {
-        header: 'Client',
-        accessorKey: 'client',
+        header: 'Client Name',
+        accessorKey: 'clientName',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -23,8 +25,9 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
-                    <Link href={`/admin/shipment-listing/track/${rowData._id}`}>{rowData.order_reference_id}</Link>
+                <p className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center w-32">
+                    <Link href={`/admin/shipment-listing/track/${rowData._id}`}>{rowData.order_reference_id?.toString().substring(0, 8) + "..."}</Link>
+                    <CopyCheck className="ml-2 cursor-pointer" size={15} onClick={() => handleCopyText(`${rowData.order_reference_id}`)} />
                 </p>
             )
         }
@@ -35,7 +38,7 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p>{rowData.pickupAddress._id}</p>
+                <HoverCardToolTip align="center" label={"Address Id"} className="text-center">{rowData.pickupAddress._id}</HoverCardToolTip>
             )
         }
     },
@@ -55,7 +58,10 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p>{rowData.awb}</p>
+                <p className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
+                    {rowData.awb || "N/A"}
+                    {rowData.awb && <CopyCheck className="ml-2 cursor-pointer" size={15} onClick={() => handleCopyText(`${rowData.awb}`)} />}
+                </p>
             )
         }
     },
@@ -66,7 +72,9 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p>{rowData.pickupAddress.address1}, {rowData.pickupAddress.city}, {rowData.pickupAddress.state}</p>
+                <HoverCardToolTip label={rowData.pickupAddress?.name?.toString().substring(0, 20) + "..."}>
+                    {`${rowData?.pickupAddress?.address1}, ${rowData.pickupAddress.address2}, ${rowData.pickupAddress.city}, ${rowData.pickupAddress.state}, ${rowData.pickupAddress.pincode}`}
+                </HoverCardToolTip>
             )
         }
     },
@@ -91,9 +99,11 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>Dead wt. {rowData.orderWeight} {rowData?.orderWeightUnit}</p>
-                    <p>{rowData.orderBoxLength} x {rowData.orderBoxWidth} x {rowData.orderBoxHeight} ({rowData.orderSizeUnit})</p>
-                    <p>Vol. weight: {((rowData?.orderBoxLength || 1) * (rowData?.orderBoxWidth || 1) * (rowData?.orderBoxHeight || 1)) / 5000} ({rowData?.orderWeightUnit})</p>
+                    <HoverCardToolTip label={"weigth & Dimension"} className="">
+                        <p>Dead wt. {rowData.orderWeight} {rowData?.orderWeightUnit}</p>
+                        <p>{rowData.orderBoxLength} x {rowData.orderBoxWidth} x {rowData.orderBoxHeight} ({rowData.orderSizeUnit})</p>
+                        <p>Vol. weight: {((rowData?.orderBoxLength || 1) * (rowData?.orderBoxWidth || 1) * (rowData?.orderBoxHeight || 1)) / 5000} ({rowData?.orderWeightUnit})</p>
+                    </HoverCardToolTip>
                 </div>
             )
         }
