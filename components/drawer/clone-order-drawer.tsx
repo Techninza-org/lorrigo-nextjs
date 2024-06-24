@@ -31,7 +31,17 @@ import { SellerForm, sellerSchema } from "../modal/add-seller-modal";
 import { Box, MapPin, Package, Undo2 } from "lucide-react";
 import useFetchCityState from "@/hooks/use-fetch-city-state";
 
-export const cloneFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema)
+export const cloneFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema).refine((data) => {
+    if (data.payment_mode === 'Prepaid') {
+        return true;
+    } else {
+        // @ts-ignore
+        return data?.amount2Collect?.length > 0;
+    }
+}, {
+    message: "Collectable amount is required.",
+    path: ["amount2Collect"],
+});
 
 
 export function CloneOrderDrawer() {

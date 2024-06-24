@@ -34,6 +34,16 @@ import useFetchCityState from "@/hooks/use-fetch-city-state";
 export const EditFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema).extend({
     orderId: z.string(),
     productId: z.string(),
+}).refine((data) => {
+    if (data.payment_mode === 'Prepaid') {
+        return true;
+    } else {
+        // @ts-ignore
+        return data?.amount2Collect?.length > 0;
+    }
+}, {
+    message: "Collectable amount is required.",
+    path: ["amount2Collect"],
 });
 
 
