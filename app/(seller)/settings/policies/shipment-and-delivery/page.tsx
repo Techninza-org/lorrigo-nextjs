@@ -20,7 +20,7 @@ export default function ShipmentAndDeliveryPage() {
 
             <div className="mt-8">
                 <h2 className="text-lg font-semibold">3. Delivery Timelines</h2>
-                <p className="text-sm">3.1 Estimated delivery timelines are provided based on the shipping method selected and the destination.</p>
+                <p className="text-sm">3.1 Estimated delivery timelines are provided based on the shipping method selected and the destination. Which is most of the time seven days</p>
                 <p className="text-sm">3.2 Lorrigo strives to meet delivery timelines; however, actual delivery times may vary based on external factors beyond our control.</p>
             </div>
 

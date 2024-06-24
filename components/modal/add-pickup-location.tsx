@@ -28,7 +28,6 @@ import { Checkbox } from '../ui/checkbox';
 import { useHubProvider } from '../providers/HubProvider';
 import { isValidPhoneNumber } from 'react-phone-number-input';
 import { PhoneInput } from '../ui/phone-input';
-import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
 import { LoadingSpinner } from '../loading-spinner';
