@@ -224,13 +224,18 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const getCourierPartners = async (orderId: string, type: string) => {
     try {
-
-      unstable_noStore()
       let url = type === "b2c" ? `/order/courier/${type}/SR/${orderId}` : `/order/courier/b2b/${orderId}`
       const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
         setCourierPartners(res.data);
         return res.data;
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Pincode not serviceable",
+        });
+        router.push('/orders/b2b');
       }
 
     } catch (error) {

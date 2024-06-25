@@ -86,21 +86,6 @@ export function B2BOrderStatusTable({ data, columns }: { data: any[], columns: C
     onGlobalFilterChange: setFiltering
   })
 
-  const router = useRouter()
-  const { onOpen } = useModal();
-  const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
-  const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 0)
-  const newOrders = allNewStageOrders.map(row => row.original)
-  const handleMultiLableDownload = () => {
-    onOpen("downloadLabels", { orders: selectedRows })
-    router.push('/print/invoices')
-  }
-
-  const handleMultiManifestDownload = () => {
-    onOpen("downloadManifests", { orders: selectedRows })
-    router.push('/print/manifest')
-  }
-
   return (
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
@@ -110,30 +95,7 @@ export function B2BOrderStatusTable({ data, columns }: { data: any[], columns: C
           onChange={(e) => setFiltering(e.target.value)}
           className="max-w-sm"
         />
-        <div>
-          {
-            selectedRows.length > 0 && (
-              <DropdownMenu >
-                <DropdownMenuTrigger className={cn("mr-3", buttonVariants({
-                  variant: "webPageBtn",
-                  size: "sm"
-                }))}>Bulk Actions</DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => onOpen("updateShopifyOrders", { orders: (newOrders as unknown as B2COrderType[]) })}>Update shopify orders</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onOpen("BulkPickupUpdate", { orders: selectedRows })}>Change pickup location</DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleMultiLableDownload}>Download Label</DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleMultiManifestDownload}>Download Manifest</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onOpen("cancelBulkOrder", { orders: selectedRows })}>Cancel</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>)
-          }
-
-
-          {
-            seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
-          }
-        </div>
+    
       </div>
       <div className="rounded-md border">
         <Table>

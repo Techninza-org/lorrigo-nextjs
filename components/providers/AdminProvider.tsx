@@ -28,7 +28,8 @@ interface AdminContextType {
     upateSellerAssignedCouriers: ({ couriers }: { couriers: string[] }) => void;
     getSellerRemittanceID: (sellerId: string, remittanceId: string) => Promise<RemittanceType> | null;
     clientBills: any;
-    getClientBillingData: () => void;
+    vendorBills: any;
+    getVendorBillingData: () => void;
 
 
     manageRemittance: ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => Promise<boolean>;
@@ -48,6 +49,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [allCouriers, setAllCouriers] = useState<ShippingRate[]>([]);
     const [assignedCouriers, setAssignedCouriers] = useState<ShippingRate[]>([]);
     const [clientBills, setClientBills] = useState<any>([]);
+    const [vendorBills, setVendorBills] = useState<any>([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -212,7 +214,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description:error?.response?.data?.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
             });
             console.error('Error fetching data:', error);
         }
@@ -238,7 +240,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             toast({
                 variant: "destructive",
                 title: "Error",
-                description:error?.response?.data?.message || "An error occurred",
+                description: error?.response?.data?.message || "An error occurred",
             });
             console.error('Error fetching data:', error);
         }
@@ -256,10 +258,10 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
-    const getClientBillingData = async () => {
+    const getVendorBillingData = async () => {
         try {
             const res = await axiosIWAuth.get('/admin/billing/client');
-            setClientBills(res.data.data)
+            setVendorBills(res.data.data)
             return res.data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -297,9 +299,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getAllRemittance();
 
             getAllCouriers(),
-                getSellerAssignedCouriers(),
-                getFutureRemittance()
-            getClientBillingData();
+            getSellerAssignedCouriers(),
+            getFutureRemittance()
+            getVendorBillingData();
         }
     }, [user, userToken])
 
@@ -327,7 +329,8 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 getSellerRemittanceID,
                 upateSellerAssignedCouriers,
                 clientBills,
-                getClientBillingData,
+                vendorBills,
+                getVendorBillingData,
                 manageRemittance
             }}
         >

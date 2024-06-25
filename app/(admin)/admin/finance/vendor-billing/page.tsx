@@ -1,8 +1,8 @@
-import { AdminVendorBillingCols } from "@/components/Admin/Finance/vendor-billing-cols";
-import { VendorBillngTable } from "@/components/Admin/Finance/vendor-billing-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { VendorBilling } from "@/components/Admin/Finance/vendor-billing";
 
-export default function VendorBilling() {
+
+export default function VendorBillingPage() {
     return (
         <Card className="col-span-4">
             <CardHeader>
@@ -11,7 +11,7 @@ export default function VendorBilling() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-                <VendorBillngTable data={[]} columns={AdminVendorBillingCols} />
+                <VendorBilling />
             </CardContent>
         </Card>
     )
