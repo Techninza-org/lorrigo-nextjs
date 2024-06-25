@@ -1,28 +1,8 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
-import { InfoIcon } from "lucide-react";
-import HoverCardToolTip from "@/components/hover-card-tooltip";
 
 export const AdminVendorBillingCols: ColumnDef<B2COrderType>[] = [
-    {
-        header: 'Client Name',
-        accessorKey: 'sellerId',
-        cell: ({ row }) => {
-            const rowData = row.original;
-            return (
-                <div className="space-y-1 items-center">
-
-                    <p>
-                        {
-                            // @ts-ignore
-                            rowData?.sellerId?.name || "N/A"
-                        }
-                    </p>
-                </div>
-            )
-        }
-    },
     {
         header: 'Order ID',
         accessorKey: 'orderRefId',
@@ -64,7 +44,7 @@ export const AdminVendorBillingCols: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("shipmentType") ? "COD" : "Prepaid"}</p>
+                    <p>{row.getValue("shipmentType")  ? "COD" : "Prepaid"}</p>
                 </div>
             )
         }
@@ -104,24 +84,19 @@ export const AdminVendorBillingCols: ColumnDef<B2COrderType>[] = [
                 </div>
             )
         }
+
     },
     {
         header: 'Charged Weight',
         accessorKey: 'chargedWeight',
         cell: ({ row }) => {
-            const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p className="flex gap-2 items-center">
-                        <span className="flex">{row.getValue("chargedWeight")} Kg</span>
-                        <HoverCardToolTip Icon={<InfoIcon size={15} />} side="top" className="flex-col max-w-fit">
-                            <div>Increment Weight: {rowData.incrementPrice}</div>
-                            <div>Base Weight: {rowData.basePrice}</div>
-                        </HoverCardToolTip>
-                    </p>
+                    <p>{row.getValue("chargedWeight")} Kg</p>
                 </div>
             )
         }
+
     },
     {
         header: 'Zone',

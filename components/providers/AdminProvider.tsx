@@ -27,9 +27,8 @@ interface AdminContextType {
     getSellerAssignedCouriers: () => void;
     upateSellerAssignedCouriers: ({ couriers }: { couriers: string[] }) => void;
     getSellerRemittanceID: (sellerId: string, remittanceId: string) => Promise<RemittanceType> | null;
-    clientBills: any;
-    vendorBills: any;
-    getVendorBillingData: () => void;
+    clientNVendorBills: any;
+    getClientNVendorBillingData: () => void;
 
 
     manageRemittance: ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => Promise<boolean>;
@@ -48,8 +47,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [futureRemittance, setFutureRemittance] = useState<RemittanceType[] | null>(null);
     const [allCouriers, setAllCouriers] = useState<ShippingRate[]>([]);
     const [assignedCouriers, setAssignedCouriers] = useState<ShippingRate[]>([]);
-    const [clientBills, setClientBills] = useState<any>([]);
-    const [vendorBills, setVendorBills] = useState<any>([]);
+    const [clientNVendorBills, setClientNVendorBills] = useState<any>([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -258,20 +256,10 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
-    const getVendorBillingData = async () => {
-        try {
-            const res = await axiosIWAuth.get('/admin/billing/vendor');
-            setVendorBills(res.data.data)
-            return res.data;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
-
-    const getClientBillingData = async () => {
+    const getClientNVendorBillingData = async () => {
         try {
             const res = await axiosIWAuth.get('/admin/billing/client');
-            setClientBills(res.data.data)
+            setClientNVendorBills(res.data.data)
             return res.data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -311,8 +299,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getAllCouriers(),
             getSellerAssignedCouriers(),
             getFutureRemittance()
-            getVendorBillingData();
-            getClientBillingData()
+            getClientNVendorBillingData()
         }
     }, [user, userToken])
 
@@ -339,10 +326,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 getSellerAssignedCouriers,
                 getSellerRemittanceID,
                 upateSellerAssignedCouriers,
-                clientBills,
-                vendorBills,
-                getVendorBillingData,
-                manageRemittance
+                manageRemittance,
+                clientNVendorBills,
+                getClientNVendorBillingData
             }}
         >
             {children}

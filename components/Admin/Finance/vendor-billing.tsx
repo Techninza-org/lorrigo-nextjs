@@ -5,8 +5,8 @@ import { VendorBillingTable } from "./vendor-billing-table"
 import { useAdminProvider } from "@/components/providers/AdminProvider"
 
 export const VendorBilling = () => {
-    const { vendorBills } = useAdminProvider()
+    const { clientNVendorBills } = useAdminProvider()
     return (
-        <VendorBillingTable data={vendorBills || []} columns={AdminVendorBillingCols} />
+        <VendorBillingTable data={clientNVendorBills || []} columns={AdminVendorBillingCols} />
     )
 }

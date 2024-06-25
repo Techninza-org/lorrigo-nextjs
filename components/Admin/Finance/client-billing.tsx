@@ -2,12 +2,12 @@
 
 import { useAdminProvider } from "@/components/providers/AdminProvider"
 import { ClientBillingTable } from "./client-billing-table"
-import { AdminVendorBillingCols } from "./vendor-billing-cols"
+import { AdminClientBillingCols } from "./client-billing-cols"
 
 export const ClientBilling = () => {
-    const { clientBills } = useAdminProvider()
+    const { clientNVendorBills } = useAdminProvider()
 
     return (
-        <ClientBillingTable data={clientBills || []} columns={AdminVendorBillingCols}/>
+        <ClientBillingTable data={clientNVendorBills || []} columns={AdminClientBillingCols}/>
     )
 }
