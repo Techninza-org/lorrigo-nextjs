@@ -10,7 +10,7 @@ import {
 import { useModal } from "@/hooks/use-model-store";
 
 export const ClientBillingUploadModal = () => {
-    const { getClientBillingData } = useAdminProvider();
+    const { getVendorBillingData } = useAdminProvider();
     const { isOpen, onClose, type } = useModal();
 
     const isModalOpen = isOpen && type === "ClientBillingUpload";
@@ -32,7 +32,7 @@ export const ClientBillingUploadModal = () => {
                     uploadUrl='/admin/billing/client-billing/upload-csv'
                     acceptFileTypes={{ "text/csv": [".csv"] }}
                     handleClose={() =>{
-                        getClientBillingData()
+                        getVendorBillingData()
                         handleClose();
                     }}
                 />
