@@ -1,7 +1,13 @@
+"use client"
+
+import { useAdminProvider } from "@/components/providers/AdminProvider"
+import { ClientBillingTable } from "./client-billing-table"
+import { AdminVendorBillingCols } from "./vendor-billing-cols"
+
 export const ClientBilling = () => {
+    const { clientBills } = useAdminProvider()
+
     return (
-        <div>
-            <h1>Client Billing</h1>
-        </div>
+        <ClientBillingTable data={clientBills || []} columns={AdminVendorBillingCols}/>
     )
 }

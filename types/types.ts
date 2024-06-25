@@ -178,6 +178,9 @@ export interface B2COrderType {
   __v?: number;
 
   amount?: number; // this is for B2B order
+  incrementPrice?: string;
+  basePrice?: string;
+
 }
 
 // Order Response

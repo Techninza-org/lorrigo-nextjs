@@ -260,8 +260,18 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
     const getVendorBillingData = async () => {
         try {
-            const res = await axiosIWAuth.get('/admin/billing/client');
+            const res = await axiosIWAuth.get('/admin/billing/vendor');
             setVendorBills(res.data.data)
+            return res.data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    const getClientBillingData = async () => {
+        try {
+            const res = await axiosIWAuth.get('/admin/billing/client');
+            setClientBills(res.data.data)
             return res.data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -302,6 +312,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getSellerAssignedCouriers(),
             getFutureRemittance()
             getVendorBillingData();
+            getClientBillingData()
         }
     }, [user, userToken])
 
