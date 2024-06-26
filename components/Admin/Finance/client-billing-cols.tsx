@@ -106,6 +106,17 @@ export const AdminClientBillingCols: ColumnDef<B2COrderType>[] = [
         }
     },
     {
+        header: 'Vendor Name',
+        accessorKey: 'vendorWNickName',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p className="capitalize">{row.getValue("vendorWNickName")?.toString()?.toLowerCase()}</p>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Charged Weight',
         accessorKey: 'chargedWeight',
         cell: ({ row }) => {

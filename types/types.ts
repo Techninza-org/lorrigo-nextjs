@@ -182,6 +182,7 @@ export interface B2COrderType {
   basePrice?: string;
   incrementWeight: string;
   baseWeight: string;
+  vendorWNickName?: string;
 
 }
 
