@@ -59,8 +59,6 @@ export function ClientBillingTable({ data, columns }: { data: any[], columns: Co
         onGlobalFilterChange: setFiltering
     })
 
-    const { onOpen } = useModal()
-
 
     return (
         <div className="w-full">
@@ -71,14 +69,6 @@ export function ClientBillingTable({ data, columns }: { data: any[], columns: Co
                     onChange={(e) => setFiltering(e.target.value)}
                     className="max-w-sm"
                 />
-                <div className="space-x-3">
-                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("client_billing_sample_format.csv")}>
-                        <Download size={18} />
-                    </Button>
-                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => onOpen("ClientBillingUpload")}>
-                        <UploadCloudIcon size={18} />
-                    </Button>
-                </div>
             </div>
 
             <div className="rounded-md border">

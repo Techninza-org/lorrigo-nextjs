@@ -180,6 +180,8 @@ export interface B2COrderType {
   amount?: number; // this is for B2B order
   incrementPrice?: string;
   basePrice?: string;
+  incrementWeight: string;
+  baseWeight: string;
 
 }
 

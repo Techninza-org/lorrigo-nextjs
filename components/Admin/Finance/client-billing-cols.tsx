@@ -115,8 +115,10 @@ export const AdminClientBillingCols: ColumnDef<B2COrderType>[] = [
                     <p className="flex gap-1 items-center">
                         <span className="flex">{row.getValue("chargedWeight")} Kg</span>
                         <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
-                            <div>Increment Weight: {rowData.incrementPrice}</div>
-                            <div>Base Weight: {rowData.basePrice}</div>
+                            <div>Increment Price: {rowData.incrementPrice}</div>
+                            <div>Base Price: {rowData.basePrice}</div>
+                            <div>Increment Weight: {rowData.incrementWeight}</div>
+                            <div>Base Weight: {rowData.baseWeight}</div>
                         </HoverCardToolTip>
                     </p>
                 </div>

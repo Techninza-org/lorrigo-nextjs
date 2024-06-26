@@ -227,18 +227,37 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       let url = type === "b2c" ? `/order/courier/${type}/SR/${orderId}` : `/order/courier/b2b/${orderId}`
       const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
+        if (res?.data?.courierPartner[0]?.message?.includes("error: ")) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "No courier partners available",
+          });
+          router.push(`/orders/${type === 'b2c' ? '' : 'b2b'}`);
+        }
         setCourierPartners(res.data);
         return res.data;
-      } else {
+      }
+
+
+      if (type != "b2c" && (!res.data?.valid || res?.data?.message.includes("Zone not found for the given region"))) {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Pincode not serviceable",
+          description: "No courier partners available",
         });
-        router.push('/orders/b2b');
+        router.push(`/orders/${type === 'b2c' ? '' : 'b2b'}`);
       }
 
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response.data.message.includes("Zone not found for the given region")) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Zone not Serviceable for the given pincode",
+        });
+        router.push(`/orders/${type === 'b2c' ? '' : 'b2b'}`);
+      }
       console.error('Error fetching data:', error);
     }
   }
