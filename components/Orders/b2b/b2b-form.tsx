@@ -19,6 +19,7 @@ import { useAuth } from '@/components/providers/AuthProvider'
 import { generateOrderID } from '@/lib/utils'
 
 export const b2bformDataSchema = z.object({
+    client_order_reference_id: z.string().optional(),
     order_reference_id: z.string().min(1, "Order reference id is required"),
     client_name: z.string().min(1, "Client name is required"),
     pickupAddress: z.string().min(1, "Pickup address is required"),

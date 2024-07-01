@@ -101,21 +101,10 @@ const calculateFinancialYear = () => {
 export const generateOrderID = (hubName: string, lastOrderId: string) => {
   const platformName = "LS";
 
-  const currentYear = new Date().getFullYear();
-  const financialYearStart = new Date(currentYear, 3, 1);
-  const financialYear = new Date() >= financialYearStart
-    ? `${currentYear.toString().slice(2)}${(currentYear + 1).toString().slice(2)}`
-    : `${(currentYear - 1).toString().slice(2)}${currentYear.toString().slice(2)}`;
-
-  // const regex = new RegExp(`^${platformName}${financialYear}[A-Z]{3}\\d{4}$`);
-  // if (!regex.test(lastOrderId)) {
-  //   throw new Error("Invalid lastOrderId format.");
-
-  // const lastOrderIDNumber = parseInt(lastOrderId.slice(-4), 10);
   const lastOrderIDNumber = parseInt(lastOrderId);
   const nextOrderID = (lastOrderIDNumber + 1).toString().padStart(4, '0');
   const hubNameAbbreviation = hubName?.split(" ").map(word => word.charAt(0).toUpperCase()).join("");
-  const uniqueOrderID = `${platformName}${financialYear}${hubNameAbbreviation}${nextOrderID}`;
+  const uniqueOrderID = `${platformName}${hubNameAbbreviation}${nextOrderID}`;
 
   return uniqueOrderID;
 };
@@ -142,4 +131,14 @@ export const handleFileDownload = (fileName: string) => {
   anchor.href = url;
   anchor.download = fileName;
   anchor.click();
+}
+
+export function splitStringOnFirstNumber(input?: string) {
+  const result = input?.split("").slice(-3)?.join("");
+  const increment = parseInt(result || "0") + 1;
+  if (isNaN(increment)) {
+    const random = Math.floor(Math.random() * 1000);
+    return random.toString();
+  }
+  return result;
 }

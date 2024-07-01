@@ -20,7 +20,7 @@ import { Button } from '../ui/button';
 import { BoxDetails } from './box-details';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../providers/AuthProvider';
-import { generateOrderID, handleFileDownload } from '@/lib/utils';
+import { generateOrderID, handleFileDownload, splitStringOnFirstNumber } from '@/lib/utils';
 import ImageUpload from '../file-upload';
 
 
@@ -36,6 +36,7 @@ const productDetailsSchema = z.object({
 
 
 export const formDataSchema = z.object({
+    client_order_reference_id: z.string().optional(),
     order_reference_id: z.string().min(1, "Order reference id is required"),
     fragile_items: z.boolean().default(false).optional(),
     payment_mode: z.string().min(1, "Payment mode is required"),
@@ -102,7 +103,7 @@ export const B2CForm = () => {
     const isCOD = form.watch('payment_mode') === "COD";
 
     useEffect(() => {
-        setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name) || "@@", `${orders?.length || 0}`))
+        setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name) || "@@", `${splitStringOnFirstNumber(orders[0]?.order_reference_id) || 0}`))
     }, [orders?.length, seller?.companyProfile?.companyName, user?.name])
 
     useEffect(() => {

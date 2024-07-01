@@ -65,7 +65,7 @@ export function CloneB2BOrderDrawer() {
     }, [form, b2bOrder]);
 
     const isLoading = form.formState.isSubmitting;
-    const {errors} = form.formState;
+    const { errors } = form.formState;
 
     const handleClose = () => {
         // form.reset();
@@ -75,7 +75,7 @@ export function CloneB2BOrderDrawer() {
     const onSubmit = async (values: z.infer<typeof b2bformDataSchema>) => {
         try {
             console.log(values)
-            const isSuccess = await handleCreateB2BOrder(values)
+            const isSuccess = await handleCreateB2BOrder({ client_order_reference_id: `${form.watch("order_reference_id")}_C`, ...values })
             if (isSuccess == true) {
                 // form.reset();
                 handleClose()

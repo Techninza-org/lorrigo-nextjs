@@ -210,7 +210,7 @@ export function CloneOrderDrawer() {
 
     const onSubmit = async (values: z.infer<typeof cloneFormSchema>) => {
         try {
-            const isSuccess = await handleCreateOrder(values)
+            const isSuccess = await handleCreateOrder({ client_order_reference_id: `${form.watch("order_reference_id")}_C`, ...values })
             if (isSuccess == true) {
                 // form.reset();
                 router.refresh()

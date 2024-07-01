@@ -349,6 +349,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       const payload = {
         ewaybill: order.ewaybill,
         order_reference_id: order.order_reference_id,
+        client_order_reference_id: order.client_order_reference_id,
         payment_mode: order.payment_mode === "COD" ? 1 : 0,
         orderWeight: Number(order.orderWeight),
         orderWeightUnit: "kg",
@@ -976,6 +977,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const handleCreateB2BOrder = async (order: z.infer<typeof b2bformDataSchema>) => {
+    console.log(order)
     try {
       const res = await axiosIWAuth.post('/order/b2b', order);
       if (res.data?.valid) {

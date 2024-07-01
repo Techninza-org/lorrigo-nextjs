@@ -24,7 +24,7 @@ export const CompanyProfileSchema = z.object({
   companyId: z.string().optional(),
   companyName: z.string().min(1, "Company Name is required"),
   companyEmail: z.string().email("Invalid email address"),
-  website: z.string().url().min(1, "Store Url is required"),
+  website: z.string().url().min(1, "Store Url is required").optional(),
   logo: z.string().optional(),
 })
 
