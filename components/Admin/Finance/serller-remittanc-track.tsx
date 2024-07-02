@@ -14,7 +14,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useEffect, useState } from "react";
 import { RemittanceType } from "@/types/types";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "date-fns";
+import { formatDate, parse } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { CircleAlert, CircleCheck, NotepadTextDashed, PackageIcon, XCircle } from "lucide-react";
@@ -57,7 +57,8 @@ const TrackSellerRemittance = () => {
                     {status}
                 </Badge>
                 <Badge variant={"secondary"}>
-                    Processed on: {formatDate(`${remittanceDetails.remittanceDate}`, 'MMM dd, yyyy')}
+                
+                    Processed on: {formatDate(parse(remittanceDetails.remittanceDate, 'yy-MM-dd', new Date()), 'MMM dd, yyyy')}
                 </Badge>
             </div>
 
