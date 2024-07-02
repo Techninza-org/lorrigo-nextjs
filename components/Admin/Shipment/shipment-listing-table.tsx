@@ -40,6 +40,8 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
     []
   )
   const searchParams = useSearchParams()
+  const [filtering, setFiltering] = React.useState<string>("")
+
   const isShipmentVisible = searchParams.get('status') !== 'new'
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
     "Shipment Details": isShipmentVisible,
@@ -55,20 +57,17 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    enableSorting: false,
+    onGlobalFilterChange: setFiltering,
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
     state: {
-      columnFilters,
       pagination,
+      columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter: filtering
     },
   })
 

@@ -15,7 +15,7 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p>{rowData.customerDetails?.name}</p>
+                <p className="capitalize">{rowData.sellerDetails?.sellerName}</p>
             )
         }
     },
