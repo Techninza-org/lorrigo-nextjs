@@ -62,6 +62,13 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
     onGlobalFilterChange: setFiltering,
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: setPagination,
+
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getSortedRowModel: getSortedRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+
     state: {
       pagination,
       columnFilters,
