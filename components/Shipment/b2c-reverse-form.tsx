@@ -20,7 +20,7 @@ import { Button } from '../ui/button';
 import { BoxDetails } from './box-details';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../providers/AuthProvider';
-import { generateOrderID, handleFileDownload } from '@/lib/utils';
+import { generateOrderID, handleFileDownload, splitStringOnFirstNumber } from '@/lib/utils';
 import ImageUpload from '../file-upload';
 
 
@@ -69,7 +69,7 @@ export const B2CReverseForm = () => {
     const form = useForm({
         resolver: zodResolver(formDataSchema),
         defaultValues: {
-            order_reference_id: `${user?.name}`,
+            order_reference_id: generateOrderID((seller?.companyProfile?.companyName || user?.name) || "@@", `${orders?.length || 0}`),
             fragile_items: false,
             payment_mode: "prepaid" as "prepaid" | "COD",
             orderWeight: "",
@@ -100,8 +100,9 @@ export const B2CReverseForm = () => {
     const isCOD = form.watch('payment_mode') === "COD";
 
     useEffect(() => {
-        setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name) || "@@", `${orders?.length || 0}`))
-    }, [currentDate, setValue, user?.name])
+        setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name) || "@@", `${splitStringOnFirstNumber(orders[0]?.order_reference_id) || 0}`))
+    }, [orders?.length, seller?.companyProfile?.companyName, user?.name])
+
 
     useEffect(() => {
 
