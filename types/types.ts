@@ -11,6 +11,8 @@ export type SellerType = {
   _id: string;
   name: string;
   email: string;
+  zoho_contact_id: string;
+  zoho_invoice_id: string;
   walletBalance?: number;
   companyProfile: {
     companyName?: string;
