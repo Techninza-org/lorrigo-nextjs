@@ -12,6 +12,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontalIcon } from "lucide-react";
+import { useSellerProvider } from "../providers/SellerProvider";
+import { useRouter } from "next/navigation";
 
 export const getBucketStatus = (bucket: number) => {
     switch (bucket) {
@@ -115,7 +117,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
     if (orderStage === 67 || orderStage === 4) {
         return (
             <div className="flex gap-2 items-center">
-                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("downloadManifest", { order: rowData })}>Download Manifest</Button>
+                <CreateReturnOrderButton  rowData={rowData}/>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -184,7 +186,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                <OrderCloneButton rowData={rowData} />
+                    <OrderCloneButton rowData={rowData} />
 
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -217,5 +219,40 @@ export const DownloadLabelButton: React.FC<{ rowData: B2COrderType }> = ({ rowDa
     const { onOpen } = useModal();
     return (
         <DropdownMenuItem onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</DropdownMenuItem>
+    );
+}
+
+export const CreateReturnOrderButton = ({ rowData }: { rowData: any }) => {
+    const router = useRouter()
+    const { handleCreateOrder } = useSellerProvider()
+    return (
+        <Button variant={"themeButton"} size={"sm"}  onClick={async () => {
+            const isSuccess = await handleCreateOrder({
+                ...rowData,
+                order_reference_id: `${rowData.order_reference_id}-RT`,
+                order_invoice_date: new Date(),
+                orderSizeUnit: "cm",
+                orderWeight: rowData.orderWeight?.toString() || "0",
+                orderBoxHeight: rowData.orderBoxHeight?.toString() || "0",
+                orderBoxWidth: rowData.orderBoxWidth?.toString() || "0",
+                orderBoxLength: rowData.orderBoxLength?.toString() || "0",
+                amount2Collect: rowData.amount2Collect?.toString() || "0",
+                fragile_items: false,
+                isReverseOrder: true,
+                order_invoice_number: "",
+                pickupAddress: rowData?.pickupAddress?._id,   
+                numberOfBoxes: "1",
+                payment_mode: "0",
+                productDetails: {
+                    ...rowData.productId,
+                    taxRate: rowData.productId.tax_rate,
+                    taxableValue: rowData.productId.taxable_value
+                }
+            });
+
+            if(isSuccess){
+                router.push('/orders/reverse')
+            }
+        }}>Create Return Order</Button>
     );
 }
