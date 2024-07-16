@@ -57,6 +57,10 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                     title: "Billing",
                     href: "/finance/billing",
                 },
+                {
+                    title: "Invoice",
+                    href: "/finance/invoice",
+                },
             ],
         },
         {

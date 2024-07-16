@@ -1,7 +1,7 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import { BadgeCheck, ImagesIcon, LayoutDashboard, SquarePen, Wrench } from "lucide-react";
+import { BadgeCheck, ImagesIcon, LayoutDashboard, SquarePen, Wrench, DollarSign } from "lucide-react";
 import { formatDate } from "date-fns";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
 import { useModal } from "@/hooks/use-model-store";
@@ -124,6 +124,7 @@ export const AdminUsersListingCols: ColumnDef<SellerType>[] = [
                     <Link href={`/admin/users/courier-configure?sellerId=${sellerId}`}><Wrench /></Link>
                     <Link href={`/admin/users/edit-user?sellerId=${sellerId}`}><SquarePen /></Link>
                     <Link href={`/admin/orders?sellerId=${sellerId}`}><LayoutDashboard /></Link>
+                    <Link href={`/admin/users/invoice?sellerId=${sellerId}`}><DollarSign /></Link>
                 </div>
             )
         }

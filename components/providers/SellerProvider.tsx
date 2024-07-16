@@ -77,6 +77,8 @@ interface SellerContextType {
 
   handleEditB2BOrder: (order: z.infer<typeof b2bformDataSchema>, orderId: string) => boolean | Promise<boolean>;
   B2BcalcRate: (values: z.infer<typeof B2BrateCalcSchema>) => Promise<OrderType>;
+  getInvoices: () => Promise<any>;
+  invoices: any;
 }
 
 interface sellerCustomerFormType {
@@ -119,6 +121,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [courierPartners, setCourierPartners] = useState<OrderType>();
   const [b2bCustomers, setB2bCustomers] = useState<any[]>([]);
   const [sellerBilling, setSellerBilling] = useState<any>(null);  // Type should be updated
+  const [invoices, setInvoices] = useState<any>(null);
 
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
@@ -698,6 +701,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       const res = await axiosIWAuth.get('/seller');
       if (res.data.valid) {
         setSeller(res.data.seller)
+        setInvoices(res.data.seller.invoices)
       }
     } catch (error) {
       console.error('Error fetching seller:', error);
@@ -1108,6 +1112,15 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const getInvoices = async () => {
+    try {
+      const res = await axiosIWAuth.get('/seller/invoice');
+      setInvoices(res.data.invoices)
+    } catch (error) {
+      console.error('Error fetching data:', error);
+  }
+  }
+
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
       getHub();
@@ -1116,6 +1129,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       getSellerDashboardDetails()
       getSellerRemittance();
       getSellerBillingDetails();
+      getInvoices();
     }
   }, [user, userToken])
 
@@ -1179,7 +1193,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         handleCreateB2BShipment,
         handleEditB2BOrder,
 
-        B2BcalcRate
+        B2BcalcRate,
+        getInvoices,
+        invoices
 
       }}
     >
