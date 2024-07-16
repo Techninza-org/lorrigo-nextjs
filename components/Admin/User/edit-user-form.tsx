@@ -83,6 +83,7 @@ const EditUserForm = () => {
                 pan: values.pan,
                 aadhar: values.aadhar,
                 gst: values.gst,
+                isVerified: values.verified,
                 kycDetails: {
                     verified: values.verified
                 },
