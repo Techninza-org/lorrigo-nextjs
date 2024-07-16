@@ -104,16 +104,6 @@ export const B2CReverseForm = () => {
     }, [orders?.length, seller?.companyProfile?.companyName, user?.name])
 
 
-    useEffect(() => {
-
-        // if (isCOD) {
-        //     setCollectableFeild(true);
-        // } else {
-        //     setCollectableFeild(false);
-        // }
-    }, []);
-
-
     const handleIncrement = () => {
         const currentValue = parseInt(form.watch('productDetails.quantity').toString()) || 0;
         setValue('productDetails.quantity', (currentValue + 1).toString());

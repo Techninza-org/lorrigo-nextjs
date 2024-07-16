@@ -255,6 +255,7 @@ interface Stage {
 export interface PaymentTransaction {
   _id: string;
   sellerId: string;
+  desc: string;
   merchantTransactionId: string;
   amount: string;
   code: string;
