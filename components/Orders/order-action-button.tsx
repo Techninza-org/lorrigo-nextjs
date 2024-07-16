@@ -114,10 +114,31 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
         );
     }
 
-    if (!rowData?.isReverseOrder && (orderStage === 67 || orderStage === 4)) {
+    if (orderStage === 67 || orderStage === 4) {
         return (
             <div className="flex gap-2 items-center">
-                <CreateReturnOrderButton  rowData={rowData}/>
+                <CreateReturnOrderButton rowData={rowData} />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontalIcon className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                        <OrderCloneButton rowData={rowData} />
+                        <DownloadLabelButton rowData={rowData} />
+                        <DropdownMenuSeparator />
+                        <OrderCancelButton rowData={rowData} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        );
+    }
+    if (rowData?.isReverseOrder && orderStage === 4) {
+        return (
+            <div className="flex gap-2 items-center">
+                <CreateReturnOrderButton rowData={rowData} />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -226,7 +247,7 @@ export const CreateReturnOrderButton = ({ rowData }: { rowData: any }) => {
     const router = useRouter()
     const { handleCreateOrder } = useSellerProvider()
     return (
-        <Button variant={"themeButton"} size={"sm"}  onClick={async () => {
+        <Button variant={"themeButton"} size={"sm"} onClick={async () => {
             const isSuccess = await handleCreateOrder({
                 ...rowData,
                 order_reference_id: `${rowData.order_reference_id}-RT`,
@@ -240,7 +261,7 @@ export const CreateReturnOrderButton = ({ rowData }: { rowData: any }) => {
                 fragile_items: false,
                 isReverseOrder: true,
                 order_invoice_number: "",
-                pickupAddress: rowData?.pickupAddress?._id,   
+                pickupAddress: rowData?.pickupAddress?._id,
                 numberOfBoxes: "1",
                 payment_mode: "0",
                 productDetails: {
@@ -250,7 +271,7 @@ export const CreateReturnOrderButton = ({ rowData }: { rowData: any }) => {
                 }
             });
 
-            if(isSuccess){
+            if (isSuccess) {
                 router.push('/orders/reverse')
             }
         }}>Create Return Order</Button>
