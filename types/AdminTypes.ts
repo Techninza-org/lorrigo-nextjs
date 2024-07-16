@@ -32,3 +32,33 @@ export interface ShippingRate {
     updatedAt?: string;
     __v: number;
 }
+
+
+interface ZoneMatrix {
+    [zone: string]: {
+        [destinationZone: string]: number;
+    };
+}
+
+export interface ShippinB2BgRate {
+    _id: string;
+    name: string;
+    baseFreight: number;
+    fuelSurcharge: number;
+    ODACharge: number;
+    docketCharge: number;
+    type: string;
+    pickupTime: string;
+    carrierID: number;
+    isActive: boolean;
+    isReversedCourier: boolean;
+    zoneMatrix: ZoneMatrix;
+    createdAt: string;
+    updatedAt: string;
+    greenTax: number;
+    foPercentage: string;
+    foValue: number;
+    nameWithNickname?: string;
+    __v: number;
+}
+

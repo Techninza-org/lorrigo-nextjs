@@ -114,7 +114,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
         );
     }
 
-    if (orderStage === 67 || orderStage === 4) {
+    if (!rowData?.isReverseOrder && (orderStage === 67 || orderStage === 4)) {
         return (
             <div className="flex gap-2 items-center">
                 <CreateReturnOrderButton  rowData={rowData}/>
