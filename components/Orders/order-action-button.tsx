@@ -117,7 +117,6 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
     if (orderStage === 67 || orderStage === 4) {
         return (
             <div className="flex gap-2 items-center">
-                <CreateReturnOrderButton rowData={rowData} />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
