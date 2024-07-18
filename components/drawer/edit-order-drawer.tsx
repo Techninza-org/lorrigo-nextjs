@@ -54,7 +54,7 @@ export function EditOrderDrawer() {
 
     const isModalOpen = isOpen && type === "editOrder";
 
-    const { handleUpdateOrder, sellerFacilities } = useSellerProvider();
+    const { handleUpdateOrder, sellerFacilities, seller } = useSellerProvider();
 
     const router = useRouter();
 
@@ -253,6 +253,7 @@ export function EditOrderDrawer() {
                                         <Package className='mr-3' size={20} />Order Details
                                     </h4>
                                     <OrderDetailForm
+                                        seller={seller}
                                         form={form}
                                         orderRefDisable={true}
                                         isLoading={isLoading}

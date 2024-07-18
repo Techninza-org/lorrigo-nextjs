@@ -40,6 +40,18 @@ import CsvDownloader from 'react-csv-downloader';
 import { getBucketStatus } from "./order-action-button"
 import { format } from "date-fns"
 
+const filterData = (data: any, filter: any) => {
+  if (!filter) return data;
+
+  const lowercasedFilter = filter.toLowerCase();
+  return data.filter((row: any) => {
+    const awb = row.awb ? row.awb.toLowerCase() : "";
+    const orderReferenceId = row.order_reference_id.toLowerCase();
+    return awb.includes(lowercasedFilter) || orderReferenceId.includes(lowercasedFilter);
+  });
+};
+
+
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const { handleOrderSync, seller } = useSellerProvider()
   const [filtering, setFiltering] = React.useState<string>("")
@@ -55,7 +67,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   const defaultToDate = new Date();
   const defaultFromDate = new Date(
     defaultToDate.getFullYear(),
-    defaultToDate.getMonth()-1,
+    defaultToDate.getMonth() - 1,
   );
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
@@ -63,9 +75,12 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   })
 
   const [filteredData, setFilteredData] = React.useState<any[]>(data)
+  // Memoize filtered data to avoid unnecessary re-renders
+  const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
+
 
   const table = useReactTable({
-    data: filteredData,
+    data: filteredDataMemo,
     columns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -73,7 +88,6 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-
     state: {
       columnFilters,
       pagination,
@@ -81,7 +95,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
       globalFilter: filtering
     },
     onGlobalFilterChange: setFiltering
-  })
+  });
 
   const router = useRouter()
   const { onOpen } = useModal();
@@ -114,6 +128,10 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   }, [data])
 
   const cols = [
+    {
+      id: "order_creation_date",
+      displayName: "Order Created At"
+    },
     {
       id: "order_reference_id",
       displayName: "Order Reference ID"
@@ -162,6 +180,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
 
   const datas = filteredData.map((row) => {
     return {
+      order_creation_date: row?.createdAt && format(row?.createdAt, 'dd MM yyyy | HH:mm a'),
       order_reference_id: row.order_reference_id,
       awb: row.awb,
       order_invoice_date: format(row.order_invoice_date, 'dd MM yyyy | HH:mm a'),

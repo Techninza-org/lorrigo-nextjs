@@ -44,6 +44,12 @@ export type SellerType = {
     deductTDS?: string;
     tan?: string;
   };
+  config: { 
+    isD2C: boolean
+    isB2B: boolean
+    isPrepaid: boolean
+    isPostpaid: boolean
+  };
   kycDetails: {
     businessType?: string;
     photoUrl?: string;

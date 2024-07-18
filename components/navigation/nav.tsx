@@ -7,7 +7,7 @@ import { ArrowDown, ArrowDownIcon, ChevronDown, ChevronUp, LucideIcon } from "lu
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 import ActionTooltip from "../action-tooltip"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 interface NavProps {
   isCollapsed: boolean
@@ -20,12 +20,14 @@ interface NavProps {
     subLinks?: {
       title: string
       href: string
+      isDisabled?: boolean
     }[]
   }[]
 
 }
 
 export function Nav({ links, isCollapsed }: NavProps) {
+  const router = useRouter()
   const pathname = usePathname()
   const [openDropdownIndex, setOpenDropdownIndex] = React.useState<number | null>(null)
 
@@ -124,16 +126,17 @@ export function Nav({ links, isCollapsed }: NavProps) {
                       <div className="py-1" role="none">
                         {
                           link.subLinks?.map((subLink, subIndex) => (
-                            <Link
+                            <button
                               key={subIndex}
-                              href={subLink.href}
+                              onClick={() => router.push(subLink.href)}
                               className={cn(
                                 buttonVariants({ variant: isActive(subLink.href || ""), size: "sm" }),
                                 "justify-start w-full bg-opacity-50"
                               )}
+                              disabled={subLink.isDisabled || false}
                             >
                               {subLink.title}
-                            </Link>
+                            </button>
                           ))
                         }
                       </div>

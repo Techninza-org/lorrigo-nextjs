@@ -5,7 +5,6 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useAxios } from "@/components/providers/AxiosProvider";
 import { CardContent } from "@/components/ui/card";
 import { OrderType } from "@/types/types";
-import axios, { AxiosInstance } from "axios";
 import { useEffect, useState } from "react";
 
 export default function SellerOrders({sellerId}: {sellerId: any}) {
