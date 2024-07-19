@@ -1,7 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatCurrencyForIndia, getSvg, removeWhitespaceAndLowercase } from "@/lib/utils"
 import { useParams } from "next/navigation"
 import {
@@ -26,9 +26,10 @@ export const dynamic = 'force-dynamic'
 
 export default function CourierPage() {
     const params = useParams()
-    const { getCourierPartners, handleCreateD2CShipment, handleCreateB2BShipment } = useSellerProvider()
+    const { getCourierPartners, handleCreateD2CShipment, handleCreateB2BShipment, codprice} = useSellerProvider()
     const { userToken } = useAuth()
     const { pending } = useFormStatus();
+    const [volWeight, setVolWeight] = useState(0)
 
     const [courierPartners, setCourierPartners] = useState<OrderType>()
 
@@ -38,7 +39,10 @@ export default function CourierPage() {
         async function fetchCourierPartners() {
             const res = await getCourierPartners(String(params.id), String(params.type))
             setCourierPartners(res)
+            const volume = res?.orderDetails?.orderBoxLength * res?.orderDetails?.orderBoxWidth * res?.orderDetails?.orderBoxHeight;
+            setVolWeight(Math.round(volume / 5000))
         }
+        
         fetchCourierPartners()
         return () => {
             setCourierPartners(undefined)
@@ -86,6 +90,18 @@ export default function CourierPage() {
                             <p className="text-sm font-semibold">Approximate Weight (kg)</p>
                             <p className="text-sm">{courierPartners.orderDetails?.orderWeight} {courierPartners.orderDetails?.orderWeightUnit}</p>
                         </div>
+                        <div>
+                            <p className="text-sm font-semibold">Volumetric Weight (kg)</p>
+                            <p className="text-sm">{volWeight} kg</p>
+                        </div>
+                        {courierPartners.orderDetails.payment_mode != 0 && <div>
+                            <p className="text-sm font-semibold">COD Charges</p>
+                            <p className="text-sm">Rs. {codprice}</p>
+                        </div>}
+                        {courierPartners.orderDetails.payment_mode != 0 && <div>
+                            <p className="text-sm font-semibold">Collectable Amount</p>
+                            <p className="text-sm">Rs. {courierPartners.orderDetails.amount2Collect}</p>
+                        </div>}
 
                     </CardContent>
                 </Card>
@@ -98,6 +114,7 @@ export default function CourierPage() {
                             <CardTitle>
                                 Select Courier Partner
                             </CardTitle>
+                            <p>* All prices are inclusive of all taxes (Gst included)</p>
 
                         </CardHeader>
                         <CardContent className="flex items-center justify-between gap-1">

@@ -80,7 +80,7 @@ export const AdminRemittancesCols: ColumnDef<RemittanceType>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             const status = rowData.remittanceStatus;
-            const statusText: "success" | "failure" | "warning" = status === 'success' ? 'success' : status === 'pending' ? 'warning' : 'failure';
+            const statusText: "success" | "failure" | "warning" = status === 'completed' ? 'success' : status === 'pending' ? 'warning' : 'failure';
             return (
                 <div className="space-y-1 items-center">
                     <Badge variant={statusText} className="capitalize">{status}</Badge>

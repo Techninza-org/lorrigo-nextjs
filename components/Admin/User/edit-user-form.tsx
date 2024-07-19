@@ -69,6 +69,7 @@ const EditUserForm = () => {
     const isLoading = form.formState.isSubmitting;
 
     const onSubmit = async (values: z.infer<typeof EditUserSchema>) => {
+        // const olduser = users.find((user: any) => user._id === sellerId);
         try {
             const user = {
                 name: values.name,
@@ -84,9 +85,10 @@ const EditUserForm = () => {
                 aadhar: values.aadhar,
                 gst: values.gst,
                 isVerified: values.verified,
-                kycDetails: {
-                    verified: values.verified
-                },
+                // kycDetails: {
+                //     ...(olduser?.kycDetails ?? {}),
+                //     verified: values.verified
+                // },
                 isActive: values.active,
                 bankDetails: {
                     accHolderName: values.accHolderName,
@@ -111,7 +113,7 @@ const EditUserForm = () => {
             form.setValue('pan', user.pan || '')
             form.setValue('aadhar', user.aadhar || '')
             form.setValue('gst', user.gst || '')
-            form.setValue('verified', user.kycDetails.verified || false)
+            form.setValue('verified', user.isVerified || false)
             form.setValue('active', user.isActive || false)
             form.setValue('accHolderName', user.bankDetails?.accHolderName || '')
             form.setValue('accType', user.bankDetails?.accType || '')
@@ -336,7 +338,9 @@ const EditUserForm = () => {
                                 <FormMessage />
                             </FormItem>
                         )} />
-                    <FormField
+                    {
+                        !user?.isVerified &&
+                        <FormField
                         control={form.control}
                         name={'verified'}
                         render={({ field }) => (
@@ -358,7 +362,7 @@ const EditUserForm = () => {
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )} />
+                        )} />}
                     <FormField
                         control={form.control}
                         name={'active'}

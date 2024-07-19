@@ -157,6 +157,10 @@ export const B2CForm = () => {
         }
     }
 
+    function navigateToShipment(){
+        router.push("/orders")
+    }
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

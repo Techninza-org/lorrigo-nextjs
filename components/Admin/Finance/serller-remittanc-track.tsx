@@ -87,15 +87,21 @@ const TrackSellerRemittance = () => {
                             <TableRow>
                                 <TableHead>AWB Number</TableHead>
                                 <TableHead>Amount Collected</TableHead>
+                                <TableHead>Delivery Date</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {
                                 remittanceDetails.orders.map((order, index) => {
+                                    const length = order?.orderStages?.length
+                                    //@ts-ignore
+                                    const date = order?.orderStages[length-1]?.stageDateTime
+                                    const formattedDate = formatDate(date, 'dd-MM-yyyy')
                                     return (
                                         <TableRow key={index}>
                                             <TableCell>{order.awb}</TableCell>
                                             <TableCell>{formatCurrencyForIndia(Number(order?.amount2Collect))}</TableCell>
+                                            <TableCell>{formattedDate}</TableCell>
                                         </TableRow>
                                     )
                                 })

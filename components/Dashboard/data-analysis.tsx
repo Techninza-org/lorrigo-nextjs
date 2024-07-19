@@ -103,7 +103,7 @@ export const DataAnalysis = () => {
                             </div>
                         </CardContent>
                     </Card>
-                    <Card className="drop-shadow-md">
+                    {/* <Card className="drop-shadow-md">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
                             <CardTitle className="text-lg font-medium">
                                 NDR Details
@@ -126,8 +126,8 @@ export const DataAnalysis = () => {
                                 <Label>NDR Delivered</Label>
                             </div>
                         </CardContent>
-                    </Card>
-                    <Card className="drop-shadow-md">
+                    </Card> */}
+                    {/* <Card className="drop-shadow-md">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
                             <CardTitle className="text-lg font-medium">
                             COD Status
@@ -154,7 +154,7 @@ export const DataAnalysis = () => {
                                 <Label>Last COD Remitted</Label>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
                 </div>
             </div>
         </div>

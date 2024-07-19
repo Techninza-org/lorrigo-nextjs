@@ -79,6 +79,8 @@ interface SellerContextType {
   B2BcalcRate: (values: z.infer<typeof B2BrateCalcSchema>) => Promise<OrderType>;
   getInvoices: () => Promise<any>;
   invoices: any;
+  getCodPrice: () => Promise<any>;
+  codprice: any;
 }
 
 interface sellerCustomerFormType {
@@ -122,6 +124,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [b2bCustomers, setB2bCustomers] = useState<any[]>([]);
   const [sellerBilling, setSellerBilling] = useState<any>(null);  // Type should be updated
   const [invoices, setInvoices] = useState<any>(null);
+  const [codprice, setCodprice] = useState<any>(0);
 
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
@@ -340,7 +343,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       }
 
       // For Ewaybill validation
-      if (Number(order.productDetails.taxableValue) > 50000) {
+      if (Number(order.productDetails.taxableValue) > 50000 && !order.ewaybill) {
         toast({
           variant: "destructive",
           title: "Error",
@@ -687,6 +690,14 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const calcRate = async (order: any) => {
     try {
+      if(order.boxLength === '0' || order.boxWidth === '0' || order.boxHeight === '0' || order.weight === '0') {
+        toast({
+          variant: "destructive",
+          title: "Invalid Input",
+          description: "Weght and dimensions should be greater than 0",
+        });
+        return false;
+      }
       const res = await axiosIWAuth.post('/ratecalculator', order);
       if (res.data?.valid) {
         return res.data.rates;
@@ -1121,6 +1132,15 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
   }
 
+  const getCodPrice = async () => {
+    try {
+      const res = await axiosIWAuth.get('/seller/cod-price');
+      setCodprice(res.data.codPrice)
+    } catch (error) {
+      console.error('Error fetching data:', error);
+  }
+}
+
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
       getHub();
@@ -1130,6 +1150,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       getSellerRemittance();
       getSellerBillingDetails();
       getInvoices();
+      getCodPrice();
     }
   }, [user, userToken])
 
@@ -1195,7 +1216,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
         B2BcalcRate,
         getInvoices,
-        invoices
+        invoices,
+        getCodPrice,
+        codprice,
 
       }}
     >

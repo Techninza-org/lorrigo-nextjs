@@ -47,11 +47,12 @@ const rateCalcSchema = z.object({
 
 });
 
-
 export const RateCalcForm = () => {
     const { getCityStateFPincode, calcRate } = useSellerProvider();
     const [courierCalcRate, setCourierCalcRate] = useState([{}] as any);
     const [isAPILoading, setIsAPILoading] = useState(false);
+    const [volWeight, setVolWeight] = useState('')
+
 
     const form = useForm({
         resolver: zodResolver(rateCalcSchema),
@@ -109,8 +110,14 @@ export const RateCalcForm = () => {
 
 
     const onSubmit = async (values: z.infer<typeof rateCalcSchema>) => {
+        // if(values.orderBoxLength === '0' || values.orderBoxWidth === "0" || values.orderBoxHeight === "0" || values.orderWeight === "0") {
+        //     alert("Please enter the valid dimensions and weight")
+        //     return;
+        // }
         setIsAPILoading(true)
         try {
+            const volume = Number(values.orderBoxLength) * Number(values.orderBoxWidth) * Number(values.orderBoxHeight);
+            setVolWeight(String((volume / 5000).toFixed(2)))
             const res = await calcRate({
                 pickupPincode: values.pickupPincode,
                 deliveryPincode: values.deliveryPincode,
@@ -254,7 +261,7 @@ export const RateCalcForm = () => {
                                                         </div>
 
                                                     </FormControl>
-                                                    <FormDescription>Package weight should be 0.5kg.</FormDescription>
+                                                    {/* <FormDescription>Package weight should be 0.5kg.</FormDescription> */}
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -281,6 +288,7 @@ export const RateCalcForm = () => {
                                                                 />
                                                             </div>
                                                         </div>
+                                                        <FormMessage />
                                                     </FormItem>
                                                 )}
                                             />
@@ -302,6 +310,7 @@ export const RateCalcForm = () => {
                                                                 />
                                                             </div>
                                                         </div>
+                                                        <FormMessage />
                                                     </FormItem>
                                                 )}
                                             />
@@ -323,7 +332,7 @@ export const RateCalcForm = () => {
                                                                 />
                                                             </div>
                                                         </div>
-
+                                                        <FormMessage />
                                                     </FormItem>
                                                 )}
                                             />
@@ -364,6 +373,11 @@ export const RateCalcForm = () => {
                                             </FormItem>
                                         )}
                                     />
+                                    <br />
+                                    <div>
+                                        <p className="text-md">Volumetric Weight:</p>
+                                        {volWeight && <p className="text-sm">{volWeight} kg</p>}
+                                    </div>
                                     {
                                         collectableFeild && (
                                             <FormField
