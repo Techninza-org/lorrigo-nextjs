@@ -13,7 +13,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, DownloadIcon } from "lucide-react"
+import CsvDownloader from 'react-csv-downloader';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -33,54 +34,122 @@ import {
 } from "@/components/ui/table"
 import { useSearchParams } from "next/navigation"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DateRange } from "react-day-picker"
+import { filterData } from "@/lib/utils"
+import { DatePickerWithRange } from "@/components/DatePickerWithRange"
+import { formatDate } from "date-fns";
 
 export function ShipmentListingTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const searchParams = useSearchParams()
-  const [filtering, setFiltering] = React.useState<string>("")
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const searchParams = useSearchParams();
+  const [filtering, setFiltering] = React.useState<string>("");
 
-  const isShipmentVisible = searchParams.get('status') !== 'new'
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-    "Shipment Details": isShipmentVisible,
-  });
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [rowSelection, setRowSelection] = React.useState({});
   const [selectedColumn, setSelectedColumn] = React.useState("order_reference_id");
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 20,
   });
 
+  const defaultToDate = new Date();
+  const defaultFromDate = new Date(
+    defaultToDate.getFullYear(),
+    defaultToDate.getMonth() - 1,
+  );
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: defaultFromDate,
+    to: defaultToDate,
+  });
+
+  const filteredDataMemo = React.useMemo(() => {
+    const filteredByGlobal = filterData(data, filtering);
+    if ((!date?.from || !date?.to) || (date.from === date.to)) return filteredByGlobal;
+
+    return filteredByGlobal.filter((row: any) => {
+      if (date?.from && date?.to) {
+        const createdAt = row.createdAt && new Date(row.createdAt)?.toISOString();
+        return createdAt > new Date(date.from).toISOString() && createdAt < new Date(date.to).toISOString();
+      }
+      return false;
+    });
+  }, [data, filtering, date]);
 
   const table = useReactTable({
-    data,
+    data: filteredDataMemo,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onGlobalFilterChange: setFiltering,
-    getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
-
-    onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
-
+    onPaginationChange: setPagination,
     state: {
-      pagination,
       columnFilters,
-      columnVisibility,
+      pagination,
       rowSelection,
       globalFilter: filtering
     },
-  })
+    onGlobalFilterChange: setFiltering,
+  });
 
   function handleFilterChange(value: string) {
     setSelectedColumn(value);
   }
+
+
+  const cols = [
+    {
+      id: "clientName",
+      displayName: "Client Name",
+    },
+    {
+      id: "shipmentId",
+      displayName: "Shipment ID",
+    },
+    {
+      id: "addressId",
+      displayName: "Address ID",
+    },
+    {
+      id: "partner",
+      displayName: "Carrier Name",
+    },
+    {
+      id: "awb",
+      displayName: "AWB",
+    },
+    {
+      id: "paymentMode",
+      displayName: "Payment Mode",
+    },
+    {
+      id: "amount",
+      displayName: "Amount",
+    },
+    {
+      id: "status",
+      displayName: "Status",
+    },
+    {
+      id: "orderCreationDate",
+      displayName: "Order Creation Date",
+    }
+
+  ]
+
+  const datas = filteredDataMemo.map((row: any) => {
+    return {
+      clientName: row.sellerDetails?.sellerName || row?.sellerId?.name,
+      shipmentId: row?.order_reference_id,
+      addressId: row?.pickupAddress?._id,
+      partner: row?.carrierName,
+      awb: row?.awb,
+      paymentMode: row?.payment_mode === 1 ? 'COD' : 'Prepaid',
+      amount: row?.productId?.taxable_value || row?.amount,
+      status: row?.orderStages?.slice(-1)[0].action + " " + formatDate(`${row?.orderStages?.slice(-1)[0].stageDateTime || new Date()}`, 'dd MM yyyy | HH:mm a'),
+      orderCreationDate: row?.createdAt,
+    }
+  })
 
   return (
     <div className="w-full">
@@ -94,14 +163,21 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
             <SelectItem value={'awb'}>AWB</SelectItem>
           </SelectContent>
         </Select>
-        <Input
-          placeholder={`Filter by ${selectedColumn === "order_reference_id" ? "Order Ref ID" : "AWB"}`}
-          value={(table.getColumn(selectedColumn)?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn(selectedColumn)?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <div className="flex gap-3">
+
+          <Input
+            placeholder={`Filter by ${selectedColumn === "order_reference_id" ? "Order Ref ID" : "AWB"}`}
+            value={(table.getColumn(selectedColumn)?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn(selectedColumn)?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
+          <CsvDownloader filename="shipment-listing" datas={datas} columns={cols}>
+            <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
+          </CsvDownloader>
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

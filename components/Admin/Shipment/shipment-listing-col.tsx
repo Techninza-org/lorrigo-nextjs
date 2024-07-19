@@ -37,7 +37,7 @@ export const AdminShipmentListingCol: ColumnDef<any>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <HoverCardToolTip align="center" label={"Address Id"} className="text-center">{rowData.pickupAddress._id}</HoverCardToolTip>
+                <HoverCardToolTip align="center" label={"Address Id"} className="text-center">{rowData?.pickupAddress?._id}</HoverCardToolTip>
             )
         }
     },
@@ -72,7 +72,7 @@ export const AdminShipmentListingCol: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 <HoverCardToolTip label={rowData.pickupAddress?.name?.toString().substring(0, 20) + "..."}>
-                    {`${rowData?.pickupAddress?.address1}, ${rowData.pickupAddress.address2}, ${rowData.pickupAddress.city}, ${rowData.pickupAddress.state}, ${rowData.pickupAddress.pincode}`}
+                    {`${rowData?.pickupAddress?.address1}, ${rowData?.pickupAddress?.address2}, ${rowData?.pickupAddress?.city}, ${rowData?.pickupAddress?.state}, ${rowData?.pickupAddress?.pincode}`}
                 </HoverCardToolTip>
             )
         }

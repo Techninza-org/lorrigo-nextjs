@@ -95,10 +95,6 @@ export default function CourierPage() {
                             <p className="text-sm">{volWeight} kg</p>
                         </div>
                         {courierPartners.orderDetails.payment_mode != 0 && <div>
-                            <p className="text-sm font-semibold">COD Charges</p>
-                            <p className="text-sm">Rs. {codprice}</p>
-                        </div>}
-                        {courierPartners.orderDetails.payment_mode != 0 && <div>
                             <p className="text-sm font-semibold">Collectable Amount</p>
                             <p className="text-sm">Rs. {courierPartners.orderDetails.amount2Collect}</p>
                         </div>}
@@ -142,7 +138,7 @@ export default function CourierPage() {
                                                         {partner.name}
                                                         <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
                                                     </div>
-                                                  {!partner.isReversedCourier &&  <div>RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>}
+                                                  {!partner.isReversedCourier &&  <div>{!!partner.cod && (<>COD Charges Applied: {formatCurrencyForIndia(partner.cod)} |</>)}  RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>}
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
                                                 <TableCell>{partner.order_zone}</TableCell>

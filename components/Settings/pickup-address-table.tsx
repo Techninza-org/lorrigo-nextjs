@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import CsvDownloader from 'react-csv-downloader';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -13,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { Download, PackagePlusIcon, Upload } from "lucide-react"
+import { Download, DownloadIcon, PackagePlusIcon, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -56,23 +57,88 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
   })
 
 
+  const cols = [
+    {
+      id: "facilityName",
+      displayName: "facility Name",
+    },
+    {
+      id: 'contactPersonName',
+      displayName: 'Contact Person Name'
+    },
+    {
+      id: 'phone',
+      displayName: 'Phone'
+    },
+    {
+      id: 'address',
+      displayName: 'Address'
+    },
+    {
+      id: 'address2',
+      displayName: 'Address2'
+    },
+    {
+      id: 'city',
+      displayName: 'City'
+    },
+    {
+      id: 'state',
+      displayName: 'State'
+    },
+    {
+      id: 'pincode',
+      displayName: 'Pincode'
+    },
+    {
+      id: 'isPrimary',
+      displayName: "Primary"
+    },
+    {
+      id: 'isActive',
+      displayName: "Active"
+    }
+
+  ]
+
+  const datas = data.map((row) => {
+    return {
+      facilityName: row.name,
+      contactPersonName: row.contactPersonName,
+      phone: row.phone,
+      address: row.address1?.replaceAll(',', ' '),
+      address2: row.address2?.replaceAll(',', ' '),
+      city: row.city,
+      state: row.state,
+      pincode: row.pincode,
+      isPrimary: row.isPrimary,
+      isActive: row.isActive
+    }
+  })
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <div className="flex justify-between w-full">
-          <Input
-            placeholder="Search by Facility Name"
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
+          <div className="flex gap-3">
+            <Input
+              placeholder="Search by Facility Name"
+              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+              onChange={(event) =>
+                table.getColumn("name")?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
+            />
+            <CsvDownloader filename="hubs-list" datas={datas} columns={cols}>
+              <Button variant={'webPageBtn'} size={'sm'}><DownloadIcon size={20} className="mr-3" />Download CSV</Button>
+            </CsvDownloader>
+          </div>
+
           <div className='flex gap-2'>
             <Button variant={'webPageBtn'} size={'icon'} onClick={() => onOpen("BulkHubUpload")}>
               <Upload size={18} />
             </Button>
-            <Button variant={'webPageBtn'} size={'icon'} onClick={()=>handleFileDownload("pickup_bulk_sample.csv")}>
+            <Button variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("pickup_bulk_sample.csv")}>
               <Download size={18} />
             </Button>
             <Button onClick={() => onOpen("addPickupLocation")} variant={'themeButton'}>

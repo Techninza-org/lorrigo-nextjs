@@ -79,6 +79,13 @@ const Settings = () => {
       logo: CarPNG
     },
     {
+      title: 'Couriers Price',
+      links: [
+        { href: '/settings/courier-price', label: 'Courier Price' }
+      ],
+      logo: Workflow
+    },
+    {
       title: 'Channels',
       links: [
         { href: '/settings/manage-channels', label: 'Manage Channels' }

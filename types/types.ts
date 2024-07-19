@@ -203,6 +203,7 @@ export interface OrderType {
     nickName: string;
     rtoCharges?: number;
     minWeight: number;
+    cod: number;
     isReversedCourier?: boolean
     charge: number;
     type?: string;

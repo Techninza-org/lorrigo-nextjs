@@ -6,7 +6,7 @@ import { AddCustomerModal } from "../modal/add-customer-modal";
 import { AddSellerModal } from "../modal/add-seller-modal";
 import { AddPickupLocationModal } from "../modal/add-pickup-location";
 import { SchedulePickupModal } from "../modal/schedule-pickup-modal";
-import { DownloadLableModal } from "../modal/download-label-modal";
+import { DownloadB2BLableModal, DownloadLableModal } from "../modal/download-label-modal";
 import { DownloadManifestModal } from "../modal/download-manifest-modal";
 import { CancelOrderDialog } from "../Orders/cancel-order-dialog";
 import { NDROrderDialog, NDRRTODialog } from "../Orders/ndr-order-dialog";
@@ -38,6 +38,8 @@ export const ModalProvider = () => {
       <AddPickupLocationModal />
       <SchedulePickupModal />
       <DownloadLableModal />
+      <DownloadB2BLableModal />
+
       <DownloadManifestModal />
       <CancelOrderDialog />
 

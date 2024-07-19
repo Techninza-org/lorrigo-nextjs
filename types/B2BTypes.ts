@@ -22,6 +22,7 @@ export interface B2BCustomerDetailsType {
     name: string;
     phone: string;
     state: string;
+    address: string;
     city: string;
     pincode: string;
     gst: string;

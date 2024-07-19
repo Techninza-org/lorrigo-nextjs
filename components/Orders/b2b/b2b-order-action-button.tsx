@@ -198,6 +198,6 @@ export const OrderEditButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData }
 export const DownloadLabelButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData }) => {
     const { onOpen } = useModal();
     return (
-        <DropdownMenuItem onClick={() => onOpen("downloadLabel", { b2bOrder: rowData })}>Download Label</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => onOpen("downloadB2BLabel", { b2bOrder: rowData })}>Download Label</DropdownMenuItem>
     );
 }

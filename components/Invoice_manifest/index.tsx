@@ -7,6 +7,8 @@ import jsPDF from "jspdf";
 import { Button } from "../ui/button";
 import GenerateManifestTemplate from "./manifest-template";
 import { usePDF } from 'react-to-pdf';
+import { B2BInvoiceTemplate } from "./b2b-invoice-template";
+import { B2BOrderType } from "@/types/B2BTypes";
 
 export const InvoicePage = ({ order }: { order?: B2COrderType }) => {
     const printDocument = () => {
@@ -25,6 +27,28 @@ export const InvoicePage = ({ order }: { order?: B2COrderType }) => {
             <Button size={"sm"} variant={"webPageBtn"} onClick={printDocument}>Download Label</Button>
             <div id="divToPrint" className="mx-auto pb-3">
                 <InvoiceTemplate order={order} />
+            </div>
+        </>
+    );
+}
+
+export const B2BInvoicePage = ({ order }: { order?: B2BOrderType }) => {
+    const printDocument = () => {
+        const input = document.getElementById("divToPrint");
+        html2canvas(input!)?.then((canvas) => {
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF();
+            pdf.addImage(imgData, "JPEG", 3, 3, canvas.width * 0.16, canvas.height * 0.16);
+            pdf.save(`label_${order?.invoiceNumber}.pdf`);
+            pdf.autoPrint();
+        });
+    };
+
+    return (
+        <>
+            <Button size={"sm"} variant={"webPageBtn"} onClick={printDocument}>Download Label</Button>
+            <div id="divToPrint" className="mx-auto pb-3">
+                <B2BInvoiceTemplate order={order} />
             </div>
         </>
     );
