@@ -169,6 +169,7 @@ export const B2CForm = () => {
                             <CardDescription>Order Details</CardDescription>
                         </CardHeader>
                         <OrderDetailForm
+                        seller={seller}
                             form={form}
                             isLoading={isLoading}
                             handleDecrement={handleDecrement}

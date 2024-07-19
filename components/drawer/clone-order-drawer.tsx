@@ -51,7 +51,7 @@ export function CloneOrderDrawer() {
 
     const isModalOpen = isOpen && type === "cloneOrder";
 
-    const { handleCreateOrder, sellerFacilities } = useSellerProvider();
+    const { handleCreateOrder, sellerFacilities, seller } = useSellerProvider();
 
     const router = useRouter();
 
@@ -248,6 +248,7 @@ export function CloneOrderDrawer() {
                                         <Package className='mr-3' size={20} />Order Details
                                     </h4>
                                     <OrderDetailForm
+                                        seller={seller}
                                         form={form}
                                         isLoading={isLoading}
                                         handleDecrement={handleDecrement}

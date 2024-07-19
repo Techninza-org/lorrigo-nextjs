@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/table"
 import { useRouter } from "next/navigation"
 import { useSellerProvider } from "../providers/SellerProvider"
-import { cn } from "@/lib/utils"
+import { cn, filterData } from "@/lib/utils"
 import { useModal } from "@/hooks/use-model-store"
 import { B2COrderType } from "@/types/types"
 import { DatePickerWithRange } from "../DatePickerWithRange"
@@ -39,17 +39,6 @@ import { DateRange } from "react-day-picker"
 import CsvDownloader from 'react-csv-downloader';
 import { getBucketStatus } from "./order-action-button"
 import { format } from "date-fns"
-
-const filterData = (data: any, filter: any) => {
-  if (!filter) return data;
-
-  const lowercasedFilter = filter.toLowerCase();
-  return data.filter((row: any) => {
-    const awb = row.awb ? row.awb.toLowerCase() : "";
-    const orderReferenceId = row.order_reference_id.toLowerCase();
-    return awb.includes(lowercasedFilter) || orderReferenceId.includes(lowercasedFilter);
-  });
-};
 
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {

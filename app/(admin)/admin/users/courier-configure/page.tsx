@@ -1,5 +1,6 @@
 import { UserB2BCourierConfigure } from "@/components/Admin/User/user-b2b-courier-configure";
 import { UserB2BCourierManager } from "@/components/Admin/User/user-b2b-courier-manager";
+import { UserConfigure } from "@/components/Admin/User/user-config";
 import { UserCourierConfigure } from "@/components/Admin/User/user-courier-configure";
 import { UserCourierManager } from "@/components/Admin/User/user-courier-manager";
 import {
@@ -13,6 +14,17 @@ import {
 export default function CourierConfigurePage() {
     return (
         <>
+            <div className="flex gap-3 my-6 w-full">
+                <Card className="w-full">
+                    <CardHeader>
+                        <CardTitle>Configuration</CardTitle>
+                        <CardDescription>Manager seller configuration.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex gap-6 items-center">
+                        <UserConfigure />
+                    </CardContent>
+                </Card>
+            </div>
             <div className="flex gap-3 my-6 w-full">
                 <Card className="w-full">
                     <CardHeader>

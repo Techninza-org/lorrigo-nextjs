@@ -1,6 +1,5 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { B2COrderType } from "@/types/types";
 import { formatDate } from "date-fns";
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -8,14 +7,14 @@ import Link from "next/link";
 import { CopyCheck } from "lucide-react";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
 
-export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
+export const AdminShipmentListingCol: ColumnDef<any>[] = [
     {
         header: 'Client Name',
         accessorKey: 'clientName',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p className="capitalize">{rowData.sellerDetails?.sellerName}</p>
+                <p className="capitalize">{rowData.sellerDetails?.sellerName || rowData?.sellerId?.name}</p>
             )
         }
     },
@@ -86,8 +85,8 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
 
             return (
                 <div className="space-y-1 items-center">
-                    <p>{formatCurrencyForIndia(Number(rowData.productId?.taxable_value))}</p>
-                    <Badge variant={rowData.payment_mode == 0 ? "success" : "failure"}>{rowData.payment_mode == 0 ? "Prepaid" : "COD"}</Badge>
+                    <p>{formatCurrencyForIndia(Number(rowData.productId?.taxable_value || rowData?.amount))}</p>
+                    <Badge variant={rowData.payment_mode == 1 ? "failure" : "success"}>{rowData.payment_mode == 1 ? "COD" : "Prepaid"}</Badge>
                 </div>
             )
         }
@@ -130,7 +129,7 @@ export const AdminShipmentListingCol: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p>{formatDate(`${rowData.createdAt}`, 'dd MM yyyy | HH:mm a')}</p>
+                <p>{ rowData.createdAt && formatDate(`${rowData.createdAt}`, 'dd MM yyyy | HH:mm a')}</p>
             )
         }
     },

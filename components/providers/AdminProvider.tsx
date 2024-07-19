@@ -12,11 +12,15 @@ import { ShippinB2BgRate, ShippingRate } from "@/types/AdminTypes";
 import { CourierPriceConfigureSchema } from "../Admin/User/user-courier-configure";
 import { z } from "zod";
 import { B2BCourierPriceConfigureSchema } from "../Admin/User/user-b2b-courier-configure";
+import { UserConfigSchema } from "../Admin/User/user-config";
+import { B2BOrderType } from "@/types/B2BTypes";
 
 interface AdminContextType {
     users: SellerType[];
+    currSeller: SellerType;
     allRemittance: RemittanceType[] | null;
     shippingOrders: B2COrderType[];
+    shippingB2BOrders: B2BOrderType[];
     allCouriers: ShippingRate[];
     allB2BCouriers: ShippinB2BgRate[];
     assignedCouriers: ShippingRate[];
@@ -34,6 +38,7 @@ interface AdminContextType {
     getSellerRemittanceID: (sellerId: string, remittanceId: string) => Promise<RemittanceType> | null;
     clientNVendorBills: any;
     getClientNVendorBillingData: () => void;
+    handleUserConfig: (values: z.infer<typeof UserConfigSchema>) => Promise<boolean> | undefined;
 
 
     manageRemittance: ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => Promise<boolean>;
@@ -47,7 +52,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const { axiosIWAuth } = useAxios();
 
     const [users, setUsers] = useState([]);
+    const [currSeller, setCurrSeller] = useState<any>();
     const [shippingOrders, setOrders] = useState<B2COrderType[]>([]);
+    const [shippingB2BOrders, setB2BOrders] = useState<B2BOrderType[]>([]);
     const [allRemittance, setAllRemittance] = useState<RemittanceType[] | null>(null);
     const [futureRemittance, setFutureRemittance] = useState<RemittanceType[] | null>(null);
     const [allCouriers, setAllCouriers] = useState<ShippingRate[]>([]);
@@ -171,6 +178,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             const res = await axiosIWAuth.get(url);
             if (res.data?.valid) {
                 setOrders(res.data.response.orders);
+                setB2BOrders(res.data.response.b2borders);
                 return res.data.response.orders
             }
         } catch (error) {
@@ -203,7 +211,6 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const getSellerAssignedB2BCouriers = async () => {
         try {
             const res = await axiosIWAuth.get(`/admin/seller-B2B-couriers?sellerId=${sellerId}`);
-            console.log(res.data, " res.data")
             setAssignedB2BCouriers(res?.data?.couriers)
 
         } catch (error) {
@@ -359,6 +366,27 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const handleUserConfig = async (values: z.infer<typeof UserConfigSchema>) => {
+        try {
+            const req = (await axiosIWAuth.put(`/admin/seller/config/${sellerId}`, {
+                ...values
+            })).data
+            toast({
+                variant: "default",
+                title: "User Config Updated Successfully!"
+            })
+            return true
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return false;
+        }
+    }
+
+    const getSeller = async (sellerId: string) => {
+        const res = (await axiosIWAuth.get(`/admin/seller?sellerId=${sellerId}`)).data;
+        setCurrSeller(res)
+    }
+
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
             getAllOrders("all")
@@ -366,14 +394,15 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getAllRemittance();
 
             getAllCouriers(),
-            getSellerAssignedCouriers(),
-            getFutureRemittance()
+                getSellerAssignedCouriers(),
+                getFutureRemittance()
             getClientNVendorBillingData()
         }
     }, [user, userToken])
 
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin" && sellerId) {
+            getSeller(sellerId);
             getSellerAssignedCouriers()
             getSellerAssignedB2BCouriers()
         }
@@ -383,7 +412,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         <AdminContext.Provider
             value={{
                 users,
+                currSeller,
                 allRemittance,
+                shippingB2BOrders,
                 futureRemittance,
                 shippingOrders,
                 allCouriers,
@@ -393,6 +424,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 handleCreateHub,
                 handleSignup,
                 handleEditUser,
+                handleUserConfig,
 
                 upateSellerB2BAssignedCouriers,
                 updateSellerCourierPrice,

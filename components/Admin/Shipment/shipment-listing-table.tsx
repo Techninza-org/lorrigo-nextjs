@@ -86,7 +86,7 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
     <div className="w-full">
       <div className="flex items-center py-4">
         <Select onValueChange={handleFilterChange}>
-          <SelectTrigger className='w-40 mx-4' >
+          <SelectTrigger className='w-[180px] mr-4' >
             <SelectValue placeholder='Shipment ID' />
           </SelectTrigger>
           <SelectContent>
