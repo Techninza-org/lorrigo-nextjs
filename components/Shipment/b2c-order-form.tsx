@@ -12,8 +12,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import {
     CardContent,
 } from "@/components/ui/card"
+import { SellerType } from '@/types/types';
 
 interface OrderDetailFormProps {
+    seller?: SellerType | null;
     form: any;
     isLoading: boolean;
     orderRefDisable?: boolean;
@@ -22,7 +24,7 @@ interface OrderDetailFormProps {
     collectableFeild: boolean;
 }
 
-export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrement, collectableFeild, orderRefDisable }: OrderDetailFormProps) => {
+export const OrderDetailForm = ({ seller, form, isLoading, handleIncrement, handleDecrement, collectableFeild, orderRefDisable }: OrderDetailFormProps) => {
     const currentDate = new Date();
     const yesterday = new Date(currentDate);
     yesterday.setDate(yesterday.getDate() - 1);
@@ -375,8 +377,8 @@ export const OrderDetailForm = ({ form, isLoading, handleIncrement, handleDecrem
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value={"COD"}>Cash on Delivery</SelectItem>
-                                    <SelectItem value={"Prepaid"}>Prepaid</SelectItem>
+                                    <SelectItem disabled={!seller?.config?.isPostpaid} value={"COD"}>Cash on Delivery</SelectItem>
+                                    <SelectItem disabled={!seller?.config?.isPrepaid}  value={"Prepaid"}>Prepaid</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormMessage />

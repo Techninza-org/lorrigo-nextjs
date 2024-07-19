@@ -173,6 +173,7 @@ export const B2CForm = () => {
                             <CardDescription>Order Details</CardDescription>
                         </CardHeader>
                         <OrderDetailForm
+                        seller={seller}
                             form={form}
                             isLoading={isLoading}
                             handleDecrement={handleDecrement}
@@ -214,7 +215,11 @@ export const B2CForm = () => {
                             </CardHeader>
                             <ImageUpload
                                 uploadUrl='/order/b2c/bulk'
-                                handleClose={() => getAllOrdersByStatus("all")}
+                                handleClose={() => {
+                                    getAllOrdersByStatus("all")
+                                    router.push('/orders')
+                                    
+                                }}
                                 acceptFileTypes={{ "text/csv": [".csv"] }}
                             />
                         </Card>

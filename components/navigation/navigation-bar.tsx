@@ -6,9 +6,11 @@ import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { useSellerProvider } from "../providers/SellerProvider";
 
 
 export function NavigationBar({ children }: { children: React.ReactNode }) {
+    const { seller } = useSellerProvider()
     const [isNavCollapsed, setIsNavCollapsed] = useState<boolean>(true)
     const handleMouseEnter = () => {
         setIsNavCollapsed(false);
@@ -34,6 +36,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 {
                     title: "Forward Orders",
                     href: "/orders",
+                    isDisabled: !seller?.config?.isD2C
                 },
                 {
                     title: "Reverse Orders",
@@ -42,6 +45,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 {
                     title: "B2B Orders",
                     href: "/orders/b2b",
+                    isDisabled: !seller?.config?.isB2B
                 },
             ],
         },
@@ -86,11 +90,11 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 },
                 {
                     title: "Vendor Billing",
-                    href: "/admin/finance/vendor-billing",  
+                    href: "/admin/finance/vendor-billing",
                 },
                 {
                     title: "Client Billing",
-                    href: "/admin/finance/client-billing",  
+                    href: "/admin/finance/client-billing",
                 },
             ]
         },

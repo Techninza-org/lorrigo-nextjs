@@ -142,3 +142,15 @@ export function splitStringOnFirstNumber(input?: string) {
   }
   return result;
 }
+
+
+export const filterData = (data: any, filter: any) => {
+  if (!filter) return data;
+
+  const lowercasedFilter = filter.toLowerCase();
+  return data.filter((row: any) => {
+    const awb = row.awb ? row.awb.toLowerCase() : "";
+    const orderReferenceId = row.order_reference_id.toLowerCase();
+    return awb.includes(lowercasedFilter) || orderReferenceId.includes(lowercasedFilter);
+  });
+};

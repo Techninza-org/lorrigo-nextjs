@@ -14,13 +14,15 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useEffect, useState } from "react";
 import { RemittanceType } from "@/types/types";
 import { Badge } from "@/components/ui/badge";
-import { formatDate, parse } from "date-fns";
+import { format, formatDate, parse } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { CircleAlert, CircleCheck, NotepadTextDashed, PackageIcon, XCircle } from "lucide-react";
+import { CircleAlert, CircleCheck, DownloadIcon, NotepadTextDashed, PackageIcon, XCircle } from "lucide-react";
 import { formatCurrencyForIndia } from "@/lib/utils";
 import { LoadingComponent } from "@/components/loading-spinner";
+import CsvDownloader from 'react-csv-downloader';
 import { useAdminProvider } from "@/components/providers/AdminProvider";
+import { Button } from "@/components/ui/button";
 
 const TrackSellerRemittance = () => {
     const params = useParams()
@@ -50,6 +52,44 @@ const TrackSellerRemittance = () => {
     const status = remittanceDetails.remittanceStatus;
     const statusText: "success" | "failure" | "warning" = status === 'success' ? 'success' : status === 'pending' ? 'warning' : 'failure';
     const StatusIcon = status === 'success' ? CircleCheck : status === 'pending' ? CircleAlert : XCircle;
+
+    const cols = [
+       
+        {
+            id: "Remittance_no",
+            displayName: "Remittance Number"
+        },
+        {
+            id: "date",
+            displayName: "Date"
+        },
+        {
+            id: "txnId",
+            displayName: "Bank Transaction ID"
+        },
+        {
+            id: "Status",
+            displayName: "Status"
+        },
+        {
+            id: "TAmt",
+            displayName: "Total Remittance Amount"
+        },
+        {
+            id: "awbs",
+            displayName: "AWB"
+        },
+      
+    ]
+
+    const datas = {
+        Remittance_no: remittanceDetails.remittanceId,
+        awbs: remittanceDetails.orders.map((o: any) => `${o.awb}, ${o.amount2Collect}`).join("\n, , , , ,"),
+        date: remittanceDetails.remittanceDate,
+        txnId: remittanceDetails.BankTransactionId,
+        Status: remittanceDetails.remittanceStatus,
+        TAmt: remittanceDetails.remittanceAmount.toString(),
+    }
     return (
         <>
             <div className="space-x-3 my-3">
@@ -57,16 +97,21 @@ const TrackSellerRemittance = () => {
                     {status}
                 </Badge>
                 <Badge variant={"secondary"}>
-                
+
                     Processed on: {formatDate(parse(remittanceDetails.remittanceDate, 'yy-MM-dd', new Date()), 'MMM dd, yyyy')}
                 </Badge>
             </div>
 
             <Card className="col-span-4 max-w-2xl">
                 <CardHeader className="p-3">
-                    <CardTitle className="flex gap-3">
-                        <NotepadTextDashed />
-                        <span>Remittance Details</span>
+                    <CardTitle className="flex justify-between gap-3">
+                        <div className="flex gap-3">
+                            <NotepadTextDashed />
+                            <span>Remittance Details</span>
+                        </div>
+                        <CsvDownloader filename="view-shipment" datas={[datas]} columns={cols}>
+                            <Button variant={'webPageBtn'} size={'sm'}><DownloadIcon size={16} className="mr-3"/> Download Report</Button>
+                        </CsvDownloader>
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2 space-y-6">
@@ -87,7 +132,7 @@ const TrackSellerRemittance = () => {
                             <TableRow>
                                 <TableHead>AWB Number</TableHead>
                                 <TableHead>Amount Collected</TableHead>
-                                <TableHead>Delivery Date</TableHead>
+                                <TableHead>Deliverd At</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -101,7 +146,7 @@ const TrackSellerRemittance = () => {
                                         <TableRow key={index}>
                                             <TableCell>{order.awb}</TableCell>
                                             <TableCell>{formatCurrencyForIndia(Number(order?.amount2Collect))}</TableCell>
-                                            <TableCell>{formattedDate}</TableCell>
+                                            <TableCell>{order.orderStages?.pop()?.stageDateTime && format(order?.orderStages?.pop()?.stageDateTime || new Date(), 'dd/MM/yyyy')}</TableCell>
                                         </TableRow>
                                     )
                                 })
