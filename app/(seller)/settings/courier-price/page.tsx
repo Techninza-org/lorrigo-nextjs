@@ -1,9 +1,9 @@
-import { UserCourierConfigure } from "@/components/Admin/User/user-courier-configure";
+import { ClientRateCard } from "@/components/Courires/client-courires-pricing";
 
 export default function CourierPricePage() {
     return (
         <>
-            <UserCourierConfigure isDisabled={true} />
+            <ClientRateCard isDisabled={true} />
         </>
     );
 }

@@ -49,10 +49,12 @@ import {
 import { useAdminProvider } from "@/components/providers/AdminProvider"
 import { useEffect } from "react"
 import { useSearchParams } from "next/navigation"
+import { useAuth } from "@/components/providers/AuthProvider"
+import { useSellerProvider } from "../providers/SellerProvider"
 
 
 
-export const CourierPriceConfigureSchema = z.object({
+const CourierPriceConfigureSchema = z.object({
     vendorId: z.string().min(1, "Name is required"),
     codCharge: z.object({
         hard: z.string().min(1, "Base Price is required"),
@@ -80,10 +82,9 @@ export const CourierPriceConfigureSchema = z.object({
     }),
 });
 
-export const UserCourierConfigure = () => {
+export const ClientRateCard = ({ isDisabled }: { isDisabled?: boolean }) => {
 
-    const { assignedCouriers, updateSellerCourierPrice } = useAdminProvider()
-    const searchParams = useSearchParams()
+    const { assignedCouriers } = useSellerProvider()
 
     const form = useForm<z.infer<typeof CourierPriceConfigureSchema>>({
         resolver: zodResolver(CourierPriceConfigureSchema),
@@ -147,16 +148,7 @@ export const UserCourierConfigure = () => {
     }, [assignedCouriers, form]);
 
 
-    const isLoading = form.formState.isSubmitting
-
-    async function onSubmit(value: z.infer<typeof CourierPriceConfigureSchema>) {
-        try {
-            const sellerId = searchParams.get("sellerId") || ""; // Set a default value of an empty string if sellerId is null
-            updateSellerCourierPrice({ value, sellerId })
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    const isLoading = form.formState.isSubmitting || !!isDisabled;
 
     const handleCourierChange = (vendorId: string) => {
         const selectedCourier = assignedCouriers.find(courier => courier._id === vendorId);
@@ -191,7 +183,7 @@ export const UserCourierConfigure = () => {
         <div>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form className="space-y-6">
                     <FormField
                         control={form.control}
                         name="vendorId"
@@ -209,9 +201,9 @@ export const UserCourierConfigure = () => {
                                                     !field.value && "text-muted-foreground"
                                                 )}
                                             >
-                                                {field.value
-                                                    ? assignedCouriers.find(
-                                                        (courier) => courier._id === field.value
+                                                {field?.value
+                                                    ? assignedCouriers?.find(
+                                                        (courier) => courier?._id === field?.value
                                                     )?.nameWithNickname
                                                     : "Select Courier"}
                                                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -260,7 +252,7 @@ export const UserCourierConfigure = () => {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    COD Hard (₹)
+                                        COD Hard (₹)
                                     </FormLabel>
                                     <FormControl>
                                         <Input
@@ -352,12 +344,16 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <SubmitButton isLoading={isLoading} />
-                                    <TabsList className="">
-                                        <TabsTrigger value="withinZone" className={buttonVariants({
-                                            variant: "webPageBtn",
-                                        })}>Next</TabsTrigger>
-                                    </TabsList>
+                                    {
+                                        !Boolean(isDisabled) && <>
+                                            <SubmitButton isLoading={isLoading} />
+                                            <TabsList className="">
+                                                <TabsTrigger value="withinZone" className={buttonVariants({
+                                                    variant: "webPageBtn",
+                                                })}>Next</TabsTrigger>
+                                            </TabsList>
+                                        </>
+                                    }
                                 </CardFooter>
                             </Card>
                         </TabsContent>
@@ -412,12 +408,16 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <SubmitButton isLoading={isLoading} />
-                                    <TabsList className="">
-                                        <TabsTrigger value="withinZone" className={buttonVariants({
-                                            variant: "webPageBtn",
-                                        })}>Next</TabsTrigger>
-                                    </TabsList>
+                                    {
+                                        !Boolean(isDisabled) && <>
+                                            <SubmitButton isLoading={isLoading} />
+                                            <TabsList className="">
+                                                <TabsTrigger value="withinZone" className={buttonVariants({
+                                                    variant: "webPageBtn",
+                                                })}>Next</TabsTrigger>
+                                            </TabsList>
+                                        </>
+                                    }
                                 </CardFooter>
                             </Card>
                         </TabsContent>
@@ -472,12 +472,16 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <SubmitButton isLoading={isLoading} />
-                                    <TabsList className="">
-                                        <TabsTrigger value="withinZone" className={buttonVariants({
-                                            variant: "webPageBtn",
-                                        })}>Next</TabsTrigger>
-                                    </TabsList>
+                                    {
+                                        !Boolean(isDisabled) && <>
+                                            <SubmitButton isLoading={isLoading} />
+                                            <TabsList className="">
+                                                <TabsTrigger value="withinZone" className={buttonVariants({
+                                                    variant: "webPageBtn",
+                                                })}>Next</TabsTrigger>
+                                            </TabsList>
+                                        </>
+                                    }
                                 </CardFooter>
                             </Card>
                         </TabsContent>
@@ -532,12 +536,14 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <SubmitButton isLoading={isLoading} />
-                                    <TabsList className="">
-                                        <TabsTrigger value="withinZone" className={buttonVariants({
-                                            variant: "webPageBtn",
-                                        })}>Next</TabsTrigger>
-                                    </TabsList>
+                                    {isDisabled && <>
+                                        <SubmitButton isLoading={isLoading} />
+                                        <TabsList className="">
+                                            <TabsTrigger value="withinZone" className={buttonVariants({
+                                                variant: "webPageBtn",
+                                            })}>Next</TabsTrigger>
+                                        </TabsList>
+                                    </>}
                                 </CardFooter>
                             </Card>
                         </TabsContent>
@@ -592,12 +598,16 @@ export const UserCourierConfigure = () => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    <SubmitButton isLoading={isLoading} />
-                                    <TabsList className="">
-                                        <TabsTrigger value="withinZone" className={buttonVariants({
-                                            variant: "webPageBtn",
-                                        })}>Next</TabsTrigger>
-                                    </TabsList>
+                                    {
+                                        !Boolean(isDisabled) && <>
+                                            <SubmitButton isLoading={isLoading} />
+                                            <TabsList className="">
+                                                <TabsTrigger value="withinZone" className={buttonVariants({
+                                                    variant: "webPageBtn",
+                                                })}>Next</TabsTrigger>
+                                            </TabsList>
+                                        </>
+                                    }
                                 </CardFooter>
                             </Card>
                         </TabsContent>

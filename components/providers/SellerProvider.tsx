@@ -81,6 +81,8 @@ interface SellerContextType {
   invoices: any;
   getCodPrice: () => Promise<any>;
   codprice: any;
+  getSellerAssignedCourier: () => Promise<void>;
+  assignedCouriers: any[];
 }
 
 interface sellerCustomerFormType {
@@ -125,7 +127,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [sellerBilling, setSellerBilling] = useState<any>(null);  // Type should be updated
   const [invoices, setInvoices] = useState<any>(null);
   const [codprice, setCodprice] = useState<any>(0);
-
+  const [assignedCouriers, setAssignedCouriers] = useState<any[]>([]);
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
     sellerForm: {
@@ -157,6 +159,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   const status = useSearchParams().get("status");
+
+  const getSellerAssignedCourier = async () => {
+    try {
+      const res = await axiosIWAuth.get(`/seller/couriers`);
+      setAssignedCouriers(res.data.couriers)
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
 
   const getB2BCustomers = async () => {
     try {
@@ -690,7 +703,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const calcRate = async (order: any) => {
     try {
-      if(order.boxLength === '0' || order.boxWidth === '0' || order.boxHeight === '0' || order.weight === '0') {
+      if (order.boxLength === '0' || order.boxWidth === '0' || order.boxHeight === '0' || order.weight === '0') {
         toast({
           variant: "destructive",
           title: "Invalid Input",
@@ -1129,7 +1142,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       setInvoices(res.data.invoices)
     } catch (error) {
       console.error('Error fetching data:', error);
-  }
+    }
   }
 
   const getCodPrice = async () => {
@@ -1138,8 +1151,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       setCodprice(res.data.codPrice)
     } catch (error) {
       console.error('Error fetching data:', error);
+    }
   }
-}
 
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
@@ -1151,6 +1164,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       getSellerBillingDetails();
       getInvoices();
       getCodPrice();
+      getSellerAssignedCourier()
     }
   }, [user, userToken])
 
@@ -1219,6 +1233,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         invoices,
         getCodPrice,
         codprice,
+        assignedCouriers,
+        getSellerAssignedCourier
 
       }}
     >
