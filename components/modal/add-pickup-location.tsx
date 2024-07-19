@@ -101,7 +101,7 @@ export const AddPickupLocationModal = () => {
 
     const onSubmit = async (values: z.infer<typeof pickupAddressFormSchema>) => {
         try {
-
+            
             if (!values.isRTOAddressSame && ((values.rtoAddress?.length ?? 0) < 5 || (values.rtoPincode?.length !== 6))) {
                 toast({
                     variant: "destructive",
@@ -230,6 +230,7 @@ export const AddPickupLocationForm = ({ isLoading, form, isPinLoading, isRTOPinL
                                 defaultCountry='IN'
                                 placeholder='Enter the contact number'
                                 {...field}
+                                maxLength={11}
                             />
                         </FormControl>
                         <FormMessage />

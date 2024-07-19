@@ -28,7 +28,7 @@ const KycCompleted = () => {
     if (seller?.kycDetails?.submitted === true) {
       setSubmitted(true);
     }
-    if (seller?.kycDetails?.verified === true) {
+    if (seller?.isVerified === true) {
       setVerified(true);
     }
   }, [seller]);

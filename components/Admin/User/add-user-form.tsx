@@ -77,10 +77,6 @@ const AddUserForm = () => {
                 'pan': pan,
                 'aadhar': aadhar,
                 'gst': gstin,
-                'kycDetails': {
-                    'submitted': true,
-                    'verified': true
-                }
             }
 
             handleSignup(credentials, user)

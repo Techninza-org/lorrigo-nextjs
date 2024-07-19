@@ -25,7 +25,7 @@ export const BillingAddressSchema = z.object({
     pincode: z.string().min(1, "Pincode is required"),
     city: z.string().min(1, "City is required"),
     state: z.string().min(1, "State is required"),
-    phone: z.string().min(1, "Phone is required")
+    phone: z.string().min(13, "Phone number should be 10 digits").max(13, "Phone number should be 10 digits"),
 })
 const BillingAddressForm = () => {
     const { seller, updateBillingAddress } = useSellerProvider();
@@ -202,6 +202,7 @@ const BillingAddressForm = () => {
                                         defaultCountry='IN'
                                         placeholder='Enter the contact number'
                                         {...field}
+                                        maxLength={11}
                                     />
                                 </FormControl>
                                 <FormMessage />

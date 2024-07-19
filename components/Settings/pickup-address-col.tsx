@@ -32,6 +32,17 @@ export const PickupAddressCol: ColumnDef<pickupAddressType>[] = [
         }
     },
     {
+        header: 'Phone',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <div className="space-y-1 items-center">
+                    <p>+{rowData.phone}</p>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Address',
         cell: ({ row }) => {
             const rowData = row.original;

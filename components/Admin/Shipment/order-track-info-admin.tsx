@@ -11,6 +11,7 @@ import { getBucketStatus } from "@/components/Orders/order-action-button"
 import { Badge } from "@/components/ui/badge"
 import { OrderTrackTimeline } from "@/components/Orders/order-track-timeline"
 import axios, { AxiosInstance } from "axios"
+import { formatDate } from "date-fns"
 
 export const OrderTrackInfoAdmin = () => {
     const params = useParams()
@@ -59,7 +60,7 @@ export const OrderTrackInfoAdmin = () => {
                 <CardHeader>
                     <CardTitle className="flex justify-between">
                         <div className="flex gap-3 items-center">
-                            #{order?.order_reference_id}
+                            {order?.order_reference_id}
                             <Badge variant={order?.bucket == -1 ? "failure" : "success"}>{getBucketStatus(order?.bucket ?? 0)}</Badge>
                         </div>
                     </CardTitle>
@@ -75,6 +76,8 @@ export const OrderTrackInfoAdmin = () => {
                             <p><span className="font-semibold mr-4">Dimensions:</span> <span className="font-semibold">L:</span> {order.orderBoxLength}  <span className="font-semibold">B:</span> {order.orderBoxWidth} <span className="font-semibold">H:</span> {order.orderBoxHeight}</p>
                             <p><span className="font-semibold mr-4">Payment Mode:</span> {order.payment_mode == 0 ? "Prepaid" : "COD"}</p>
                             <p><span className="font-semibold mr-4">AWB:</span> {order.awb}</p>
+                            <p><span className="font-semibold mr-4">Created At:</span> {formatDate(order.createdAt ?? '', 'dd-MM-yyyy hh:mm a')}</p>
+                            <p><span className="font-semibold mr-4">Invoice Date:</span> {formatDate(order.order_invoice_date ?? '', 'dd-MM-yyyy hh:mm a')}</p>
                         </CardContent>
                     </Card>
                     <Card className="p-6 m-6">

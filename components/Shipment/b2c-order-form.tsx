@@ -343,6 +343,12 @@ export const OrderDetailForm = ({ seller, form, isLoading, handleIncrement, hand
                                     className="bg-zinc-200/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                     placeholder="Enter the Eway Bill"
                                     {...field}
+                                    maxLength={12}
+                                    type='text'
+                                    inputMode='numeric'
+                                    pattern="\d*"
+                                    //@ts-ignore
+                                    onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')}
                                 />
                             </FormControl>
                             <FormMessage />

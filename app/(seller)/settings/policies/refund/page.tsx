@@ -31,8 +31,8 @@ export default function RefundPage() {
                 <p>If you have any questions or concerns regarding refunds, please contact us at:</p>
                 <ul>
                     <li>Email: logistics@lorrigo.com</li>
-                    <li>Phone: [Phone Number]</li>
-                    <li>Address: [Company Address]</li>
+                    {/* <li>Phone: [Phone Number]</li>
+                    <li>Address: [Company Address]</li> */}
                 </ul>
             </div>
             <div>

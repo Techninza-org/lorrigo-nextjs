@@ -138,6 +138,10 @@ const TrackSellerRemittance = () => {
                         <TableBody>
                             {
                                 remittanceDetails.orders.map((order, index) => {
+                                    const length = order?.orderStages?.length
+                                    //@ts-ignore
+                                    const date = order?.orderStages[length-1]?.stageDateTime
+                                    const formattedDate = formatDate(date, 'dd-MM-yyyy')
                                     return (
                                         <TableRow key={index}>
                                             <TableCell>{order.awb}</TableCell>
