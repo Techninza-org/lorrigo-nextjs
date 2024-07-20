@@ -96,6 +96,10 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                     title: "Client Billing",
                     href: "/admin/finance/client-billing",
                 },
+                {
+                    title: "Manual Wallet Deduction",
+                    href: "/admin/finance/manual-deduction",
+                },
             ]
         },
         {

@@ -19,6 +19,7 @@ import { ViewUserDocsModal } from "../modal/admin/view-user-docs-modal";
 import { ClientBillingUploadModal } from "../modal/admin/upload-client-billing-modal";
 import { AdminRemittanceUpdateModal } from "../modal/admin/remittance-manage-modal";
 import { AddB2BCustomerModal } from "../Orders/b2b/b2b-customer-form";
+import { AlertKycModal } from "../modal/alert-kyc-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -55,6 +56,7 @@ export const ModalProvider = () => {
       <ClientBillingUploadModal/>
       <AdminRemittanceUpdateModal/>
       <AddB2BCustomerModal/>
+      <AlertKycModal/>
 
     </>
   );

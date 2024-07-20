@@ -23,6 +23,7 @@ import { usePaymentGateway } from "./PaymentGatewayProvider";
 import { B2BOrderType } from "@/types/B2BTypes";
 import { b2bformDataSchema } from "../Orders/b2b/b2b-form";
 import { B2BrateCalcSchema } from "../RateCalc/b2b-rate-calc-form";
+import { useModal } from "@/hooks/use-model-store";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -113,6 +114,7 @@ const SellerContext = createContext<SellerContextType | null>(null);
 function SellerProvider({ children }: { children: React.ReactNode }) {
   const { userToken, user } = useAuth();
   const { axiosIWAuth } = useAxios();
+  const {onOpen} = useModal();
 
   const [seller, setSeller] = useState<SellerType | null>(null);
   const [sellerRemittance, setSellerRemittance] = useState<RemittanceType[] | null>(null);
@@ -724,6 +726,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosIWAuth.get('/seller');
       if (res.data.valid) {
+        console.log(!res.data?.seller?.kycDetails?.submitted)
+        const showKycAlert = !res.data?.seller?.kycDetails?.submitted && onOpen("alert-kyc");  
         setSeller(res.data.seller)
         setInvoices(res.data.seller.invoices)
       }

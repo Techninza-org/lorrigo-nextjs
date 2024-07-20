@@ -23,7 +23,7 @@ export const OrderTrackTimeline: React.FC<OrderTrackTimelineProps> = ({ order })
                 <div className="flex flex-col md:grid grid-cols-12 text-gray-50">
                     {order?.orderStages?.map((stage, index) => {
                         const isLastItem = index === (order?.orderStages?.length ?? 0) - 1;
-                        const shouldAnimate =  isLastItem && order.bucket !== CANCELED;
+                        const shouldAnimate = isLastItem && order.bucket !== CANCELED;
 
                         return (
                             <div key={stage.stage} className="flex md:contents">
@@ -36,6 +36,10 @@ export const OrderTrackTimeline: React.FC<OrderTrackTimelineProps> = ({ order })
                                 </div>
                                 <div className={cn("bg-slate-100 text-black col-start-4 col-end-12 p-4 rounded-xl my-4 shadow-md w-full", stage.stage === -1 ? "bg-red-100" : "")}>
                                     <h3 className="font-medium mb-1">{stage.action}</h3>
+                                    <ul className='list-disc pl-6'>
+                                        {stage?.activiity && <li>{stage?.activiity}</li>}
+                                        {stage?.location && <li> {stage?.location}</li>}
+                                    </ul>
                                     <div className="text-xs leading-tight text-justify w-full">
                                         {formatDate(`${stage?.stageDateTime}`, 'dd-MM-yyyy | HH:mm a')}
                                     </div>
