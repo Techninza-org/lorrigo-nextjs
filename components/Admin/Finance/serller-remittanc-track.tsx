@@ -54,7 +54,7 @@ const TrackSellerRemittance = () => {
     const StatusIcon = status === 'success' ? CircleCheck : status === 'pending' ? CircleAlert : XCircle;
 
     const cols = [
-       
+
         {
             id: "Remittance_no",
             displayName: "Remittance Number"
@@ -79,7 +79,7 @@ const TrackSellerRemittance = () => {
             id: "awbs",
             displayName: "AWB"
         },
-      
+
     ]
 
     const datas = {
@@ -110,7 +110,7 @@ const TrackSellerRemittance = () => {
                             <span>Remittance Details</span>
                         </div>
                         <CsvDownloader filename="view-shipment" datas={[datas]} columns={cols}>
-                            <Button variant={'webPageBtn'} size={'sm'}><DownloadIcon size={16} className="mr-3"/> Download Report</Button>
+                            <Button variant={'webPageBtn'} size={'sm'}><DownloadIcon size={16} className="mr-3" /> Download Report</Button>
                         </CsvDownloader>
                     </CardTitle>
                 </CardHeader>
@@ -140,13 +140,15 @@ const TrackSellerRemittance = () => {
                                 remittanceDetails.orders.map((order, index) => {
                                     const length = order?.orderStages?.length
                                     //@ts-ignore
-                                    const date = order?.orderStages[length-1]?.stageDateTime
-                                    const formattedDate = formatDate(date, 'dd-MM-yyyy')
+                                    const date = order?.orderStages[length - 1]?.stageDateTime
+                                    // const formattedDate = formatDate(date, 'dd-MM-yyyy')
                                     return (
                                         <TableRow key={index}>
                                             <TableCell>{order.awb}</TableCell>
                                             <TableCell>{formatCurrencyForIndia(Number(order?.amount2Collect))}</TableCell>
-                                            <TableCell>{order.orderStages?.pop()?.stageDateTime && format(order?.orderStages?.pop()?.stageDateTime || new Date(), 'dd/MM/yyyy')}</TableCell>
+                                            <TableCell>
+                                                {date && format(date || new Date(), 'dd/MM/yyyy')}
+                                            </TableCell>
                                         </TableRow>
                                     )
                                 })

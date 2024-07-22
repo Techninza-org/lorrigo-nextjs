@@ -325,7 +325,6 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const getSellerRemittanceID = async (sellerId: string, remittanceId: string) => {
         try {
             const res = await axiosIWAuth.get(`/admin/seller-remittance?sellerId=${sellerId}&remittanceId=${remittanceId}`);
-            console.log(res.data)
             if (res.data?.valid) {
                 return res.data.remittance;
             }
