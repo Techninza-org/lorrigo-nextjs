@@ -47,10 +47,10 @@ export function TopNav() {
                                 <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
                             </ActionTooltip>
                         </Link>
-                        {!seller?.config?.isPostpaid && (<>
+                        {/* {!seller?.config?.isPostpaid && (<> */}
                             <span>{formatCurrencyForIndia(walletBalance || 0)}</span>
                             <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("wallet")}>Recharge Wallet</Button>
-                        </>)}
+                        {/* </>)} */}
                     </div>
 
                     <Separator orientation="vertical" className="w-[1px] bg-gray-400" />
