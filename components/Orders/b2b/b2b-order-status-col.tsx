@@ -43,7 +43,7 @@ export const B2BOrderStatusCol: ColumnDef<B2BOrderType>[] = [  ///Changed to any
             return (
                 <div className="space-y-1 items-center">
                     <p className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
-                        <Link href={`/track/${rowData._id}`}>{rowData.order_reference_id}</Link>
+                        <Link href={`/track/b2b/${rowData._id}`}>{rowData.order_reference_id}</Link>
                         <Copy className="ml-2 cursor-pointer" size={15} onClick={() => handleCopyText(`${rowData.order_reference_id}`)} /></p>
                     <p className="uppercase flex gap-1"><ShoppingCartIcon size={18} /> {rowData?.channelName?.toLowerCase() === "shopify" ? "Shopify" : "Custom"}</p>
                 </div>

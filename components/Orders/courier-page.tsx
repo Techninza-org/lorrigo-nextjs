@@ -26,7 +26,7 @@ export const dynamic = 'force-dynamic'
 
 export default function CourierPage() {
     const params = useParams()
-    const { getCourierPartners, handleCreateD2CShipment, handleCreateB2BShipment, codprice} = useSellerProvider()
+    const { getCourierPartners, handleCreateD2CShipment, handleCreateB2BShipment, codprice } = useSellerProvider()
     const { userToken } = useAuth()
     const { pending } = useFormStatus();
     const [volWeight, setVolWeight] = useState(0)
@@ -40,9 +40,11 @@ export default function CourierPage() {
             const res = await getCourierPartners(String(params.id), String(params.type))
             setCourierPartners(res)
             const volume = res?.orderDetails?.orderBoxLength * res?.orderDetails?.orderBoxWidth * res?.orderDetails?.orderBoxHeight;
-            setVolWeight(Math.round(volume / 5000))
+            const b2bVol = res?.orderDetails?.packageDetails?.reduce((sum: any, box: any) => sum + parseFloat(String(box.orderBoxHeight * box.orderBoxLength * box.orderBoxWidth) || '0'), 0);
+            console.log(volume, b2bVol)
+            setVolWeight((volume || b2bVol) / 5000)
         }
-        
+
         fetchCourierPartners()
         return () => {
             setCourierPartners(undefined)
@@ -138,7 +140,7 @@ export default function CourierPage() {
                                                         {partner.name}
                                                         <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
                                                     </div>
-                                                  {!partner.isReversedCourier &&  <div>{!!partner.cod && (<>COD Charges Applied: {formatCurrencyForIndia(partner.cod)} |</>)}  RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>}
+                                                    {!partner.isReversedCourier && <div>{!!partner.cod && (<>COD Charges Applied: {formatCurrencyForIndia(partner.cod)} |</>)}  RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>}
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
                                                 <TableCell>{partner.order_zone}</TableCell>

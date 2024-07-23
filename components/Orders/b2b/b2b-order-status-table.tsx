@@ -10,24 +10,15 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown } from "lucide-react"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -39,11 +30,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { useSellerProvider } from "../../providers/SellerProvider"
-import { cn } from "@/lib/utils"
+import { cn, filterData } from "@/lib/utils"
 import { useModal } from "@/hooks/use-model-store"
-import { B2COrderType } from "@/types/types"
 
 export function B2BOrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const { handleOrderSync, seller } = useSellerProvider()
@@ -63,8 +53,15 @@ export function B2BOrderStatusTable({ data, columns }: { data: any[], columns: C
     pageSize: 20, //default page size
   });
 
+  const { onOpen } = useModal();
+
+  const [filteredData, setFilteredData] = React.useState<any[]>(data)
+  // Memoize filtered data to avoid unnecessary re-renders
+  const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
+
+
   const table = useReactTable({
-    data,
+    data: filteredDataMemo,
     columns,
     // onSortingChange: setSorting,
     // onColumnFiltersChange: setColumnFilters,
@@ -86,16 +83,37 @@ export function B2BOrderStatusTable({ data, columns }: { data: any[], columns: C
     onGlobalFilterChange: setFiltering
   })
 
+  const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
+  console.log(selectedRows, "selectedRows")
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
-        <Input
-          placeholder="Filter by AWB or Order Reference ID"
-          value={filtering}
-          onChange={(e) => setFiltering(e.target.value)}
-          className="max-w-sm"
-        />
-    
+        <div>
+          <Input
+            placeholder="Filter by AWB or Order Reference ID"
+            value={filtering}
+            onChange={(e) => setFiltering(e.target.value)}
+            className="max-w-sm"
+          />
+        </div>
+        <div>
+          {
+            selectedRows.length > 0 && (
+              <DropdownMenu >
+                <DropdownMenuTrigger className={cn("mr-3", buttonVariants({
+                  variant: "webPageBtn",
+                  size: "sm"
+                }))}>Bulk Actions</DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onOpen("BulkPickupUpdate", { orders: selectedRows })}>Change pickup location</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onOpen("cancelBulkOrder", { orders: selectedRows })}>Cancel</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>)
+          }
+        </div>
+
       </div>
       <div className="rounded-md border">
         <Table>

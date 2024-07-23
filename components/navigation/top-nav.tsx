@@ -25,7 +25,8 @@ interface NavProps {
 export function TopNav() {
     const { onOpen } = useModal();
     const { walletBalance } = usePaymentGateway();
-
+    const { seller } = useSellerProvider();
+    
     return (
         <div
             className="group flex flex-col gap-4 py-2 "
@@ -46,8 +47,10 @@ export function TopNav() {
                                 <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
                             </ActionTooltip>
                         </Link>
-                        <span>{formatCurrencyForIndia(walletBalance || 0)}</span>
-                        <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("wallet")}>Recharge Wallet</Button>
+                        {!seller?.config?.isPostpaid && (<>
+                            <span>{formatCurrencyForIndia(walletBalance || 0)}</span>
+                            <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("wallet")}>Recharge Wallet</Button>
+                        </>)}
                     </div>
 
                     <Separator orientation="vertical" className="w-[1px] bg-gray-400" />

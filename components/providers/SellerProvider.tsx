@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { useToast } from "@/components/ui/use-toast";
 
@@ -113,8 +113,9 @@ const SellerContext = createContext<SellerContextType | null>(null);
 
 function SellerProvider({ children }: { children: React.ReactNode }) {
   const { userToken, user } = useAuth();
-  const { axiosIWAuth } = useAxios();
-  const {onOpen} = useModal();
+  const { axiosIWAuth, axiosIWAuth4Upload } = useAxios();
+  const { onOpen } = useModal();
+  const pathname = usePathname()
 
   const [seller, setSeller] = useState<SellerType | null>(null);
   const [sellerRemittance, setSellerRemittance] = useState<RemittanceType[] | null>(null);
@@ -726,8 +727,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosIWAuth.get('/seller');
       if (res.data.valid) {
-        console.log(!res.data?.seller?.kycDetails?.submitted)
-        const showKycAlert = !res.data?.seller?.kycDetails?.submitted && onOpen("alert-kyc");  
+        const showKycAlert = !res.data?.seller?.kycDetails?.submitted && onOpen("alert-kyc");
         setSeller(res.data.seller)
         setInvoices(res.data.seller.invoices)
       }
@@ -943,7 +943,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const handleBulkPickupChange = async (orderIds: string[], pickupAddress: string) => {
     try {
-      const res = await axiosIWAuth.put(`/order/b2c/bulk-pickup`, {
+      const res = await axiosIWAuth.put(`${pathname.includes('/b2b') ? "/order/b2b/bulk-pickup" : "/order/b2c/bulk-pickup"}`, {
         orderIds,
         pickupAddress
       });
@@ -954,6 +954,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Orders pickup address updated",
         });
         getAllOrdersByStatus(status || "all")
+        getB2BOrders();
         return true;
       }
       toast({
@@ -1009,9 +1010,28 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const handleCreateB2BOrder = async (order: z.infer<typeof b2bformDataSchema>) => {
-    console.log(order)
+    const formData = new FormData();
+    formData.append('order_reference_id', order.order_reference_id);
+    formData.append('client_name', order.client_name);
+    formData.append('pickupAddress', order.pickupAddress);
+    formData.append('product_description', JSON.stringify(order.product_description));
+    formData.append('total_weight', order.total_weight);
+    formData.append('quantity', order.quantity);
+    formData.append('ewaybill', order?.ewaybill || "");
+    formData.append('amount', order.amount);
+    formData.append('invoiceNumber', order.invoiceNumber);
+    formData.append('customerDetails', order.customerDetails);
+
+    formData.append('boxes', JSON.stringify(order.boxes));
+
+    if (order.invoice) {
+      formData.append('invoice', order.invoice);
+    }
+    if (order.supporting_document) {
+      formData.append('supporting_document', order.supporting_document);
+    }
     try {
-      const res = await axiosIWAuth.post('/order/b2b', order);
+      const res = await axiosIWAuth4Upload.post('/order/b2b', formData);
       if (res.data?.valid) {
         toast({
           variant: "default",

@@ -52,6 +52,7 @@ export interface B2BOrderType {
     awb?: string;
     channelName?: string;
     carrierName?: string;
-    invoiceImg?: string;
-    supporting_document?: string;
+    invoiceImage?: File;
+    supporting_document?: File;
+    createdAt?: Date;
 }

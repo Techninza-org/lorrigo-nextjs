@@ -46,7 +46,7 @@ export const BulkPickupUpdateModal = () => {
     const onSubmit = async (values: z.infer<typeof BulkPickupUpdateSchema>) => {
         const orderIds = orders?.map((order: any) => order._id) || [];
         console.log(orderIds, values);
-        handleBulkPickupChange(orderIds, values.pickupAddressId);
+       await handleBulkPickupChange(orderIds, values.pickupAddressId);
     }
 
     return (
