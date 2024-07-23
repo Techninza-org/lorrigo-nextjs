@@ -44,7 +44,7 @@ export const SchedulePickupModal = () => {
     const { isOpen, onClose, type, data } = useModal();
     const router = useRouter();
 
-    const { b2bOrder } = data;
+    const { b2bOrder, order } = data;
 
     const { manifestOrder } = useSellerProvider();
 
@@ -69,7 +69,7 @@ export const SchedulePickupModal = () => {
 
     const onSubmit = async (values: z.infer<typeof schema>) => {
         try {
-            const res = await manifestOrder({ orderId: b2bOrder?._id ?? '', scheduleDate: formatDate(`${values.schedulePickup}`, 'yyyy MM dd') })
+            const res = await manifestOrder({ orderId: order?._id ?? b2bOrder?._id ?? '', scheduleDate: formatDate(`${values.schedulePickup}`, 'yyyy MM dd') })
             if (res) {
                 form.reset();
                 router.refresh();
@@ -96,7 +96,7 @@ export const SchedulePickupModal = () => {
                         Schedule Pickup
                     </DialogTitle>
                     <DialogDescription className='pt-3'>
-                        Schedule Pickup for Order: <span className='font-medium underline underline-offset-4 text-blue-800'>{b2bOrder?.order_reference_id}</span>
+                        Schedule Pickup for Order: <span className='font-medium underline underline-offset-4 text-blue-800'>{order?.order_reference_id ||  b2bOrder?.order_reference_id}</span>
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -106,7 +106,7 @@ export const SchedulePickupModal = () => {
                                 <MapPinIcon />
                                 <div>
                                     <div className="text-lg font-bold">Pickup Address</div>
-                                    <div>{b2bOrder?.pickupAddress?.name}, {b2bOrder?.pickupAddress?.address1}</div>
+                                    <div>{order?.pickupAddress?.name || b2bOrder?.pickupAddress?.name}, {order?.pickupAddress?.address1 || b2bOrder?.pickupAddress?.address1}</div>
                                 </div>
 
                             </div>
