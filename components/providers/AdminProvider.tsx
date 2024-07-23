@@ -14,6 +14,7 @@ import { z } from "zod";
 import { B2BCourierPriceConfigureSchema } from "../Admin/User/user-b2b-courier-configure";
 import { UserConfigSchema } from "../Admin/User/user-config";
 import { B2BOrderType } from "@/types/B2BTypes";
+import { WalletDeductionSchema } from "../Admin/Finance/manual-wallet-deduction-form";
 
 interface AdminContextType {
     users: SellerType[];
@@ -39,6 +40,7 @@ interface AdminContextType {
     clientNVendorBills: any;
     getClientNVendorBillingData: () => void;
     handleUserConfig: (values: z.infer<typeof UserConfigSchema>) => Promise<boolean> | undefined;
+    walletDeduction: (values: z.infer<typeof WalletDeductionSchema>) => Promise<boolean> | undefined;
 
 
     manageRemittance: ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => Promise<boolean>;
@@ -323,7 +325,6 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const getSellerRemittanceID = async (sellerId: string, remittanceId: string) => {
         try {
             const res = await axiosIWAuth.get(`/admin/seller-remittance?sellerId=${sellerId}&remittanceId=${remittanceId}`);
-            console.log(res.data)
             if (res.data?.valid) {
                 return res.data.remittance;
             }
@@ -382,6 +383,24 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const walletDeduction = async (values: z.infer<typeof WalletDeductionSchema>) => {
+        try {
+            const res = await axiosIWAuth.post(`/admin/wallet-deduction`, values);
+            if (res.data?.valid) {
+                toast({
+                    variant: "default",
+                    title: "Wallet Deduction Success",
+                    description: "Wallet deduction has been successful.",
+                });
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            return false;
+        }
+    }
+
     const getSeller = async (sellerId: string) => {
         const res = (await axiosIWAuth.get(`/admin/seller?sellerId=${sellerId}`)).data;
         setCurrSeller(res)
@@ -434,7 +453,8 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 upateSellerAssignedCouriers,
                 manageRemittance,
                 clientNVendorBills,
-                getClientNVendorBillingData
+                getClientNVendorBillingData,
+                walletDeduction
             }}
         >
             {children}

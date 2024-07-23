@@ -44,7 +44,7 @@ export type SellerType = {
     deductTDS?: string;
     tan?: string;
   };
-  config: { 
+  config: {
     isD2C: boolean
     isB2B: boolean
     isPrepaid: boolean
@@ -161,6 +161,8 @@ export interface B2COrderType {
     stage: number;
     stageDateTime: string;
     action: string;
+    activiity?: string;
+    location?: string;
     _id?: string;
   }[];
   pickupAddress: pickupAddressType;
@@ -203,6 +205,7 @@ export interface OrderType {
     nickName: string;
     rtoCharges?: number;
     minWeight: number;
+    cod: number;
     isReversedCourier?: boolean
     charge: number;
     type?: string;

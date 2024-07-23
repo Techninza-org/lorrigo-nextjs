@@ -63,8 +63,8 @@ export function EditB2BOrderDrawer() {
         form.setValue("amount", b2bOrder?.amount.toString() || "")
         form.setValue("invoiceNumber", b2bOrder?.invoiceNumber || "")
 
-        form.setValue("invoice", b2bOrder?.invoiceImg)
-        form.setValue("supporting_document", b2bOrder?.supporting_document || "")
+        form.setValue("invoice", b2bOrder?.invoiceImage instanceof File ? b2bOrder?.invoiceImage : undefined);
+        form.setValue("supporting_document", b2bOrder?.supporting_document instanceof File ? b2bOrder?.supporting_document : undefined);
     }, [form, b2bOrder]);
 
     const isLoading = form.formState.isSubmitting;

@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { useToast } from "@/components/ui/use-toast";
 
@@ -23,6 +23,7 @@ import { usePaymentGateway } from "./PaymentGatewayProvider";
 import { B2BOrderType } from "@/types/B2BTypes";
 import { b2bformDataSchema } from "../Orders/b2b/b2b-form";
 import { B2BrateCalcSchema } from "../RateCalc/b2b-rate-calc-form";
+import { useModal } from "@/hooks/use-model-store";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -81,6 +82,8 @@ interface SellerContextType {
   invoices: any;
   getCodPrice: () => Promise<any>;
   codprice: any;
+  getSellerAssignedCourier: () => Promise<void>;
+  assignedCouriers: any[];
   getInvoiceById: (id: any) => Promise<any>;
 }
 
@@ -111,7 +114,9 @@ const SellerContext = createContext<SellerContextType | null>(null);
 
 function SellerProvider({ children }: { children: React.ReactNode }) {
   const { userToken, user } = useAuth();
-  const { axiosIWAuth } = useAxios();
+  const { axiosIWAuth, axiosIWAuth4Upload } = useAxios();
+  const { onOpen } = useModal();
+  const pathname = usePathname()
 
   const [seller, setSeller] = useState<SellerType | null>(null);
   const [sellerRemittance, setSellerRemittance] = useState<RemittanceType[] | null>(null);
@@ -126,7 +131,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [sellerBilling, setSellerBilling] = useState<any>(null);  // Type should be updated
   const [invoices, setInvoices] = useState<any>(null);
   const [codprice, setCodprice] = useState<any>(0);
-
+  const [assignedCouriers, setAssignedCouriers] = useState<any[]>([]);
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
     sellerForm: {
@@ -158,6 +163,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   const status = useSearchParams().get("status");
+
+  const getSellerAssignedCourier = async () => {
+    try {
+      const res = await axiosIWAuth.get(`/seller/couriers`);
+      setAssignedCouriers(res.data.couriers)
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
 
   const getB2BCustomers = async () => {
     try {
@@ -691,7 +707,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const calcRate = async (order: any) => {
     try {
-      if(order.boxLength === '0' || order.boxWidth === '0' || order.boxHeight === '0' || order.weight === '0') {
+      if (order.boxLength === '0' || order.boxWidth === '0' || order.boxHeight === '0' || order.weight === '0') {
         toast({
           variant: "destructive",
           title: "Invalid Input",
@@ -712,6 +728,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosIWAuth.get('/seller');
       if (res.data.valid) {
+        const showKycAlert = !res.data?.seller?.kycDetails?.submitted && onOpen("alert-kyc");
         setSeller(res.data.seller)
         setInvoices(res.data.seller.invoices)
       }
@@ -927,7 +944,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const handleBulkPickupChange = async (orderIds: string[], pickupAddress: string) => {
     try {
-      const res = await axiosIWAuth.put(`/order/b2c/bulk-pickup`, {
+      const res = await axiosIWAuth.put(`${pathname.includes('/b2b') ? "/order/b2b/bulk-pickup" : "/order/b2c/bulk-pickup"}`, {
         orderIds,
         pickupAddress
       });
@@ -938,6 +955,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Orders pickup address updated",
         });
         getAllOrdersByStatus(status || "all")
+        getB2BOrders();
         return true;
       }
       toast({
@@ -993,9 +1011,28 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const handleCreateB2BOrder = async (order: z.infer<typeof b2bformDataSchema>) => {
-    console.log(order)
+    const formData = new FormData();
+    formData.append('order_reference_id', order.order_reference_id);
+    formData.append('client_name', order.client_name);
+    formData.append('pickupAddress', order.pickupAddress);
+    formData.append('product_description', JSON.stringify(order.product_description));
+    formData.append('total_weight', order.total_weight);
+    formData.append('quantity', order.quantity);
+    formData.append('ewaybill', order?.ewaybill || "");
+    formData.append('amount', order.amount);
+    formData.append('invoiceNumber', order.invoiceNumber);
+    formData.append('customerDetails', order.customerDetails);
+
+    formData.append('boxes', JSON.stringify(order.boxes));
+
+    if (order.invoice) {
+      formData.append('invoice', order.invoice);
+    }
+    if (order.supporting_document) {
+      formData.append('supporting_document', order.supporting_document);
+    }
     try {
-      const res = await axiosIWAuth.post('/order/b2b', order);
+      const res = await axiosIWAuth4Upload.post('/order/b2b', formData);
       if (res.data?.valid) {
         toast({
           variant: "default",
@@ -1130,7 +1167,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       setInvoices(res.data.invoices)
     } catch (error) {
       console.error('Error fetching data:', error);
-  }
+    }
   }
 
   const getInvoiceById = async (id: any) => {
@@ -1150,8 +1187,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       setCodprice(res.data.codPrice)
     } catch (error) {
       console.error('Error fetching data:', error);
+    }
   }
-}
 
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
@@ -1163,6 +1200,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       getSellerBillingDetails();
       getInvoices();
       getCodPrice();
+      getSellerAssignedCourier()
     }
   }, [user, userToken])
 
@@ -1231,6 +1269,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         invoices,
         getCodPrice,
         codprice,
+        assignedCouriers,
+        getSellerAssignedCourier,
         getInvoiceById
 
       }}

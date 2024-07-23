@@ -373,11 +373,6 @@ export const RateCalcForm = () => {
                                             </FormItem>
                                         )}
                                     />
-                                    <br />
-                                    <div>
-                                        <p className="text-md">Volumetric Weight:</p>
-                                        {volWeight && <p className="text-sm">{volWeight} kg</p>}
-                                    </div>
                                     {
                                         collectableFeild && (
                                             <FormField
@@ -407,11 +402,15 @@ export const RateCalcForm = () => {
 
                                 </div>
 
+                                <div>
+                                    <p className="text-md">Volumetric Weight:</p>
+                                    {volWeight && <p className="text-sm">{volWeight} kg</p>}
+                                </div>
 
                             </CardContent>
                             <CardFooter className='flex-row-reverse gap-3'>
                                 <Button type='submit' variant={'themeButton'} >Calculate</Button>
-                                <Button variant={'secondary'} type='button' onClick={()=>form.reset()}>Reset</Button>
+                                <Button variant={'secondary'} type='button' onClick={() => form.reset()}>Reset</Button>
                             </CardFooter>
                         </Card>
                         <Card>
@@ -464,7 +463,7 @@ export const RateCalcForm = () => {
                                 </TableHeader>
                                 <TableBody>
                                     {
-                                         (courierCalcRate) && (courierCalcRate?.length > 1) && courierCalcRate?.map((partner: any, i: number) => {
+                                        (courierCalcRate) && (courierCalcRate?.length > 1) && courierCalcRate?.map((partner: any, i: number) => {
                                             return <TableRow key={i}>
                                                 <TableCell>
                                                     <div className="flex items-center">
@@ -474,7 +473,7 @@ export const RateCalcForm = () => {
                                                         <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
 
                                                     </div>
-                                                    <div>RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>
+                                                    <div>{!!partner.cod && (<>COD Charges Applied: {formatCurrencyForIndia(partner.cod)}</>)} |  RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
                                                 <TableCell>{partner.order_zone}</TableCell>

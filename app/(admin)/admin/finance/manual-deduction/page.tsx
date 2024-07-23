@@ -1,18 +1,18 @@
+import { ManualDeductionForm } from "@/components/Admin/Finance/manual-wallet-deduction-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import PickupAddresses from "@/components/Settings/pickup-addresses";
 
-export default function ManagePickupAddresses() {
-
+export default function ManualDeductionPage() {
     return (
-        <Card className="col-span-4">
+        <Card>
             <CardHeader>
                 <CardTitle className="md:flex justify-between space-y-3">
-                    Pickup Addresses
+                    Manual Wallet Deduction
                 </CardTitle>
             </CardHeader>
-            <CardContent className="pl-2">
-                <PickupAddresses />
+            <CardContent>
+
+                <ManualDeductionForm />
             </CardContent>
         </Card>
-    )
+    );
 }

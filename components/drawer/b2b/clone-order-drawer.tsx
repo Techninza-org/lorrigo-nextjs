@@ -36,6 +36,21 @@ export function CloneB2BOrderDrawer() {
 
     const form = useForm<z.infer<typeof b2bformDataSchema>>({
         resolver: zodResolver(b2bformDataSchema),
+        defaultValues: {
+            client_name: "",
+            order_reference_id: "",
+            product_description: "",
+            total_weight: "",
+            quantity: "",
+            boxes: [],
+            pickupAddress: "",
+            customerDetails: "",
+            ewaybill: "",
+            amount: "",
+            invoiceNumber: "",
+            invoice: undefined,
+            supporting_document: undefined
+        }
     });
 
     useEffect(() => {
@@ -60,12 +75,13 @@ export function CloneB2BOrderDrawer() {
         form.setValue("amount", b2bOrder?.amount.toString() || "")
         form.setValue("invoiceNumber", b2bOrder?.invoiceNumber || "")
 
-        form.setValue("invoice", b2bOrder?.invoiceImg)
-        form.setValue("supporting_document", b2bOrder?.supporting_document || "")
+        form.setValue("invoice", b2bOrder?.invoiceImage instanceof File ? b2bOrder?.invoiceImage : undefined);
+        form.setValue("supporting_document", b2bOrder?.supporting_document instanceof File ? b2bOrder?.supporting_document : undefined);
     }, [form, b2bOrder]);
 
     const isLoading = form.formState.isSubmitting;
     const { errors } = form.formState;
+    console.log(errors)
 
     const handleClose = () => {
         // form.reset();

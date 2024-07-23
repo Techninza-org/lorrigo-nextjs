@@ -22,6 +22,7 @@ export interface B2BCustomerDetailsType {
     name: string;
     phone: string;
     state: string;
+    address: string;
     city: string;
     pincode: string;
     gst: string;
@@ -51,6 +52,7 @@ export interface B2BOrderType {
     awb?: string;
     channelName?: string;
     carrierName?: string;
-    invoiceImg?: string;
-    supporting_document?: string;
+    invoiceImage?: File;
+    supporting_document?: File;
+    createdAt?: Date;
 }

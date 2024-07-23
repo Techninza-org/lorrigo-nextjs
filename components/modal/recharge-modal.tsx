@@ -40,9 +40,9 @@ const schema = z.object({
     rechargeAmount: z.string().refine(
         v => {
             let n = Number(v);
-            return !isNaN(n) && v?.length > 0 && n <= 10000;
+            return !isNaN(n) && v?.length > 0 && n >= 500 && n <= 10000;
         },
-        { message: "Invalid amount or exceeds maximum recharge amount of 10000" }
+        { message: "Invalid amount or recharge amount must be between 500 and 10000" }
     ),
     couponCode: z.string().optional()
 });
@@ -72,9 +72,7 @@ export const RechargeModal = () => {
     const onSubmit = async (values: z.infer<typeof schema>) => {
         try {
 
-            //   await createChannel(values, String(params?.serverId));
             await rechargeWallet(Number(values.rechargeAmount));
-            console.log(values);
             // form.reset();
             // router.refresh();
             // onClose();

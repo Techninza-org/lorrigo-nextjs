@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/navigation-menu"
 import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "../ui/button";
 
 export function NavigationItem({ links }: { links: { label: string; href: string }[] }) {
     const pathname = usePathname()
