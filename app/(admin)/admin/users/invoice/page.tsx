@@ -1,18 +1,21 @@
-import Invoice from '@/components/Admin/User/invoice'
+import AdminInvoiceList from "@/components/Admin/User/AdminInvoice";
+import InvoiceList from "@/components/Admin/User/InvoiceList";
+import Invoice from "@/components/finance/invoice";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import React from 'react'
+import { useParams } from "next/navigation";
 
-export default function page() {
-  return (
-    <Card className="col-span-4">
+export default function InvoicePage() {
+    return (
+        <Card className="col-span-4">
             <CardHeader>
                 <CardTitle className="md:flex justify-between space-y-3">
-                    Invoices
+                    Invoice
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <Invoice />
+                <AdminInvoiceList />
             </CardContent>
         </Card>
-  )
+    );
+
 }
