@@ -44,7 +44,7 @@ export const getFormattedUpcomingDate = (numberOfDaysToAdd: number) => {
 }
 
 export const handleCopyText = (text: string) => {
-  navigator.clipboard.writeText(text);
+  navigator?.clipboard?.writeText(text);
   toast({
     title: "Copied to clipboard",
     description: text,
