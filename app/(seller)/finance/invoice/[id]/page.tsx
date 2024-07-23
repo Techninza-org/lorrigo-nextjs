@@ -7,7 +7,7 @@ export default function page() {
   return (
     <Card className='p-5'>
       <CardTitle className='mb-5'>Inovice</CardTitle>
-      <AdminInvoiceById />
+      <InvoiceById />
     </Card>
   )
 }
