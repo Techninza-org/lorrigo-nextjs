@@ -84,6 +84,7 @@ interface SellerContextType {
   codprice: any;
   getSellerAssignedCourier: () => Promise<void>;
   assignedCouriers: any[];
+  getInvoiceById: (id: any) => Promise<any>;
 }
 
 interface sellerCustomerFormType {
@@ -1169,6 +1170,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const getInvoiceById = async (id: any) => {
+    try {
+      const res = await axiosIWAuth.get(`/seller/invoice/${id}`);
+      return res.data.invoice;
+      console.log(res.data.invoice);
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+  }
+}
+
   const getCodPrice = async () => {
     try {
       const res = await axiosIWAuth.get('/seller/cod-price');
@@ -1258,7 +1270,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getCodPrice,
         codprice,
         assignedCouriers,
-        getSellerAssignedCourier
+        getSellerAssignedCourier,
+        getInvoiceById
 
       }}
     >
