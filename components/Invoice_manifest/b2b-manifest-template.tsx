@@ -1,11 +1,10 @@
 import { LorrigoLogo } from "@/components/Logos";
-import { B2COrderType } from "@/types/types";
+import { B2BOrderType } from "@/types/B2BTypes";
 import { format } from "date-fns";
 import { Square } from "lucide-react";
 import Barcode from "react-barcode"
 
-export default function GenerateManifestTemplate({ order }: { order?: B2COrderType }) {
-
+export default function GenerateB2BManifestTemplate({ order }: { order?: B2BOrderType }) {
     return (
         <div className="w-full p-4 border-black border-double border-2 h-full">
             <div>
@@ -21,9 +20,9 @@ export default function GenerateManifestTemplate({ order }: { order?: B2COrderTy
             </div>
             <div className="flex justify-between">
                 <div>
-                    <div className="max-w-72">
-                        Seller: <span className="font-bold text-lg  text-wrap">{order?.sellerDetails?.sellerName}</span>
-                    </div>
+                    {/* <div className="max-w-72">
+                        Seller: <span className="font-bold text-lg  text-wrap">{order?.}</span>
+                    </div> */}
                     <div>
                         <div className="max-w-72">
                             Courier: <span className="font-bold text-lg  text-wrap">{order?.carrierName}</span>
@@ -91,9 +90,9 @@ export default function GenerateManifestTemplate({ order }: { order?: B2COrderTy
 
             </div>
             <div className="text-center my-3">
-                <div className="capitalize">{order?.pickupAddress.address1.toLowerCase()}, {order?.pickupAddress.city.toLowerCase()}, {order?.pickupAddress.state.toLowerCase()}</div>
-                <div>{order?.pickupAddress.city.toLowerCase()}, {order?.pickupAddress.state.toLowerCase()}-{order?.pickupAddress.pincode}.</div>
-                <div>Contact : <span className="font-bold">+{order?.pickupAddress.phone}</span></div>
+                <div className="capitalize">{order?.pickupAddress?.address1.toLowerCase()}, {order?.pickupAddress?.city.toLowerCase()}, {order?.pickupAddress?.state.toLowerCase()}</div>
+                <div>{order?.pickupAddress?.city.toLowerCase()}, {order?.pickupAddress?.state?.toLowerCase()}-{order?.pickupAddress?.pincode}.</div>
+                <div>Contact : <span className="font-bold">+{order?.pickupAddress?.phone}</span></div>
             </div>
             <div className="my-3 text-center">
                 This is a system generated document

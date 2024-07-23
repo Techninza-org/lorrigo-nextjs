@@ -26,7 +26,7 @@ export function TopNav() {
     const { onOpen } = useModal();
     const { walletBalance } = usePaymentGateway();
     const { seller } = useSellerProvider();
-    
+
     return (
         <div
             className="group flex flex-col gap-4 py-2 "
@@ -37,23 +37,23 @@ export function TopNav() {
 
                 </div>
                 <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-3">
-                        <Link href="/wallet/txn">
-                            <ActionTooltip
-                                side="bottom"
-                                align="center"
-                                label="wallet"
-                            >
-                                <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
-                            </ActionTooltip>
-                        </Link>
-                        {/* {!seller?.config?.isPostpaid && (<> */}
+                    {seller?.config?.isPrepaid && (<>
+                        <div className="flex items-center space-x-3">
+                            <Link href="/wallet/txn">
+                                <ActionTooltip
+                                    side="bottom"
+                                    align="center"
+                                    label="wallet"
+                                >
+                                    <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
+                                </ActionTooltip>
+                            </Link>
                             <span>{formatCurrencyForIndia(walletBalance || 0)}</span>
                             <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("wallet")}>Recharge Wallet</Button>
-                        {/* </>)} */}
-                    </div>
+                        </div>
 
-                    <Separator orientation="vertical" className="w-[1px] bg-gray-400" />
+                        <Separator orientation="vertical" className="w-[1px] bg-gray-400" />
+                    </>)}
 
                     <UserAvatar />
                 </div>

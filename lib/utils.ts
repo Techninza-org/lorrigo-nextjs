@@ -154,3 +154,12 @@ export const filterData = (data: any, filter: any) => {
     return awb.includes(lowercasedFilter) || orderReferenceId.includes(lowercasedFilter);
   });
 };
+
+export const removeDoubleQuotes = (str: string): string => {
+  // Check if the string starts and ends with double quotes
+  if (str.startsWith('"') && str.endsWith('"')) {
+      // Remove the quotes
+      return str.slice(1, -1);
+  }
+  return str;
+};

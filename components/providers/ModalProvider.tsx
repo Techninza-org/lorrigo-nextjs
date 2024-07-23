@@ -7,7 +7,7 @@ import { AddSellerModal } from "../modal/add-seller-modal";
 import { AddPickupLocationModal } from "../modal/add-pickup-location";
 import { SchedulePickupModal } from "../modal/schedule-pickup-modal";
 import { DownloadB2BLableModal, DownloadLableModal } from "../modal/download-label-modal";
-import { DownloadManifestModal } from "../modal/download-manifest-modal";
+import { DownloadB2BManifestModal, DownloadManifestModal } from "../modal/download-manifest-modal";
 import { CancelOrderDialog } from "../Orders/cancel-order-dialog";
 import { NDROrderDialog, NDRRTODialog } from "../Orders/ndr-order-dialog";
 import { BulkHubUploadModal } from "../modal/bulk-hub-upload-modal";
@@ -57,6 +57,8 @@ export const ModalProvider = () => {
       <AdminRemittanceUpdateModal/>
       <AddB2BCustomerModal/>
       <AlertKycModal/>
+
+      <DownloadB2BManifestModal />
 
     </>
   );

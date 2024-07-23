@@ -18,7 +18,7 @@ import { WalletDeductionSchema } from "../Admin/Finance/manual-wallet-deduction-
 
 interface AdminContextType {
     users: SellerType[];
-    currSeller: SellerType;
+    currSeller: any;
     allRemittance: RemittanceType[] | null;
     shippingOrders: B2COrderType[];
     shippingB2BOrders: B2BOrderType[];

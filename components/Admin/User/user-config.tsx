@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAdminProvider } from '@/components/providers/AdminProvider';
+import { useEffect } from 'react';
 
 export const UserConfigSchema = z.object({
     isD2C: z.boolean(),
@@ -16,21 +17,32 @@ export const UserConfigSchema = z.object({
 
 export const UserConfigure = () => {
     const { currSeller, handleUserConfig } = useAdminProvider()
+
     const form = useForm<z.infer<typeof UserConfigSchema>>({
         resolver: zodResolver(UserConfigSchema),
         defaultValues: {
-            isD2C: currSeller?.config?.isD2C || true,
-            isB2B: currSeller?.config?.isB2B || true,
-            isPostpaid: currSeller?.config?.isPostpaid || true,
-            isPrepaid: currSeller?.config?.isPrepaid || true,
+            isD2C: currSeller?.seller?.config?.isD2C || false,
+            isB2B: currSeller?.seller?.config?.isB2B || false,
+            isPostpaid: currSeller?.seller?.config?.isPostpaid || false,
+            isPrepaid: currSeller?.seller?.config?.isPrepaid || false,
         },
     });
 
-    // Move onSubmit function here
-    async function onSubmit(values: z.infer<typeof UserConfigSchema>) {
-        await handleUserConfig(values)
-    }
+    useEffect(() => {
+        if (currSeller) {
+            form.reset({
+                isD2C: currSeller.seller.config.isD2C || false,
+                isB2B: currSeller.seller.config.isB2B || false,
+                isPostpaid: currSeller.seller.config.isPostpaid || false,
+                isPrepaid: currSeller.seller.config.isPrepaid || false,
+            });
+        }
+    }, [currSeller, form]);
 
+    async function onSubmit(values: z.infer<typeof UserConfigSchema>) {
+        await handleUserConfig(values);
+    }
+    
     return (
         <>
             <Form {...form}>

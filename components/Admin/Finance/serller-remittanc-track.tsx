@@ -72,10 +72,6 @@ const TrackSellerRemittance = () => {
             displayName: "Status"
         },
         {
-            id: "TAmt",
-            displayName: "Total Remittance Amount"
-        },
-        {
             id: "awbs",
             displayName: "AWB"
         },
@@ -84,11 +80,10 @@ const TrackSellerRemittance = () => {
 
     const datas = {
         Remittance_no: remittanceDetails.remittanceId,
-        awbs: remittanceDetails.orders.map((o: any) => `${o.awb}, ${o.amount2Collect}`).join("\n, , , , ,"),
+        awbs: remittanceDetails.orders.map((o: any) => `${o.awb}, ${o.amount2Collect}`).join(`\n${remittanceDetails.remittanceId},${remittanceDetails.remittanceDate},${remittanceDetails.BankTransactionId},${remittanceDetails.remittanceStatus},`),
         date: remittanceDetails.remittanceDate,
         txnId: remittanceDetails.BankTransactionId,
         Status: remittanceDetails.remittanceStatus,
-        TAmt: remittanceDetails.remittanceAmount.toString(),
     }
     return (
         <>
@@ -109,7 +104,7 @@ const TrackSellerRemittance = () => {
                             <NotepadTextDashed />
                             <span>Remittance Details</span>
                         </div>
-                        <CsvDownloader filename="view-shipment" datas={[datas]} columns={cols}>
+                        <CsvDownloader filename="remittance-report" datas={[datas]} columns={cols}>
                             <Button variant={'webPageBtn'} size={'sm'}><DownloadIcon size={16} className="mr-3" /> Download Report</Button>
                         </CsvDownloader>
                     </CardTitle>

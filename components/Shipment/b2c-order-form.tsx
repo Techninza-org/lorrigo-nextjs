@@ -377,8 +377,8 @@ export const OrderDetailForm = ({ seller, form, isLoading, handleIncrement, hand
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem disabled={!seller?.config?.isPostpaid} value={"COD"}>Cash on Delivery</SelectItem>
-                                    <SelectItem disabled={!seller?.config?.isPrepaid}  value={"Prepaid"}>Prepaid</SelectItem>
+                                    <SelectItem value={"COD"}>Cash on Delivery</SelectItem>
+                                    <SelectItem  value={"Prepaid"}>Prepaid</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormMessage />

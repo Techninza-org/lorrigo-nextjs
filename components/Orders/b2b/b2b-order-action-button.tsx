@@ -116,7 +116,7 @@ export const B2BOrderButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData })
     if (orderStage === 67 || orderStage === 4) {
         return (
             <div className="flex gap-2 items-center">
-                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("downloadManifest", { b2bOrder: rowData })}>Download Manifest</Button>
+                <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("downloadB2BManifest", { b2bOrder: rowData })}>Download Manifest</Button>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
