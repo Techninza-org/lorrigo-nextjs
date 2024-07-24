@@ -33,6 +33,7 @@ import useFetchCityState from '@/hooks/use-fetch-city-state';
 import { LoadingSpinner } from '../loading-spinner';
 import { useToast } from '../ui/use-toast';
 
+
 export const pickupAddressFormSchema = z.object({
     facilityName: z.string().min(1, "Facility name is required"),
     contactPersonName: z.string().min(1, "Contact person name is required").refine((value) => typeof value === "string" && !/\d/.test(value), {
@@ -40,7 +41,9 @@ export const pickupAddressFormSchema = z.object({
     }),
     phone: z.string().refine(isValidPhoneNumber, { message: "Invalid phone number" }),
     email: z.string().optional(),
-    address: z.string().min(1, "Address is required"),
+    address: z.string().min(1, "Address is required").refine((value) => /[\/-]/.test(value), {
+        message: "Address must contain / or -",
+    }),
     country: z.string().min(1, "Country is required"),
     pincode: z.string().min(1, "Pincode is required"),
     city: z.string().min(1, "City is required"),
@@ -51,7 +54,6 @@ export const pickupAddressFormSchema = z.object({
     rtoState: z.string().optional(),
     rtoPincode: z.string().optional(),
 });
-
 
 export const AddPickupLocationModal = () => {
     const { handleCreateHub } = useHubProvider();
@@ -101,7 +103,7 @@ export const AddPickupLocationModal = () => {
 
     const onSubmit = async (values: z.infer<typeof pickupAddressFormSchema>) => {
         try {
-            
+
             if (!values.isRTOAddressSame && ((values.rtoAddress?.length ?? 0) < 5 || (values.rtoPincode?.length !== 6))) {
                 toast({
                     variant: "destructive",

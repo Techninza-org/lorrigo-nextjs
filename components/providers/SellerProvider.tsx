@@ -661,6 +661,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           description: "Order manifested successfully",
         });
         getAllOrdersByStatus(status || "all")
+        getB2BOrders();
         router.refresh();
         return true;
       }
@@ -1015,22 +1016,22 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     formData.append('order_reference_id', order.order_reference_id);
     formData.append('client_name', order.client_name);
     formData.append('pickupAddress', order.pickupAddress);
-    formData.append('product_description', JSON.stringify(order.product_description));
+    formData.append('product_description', order.product_description);
     formData.append('total_weight', order.total_weight);
     formData.append('quantity', order.quantity);
     formData.append('ewaybill', order?.ewaybill || "");
     formData.append('amount', order.amount);
     formData.append('invoiceNumber', order.invoiceNumber);
     formData.append('customerDetails', order.customerDetails);
-
     formData.append('boxes', JSON.stringify(order.boxes));
 
-    if (order.invoice) {
+    if (order?.invoice) {
       formData.append('invoice', order.invoice);
     }
-    if (order.supporting_document) {
+    if (order?.supporting_document) {
       formData.append('supporting_document', order.supporting_document);
     }
+
     try {
       const res = await axiosIWAuth4Upload.post('/order/b2b', formData);
       if (res.data?.valid) {
@@ -1049,11 +1050,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         return false;
       }
-    } catch (error) {
+    } catch (error:any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "An error occurred",
+        description:   error?.response?.data?.message || "An error occurred",
       });
       return false;
     }
@@ -1061,12 +1062,33 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const handleEditB2BOrder = async (order: z.infer<typeof b2bformDataSchema>, orderId: string) => {
     try {
-      const res = await axiosIWAuth.patch('/order/update/b2b', { order, orderId });
+      const formData = new FormData();
+      formData.append('orderId', orderId); // Append orderId to formData
+      formData.append('order_reference_id', order.order_reference_id);
+      formData.append('client_name', order.client_name);
+      formData.append('pickupAddress', order.pickupAddress);
+      formData.append('product_description', order.product_description);
+      formData.append('total_weight', order.total_weight);
+      formData.append('quantity', order.quantity);
+      formData.append('ewaybill', order?.ewaybill || "");
+      formData.append('amount', order.amount);
+      formData.append('invoiceNumber', order.invoiceNumber);
+      formData.append('customerDetails', order.customerDetails);
+      formData.append('boxes', JSON.stringify(order.boxes));
+  
+      if (order?.invoice) {
+        formData.append('invoice', order.invoice);
+      }
+      if (order?.supporting_document) {
+        formData.append('supporting_document', order.supporting_document);
+      }
+  
+      const res = await axiosIWAuth4Upload.patch(`/order/update/b2b`, formData);
       if (res.data?.valid) {
         toast({
           variant: "default",
-          title: "B2B order created successfully",
-          description: "Order has been created successfully",
+          title: "B2B order updated successfully",
+          description: "Order has been updated successfully",
         });
         getB2BOrders();
         return true;
@@ -1078,15 +1100,16 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         return false;
       }
-    } catch (error) {
+    } catch (error:any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "An error occurred",
+        description:  error?.response?.data?.message || "An error occurred",
       });
       return false;
     }
-  }
+  };
+  
 
   const getB2BOrders = async () => {
     try {
@@ -1175,11 +1198,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       const res = await axiosIWAuth.get(`/seller/invoice/${id}`);
       return res.data.invoice;
       console.log(res.data.invoice);
-      
+
     } catch (error) {
       console.error('Error fetching data:', error);
+    }
   }
-}
 
   const getCodPrice = async () => {
     try {

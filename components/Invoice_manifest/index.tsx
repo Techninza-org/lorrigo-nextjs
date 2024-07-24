@@ -50,8 +50,7 @@ export const B2BInvoicePage = ({ order }: { order?: B2BOrderType }) => {
         let x = margin;
         let y = margin;
 
-        for (let i = 0; i < inputElements.length; i++) {
-            const input = inputElements[i];
+        for (const input of inputElements) {
             const canvas = await html2canvas(input as HTMLElement, {
                 scale: 1
             });
@@ -97,30 +96,56 @@ export const B2BInvoicePage = ({ order }: { order?: B2BOrderType }) => {
 
     if (!order) return null;
 
-    const totalBoxes = order.packageDetails?.length;
-    
+    const generateAwbs = () => {
+        let currentAwb = order.awb;
+        const labels = [];
+        let labelCount = 1;
+
+        for (const packageDetail of order.packageDetails ?? []) {
+            const qty = Number(packageDetail.qty);
+            for (let j = 0; j < qty; j++) {
+                const awb = labelCount === 1
+                    ? currentAwb
+                    : `${currentAwb}${(labelCount).toString().padStart(4, '0')}`;
+                labels.push({
+                    awb,
+                    index: labelCount - 1,
+                    labelIndex: j
+                });
+                labelCount++;
+            }
+        }
+        return labels;
+    };
+
+    const labels = generateAwbs();
+
     return (
         <>
             <Button size={"sm"} variant={"webPageBtn"} className="w-full" onClick={printAllDocuments}>
                 Download All
             </Button>
-            {order?.packageDetails?.map((packageDetail, index) => {
-                const awb = index === 0 ? order.awb : `${order.awb}-${index + 1}`;
-                const boxNumber = `${index + 1} / ${totalBoxes}`;
+            {labels.map((label, index) => {
+                const boxNumber = `${Math.floor(index / (order?.packageDetails?.length ?? 0)) + 1} / ${order.packageDetails?.length ?? 0}`;
                 return (
                     <div key={index}>
                         <div id={`divToPrint_${index}`} className="divToPrint mx-auto pb-3">
-                            <B2BInvoiceTemplate order={{ ...order, awb }} boxNumber={boxNumber} />
+                            <B2BInvoiceTemplate
+                                order={{ ...order, awb: label.awb }}
+                                boxNumber={`${boxNumber}-${label.labelIndex + 1}`}
+                            />
                         </div>
                         {(index + 1) % 4 === 0 && <div className="page-break" />}
                     </div>
                 );
             })}
-            <style jsx>{`
-                .page-break {
-                    page-break-after: always;
-                }
-            `}</style>
+            <style jsx>
+                {`
+                    .page-break {
+                        page-break-after: always;
+                    }
+                `}
+            </style>
         </>
     );
 };

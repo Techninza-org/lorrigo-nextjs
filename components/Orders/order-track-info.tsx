@@ -82,7 +82,7 @@ export const OrderTrackInfo = () => {
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-gray-400">
-                                    Pickup Address
+                                    Warehouse Address
                                 </span>
                                 <HoverCardToolTip label={order.pickupAddress.name} side="bottom">
                                     {`${order?.pickupAddress?.address1}, ${order?.pickupAddress?.address2}, ${order?.pickupAddress?.city}, ${order?.pickupAddress?.state}, ${order?.pickupAddress?.pincode}`}

@@ -16,8 +16,9 @@ import ImageUpload from '../../file-upload'
 import { Label } from '../../ui/label'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { generateOrderID } from '@/lib/utils'
+import { base64ToFile, generateOrderID } from '@/lib/utils'
 import Image from 'next/image'
+import { useToast } from '@/components/ui/use-toast'
 
 export const b2bformDataSchema = z.object({
     client_order_reference_id: z.string().optional(),
@@ -25,66 +26,83 @@ export const b2bformDataSchema = z.object({
     client_name: z.string().min(1, "Client name is required"),
     pickupAddress: z.string().min(1, "Pickup address is required"),
     product_description: z.string().min(1, "Product description is required"),
-    total_weight: z.string().min(1, "Total weight is required").refine((val) => !isNaN(parseFloat(val)), {
-        message: "Total weight must be a valid number",
-        path: ["total_weight"],
-    }),
-    quantity: z.string().min(1, "Quantity is required").refine((val) => !isNaN(parseFloat(val)), {
-        message: "Quantity must be a valid number",
-        path: ["quantity"],
-    }),
-    boxes: z.array(z.object({
-        qty: z.string().min(1, "Quantity is required").refine((val) => !isNaN(parseFloat(val)), {
-            message: "Box quantity must be a valid number",
-            path: ["qty"],
+    total_weight: z
+        .string()
+        .min(1, "Total weight is required")
+        .refine((val) => !isNaN(parseFloat(val)), {
+            message: "Total weight must be a valid number",
+            path: ["total_weight"],
         }),
-        orderBoxLength: z.string().optional(),
-        orderBoxWidth: z.string().optional(),
-        orderBoxHeight: z.string().optional(),
-        orderBoxWeight: z.string().refine((val) => !isNaN(parseFloat(val)), {
-            message: "Box weight must be a valid number",
-            path: ["orderBoxWeight"],
-        }).optional(),
-        boxWeightUnit: z.string().optional(),
-        boxSizeUnit: z.string().optional(),
-    })).min(1, "At least one box is required"),
+    quantity: z
+        .string()
+        .min(1, "Quantity is required")
+        .refine((val) => !isNaN(parseFloat(val)), {
+            message: "Quantity must be a valid number",
+            path: ["quantity"],
+        }),
+    boxes: z
+        .array(
+            z.object({
+                qty: z
+                    .string()
+                    .min(1, "Quantity is required")
+                    .refine((val) => !isNaN(parseFloat(val)), {
+                        message: "Box quantity must be a valid number",
+                        path: ["qty"],
+                    }),
+                orderBoxLength: z.string().optional(),
+                orderBoxWidth: z.string().optional(),
+                orderBoxHeight: z.string().optional(),
+                orderBoxWeight: z
+                    .string()
+                    .refine((val) => !isNaN(parseFloat(val)), {
+                        message: "Box weight must be a valid number",
+                        path: ["orderBoxWeight"],
+                    })
+                    .optional(),
+                boxWeightUnit: z.string().optional(),
+                boxSizeUnit: z.string().optional(),
+            })
+        )
+        .min(1, "At least one box is required"),
     customerDetails: z.string().min(1, "Customer is required"),
     ewaybill: z.string().optional(),
     amount: z.string().min(1, "Amount is required"),
     invoiceNumber: z.string().min(1, "Invoice number is required"),
-    invoice: z.instanceof(File).optional(),
-    supporting_document: z.instanceof(File).optional(),
-}).refine((data) => {
-    const totalWeight = parseFloat(data.total_weight);
-    const quantity = parseFloat(data.quantity);
+    invoice: z.any().optional(),
+    supporting_document: z.any().optional(),
+})
+    .refine((data) => {
+        const totalWeight = parseFloat(data.total_weight);
+        const quantity = parseFloat(data.quantity);
 
-    const totalBoxWeight = data.boxes.reduce((sum, box) => sum + parseFloat(box.orderBoxWeight || '0'), 0);
-    const totalBoxQuantity = data.boxes.reduce((sum, box) => sum + parseFloat(box.qty || '0'), 0);
+        const totalBoxWeight = data.boxes.reduce(
+            (sum, box) => sum + parseFloat(box.orderBoxWeight || '0') * parseFloat(box.qty),
+            0
+        );
+        const totalBoxQuantity = data.boxes.reduce(
+            (sum, box) => sum + parseFloat(box.qty || '0'),
+            0
+        );
 
-    if (totalWeight !== totalBoxWeight) {
-        return false;
-    }
-    if (quantity !== totalBoxQuantity) {
-        return false;
-    }
+        if (totalWeight !== totalBoxWeight) {
+            return false;
+        }
+        if (quantity !== totalBoxQuantity) {
+            return false;
+        }
 
-    return true;
-}, {
-    message: "Total weight must be equal to the sum of all boxes weights",
-    path: ["total_weight"],
-}).refine((data) => {
-    const quantity = parseFloat(data.quantity);
-    const totalBoxQuantity = data.boxes.reduce((sum, box) => sum + parseFloat(box.qty || '0'), 0);
-
-    return quantity === totalBoxQuantity;
-}, {
-    message: "Total quantity must be equal to the sum of all boxes quantities",
-    path: ["quantity"],
-});
+        return true;
+    }, {
+        message: "Total weight and quantity must be equal to the sum of all boxes' weights and quantities",
+        path: ["total_weight"],
+    });
 
 
 export default function B2BForm() {
     const { handleCreateB2BOrder } = useSellerProvider();
+
+    const { toast } = useToast()
 
     const { seller, orders } = useSellerProvider();
     const { user } = useAuth();
@@ -123,6 +141,14 @@ export default function B2BForm() {
 
     const onSubmit = async (values: z.infer<typeof b2bformDataSchema>) => {
         try {
+
+            if (!form.watch('invoice')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Invoice is required'
+                })
+                return
+            }
             const isSuccess = await handleCreateB2BOrder(values);
             if (isSuccess) {
                 form.reset();
@@ -472,34 +498,26 @@ export const B2BAddAmtDocForm = ({ form, isLoading }: { form: any, isLoading: bo
                 </CardHeader>
                 <CardContent>
                     <div className='flex gap-10 justify-around'>
-                        <div >
+                        <div className='w-60'>
                             <Label className='font-semibold'>1. Invoice <span className='text-red-500'>*</span></Label>
 
-                            {
-                                form.watch("invoice") ? (
-                                    <div className='flex flex-col gap-2'>
-                                        <Image src={`data:image/jpeg;base64,${form.watch('invoice')}`} height={290} width={290} alt='invoice' />
-                                    </div>
-                                ) : <ImageUpload
-                                    handleFileChange={handleInvoice}
-                                    fieldName={"invoice" as any}
-                                />
-                            }
-
+                            <ImageUpload
+                                handleFileChange={handleInvoice}
+                                fieldName={"invoice" as any}
+                                uploadedFile={form.watch('invoice') instanceof File ? form.watch('invoice') : base64ToFile(`data:image/jpeg;base64,${form.watch('invoice')}`, "invoice", "image/jpeg")}
+                                acceptFileTypes={{ 'application/pdf': ['.pdf'] }}
+                            />
                             <FormMessage />
                         </div>
                         <div className='w-60'>
                             <Label className='font-semibold'>2. Supporting Document (optional)</Label>
-                            {
-                                form.watch("supporting_document") ? (
-                                    <div className='flex flex-col gap-2'>
-                                        <Image src={`data:image/jpeg;base64,${form.watch('supporting_document')}`} height={290} width={290} alt='invoice' />
-                                    </div>
-                                ) : <ImageUpload
-                                    handleFileChange={handleFileChange}
-                                    fieldName={"supporting_document" as any}
-                                />
-                            }
+                            <ImageUpload
+                                handleFileChange={handleFileChange}
+                                fieldName={"supporting_document" as any}
+                                uploadedFile={form.watch('supporting_document') instanceof File ? form.watch('supporting_document') : base64ToFile(`data:image/jpeg;base64,${form.watch('supporting_document')}`, "supporting_document", "image/jpeg")}
+                                acceptFileTypes={{ 'application/pdf': ['.pdf'] }}
+                            />
+                            <FormMessage />
 
                         </div>
                     </div>

@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAdminProvider } from '@/components/providers/AdminProvider';
 import { useEffect } from 'react';
+import { useToast } from '@/components/ui/use-toast';
 
 export const UserConfigSchema = z.object({
     isD2C: z.boolean(),
@@ -16,7 +17,8 @@ export const UserConfigSchema = z.object({
 });
 
 export const UserConfigure = () => {
-    const { currSeller, handleUserConfig } = useAdminProvider()
+    const { currSeller, handleUserConfig } = useAdminProvider();
+    const { toast } = useToast();
 
     const form = useForm<z.infer<typeof UserConfigSchema>>({
         resolver: zodResolver(UserConfigSchema),
@@ -39,100 +41,129 @@ export const UserConfigure = () => {
         }
     }, [currSeller, form]);
 
+    useEffect(() => {
+        const subscription = form.watch((values) => {
+            if (!(values.isPrepaid || values.isPostpaid)) {
+                // toast({
+                //     variant: "destructive",
+                //     title: "Validation Error",
+                //     description: "Either Prepaid or Postpaid must be enabled.",
+                // });
+
+                // Reset fields to ensure at least one is enabled
+                if (!values.isPrepaid) {
+                    form.setValue('isPrepaid', true, { shouldValidate: false });
+                } else if (!values.isPostpaid) {
+                    form.setValue('isPostpaid', true, { shouldValidate: false });
+                }
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, [form.watch]);
+
     async function onSubmit(values: z.infer<typeof UserConfigSchema>) {
-        await handleUserConfig(values);
+        if (!(values.isPrepaid || values.isPostpaid)) {
+            // toast({
+            //     variant: "destructive",
+            //     title: "Validation Error",
+            //     description: "Either Prepaid or Postpaid must be enabled.",
+            // });
+            return;
+        }else{ 
+            await handleUserConfig(values);
+        }
+
     }
-    
+
     return (
-        <>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex  gap-6">
-                    <FormField
-                        control={form.control}
-                        name="isD2C"
-                        render={({ field }) => (
-                            <FormItem className="flex items-center gap-3">
-                                <FormLabel className=" font-bold text-zinc-500 dark:text-secondary/70">
-                                    D2C
-                                </FormLabel>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={() => {
-                                            field.onChange(!field.value);
-                                            form.handleSubmit(onSubmit)(); // Trigger form submission
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="isB2B"
-                        render={({ field }) => (
-                            <FormItem className="flex items-center gap-3">
-                                <FormLabel className=" font-bold text-zinc-500 dark:text-secondary/70">
-                                    B2B
-                                </FormLabel>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={() => {
-                                            field.onChange(!field.value);
-                                            form.handleSubmit(onSubmit)(); // Trigger form submission
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="isPrepaid"
-                        render={({ field }) => (
-                            <FormItem className="flex items-center gap-3">
-                                <FormLabel className=" font-bold text-zinc-500 dark:text-secondary/70">
-                                    Prepaid
-                                </FormLabel>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={() => {
-                                            field.onChange(!field.value);
-                                            form.handleSubmit(onSubmit)(); // Trigger form submission
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="isPostpaid"
-                        render={({ field }) => (
-                            <FormItem className="flex items-center gap-3">
-                                <FormLabel className=" font-bold text-zinc-500 dark:text-secondary/70">
-                                    Postpaid
-                                </FormLabel>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={() => {
-                                            field.onChange(!field.value);
-                                            form.handleSubmit(onSubmit)(); // Trigger form submission
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </form>
-            </Form>
-        </>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex gap-6">
+                <FormField
+                    control={form.control}
+                    name="isD2C"
+                    render={({ field }) => (
+                        <FormItem className="flex items-center gap-3">
+                            <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
+                                D2C
+                            </FormLabel>
+                            <FormControl>
+                                <Switch
+                                    checked={field.value}
+                                    onCheckedChange={() => {
+                                        field.onChange(!field.value);
+                                        form.handleSubmit(onSubmit)(); // Trigger form submission
+                                    }}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="isB2B"
+                    render={({ field }) => (
+                        <FormItem className="flex items-center gap-3">
+                            <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
+                                B2B
+                            </FormLabel>
+                            <FormControl>
+                                <Switch
+                                    checked={field.value}
+                                    onCheckedChange={() => {
+                                        field.onChange(!field.value);
+                                        form.handleSubmit(onSubmit)(); // Trigger form submission
+                                    }}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="isPrepaid"
+                    render={({ field }) => (
+                        <FormItem className="flex items-center gap-3">
+                            <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
+                                Prepaid
+                            </FormLabel>
+                            <FormControl>
+                                <Switch
+                                    checked={field.value}
+                                    onCheckedChange={() => {
+                                        field.onChange(!field.value);
+                                        form.handleSubmit(onSubmit)(); // Trigger form submission
+                                    }}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="isPostpaid"
+                    render={({ field }) => (
+                        <FormItem className="flex items-center gap-3">
+                            <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
+                                Postpaid
+                            </FormLabel>
+                            <FormControl>
+                                <Switch
+                                    checked={field.value}
+                                    onCheckedChange={() => {
+                                        field.onChange(!field.value);
+                                        form.handleSubmit(onSubmit)(); // Trigger form submission
+                                    }}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+            </form>
+        </Form>
     );
 };

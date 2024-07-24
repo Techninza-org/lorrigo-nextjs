@@ -11,7 +11,7 @@ import {
   Video,
   X,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FileRejection, useDropzone } from "react-dropzone";
 import { Input } from "./ui/input";
 // import { Progress } from "./ui/progress";
@@ -77,6 +77,7 @@ const compressFile = async (file: File) => {
   }
 };
 
+
 export default function ImageUpload({ Label,
   maxFiles = 1,
   uploadUrl,
@@ -84,6 +85,7 @@ export default function ImageUpload({ Label,
   acceptFileTypes = { 'image/jpeg': ['.jpeg', '.png', '.jpg'] },
   handleFileChange,
   fieldName,
+  uploadedFile
 }: {
   Label?: string,
   maxFiles?: number,
@@ -92,37 +94,45 @@ export default function ImageUpload({ Label,
   acceptFileTypes?: { [key: string]: string[] },
   handleFileChange?: ({ fieldName, file }: { fieldName: keyof DocumentUploadSchema, file: File }) => void
   fieldName?: keyof DocumentUploadSchema
+  uploadedFile?: File,
 }) {
-
   const { axiosIWAuth4Upload } = useAxios();
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([]);
 
+  useEffect(() => {
+
+    if (uploadedFile) {
+      setFilesToUpload([{ progress: 0, File: uploadedFile, source: null }]);
+    }
+  }, [uploadedFile]);
+
+
   const { toast } = useToast();
 
   const getFileIconAndColor = (file: File) => {
-    if (file.type.includes(FileTypes.Image)) {
+    if (file?.type?.includes(FileTypes.Image)) {
       return {
         icon: <FileImage size={40} className={ImageColor.fillColor} />,
         color: ImageColor.bgColor,
       };
     }
 
-    if (file.type.includes(FileTypes.Pdf)) {
+    if (file?.type?.includes(FileTypes.Pdf)) {
       return {
         icon: <File size={40} className={PdfColor.fillColor} />,
         color: PdfColor.bgColor,
       };
     }
 
-    if (file.type.includes(FileTypes.Audio)) {
+    if (file?.type?.includes(FileTypes.Audio)) {
       return {
         icon: <AudioWaveform size={40} className={AudioColor.fillColor} />,
         color: AudioColor.bgColor,
       };
     }
 
-    if (file.type.includes(FileTypes.Video)) {
+    if (file?.type?.includes(FileTypes.Video)) {
       return {
         icon: <Video size={40} className={VideoColor.fillColor} />,
         color: VideoColor.bgColor,
@@ -135,7 +145,6 @@ export default function ImageUpload({ Label,
     };
   };
 
-
   const onUploadProgress = (
     progressEvent: AxiosProgressEvent,
     file: File,
@@ -144,19 +153,19 @@ export default function ImageUpload({ Label,
     const progress = Math.round(
       (progressEvent.loaded / (progressEvent.total ?? 0)) * 100
     );
-  
+
     if (progress === 100) {
       setUploadedFiles((prevUploadedFiles) => {
         return [...prevUploadedFiles, file];
       });
-  
+
       setFilesToUpload((prevUploadProgress) => {
         return prevUploadProgress.filter((item) => item.File !== file);
       });
-  
+
       return;
     }
-  
+
     setFilesToUpload((prevUploadProgress) => {
       return prevUploadProgress.map((item) => {
         if (item.File.name === file.name) {
@@ -324,9 +333,9 @@ export default function ImageUpload({ Label,
       <div className="relative">
         <label
           {...getRootProps()}
-          className="relative h-36 overflow-hidden flex flex-col items-center justify-center w-full py-6 border-2 border-red-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 "
+          className="relative h-36 w-full overflow-hidden flex flex-col items-center justify-center  py-6 border-2 border-red-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 "
         >
-          <div className=" text-center">
+          <div className="min-w-60 text-center">
             <div className="border p-2 rounded-md max-w-min mx-auto">
               {filesToUpload.length > 0 ? getFileIconAndColor(filesToUpload[0].File).icon : <UploadCloud size={20} />}
             </div>

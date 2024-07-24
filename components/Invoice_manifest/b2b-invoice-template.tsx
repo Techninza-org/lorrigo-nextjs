@@ -17,11 +17,11 @@ export const B2BInvoiceTemplate = ({ order, boxNumber }: { order?: any, boxNumbe
                     Order id: {order?.order_reference_id}
                 </div>
                 <div className="text-lg">
-                    {boxNumber.includes("1") ? "Master" : "Child"} : {order.awb}
+                    AWB : {order.awb}
                 </div>
-                <div className="text-right">
+                {/* <div className="text-right">
                     Box: {boxNumber}
-                </div>
+                </div> */}
             </div>
             <Separator orientation="horizontal" className="my-3 bg-gray-400" />
             <div className="">
@@ -40,7 +40,6 @@ export const B2BInvoiceTemplate = ({ order, boxNumber }: { order?: any, boxNumbe
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
                     Shipping address:
                 </h4>
-                <LorrigoLogo />
             </div>
             <div>
                 <div>{order?.customer?.name}</div>

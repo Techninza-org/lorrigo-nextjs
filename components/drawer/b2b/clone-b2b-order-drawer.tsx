@@ -23,7 +23,7 @@ import { useSellerProvider } from "@/components/providers/SellerProvider";
 import { Undo2 } from "lucide-react";
 import { B2BAddAmtDocForm, B2BShipmentDetailsForm, b2bformDataSchema } from "@/components/Orders/b2b/b2b-form";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { generateOrderID } from "@/lib/utils";
+import { generateOrderID, splitStringOnFirstNumber } from "@/lib/utils";
 
 
 export function CloneB2BOrderDrawer() {
@@ -58,8 +58,8 @@ export function CloneB2BOrderDrawer() {
     }, [form, seller, user?.name])
 
     useEffect(() => {
-        form.setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name || "") || "@@", `${orders?.length || 0}`))
-    }, [form, orders?.length, seller?.companyProfile?.companyName, user?.name])
+        form.setValue('order_reference_id', generateOrderID((seller?.companyProfile?.companyName || user?.name) || "@@", `${splitStringOnFirstNumber(orders[0]?.order_reference_id) || 0}`))
+    }, [form, orders, orders.length, seller?.companyProfile?.companyName, user?.name])
 
     useEffect(() => {
 
@@ -75,8 +75,8 @@ export function CloneB2BOrderDrawer() {
         form.setValue("amount", b2bOrder?.amount.toString() || "")
         form.setValue("invoiceNumber", b2bOrder?.invoiceNumber || "")
 
-        form.setValue("invoice", b2bOrder?.invoiceImage instanceof File ? b2bOrder?.invoiceImage : undefined);
-        form.setValue("supporting_document", b2bOrder?.supporting_document instanceof File ? b2bOrder?.supporting_document : undefined);
+        form.setValue("invoice", b2bOrder?.invoiceImage || undefined);
+        form.setValue("supporting_document", b2bOrder?.supporting_document as any ? b2bOrder?.supporting_document : undefined);
     }, [form, b2bOrder]);
 
     const isLoading = form.formState.isSubmitting;
@@ -111,7 +111,7 @@ export function CloneB2BOrderDrawer() {
                         <Button size={"icon"} variant={"secondary"} onClick={handleClose}>
                             <Undo2 size={20} />
                         </Button>
-                        <span>Edit Order</span>
+                        <span>Clone Order</span>
                         <span className="font-medium underline underline-offset-4 text-blue-800">
                             {b2bOrder?.order_reference_id}
                         </span>
