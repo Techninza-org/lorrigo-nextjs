@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import UploadPincodes from "@/components/Admin/Pincode/upload-pincode-sheet";
 
+
 export default function UploadPincodesBulk() {
     return (
-        <>
+        <Card>
             <CardHeader>
                 <CardTitle className="md:flex justify-between space-y-3">
                     Upload Pincode Sheet
@@ -12,6 +13,6 @@ export default function UploadPincodesBulk() {
             <CardContent className="pl-2 mt-6">
                 <UploadPincodes />
             </CardContent>
-        </>
+        </Card>
     )
 }

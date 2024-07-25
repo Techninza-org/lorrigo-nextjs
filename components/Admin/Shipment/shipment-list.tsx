@@ -1,8 +1,6 @@
 'use client'
 import { AdminShipmentListingCol } from "@/components/Admin/Shipment/shipment-listing-col";
 import { ShipmentListingTable } from "@/components/Admin/Shipment/shipment-listing-table";
-import { B2BOrderStatusCol } from "@/components/Orders/b2b/b2b-order-status-col";
-import { B2BOrderStatusTable } from "@/components/Orders/b2b/b2b-order-status-table";
 import { useAdminProvider } from "@/components/providers/AdminProvider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";

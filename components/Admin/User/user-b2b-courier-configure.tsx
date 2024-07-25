@@ -353,8 +353,8 @@ export const UserB2BCourierConfigure = () => {
                         />
                     </div>
 
-                    <Tabs defaultValue="North 1" className="max-w-screen-sm">
-                        <TabsList className="flex w-full overflow-y-auto scrollbar-hide flex-nowrap gap-3 ">
+                    <Tabs defaultValue="North 1" className="">
+                        <TabsList className="flex w-full overflow-y-auto scrollbar-hide flex-nowrap gap-2 ">
                             {zones.map(zone => (
                                 <TabsTrigger key={zone} value={zone}>{zone}</TabsTrigger>
                             ))}

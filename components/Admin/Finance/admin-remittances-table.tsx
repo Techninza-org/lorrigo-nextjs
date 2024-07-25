@@ -30,7 +30,8 @@ import {
 import CsvDownloader from 'react-csv-downloader';
 import { DatePickerWithRange } from "@/components/DatePickerWithRange"
 import { DateRange } from "react-day-picker"
-import { filterData } from "@/lib/utils"
+import { filterData, filterRemittanceData } from "@/lib/utils"
+import { format, formatISO, parse } from "date-fns"
 
 
 export function RemittancesTableAdmin({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
@@ -51,8 +52,7 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
 
 
     const [filteredData, setFilteredData] = React.useState<any[]>(data)
-    // Memoize filtered data to avoid unnecessary re-renders
-    const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
+    const filteredDataMemo = React.useMemo(() => filterRemittanceData(filteredData, filtering), [filteredData, filtering]);
 
 
     const table = useReactTable({
@@ -73,7 +73,7 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
         if ((!date?.from || !date?.to) || (date.from === date.to)) return
         const a = data.filter((row) => {
             if (date?.from && date?.to) {
-                return row.order_invoice_date > new Date(date.from).toISOString() && row.order_invoice_date < new Date(date.to).toISOString()
+                return parse(row?.remittanceDate, 'dd-MM-yy', new Date()).toISOString() > new Date(date.from).toISOString() && parse(row?.remittanceDate, 'dd-MM-yy', new Date()).toISOString() < new Date(date.to).toISOString()
             }
             return false;
         });
@@ -222,8 +222,10 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+                    <Button variant={'outline'}>
+                        Page{' '}
+                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                    </Button>
                 </div>
                 <div className="space-x-2">
                     <Button

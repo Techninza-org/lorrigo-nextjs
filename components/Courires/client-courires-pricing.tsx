@@ -536,7 +536,7 @@ export const ClientRateCard = ({ isDisabled }: { isDisabled?: boolean }) => {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">
-                                    {isDisabled && <>
+                                    {!Boolean(isDisabled) && <>
                                         <SubmitButton isLoading={isLoading} />
                                         <TabsList className="">
                                             <TabsTrigger value="withinZone" className={buttonVariants({

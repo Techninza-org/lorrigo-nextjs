@@ -53,6 +53,14 @@ export const pickupAddressFormSchema = z.object({
     rtoCity: z.string().optional(),
     rtoState: z.string().optional(),
     rtoPincode: z.string().optional(),
+}).refine((data) => {
+    if (!data.isRTOAddressSame) {
+        return data.rtoAddress && data.rtoCity && data.rtoState && data.rtoPincode;
+    }
+    return true;
+}, {
+    message: "RTO Address, RTO City, RTO State and RTO Pincode are required",
+    
 });
 
 export const AddPickupLocationModal = () => {

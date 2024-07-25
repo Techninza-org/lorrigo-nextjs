@@ -12,20 +12,17 @@ import { useToast } from '@/components/ui/use-toast';
 export const UserConfigSchema = z.object({
     isD2C: z.boolean(),
     isB2B: z.boolean(),
-    isPostpaid: z.boolean(),
     isPrepaid: z.boolean(),
 });
 
 export const UserConfigure = () => {
     const { currSeller, handleUserConfig } = useAdminProvider();
-    const { toast } = useToast();
 
     const form = useForm<z.infer<typeof UserConfigSchema>>({
         resolver: zodResolver(UserConfigSchema),
         defaultValues: {
             isD2C: currSeller?.seller?.config?.isD2C || false,
             isB2B: currSeller?.seller?.config?.isB2B || false,
-            isPostpaid: currSeller?.seller?.config?.isPostpaid || false,
             isPrepaid: currSeller?.seller?.config?.isPrepaid || false,
         },
     });
@@ -35,45 +32,13 @@ export const UserConfigure = () => {
             form.reset({
                 isD2C: currSeller.seller.config.isD2C || false,
                 isB2B: currSeller.seller.config.isB2B || false,
-                isPostpaid: currSeller.seller.config.isPostpaid || false,
                 isPrepaid: currSeller.seller.config.isPrepaid || false,
             });
         }
     }, [currSeller, form]);
 
-    useEffect(() => {
-        const subscription = form.watch((values) => {
-            if (!(values.isPrepaid || values.isPostpaid)) {
-                // toast({
-                //     variant: "destructive",
-                //     title: "Validation Error",
-                //     description: "Either Prepaid or Postpaid must be enabled.",
-                // });
-
-                // Reset fields to ensure at least one is enabled
-                if (!values.isPrepaid) {
-                    form.setValue('isPrepaid', true, { shouldValidate: false });
-                } else if (!values.isPostpaid) {
-                    form.setValue('isPostpaid', true, { shouldValidate: false });
-                }
-            }
-        });
-
-        return () => subscription.unsubscribe();
-    }, [form.watch]);
-
     async function onSubmit(values: z.infer<typeof UserConfigSchema>) {
-        if (!(values.isPrepaid || values.isPostpaid)) {
-            // toast({
-            //     variant: "destructive",
-            //     title: "Validation Error",
-            //     description: "Either Prepaid or Postpaid must be enabled.",
-            // });
-            return;
-        }else{ 
-            await handleUserConfig(values);
-        }
-
+        await handleUserConfig(values);
     }
 
     return (
@@ -125,29 +90,8 @@ export const UserConfigure = () => {
                     control={form.control}
                     name="isPrepaid"
                     render={({ field }) => (
-                        <FormItem className="flex items-center gap-3">
-                            <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
-                                Prepaid
-                            </FormLabel>
-                            <FormControl>
-                                <Switch
-                                    checked={field.value}
-                                    onCheckedChange={() => {
-                                        field.onChange(!field.value);
-                                        form.handleSubmit(onSubmit)(); // Trigger form submission
-                                    }}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="isPostpaid"
-                    render={({ field }) => (
-                        <FormItem className="flex items-center gap-3">
-                            <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
+                        <FormItem className="flex gap-3">
+                            <FormLabel className="font-bold mt-2 text-zinc-500 dark:text-secondary/70">
                                 Postpaid
                             </FormLabel>
                             <FormControl>
@@ -159,6 +103,9 @@ export const UserConfigure = () => {
                                     }}
                                 />
                             </FormControl>
+                            <FormLabel className="font-bold mt-0 text-zinc-500 dark:text-secondary/70">
+                                Prepaid
+                            </FormLabel>
                             <FormMessage />
                         </FormItem>
                     )}

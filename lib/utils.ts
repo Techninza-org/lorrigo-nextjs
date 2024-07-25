@@ -149,11 +149,22 @@ export const filterData = (data: any, filter: any) => {
 
   const lowercasedFilter = filter.toLowerCase();
   return data.filter((row: any) => {
-    const awb = row.awb ? row.awb.toLowerCase() : "";
-    const orderReferenceId = row.order_reference_id.toLowerCase();
-    return awb.includes(lowercasedFilter) || orderReferenceId.includes(lowercasedFilter);
+    const awb = row.awb ? row?.awb?.toLowerCase() : "";
+    const orderReferenceId = row?.order_reference_id?.toLowerCase();
+    return awb?.includes(lowercasedFilter) || orderReferenceId?.includes(lowercasedFilter);
   });
 };
+
+export const filterRemittanceData = (data: any[], filter: string) => {
+  if (!filter) return data;
+
+  const lowercasedFilter = filter.toLowerCase();
+  return data.filter((row: any) => {
+      const remittanceId = row.remittanceId ? row.remittanceId.toLowerCase() : "";
+      const remittanceStatus = row.remittanceStatus ? row.remittanceStatus.toLowerCase() : "";
+      return remittanceId.includes(lowercasedFilter) || remittanceStatus.includes(lowercasedFilter);
+  });
+}
 
 export const removeDoubleQuotes = (str: string): string => {
   // Check if the string starts and ends with double quotes

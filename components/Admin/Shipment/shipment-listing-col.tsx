@@ -98,11 +98,20 @@ export const AdminShipmentListingCol: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <HoverCardToolTip label={"weigth & Dimension"} className="">
+                    {!rowData?.packageDetails ? (<HoverCardToolTip label={"weigth & Dimension"} className="">
                         <p>Dead wt. {rowData.orderWeight} {rowData?.orderWeightUnit}</p>
                         <p>{rowData.orderBoxLength} x {rowData.orderBoxWidth} x {rowData.orderBoxHeight} ({rowData.orderSizeUnit})</p>
                         <p>Vol. weight: {((rowData?.orderBoxLength || 1) * (rowData?.orderBoxWidth || 1) * (rowData?.orderBoxHeight || 1)) / 5000} ({rowData?.orderWeightUnit})</p>
-                    </HoverCardToolTip>
+                    </HoverCardToolTip>) : (
+
+                        <HoverCardToolTip label={"weigth & Dimension"} className="w-72">
+                            {
+                                rowData?.packageDetails?.map((item: any, i: number) => (
+                                <p key={i}>Box {i + 1} :<strong>Weight: </strong> {item.orderBoxWeight} <strong>Dimension</strong>: {item?.qty} x {item?.orderBoxWidth} x {item?.orderBoxHeight}</p>
+                                ))
+                            }
+                        </HoverCardToolTip>
+                    )}
                 </div>
             )
         }
@@ -129,7 +138,7 @@ export const AdminShipmentListingCol: ColumnDef<any>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p>{ rowData.createdAt && formatDate(`${rowData.createdAt}`, 'dd MM yyyy | HH:mm a')}</p>
+                <p>{rowData.createdAt && formatDate(`${rowData.createdAt}`, 'dd MM yyyy | HH:mm a')}</p>
             )
         }
     },

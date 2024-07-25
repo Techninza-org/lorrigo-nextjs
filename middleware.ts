@@ -30,6 +30,7 @@ export async function middleware(request: NextRequest) {
     '/pickup_bulk_sample.csv',
     '/order-bulk-sample.csv',
     '/client_billing_sample_format.csv',
+    '/pincode-sample.csv',
   ];
 
   const adminRoutes = [

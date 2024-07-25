@@ -94,7 +94,7 @@ export const b2bformDataSchema = z.object({
 
         return true;
     }, {
-        message: "Total weight and quantity must be equal to the sum of all boxes' weights and quantities",
+        message: "Total weight is the sum of the weights of all the products.",
         path: ["total_weight"],
     });
 

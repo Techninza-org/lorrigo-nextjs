@@ -168,8 +168,8 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
                     className="max-w-sm"
                 />
                 <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
-                <CsvDownloader filename="Remittance" datas={datas} columns={cols}>
-                <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
+                <CsvDownloader filename="billing" datas={datas} columns={cols}>
+                    <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
                 </CsvDownloader>
 
             </div>
@@ -226,8 +226,10 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+                    <Button variant={'outline'}>
+                        Page{' '}
+                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                    </Button>
                 </div>
                 <div className="space-x-2">
                     <Button

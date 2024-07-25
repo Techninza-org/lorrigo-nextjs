@@ -25,8 +25,11 @@ export const BulkPincodeUploadModal = () => {
                         Bulk Pincode Upload
                     </DialogTitle>
                 </DialogHeader>
-
-                <ImageUpload maxFiles={1}  uploadUrl={'http://localhost:4000/api/admin/pincodes'}/>
+                <ImageUpload
+                    maxFiles={1}
+                    uploadUrl="/admin/pincodes"
+                    acceptFileTypes={{ "text/csv": [".csv"] }}
+                />
             </DialogContent>
         </Dialog>
     )

@@ -24,8 +24,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useModal } from "@/hooks/use-model-store"
-import { filterData, handleFileDownload } from "@/lib/utils"
+import { filterData } from "@/lib/utils"
 import { DateRange } from "react-day-picker"
 import { DatePickerWithRange } from "@/components/DatePickerWithRange";
 import { DownloadIcon } from "lucide-react";
@@ -54,7 +53,7 @@ export function ClientBillingTable({ data, columns }: { data: any[], columns: Co
 
     const [filteredData, setFilteredData] = React.useState<any[]>(data)
     // Memoize filtered data to avoid unnecessary re-renders
-    const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
+    const filteredDataMemo = React.useMemo(() => filterData(filteredData, filtering), [filteredData, filtering]);
 
 
     const table = useReactTable({
@@ -78,7 +77,7 @@ export function ClientBillingTable({ data, columns }: { data: any[], columns: Co
         if ((!date?.from || !date?.to) || (date.from === date.to)) return
         const a = data.filter((row) => {
             if (date?.from && date?.to) {
-                return row.order_invoice_date > new Date(date.from).toISOString() && row.order_invoice_date < new Date(date.to).toISOString()
+                return row.billingDate > new Date(date.from).toISOString() && row.billingDate < new Date(date.to).toISOString()
             }
             return false;
         });
@@ -159,7 +158,7 @@ export function ClientBillingTable({ data, columns }: { data: any[], columns: Co
                 <div className="flex gap-3">
 
                     <Input
-                        placeholder="Filter by AWB or Order Reference ID"
+                        placeholder="Filter by AWB"
                         value={filtering}
                         onChange={(e) => setFiltering(e.target.value)}
                         className="max-w-sm"
@@ -223,8 +222,10 @@ export function ClientBillingTable({ data, columns }: { data: any[], columns: Co
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
+                    <Button variant={'outline'}>
+                        Page{' '}
+                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                    </Button>
                 </div>
                 <div className="space-x-2">
                     <Button
