@@ -42,32 +42,36 @@ export const sellerSchema = z.object({
         sellerCity: z.string().optional(),
         sellerState: z.string().optional(),
     })
-}).refine(data => {
-    if (data.sellerDetails.isSellerAddressAdded) {
-        return (data?.sellerDetails?.sellerPincode ?? '').length === 6;
-    }
-    return true;
-}, {
-    message: "Pincode should be of 6 digits",
-    path: ["sellerDetails", "sellerPincode"]
-}).refine(data => {
-    if (data.sellerDetails.isSellerAddressAdded) {
-        return isValidPhoneNumber(data?.sellerDetails?.sellerPhone ?? '');
-    }
-    return true;
-}, {
-    message: "Phone number should be of 10 digits",
-    path: ["sellerDetails", "sellerPhone"]
-}).refine(data => {
-    if (data.sellerDetails.isSellerAddressAdded) {
-        return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
-    }
-    return true;
-}, {
-    message: "Address is required",
-    path: ["sellerDetails", "sellerAddress"]
-});
+})
 
+export const validatedSellerSchema = sellerSchema
+    .refine(data => {
+        if (data.sellerDetails.isSellerAddressAdded) {
+            return (data?.sellerDetails?.sellerPincode ?? '').length === 6;
+        }
+        return true;
+    }, {
+        message: "Pincode should be of 6 digits",
+        path: ["sellerDetails", "sellerPincode"]
+    })
+    .refine(data => {
+        if (data.sellerDetails.isSellerAddressAdded) {
+            return isValidPhoneNumber(data?.sellerDetails?.sellerPhone ?? '');
+        }
+        return true;
+    }, {
+        message: "Phone number should be of 10 digits",
+        path: ["sellerDetails", "sellerPhone"]
+    })
+    .refine(data => {
+        if (data.sellerDetails.isSellerAddressAdded) {
+            return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
+        }
+        return true;
+    }, {
+        message: "Address is required",
+        path: ["sellerDetails", "sellerAddress"]
+    });
 
 
 export const AddSellerModal = () => {
@@ -78,7 +82,7 @@ export const AddSellerModal = () => {
     const isModalOpen = isOpen && type === "addSeller";
 
     const form = useForm({
-        resolver: zodResolver(sellerSchema),
+        resolver: zodResolver(validatedSellerSchema),
         defaultValues: {
             sellerDetails: {
                 sellerName: "",
@@ -109,7 +113,7 @@ export const AddSellerModal = () => {
 
     const isLoading = form.formState.isSubmitting;
 
-    const onSubmit = async (values: z.infer<typeof sellerSchema>) => {
+    const onSubmit = async (values: z.infer<typeof validatedSellerSchema>) => {
         try {
 
             setSellerCustomerForm({

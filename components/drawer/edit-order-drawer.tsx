@@ -30,6 +30,7 @@ import { AddCustomerForm, customerDetailsSchema } from "../modal/add-customer-mo
 import { SellerForm, sellerSchema } from "../modal/add-seller-modal";
 import { Box, MapPin, Package, Undo2 } from "lucide-react";
 import useFetchCityState from "@/hooks/use-fetch-city-state";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 export const EditFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema).extend({
     orderId: z.string(),
@@ -44,7 +45,34 @@ export const EditFormSchema = formDataSchema.merge(customerDetailsSchema).merge(
 }, {
     message: "Collectable amount is required.",
     path: ["amount2Collect"],
-});
+}).refine(data => {
+    if (data.sellerDetails.isSellerAddressAdded) {
+        return (data?.sellerDetails?.sellerPincode ?? '').length === 6;
+    }
+    return true;
+}, {
+    message: "Pincode should be of 6 digits",
+    path: ["sellerDetails", "sellerPincode"]
+})
+.refine(data => {
+    if (data.sellerDetails.isSellerAddressAdded) {
+        return isValidPhoneNumber(data?.sellerDetails?.sellerPhone ?? '');
+    }
+    return true;
+}, {
+    message: "Phone number should be of 10 digits",
+    path: ["sellerDetails", "sellerPhone"]
+})
+.refine(data => {
+    if (data.sellerDetails.isSellerAddressAdded) {
+        return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
+    }
+    return true;
+}, {
+    message: "Address is required",
+    path: ["sellerDetails", "sellerAddress"]
+})
+;
 
 
 export function EditOrderDrawer() {
