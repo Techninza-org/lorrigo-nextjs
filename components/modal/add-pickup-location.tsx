@@ -55,12 +55,20 @@ export const pickupAddressFormSchema = z.object({
     rtoPincode: z.string().optional(),
 }).refine((data) => {
     if (!data.isRTOAddressSame) {
-        return data.rtoAddress && data.rtoCity && data.rtoState && data.rtoPincode;
+        return (data?.rtoAddress?.length ?? 0) >= 5;
     }
     return true;
 }, {
-    message: "RTO Address, RTO City, RTO State and RTO Pincode are required",
-    
+    message: "RTO Address must be at least 5 characters long",
+    path: ["rtoAddress"]
+}).refine((data) => {
+    if (!data.isRTOAddressSame) {
+        return (data?.rtoPincode?.length ?? 0) === 6;
+    }
+    return true;
+}, {
+    message: "RTO Pincode must be 6 characters long",
+    path: ["rtoPincode"]
 });
 
 export const AddPickupLocationModal = () => {

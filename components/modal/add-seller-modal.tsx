@@ -29,6 +29,7 @@ import { useSellerProvider } from '../providers/SellerProvider';
 import { useEffect } from 'react';
 import useFetchCityState from '@/hooks/use-fetch-city-state';
 import { LoadingSpinner } from '../loading-spinner';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 export const sellerSchema = z.object({
     sellerDetails: z.object({
@@ -41,7 +42,33 @@ export const sellerSchema = z.object({
         sellerCity: z.string().optional(),
         sellerState: z.string().optional(),
     })
-})
+}).refine(data => {
+    if (data.sellerDetails.isSellerAddressAdded) {
+        return (data?.sellerDetails?.sellerPincode ?? '').length === 6;
+    }
+    return true;
+}, {
+    message: "Pincode should be of 6 digits",
+    path: ["sellerDetails", "sellerPincode"]
+}).refine(data => {
+    if (data.sellerDetails.isSellerAddressAdded) {
+        return isValidPhoneNumber(data?.sellerDetails?.sellerPhone ?? '');
+    }
+    return true;
+}, {
+    message: "Phone number should be of 10 digits",
+    path: ["sellerDetails", "sellerPhone"]
+}).refine(data => {
+    if (data.sellerDetails.isSellerAddressAdded) {
+        return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
+    }
+    return true;
+}, {
+    message: "Address is required",
+    path: ["sellerDetails", "sellerAddress"]
+});
+
+
 
 export const AddSellerModal = () => {
     const { setSellerCustomerForm, sellerCustomerForm, isOrderCreated } = useSellerProvider();
@@ -302,15 +329,15 @@ export const SellerForm = ({ isLoading, form, isPinLoading }: { isLoading: boole
                                         State
                                     </FormLabel>
                                     <FormControl>
-                                    <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
+                                        <div className='flex items-center bg-zinc-300/50 rounded-md pr-3'>
                                             <Input
                                                 disabled={isLoading || isPinLoading}
                                                 className="bg-transparent border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                            placeholder="Enter the state"
-                                            {...field}
-                                        />
-                                          {isPinLoading && <LoadingSpinner />}
-                                    </div>
+                                                placeholder="Enter the state"
+                                                {...field}
+                                            />
+                                            {isPinLoading && <LoadingSpinner />}
+                                        </div>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
