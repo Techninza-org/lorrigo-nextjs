@@ -206,7 +206,7 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                Address Line 1 <span className='text-red-500'>*</span>
+                                Address <span className='text-red-500'>*</span>
                             </FormLabel>
                             <FormControl>
                                 <Input
@@ -220,7 +220,7 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                         </FormItem>
                     )}
                 />
-                <FormField
+                {/* <FormField
                     control={form.control}
                     name="customerDetails.address2"
                     render={({ field }) => (
@@ -239,7 +239,7 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                             <FormMessage />
                         </FormItem>
                     )}
-                />
+                /> */}
 
                 <div className='grid grid-cols-2 gap-3'>
                     <FormField
