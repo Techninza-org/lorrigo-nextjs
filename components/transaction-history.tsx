@@ -24,7 +24,7 @@ import { usePaymentGateway } from "./providers/PaymentGatewayProvider";
 import { useAxios } from "./providers/AxiosProvider";
 import { format } from "date-fns";
 import Link from "next/link";
-import { MoveDownLeft, MoveUpRightIcon } from "lucide-react";
+import { CircleAlertIcon, CircleX, Move, MoveDownLeft, MoveRightIcon, MoveUpRightIcon } from "lucide-react";
 import { Input } from "./ui/input";
 
 export const TransactionsHistory = () => {
@@ -62,6 +62,42 @@ export const TransactionsHistory = () => {
         );
     });
 
+
+    const iconMap: { [key: string]: { component: any; color: string } } = {
+        "PAYMENT_INITIATED": {
+            component: CircleX,
+            color: "text-red-500",
+        },
+        "PAYMENT_SUCCESS": {
+            component: MoveDownLeft,
+            color: "text-green-600",
+        },
+        "PAYMENT_PENDING": {
+            component: CircleAlertIcon,
+            color: "text-yellow-600",
+        },
+        "PAYMENT_ERROR": {
+            component: CircleX,
+            color: "text-red-600",
+        },
+        "CREDIT": {
+            component: MoveDownLeft,
+            color: "text-green-600",
+        },
+        "DEBIT": {
+            component: MoveUpRightIcon,
+            color: "text-red-600",
+        },
+        // Add more mappings here as needed
+    };
+
+    const IconComponent = ({ item }: {item: any}) => {
+        const { component: Icon, color } = iconMap[item.code] || {};
+        return Icon ? <Icon size={18} className={color} /> : null;
+    };
+
+
+
     return (
         <Card>
             <CardHeader>
@@ -90,18 +126,16 @@ export const TransactionsHistory = () => {
                         {filteredTransactions?.length > 0 ? filteredTransactions?.map((item) => {
                             const stage = item?.stage[item?.stage?.length - 1];
                             const { action, dateTime } = stage;
-                            const status: any = action === "Completed" ? "success" : "pending";
+                            const status: any = ["Completed","PAYMENT_SUCCESSFUL"].includes(action) ? "success" : "destructive";
                             return (
                                 <TableRow key={item._id}>
                                     <TableCell className="font-medium">
-                                        {
-                                            item.code === "DEBIT" ? <MoveUpRightIcon size={18} className="text-red-500" /> : <MoveDownLeft className="text-green-600" size={18} />
-                                        }
+                                    <IconComponent item={item} />
                                     </TableCell>
                                     <TableCell className="font-medium">PID-{item?.merchantTransactionId}</TableCell>
                                     <TableCell>
                                         <div>
-                                            <Badge variant={status}>{action}</Badge>
+                                            <Badge className="font-normal" variant={status}>{action}</Badge>
                                         </div>
                                         <div>
                                             {format(new Date(dateTime), 'dd-MM-yyyy hh:mm:ss a')}
