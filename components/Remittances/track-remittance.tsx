@@ -15,7 +15,7 @@ import { useSellerProvider } from "../providers/SellerProvider";
 import { useEffect, useState } from "react";
 import { RemittanceType } from "@/types/types";
 import { Badge } from "../ui/badge";
-import { formatDate } from "date-fns";
+import { format, parse } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { CircleAlert, CircleCheck, NotepadTextDashed, PackageIcon, XCircle } from "lucide-react";
@@ -27,6 +27,11 @@ const TrackRemittance = () => {
     const [remittanceDetails, setRemittanceDetails] = useState<RemittanceType | null>(null)
     const { getSellerRemittanceDetails } = useSellerProvider()
     const { userToken } = useAuth()
+
+    const formatDate = (dateString: string, formatString: string) => {
+        const parsedDate = parse(dateString, 'yy-MM-dd', new Date());
+        return format(parsedDate, formatString);
+      };
 
 
     useEffect(() => {
