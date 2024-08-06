@@ -1,6 +1,6 @@
 'use client'
 import { InvoiceListingCols } from './invoice-listing-col';
-import { InvoiceListingTable } from './invoice-listing-table';
+import { InvoiceListingTable } from '../Admin/User/invoice-listing-table';
 import { useSellerProvider } from '@/components/providers/SellerProvider';
 
 const InvoiceList = () => {

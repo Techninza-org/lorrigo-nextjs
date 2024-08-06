@@ -212,14 +212,13 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
                   <DropdownMenuItem onClick={() => onOpen("updateShopifyOrders", { orders: (newOrders as unknown as B2COrderType[]) })}>Update shopify orders</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => onOpen("BulkPickupUpdate", { orders: selectedRows })}>Change pickup location</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onOpen("BulkShipNow", { orders: newOrders })}>Bulk Ship Now</DropdownMenuItem>
                   <DropdownMenuItem onClick={handleMultiLableDownload}>Download Label</DropdownMenuItem>
                   <DropdownMenuItem onClick={handleMultiManifestDownload}>Download Manifest</DropdownMenuItem>
                   <DropdownMenuItem onClick={() => onOpen("cancelBulkOrder", { orders: selectedRows })}>Cancel</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>)
           }
-
-
           {
             seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
           }

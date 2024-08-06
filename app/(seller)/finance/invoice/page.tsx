@@ -1,4 +1,4 @@
-import InvoiceList from "@/components/Admin/User/InvoiceList";
+import InvoiceList from "@/components/finance/InvoiceList";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function InvoicePage() {

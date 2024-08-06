@@ -26,7 +26,7 @@ export const dynamic = 'force-dynamic'
 
 export default function CourierPage() {
     const params = useParams()
-    const { getCourierPartners, handleCreateD2CShipment, handleCreateB2BShipment, codprice } = useSellerProvider()
+    const { getCourierPartners, handleCreateD2CShipment, handleCreateB2BShipment } = useSellerProvider()
     const { userToken } = useAuth()
     const { pending } = useFormStatus();
     const [volWeight, setVolWeight] = useState(0)
@@ -152,7 +152,7 @@ export default function CourierPage() {
                                                             if (params.type == "b2c") {
 
                                                                 const res = await handleCreateD2CShipment({
-                                                                    orderId: courierPartners.orderDetails._id,
+                                                                    orderId: [courierPartners.orderDetails._id],
                                                                     carrierId: partner.carrierID,
                                                                     carrierNickName: partner.nickName,
                                                                     charge: partner.charge,

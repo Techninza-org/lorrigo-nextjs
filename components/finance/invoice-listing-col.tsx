@@ -1,20 +1,19 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import InvoiceDetails from "./invoiceDetails";
+import InvoiceDetails from "../Admin/User/invoiceDetails";
 
 export const InvoiceListingCols: any = [
-    {   
+    {
         header: 'Invoice Number',
         accessorKey: 'invoice_id',
         cell: ({ row }: { row: any }) => {
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                     <Link href={`/finance/invoice/${rowData._id}`}>
+                    <Link href={`/finance/invoice/${rowData._id}`}>
                         <p className="text-blue-500 hover:text-blue-700">{rowData.invoice_id}</p>
-                     </Link>
+                    </Link>
                 </div>
             )
         }
@@ -26,7 +25,7 @@ export const InvoiceListingCols: any = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{rowData.date}</p>
+                    <p>{rowData.date}h</p>
                 </div>
             )
         }
@@ -55,4 +54,25 @@ export const InvoiceListingCols: any = [
             )
         }
     },
+    {
+        header: "Pay Now",
+        cell: ({ row }: { row: any }) => {
+            const rowData = row.original;
+            return (
+                <PayNow row={rowData} />
+            )
+        }
+    },
 ];
+
+
+const PayNow = ({ row }: { row: any }) => {
+    return (
+        <button
+            disabled={!row?.isPrepaidInvoice}
+            className="space-y-1 items-center text-blue-500"
+        >
+            Pay Now
+        </button>
+    )
+}

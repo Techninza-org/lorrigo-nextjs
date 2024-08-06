@@ -20,6 +20,7 @@ import { ClientBillingUploadModal } from "../modal/admin/upload-client-billing-m
 import { AdminRemittanceUpdateModal } from "../modal/admin/remittance-manage-modal";
 import { AddB2BCustomerModal } from "../Orders/b2b/b2b-customer-form";
 import { AlertKycModal } from "../modal/alert-kyc-modal";
+import { BulkShipNowModal } from "../modal/bulk-ship-now-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -50,8 +51,10 @@ export const ModalProvider = () => {
       <BulkHubUploadModal />
       <BulkPincodeUploadModal />
       <BulkPickupUpdateModal/>
+      <BulkShipNowModal/>
       <CancelBulkOrderDialog/>
       <BulkUpdateShopifyModal/>
+
       <ViewUserDocsModal/>
       <ClientBillingUploadModal/>
       <AdminRemittanceUpdateModal/>

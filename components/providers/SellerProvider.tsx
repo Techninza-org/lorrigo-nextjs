@@ -40,8 +40,9 @@ interface SellerContextType {
   reverseOrders: B2COrderType[];
   getAllOrdersByStatus: (status: string) => Promise<any[]>;
   getCourierPartners: (orderId: string, type: string) => Promise<any>;
+  getBulkCourierPartners: (orderIds:  string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
-  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
+  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
@@ -273,13 +274,44 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       }
 
     } catch (error: any) {
-      if (error.response.data.message.includes("Zone not found for the given region")) {
+      if (error?.response?.data?.message?.includes("Zone not found for the given region")) {
         toast({
           variant: "destructive",
           title: "Error",
           description: "Zone not Serviceable for the given pincode",
         });
         router.push(`/orders/${type === 'b2c' ? '' : 'b2b'}`);
+      }
+      console.error('Error fetching data:', error);
+    }
+  }
+
+  const getBulkCourierPartners = async (orderIds: string[] | undefined) => {
+    try {
+      let url = `/order/courier/b2b/SR/`
+      const res = await axiosIWAuth.post(url, {
+        orderIds: orderIds
+      });
+      if (res.data?.valid) {
+        if (res?.data?.courierPartner[0]?.message?.includes("error: ")) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "No courier partners available",
+          });
+          router.push(`/orders`);
+        }
+        setCourierPartners(res.data);
+        return res.data;
+      }
+    } catch (error: any) {
+      if (error?.response?.data?.message?.includes("Zone not found for the given region")) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Zone not Serviceable for the given pincode",
+        });
+        router.push(`/orders`);
       }
       console.error('Error fetching data:', error);
     }
@@ -577,9 +609,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
-  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierId: Number, carrierNickName: string, charge: Number }) => {
+  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number }) => {
     const payload = {
-      orderId: orderId,
+      orderIds: orderId,
       carrierId: carrierId,
       carrierNickName,
       charge: charge,
@@ -587,7 +619,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
-      if (res.data?.valid && res.data?.order.awb) {
+      if (res.data?.valid) {
         toast({
           variant: "default",
           title: "Order created successfully",
@@ -601,14 +633,14 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: res.data.message,
+        description: res?.data?.message,
       });
       return false
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error?.message ?? "Something went wrong",
+        description: error?.response?.data?.message ?? "Something went wrong",
       });
       return false
 
@@ -1050,11 +1082,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         return false;
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description:   error?.response?.data?.message || "An error occurred",
+        description: error?.response?.data?.message || "An error occurred",
       });
       return false;
     }
@@ -1075,14 +1107,14 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       formData.append('invoiceNumber', order.invoiceNumber);
       formData.append('customerDetails', order.customerDetails);
       formData.append('boxes', JSON.stringify(order.boxes));
-  
+
       if (order?.invoice) {
         formData.append('invoice', order.invoice);
       }
       if (order?.supporting_document) {
         formData.append('supporting_document', order.supporting_document);
       }
-  
+
       const res = await axiosIWAuth4Upload.patch(`/order/update/b2b`, formData);
       if (res.data?.valid) {
         toast({
@@ -1100,16 +1132,16 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         return false;
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description:  error?.response?.data?.message || "An error occurred",
+        description: error?.response?.data?.message || "An error occurred",
       });
       return false;
     }
   };
-  
+
 
   const getB2BOrders = async () => {
     try {
@@ -1294,7 +1326,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         codprice,
         assignedCouriers,
         getSellerAssignedCourier,
-        getInvoiceById
+        getInvoiceById,
+
+        getBulkCourierPartners
 
       }}
     >

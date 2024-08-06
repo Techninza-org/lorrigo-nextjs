@@ -99,7 +99,7 @@ export function InvoiceListingTable({ data, columns }: { data: any, columns: Col
                 <div className="flex-1 text-sm text-muted-foreground">
                     <Button variant={'outline'}>
                         Page{' '}
-                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()+1}
+                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                     </Button>
                 </div>
                 <div className="space-x-2">

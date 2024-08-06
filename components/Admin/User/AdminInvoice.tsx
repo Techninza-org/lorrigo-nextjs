@@ -1,8 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { InvoiceListingCols } from './invoice-listing-col';
 import { InvoiceListingTable } from './invoice-listing-table';
-import { useSellerProvider } from '@/components/providers/SellerProvider';
 import { useAxios } from '@/components/providers/AxiosProvider';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useSearchParams } from 'next/navigation';
@@ -31,7 +29,7 @@ const AdminInvoiceList = () => {
         if (!userToken) return;
         getSellerInvoices() 
         
-    }, [userToken]);
+    }, [userToken, sellerId]);
     
   return (
     <InvoiceListingTable columns={AdminInvoiceListingCols} data={invoices} />
