@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import InvoiceDetails from "../Admin/User/invoiceDetails";
+import { cn } from "@/lib/utils";
+import { usePaymentGateway } from "../providers/PaymentGatewayProvider";
+import { Badge } from "../ui/badge";
 
 export const InvoiceListingCols: any = [
     {
@@ -25,7 +28,7 @@ export const InvoiceListingCols: any = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{rowData.date}h</p>
+                    <p>{rowData.date}</p>
                 </div>
             )
         }
@@ -67,12 +70,22 @@ export const InvoiceListingCols: any = [
 
 
 const PayNow = ({ row }: { row: any }) => {
+    const { payInvoiceIntent } = usePaymentGateway();
     return (
-        <button
-            disabled={!row?.isPrepaidInvoice}
-            className="space-y-1 items-center text-blue-500"
-        >
-            Pay Now
-        </button>
+        row?.status?.toLowerCase() === "paid" ? (
+            <Badge variant={'secondary'} className="bg-green-100 tracking-wide text-green-500">Paid</Badge>
+        ) :
+        (
+            <button
+                disabled={row?.isPrepaidInvoice}
+                onClick={() => payInvoiceIntent(row?.amount, row?._id)}
+                className={cn(
+                    "space-y-1 items-center text-blue-500",
+                    row?.isPrepaidInvoice && "hidden disabled:cursor-not-allowed"
+                )}
+            >
+                Pay Now
+            </button >
+        )
     )
 }

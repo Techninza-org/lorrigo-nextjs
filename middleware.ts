@@ -24,6 +24,7 @@ export async function middleware(request: NextRequest) {
     '/print',
     '/finance',
     '/wallet',
+    '/pay',
 
     // public files
     '/bulk-sample.csv',

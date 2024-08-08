@@ -14,6 +14,8 @@ interface PaymentGatewayContextType {
     confirmRecharge: ({ params }: { params: string }) => Promise<void>;
     fetchWalletBalance: () => Promise<void>;
     getAllTransactions: () => Promise<PaymentTransaction[]>;
+    payInvoiceIntent: (amount: number, invoiceId: string) => Promise<void>;
+    confirmInvoicePayment: ({ params, invoiceId }: { params: string, invoiceId: string }) => Promise<void>;
 }
 
 const PaymentGatewayContext = createContext<PaymentGatewayContextType | null>(null);
@@ -66,6 +68,33 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const payInvoiceIntent = async (amount: number, invoiceId: string) => {
+        try {
+            const response = await axiosIWAuth.post('/seller/pay-invoice', { amount, origin, invoiceId });
+            router.push(response.data.url);
+        } catch (error: any) {
+            toast({
+                title: 'Error',
+                description: error?.response?.data?.message || "An error occurred",
+                variant: 'destructive'
+            });
+        }
+    }
+
+    const confirmInvoicePayment = async ({ params, invoiceId }: { params: string, invoiceId: string }) => {
+        try {
+            const response = await axiosIWAuth.post(`/seller/confirm-invoice-payment?merchantTransactionId=${params}&invoiceId=${invoiceId}`);
+            await fetchWalletBalance();
+            router.push('/dashboard')
+        } catch (error: any) {
+            toast({
+                title: 'Error',
+                description: error?.response?.data?.message || "An error occurred",
+                variant: 'destructive'
+            });
+        }
+    }
+
     const getAllTransactions = async () => {
         try {
             const response = await axiosIWAuth.get('/seller/transactions');
@@ -91,7 +120,9 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
             rechargeWallet,
             confirmRecharge,
             fetchWalletBalance,
-            getAllTransactions
+            getAllTransactions,
+            payInvoiceIntent,
+            confirmInvoicePayment
         }}>
             {children}
         </PaymentGatewayContext.Provider>
