@@ -156,6 +156,7 @@ export default function CourierPage() {
                                                                     carrierId: partner.carrierID,
                                                                     carrierNickName: partner.nickName,
                                                                     charge: partner.charge,
+                                                                    type: partner.type || ''
                                                                 })
                                                             } else {
                                                                 const res = await handleCreateB2BShipment({

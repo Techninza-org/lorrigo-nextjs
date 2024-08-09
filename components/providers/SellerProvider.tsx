@@ -42,7 +42,7 @@ interface SellerContextType {
   getCourierPartners: (orderId: string, type: string) => Promise<any>;
   getBulkCourierPartners: (orderIds:  string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
-  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
+  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge, type }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number, type: string }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
@@ -609,13 +609,14 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
-  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number }) => {
+  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge, type }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number, type: string }) => {
     const payload = {
       orderIds: orderId,
       carrierId: carrierId,
       carrierNickName,
       charge: charge,
       orderType: 0,
+      type: type
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
