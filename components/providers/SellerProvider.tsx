@@ -650,7 +650,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const handleCreateBulkD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number }) => {
     const payload = {
-      orderId: orderId,
+      orderIds: orderId,
       carrierId: carrierId,
       carrierNickName,
       charge: charge,
