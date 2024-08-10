@@ -762,7 +762,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosIWAuth.get('/seller');
       if (res.data.valid) {
-        const showKycAlert = !res.data?.seller?.kycDetails?.submitted && onOpen("alert-kyc");
+        const isAlertShown = localStorage.getItem("kyc-alert");
+        console.log("isAlertShown", isAlertShown);
+        const showKycAlert = !res.data?.seller?.kycDetails?.submitted && !isAlertShown && onOpen("alert-kyc");
         setSeller(res.data.seller)
         setInvoices(res.data.seller.invoices)
       }
