@@ -82,7 +82,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
 
         );
     }
-    if (orderStage === 1) {
+    if (orderStage === 1 || orderStage === 2) {
         return (
             <div className="flex gap-2 items-center">
                 <DropdownMenu>
