@@ -152,7 +152,7 @@ export default function CourierPage() {
                                                             if (params.type == "b2c") {
 
                                                                 const res = await handleCreateD2CShipment({
-                                                                    orderId: [courierPartners.orderDetails._id],
+                                                                    orderId: courierPartners.orderDetails._id,
                                                                     carrierId: partner.carrierID,
                                                                     carrierNickName: partner.nickName,
                                                                     charge: partner.charge,

@@ -38,7 +38,7 @@ export const BulkShipNowModal = () => {
 
     const isModalOpen = isOpen && type === "BulkShipNow";
 
-    const { getBulkCourierPartners, handleCreateD2CShipment, handleCreateB2BShipment } = useSellerProvider()
+    const { getBulkCourierPartners, handleCreateBulkD2CShipment } = useSellerProvider()
     const { userToken } = useAuth()
     const [volWeight, setVolWeight] = useState(0)
 
@@ -104,7 +104,7 @@ export const BulkShipNowModal = () => {
                                         try {
                                             // if (params.type == "b2c") {
 
-                                            const res = await handleCreateD2CShipment({
+                                            const res = await handleCreateBulkD2CShipment({
                                                 orderId: orderIds,
                                                 carrierId: partner.carrierID,
                                                 carrierNickName: partner.nickName,

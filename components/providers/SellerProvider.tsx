@@ -43,6 +43,7 @@ interface SellerContextType {
   getBulkCourierPartners: (orderIds:  string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
   handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
+  handleCreateBulkD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
@@ -611,7 +612,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number }) => {
     const payload = {
-      orderIds: orderId,
+      orderId: orderId,
       carrierId: carrierId,
       carrierNickName,
       charge: charge,
@@ -619,6 +620,44 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "Order created successfully",
+          description: "Order has been created successfully",
+        });
+        getAllOrdersByStatus(status || "all")
+        fetchWalletBalance();
+        router.push('/orders')
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: res?.data?.message,
+      });
+      return false
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error?.response?.data?.message ?? "Something went wrong",
+      });
+      return false
+
+    }
+  }, [axiosIWAuth, router, toast])
+
+  const handleCreateBulkD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number }) => {
+    const payload = {
+      orderId: orderId,
+      carrierId: carrierId,
+      carrierNickName,
+      charge: charge,
+      orderType: 0,
+    }
+    try {
+      const res = await axiosIWAuth.post('/shipment/bulk', payload);
       if (res.data?.valid) {
         toast({
           variant: "default",
@@ -1328,7 +1367,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getSellerAssignedCourier,
         getInvoiceById,
 
-        getBulkCourierPartners
+        getBulkCourierPartners,
+        handleCreateBulkD2CShipment
 
       }}
     >
