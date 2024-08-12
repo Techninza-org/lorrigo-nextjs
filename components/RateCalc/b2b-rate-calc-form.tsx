@@ -224,7 +224,7 @@ export const B2BRateCalcForm = () => {
                                                         </div>
 
                                                     </FormControl>
-                                                    <FormDescription>Package weight should be 0.5kg.</FormDescription>
+                                                    {/* <FormDescription>Package weight should be 0.5kg.</FormDescription> */}
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
