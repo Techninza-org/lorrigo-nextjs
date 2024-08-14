@@ -17,15 +17,66 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useModal } from "@/hooks/use-model-store";
 import { useSellerProvider } from "../providers/SellerProvider";
-import { getSvg, removeWhitespaceAndLowercase } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { formatCurrencyForIndia, getSvg, removeWhitespaceAndLowercase } from "@/lib/utils";
+import { Fragment, useEffect, useState } from "react";
 import { B2COrderType, OrderType } from "@/types/types";
-import { LoadingComponent } from "../loading-spinner";
 import { useAuth } from "../providers/AuthProvider";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
+import { Loader2, LucideZap } from "lucide-react";
+import HoverCardToolTip from "../hover-card-tooltip";
 
+function mergeCouriers(couriers: any[]) {
+    const mergedData = Object.values(
+        couriers.reduce((acc, courier) => {
+            if (acc[courier.name]) {
+                acc[courier.name].charge += courier.charge;
+                acc[courier.name].rtoCharges += courier.rtoCharges;
+            } else {
+                acc[courier.name] = { ...courier };
+            }
+            return acc;
+        }, {})
+    );
+
+    const orderIdWCharges = couriers.reduce((acc, courier) => {
+        if (!acc[courier.name]) {
+            acc[courier.name] = [];
+        }
+
+        const existingOrder = acc[courier.name].find(
+            (order: any) => order.orderRefId === courier.orderRefId
+        );
+
+        if (existingOrder) {
+            existingOrder.charges += courier.charge;
+        } else {
+            acc[courier.name].push({
+                orderRefId: courier.orderRefId,
+                charges: courier.charge,
+            });
+        }
+
+        return acc;
+    }, {} as Record<string, any[]>);
+
+    return {
+        mergedData,
+        orderIdWCharges
+    }
+}
+
+function groupAndMergeCouriers(data: any[]) {
+    if (!data || data.length === 0) return { groupedData: {}, mergedData: [] };
+
+    const groupedByZone = Object.groupBy(data, courier => courier.order_zone);
+
+    const groupedData = groupedByZone;
+
+    const { mergedData, orderIdWCharges } = mergeCouriers(data ?? [])
+
+    return { groupedData, mergedData, orderIdWCharges };
+}
 
 export const BulkShipNowModal = () => {
 
@@ -34,27 +85,19 @@ export const BulkShipNowModal = () => {
 
     const orderIds = orders?.map((order: B2COrderType) => order._id)
 
-    console.log(orderIds, "orderIds")
-
     const isModalOpen = isOpen && type === "BulkShipNow";
 
     const { getBulkCourierPartners, handleCreateBulkD2CShipment } = useSellerProvider()
     const { userToken } = useAuth()
-    const [volWeight, setVolWeight] = useState(0)
 
-    const [courierPartners, setCourierPartners] = useState<OrderType>()
+    const [courierPartners, setCourierPartners] = useState<any>()
 
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         async function fetchCourierPartners() {
             const res = await getBulkCourierPartners(orderIds)
-            console.log(res)
-            setCourierPartners(res)
-            const volume = res?.orderDetails?.orderBoxLength * res?.orderDetails?.orderBoxWidth * res?.orderDetails?.orderBoxHeight;
-            const b2bVol = res?.orderDetails?.packageDetails?.reduce((sum: any, box: any) => sum + parseFloat(String(box.orderBoxHeight * box.orderBoxLength * box.orderBoxWidth) || '0'), 0);
-            console.log(volume, b2bVol)
-            setVolWeight((volume || b2bVol) / 5000)
+            setCourierPartners(groupAndMergeCouriers(res?.courierPartner || []))
         }
 
         fetchCourierPartners()
@@ -71,20 +114,56 @@ export const BulkShipNowModal = () => {
         onClose();
     }
 
+
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
-            <DialogContent className="scrollbar-hide bg-white dark:text-white  text-black p-6 max-w-screen-sm">
+            <DialogContent className="scrollbar-hide bg-white dark:text-white  text-black p-6 max-w-screen-md">
                 <DialogHeader className="pt-8 px-6">
                     <DialogTitle className="text-2xl text-center font-bold">
                         Bulk Ship Now
                     </DialogTitle>
                 </DialogHeader>
 
+                <div className="h-60 scrollbar-hide w-full overflow-x-scroll">
+                    <div className="grid grid-cols-[auto] gap-4">
+                        {/* Header Row for Zones */}
+                        <div className="grid grid-flow-col text-sm auto-cols-max">
+                            {Object.entries(courierPartners?.groupedData || {}).map(([zone, couriers]) => (
+                                <div key={zone} className="flex flex-col min-w-max">
+                                    <div className="font-bold border-b grid grid-cols-2 border-gray-300 p-1">
+                                        {!!zone && (
+                                            <>
+                                                <div>{zone}</div>
+                                                <div className="text-sm">Order Ref Id</div>
+                                            </>
+                                        )}
+
+                                    </div>
+
+                                    {/* Second Row for OrderRefId and CourierName */}
+                                    <div className="grid grid-cols-2 gap-2 p-1">
+                                        {(couriers as any)?.map((courier: any) => (
+                                            <>
+                                                <div key={courier.carrierID} className="flex flex-col">
+                                                    <div className="text-sm">{courier.name}</div>
+                                                    <div className="text-xs text-gray-500">{courier.nickName}</div>
+                                                </div>
+                                                <div>
+                                                    {courier.orderRefId}
+                                                </div>
+                                            </>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
 
                 <ScrollArea className="h-96 border w-full rounded-md p-2">
 
                     {
-                        courierPartners?.courierPartner ? courierPartners?.courierPartner?.map((partner, i) => {
+                        courierPartners?.mergedData ? courierPartners?.mergedData?.map((partner: any, i: number) => {
 
                             return <TableRow key={i}>
                                 <TableCell>
@@ -96,28 +175,37 @@ export const BulkShipNowModal = () => {
                                         {partner.name}
                                         <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
                                     </div>
-                                    {/* {!partner.isReversedCourier && <div>{!!partner.cod && (<>COD Charges Applied: {formatCurrencyForIndia(partner.cod)} |</>)}  RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>} */}
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex gap-2 items-center">
+                                        <div className="flex items-center">
+                                            {formatCurrencyForIndia(partner.charge)}
+                                        </div>
+                                        <HoverCardToolTip side="top" className="overflow-auto max-h-24 p-3 scrollbar-hide" Icon={<LucideZap size={14} />} >
+                                                {
+                                                    courierPartners?.orderIdWCharges[partner.name]?.map((order: any, i: number) => (
+                                                        <div key={i} className="grid grid-cols-2 text-xs text-gray-500">
+                                                            <span>
+                                                                {order.orderRefId}
+                                                            </span>
+                                                            <span>
+                                                                {formatCurrencyForIndia(order.charges)}
+                                                            </span>
+                                                        </div>
+                                                    ))
+                                                }
+                                        </HoverCardToolTip>
+                                    </div>
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <Button disabled={loading} type="submit" variant={"themeButton"} size={"sm"} onClick={async () => {
                                         setLoading(true)
                                         try {
-                                            // if (params.type == "b2c") {
-
                                             const res = await handleCreateBulkD2CShipment({
-                                                orderId: orderIds,
+                                                orderIdWCharges: courierPartners?.orderIdWCharges[partner.name],
                                                 carrierId: partner.carrierID,
                                                 carrierNickName: partner.nickName,
-                                                charge: partner.charge,
                                             })
-                                            // } else {
-                                            //     const res = await handleCreateB2BShipment({
-                                            //         orderId: courierPartners.orderDetails._id,
-                                            //         carrierId: partner.carrierID,
-                                            //         carrierNickName: partner.nickName,
-                                            //         charge: partner.charge,
-                                            //     })
-                                            // }
                                         } finally {
                                             setLoading(false)
                                         }

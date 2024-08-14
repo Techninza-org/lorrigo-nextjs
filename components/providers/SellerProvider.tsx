@@ -43,7 +43,7 @@ interface SellerContextType {
   getBulkCourierPartners: (orderIds:  string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
   handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
-  handleCreateBulkD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
+  handleCreateBulkD2CShipment: ({ orderIdWCharges, carrierId, carrierNickName }: { orderIdWCharges: any, carrierNickName: string, carrierId: Number }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
@@ -648,12 +648,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, toast])
 
-  const handleCreateBulkD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number }) => {
+  const handleCreateBulkD2CShipment = useCallback(async ({ orderIdWCharges, carrierId, carrierNickName }: { orderIdWCharges: any, carrierId: Number, carrierNickName: string }) => {
     const payload = {
-      orderIds: orderId,
+      orderIdWCharges: orderIdWCharges,
       carrierId: carrierId,
       carrierNickName,
-      charge: charge,
       orderType: 0,
     }
     try {
