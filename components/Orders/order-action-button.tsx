@@ -46,7 +46,7 @@ export const CANCELED = 6;
 export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
     let orderStage = rowData.orderStages?.[rowData.orderStages.length - 1]?.stage as number;
 
-    const orderStatusTillUs = [0, 1, 4, 6, 17, 24, 52, 67];
+    const orderStatusTillUs = [0, 1, 2, 4, 6, 17, 24, 52, 67];
     if (!orderStatusTillUs.includes(orderStage)) {
         orderStage = rowData?.bucket || 0;
     }
@@ -72,6 +72,27 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start">
                         <OrderEditButton rowData={rowData} />
+                        <OrderCloneButton rowData={rowData} />
+
+                        <DropdownMenuSeparator />
+                        <OrderCancelButton rowData={rowData} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+
+        );
+    }
+    if (orderStage === 1 || orderStage === 2) {
+        return (
+            <div className="flex gap-2 items-center">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontalIcon className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
                         <OrderCloneButton rowData={rowData} />
 
                         <DropdownMenuSeparator />

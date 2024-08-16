@@ -18,7 +18,7 @@ import { Input } from "../ui/input";
 import { cn, formatCurrencyForIndia, getSvg, removeWhitespaceAndLowercase } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { useEffect, useState } from "react";
-import { MapPin } from "lucide-react";
+import { InfoIcon, MapPin } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { useSellerProvider } from "../providers/SellerProvider";
 import {
@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/table"
 import Image from "next/image";
 import { LoadingComponent } from "../loading-spinner";
+import HoverCardToolTip from "../hover-card-tooltip";
 
 
 const rateCalcSchema = z.object({
@@ -415,7 +416,10 @@ export const RateCalcForm = () => {
                             </CardContent>
                             <CardFooter className='flex-row-reverse gap-3'>
                                 <Button type='submit' variant={'themeButton'} >Calculate</Button>
-                                <Button variant={'secondary'} type='button' onClick={() => form.reset()}>Reset</Button>
+                                <Button variant={'secondary'} type='button' onClick={() => {
+                                    form.reset()
+                                    setVolWeight('')
+                                }}>Reset</Button>
                             </CardFooter>
                         </Card>
                         <Card>
@@ -469,7 +473,7 @@ export const RateCalcForm = () => {
                                 <TableBody>
                                     {
                                         (courierCalcRate) && (courierCalcRate?.length > 1) && courierCalcRate?.map((partner: any, i: number) => {
-                                            return <TableRow key={i}>
+                                            return <TableRow key={i} className="h-20">
                                                 <TableCell>
                                                     <div className="flex items-center">
                                                         <Image className="mr-2 mix-blend-multiply"
@@ -478,11 +482,19 @@ export const RateCalcForm = () => {
                                                         <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
 
                                                     </div>
-                                                    <div>{!!partner.cod && (<>COD Charges Applied: {formatCurrencyForIndia(partner.cod)}</>)} |  RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}</div>
                                                 </TableCell>
                                                 <TableCell>{partner.expectedPickup}</TableCell>
                                                 <TableCell>{partner.order_zone}</TableCell>
-                                                <TableCell>{formatCurrencyForIndia(partner.charge ?? 0)}</TableCell>
+                                                <TableCell>
+                                                    <div className="flex gap-2 items-center ">
+
+                                                        {formatCurrencyForIndia(partner.charge ?? 0)}
+                                                        <HoverCardToolTip side="top" Icon={<InfoIcon size={14} className="text-gray-700" />}>
+                                                            {!!partner.cod && (<div>COD Charges Applied: {formatCurrencyForIndia(partner.cod)}</div>)} RTO Charges : {formatCurrencyForIndia(partner.rtoCharges ?? 0)}
+                                                        </HoverCardToolTip>
+
+                                                    </div>
+                                                </TableCell>
 
                                             </TableRow>
                                         })
