@@ -132,7 +132,7 @@ export const handleFileDownload = (fileName: string) => {
   anchor.download = fileName;
   anchor.click();
 }
-
+ 
 export function splitStringOnFirstNumber(input?: string) {
   const result = input?.split("").slice(-3)?.join("");
   const increment = parseInt(result || "0") + 1;
