@@ -161,10 +161,10 @@ export function CloneOrderDrawer() {
 
         form.setValue('productDetails.name', order?.productId?.name || "");
         form.setValue('productDetails.category', order?.productId?.category || "");
-        form.setValue('productDetails.hsn_code', order?.productId?.hsn_code || "");
-        form.setValue('productDetails.quantity', order?.productId?.quantity || "");
-        form.setValue('productDetails.taxRate', order?.productId?.tax_rate || "");
-        form.setValue('productDetails.taxableValue', order?.productId?.taxable_value || "");
+        form.setValue('productDetails.hsn_code', order?.productId?.hsn_code?.toString() || "");
+        form.setValue('productDetails.quantity', order?.productId?.quantity?.toString() || "");
+        form.setValue('productDetails.taxRate', order?.productId?.tax_rate?.toString() || "");
+        form.setValue('productDetails.taxableValue', order?.productId?.taxable_value?.toString() || "");
         form.setValue('pickupAddress', order?.pickupAddress._id || "");
 
         form.setValue('sellerDetails.sellerName', order?.sellerDetails?.sellerName || "");
@@ -177,7 +177,7 @@ export function CloneOrderDrawer() {
         form.setValue('sellerDetails.sellerState', order?.sellerDetails?.sellerState || "");
 
         form.setValue('customerDetails.name', order?.customerDetails?.name || "");
-        form.setValue('customerDetails.phone', order?.customerDetails?.phone || "");
+        form.setValue('customerDetails.phone', order?.customerDetails?.phone?.toString() || "");
         form.setValue('customerDetails.address', order?.customerDetails?.address || "");
         form.setValue('customerDetails.pincode', order?.customerDetails?.pincode?.toString() || "");
         form.setValue('customerDetails.state', order?.customerDetails?.state || "");
