@@ -15,7 +15,7 @@ function ActiveStepFormComponent() {
         case 2:
             return <PhotoIdentification />
         case 3:
-            return  <DocumentVerification />
+            return <DocumentVerification />
         default:
             return <KycCompleted />
     }
@@ -24,7 +24,7 @@ function ActiveStepFormComponent() {
 const Kyc = () => {
     return (
         <>
-            <KycStage  />
+            <KycStage />
             <ActiveStepFormComponent />
         </>
     )

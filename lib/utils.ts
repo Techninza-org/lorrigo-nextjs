@@ -132,7 +132,7 @@ export const handleFileDownload = (fileName: string) => {
   anchor.download = fileName;
   anchor.click();
 }
- 
+
 export function splitStringOnFirstNumber(input?: string) {
   const result = input?.split("").slice(-3)?.join("");
   const increment = parseInt(result || "0") + 1;
@@ -160,40 +160,43 @@ export const filterRemittanceData = (data: any[], filter: string) => {
 
   const lowercasedFilter = filter.toLowerCase();
   return data.filter((row: any) => {
-      const remittanceId = row.remittanceId ? row.remittanceId.toLowerCase() : "";
-      const remittanceStatus = row.remittanceStatus ? row.remittanceStatus.toLowerCase() : "";
-      return remittanceId.includes(lowercasedFilter) || remittanceStatus.includes(lowercasedFilter);
+    const remittanceId = row.remittanceId ? row.remittanceId.toLowerCase() : "";
+    const remittanceStatus = row.remittanceStatus ? row.remittanceStatus.toLowerCase() : "";
+    return remittanceId.includes(lowercasedFilter) || remittanceStatus.includes(lowercasedFilter);
   });
 }
 
 export const removeDoubleQuotes = (str: string): string => {
   // Check if the string starts and ends with double quotes
   if (str.startsWith('"') && str.endsWith('"')) {
-      // Remove the quotes
-      return str.slice(1, -1);
+    // Remove the quotes
+    return str.slice(1, -1);
   }
   return str;
 };
 
 export function base64ToFile(base64String: string, fileName: string, mimeType: string) {
   try {
-      const base64Data = base64String.includes(',') ? base64String.split(',')[1] : base64String;
-      const byteCharacters = atob(base64Data);
-
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-      }
-
-      const byteArray = new Uint8Array(byteNumbers);
-
-      const blob = new Blob([byteArray], { type: mimeType });
-
-      const file = new File([blob], fileName, { type: mimeType });
-
-      return file;
-  } catch (error) {
-      console.error('Error decoding base64 string:', error);
+    if (!base64String) {
       return null;
+    }
+    const base64Data = base64String.includes(',') ? base64String.split(',')[1] : base64String;
+    const byteCharacters = atob(base64Data);
+
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+
+    const blob = new Blob([byteArray], { type: mimeType });
+
+    const file = new File([blob], fileName, { type: mimeType });
+
+    return file;
+  } catch (error) {
+    console.error('Error decoding base64 string:', error);
+    return null;
   }
 }
