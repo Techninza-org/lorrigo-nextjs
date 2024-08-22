@@ -1,7 +1,5 @@
-"use client";
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import Image from 'next/image';
 import { Building2, ChevronRight, ReceiptText, ScrollText, Truck, Wallet, Workflow } from 'lucide-react';
 // import Workflow from '@/components/SVGs/channel.svg';
 // import FIcon from '@/components/SVGs/fileIcon.svg';
@@ -22,14 +20,12 @@ interface SettingsCardProps {
   logo: any;
 }
 
-const isServer = typeof window === 'undefined';
-
-const SettingsCard: React.FC<SettingsCardProps> = ({ title, links, logo }) => (
+const SettingsCard: React.FC<SettingsCardProps> = ({ title, links, logo: Icon }) => (
   <Card className="drop-shadow-md p-1 rounded-2xl">
     <CardContent className="pt-4 h-[187px]">
       <div className="flex">
         <div className="mr-3">
-          {!isServer && <Image src={logo} alt="Settings Icon" width={30} height={30} />}
+          <Icon alt="Settings Icon" className="text-red-500" strokeWidth={1.7}  size={30} />
         </div>
         <div className="grid place-content-center">
           <h3 className="font-medium text-lg">{title}</h3>
