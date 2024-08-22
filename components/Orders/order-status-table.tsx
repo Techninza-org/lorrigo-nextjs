@@ -47,6 +47,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
+  const [assignedAwb, setAssignedAwb] = React.useState<boolean>(false)
   const [rowSelection, setRowSelection] = React.useState({})
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -65,7 +66,17 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
 
   const [filteredData, setFilteredData] = React.useState<any[]>(data)
   // Memoize filtered data to avoid unnecessary re-renders
-  const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
+  // const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
+  const filteredDataMemo = React.useMemo(() => {
+    let filtered = filterData(data, filtering);
+  
+    if (assignedAwb) {
+      filtered = filtered.filter((row: { awb: null }) => row.awb === null);
+    }
+  
+    return filtered;
+  }, [data, filtering, assignedAwb]);	
+
 
 
   const table = useReactTable({
@@ -199,6 +210,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
           <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
             <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
           </CsvDownloader>
+          <Button variant={'webPageBtn'} onClick={() => setAssignedAwb(!assignedAwb)} size={'sm'}>{assignedAwb ? "Show All" : "Awaited AWB"}</Button>
         </div>
         <div>
           {

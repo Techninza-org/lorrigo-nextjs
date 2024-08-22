@@ -47,6 +47,7 @@ export function B2BOrderStatusTable({ data, columns }: { data: any[], columns: C
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
     "Shipment Details": isShipmentVisible,
   });
+  const [assignedAwb, setAssignedAwb] = React.useState<boolean>(false)
   const [rowSelection, setRowSelection] = React.useState({})
   const [pagination, setPagination] = React.useState({
     pageIndex: 0, //initial page index
@@ -57,7 +58,16 @@ export function B2BOrderStatusTable({ data, columns }: { data: any[], columns: C
 
   const [filteredData, setFilteredData] = React.useState<any[]>(data)
   // Memoize filtered data to avoid unnecessary re-renders
-  const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
+  // const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
+  const filteredDataMemo = React.useMemo(() => {
+    let filtered = filterData(data, filtering);
+  
+    if (assignedAwb) {
+      filtered = filtered.filter((row: { awb: null }) => row.awb === null);
+    }
+  
+    return filtered;
+  }, [data, filtering, assignedAwb]);	
 
 
   const table = useReactTable({
@@ -89,13 +99,14 @@ export function B2BOrderStatusTable({ data, columns }: { data: any[], columns: C
   return (
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
-        <div>
+        <div className="flex gap-3">
           <Input
             placeholder="Filter by AWB or Order Reference ID"
             value={filtering}
             onChange={(e) => setFiltering(e.target.value)}
             className="max-w-sm"
           />
+          <Button variant={'webPageBtn'} onClick={() => setAssignedAwb(!assignedAwb)} size={'sm'}>{assignedAwb ? "Show All" : "Awaited AWB"}</Button>
         </div>
         <div>
           {
