@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { ChevronRight } from 'lucide-react';
 import Workflow from '@/components/SVGs/channel.svg'
-import FileText from '@/components/SVGs/file.svg'
+import FIcon from '@/components/SVGs/FIcon.svg'
 
 import CarPNG from '@/components/SVGs/car.png'
 import CompanyPNG from '@/components/SVGs/company.png'
@@ -100,7 +100,7 @@ const Settings = () => {
         { href: '/settings/policies/shipment-and-delivery', label: 'Shipment and Delivery' },
         { href: '/settings/policies/terms-and-conditions', label: 'Terms and Conditions' },
       ],
-      logo: FileText
+      logo: FIcon
     }
   ];
 

@@ -5,7 +5,6 @@ import DocumentVerification from '@/components/Settings/document-verification';
 import { KycBusinessTypeForm } from '@/components/Settings/kyc-business-type-form';
 import PhotoIdentification from '@/components/Settings/photo-identification';
 import { useKycProvider } from '@/components/providers/KycProvider';
-import React from 'react'
 
 function ActiveStepFormComponent() {
     const { step } = useKycProvider();
