@@ -24,6 +24,10 @@ export const AlertKycModal = () => {
         onClose();
     }
 
+    const handleSetItem =   () => {
+        localStorage.setItem("kyc-alert", "true");
+    }
+
     return (
         <AlertDialog open={isModalOpen} onOpenChange={handleClose}>
             <AlertDialogContent>
@@ -34,7 +38,7 @@ export const AlertKycModal = () => {
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Skip</AlertDialogCancel>
+                    <AlertDialogCancel onClick={handleSetItem}>Skip</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={() => router.push("/settings/company/kyc")}
                         className={buttonVariants({

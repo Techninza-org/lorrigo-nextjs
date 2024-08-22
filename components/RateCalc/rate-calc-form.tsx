@@ -93,6 +93,13 @@ export const RateCalcForm = () => {
         }
     }, [isCOD]);
 
+    useEffect(() => {
+        if (form.watch('orderBoxLength') && form.watch('orderBoxWidth') && form.watch('orderBoxHeight')) {
+            const volume = Number(form.watch('orderBoxLength')) * Number(form.watch('orderBoxWidth')) * Number(form.watch('orderBoxHeight'));
+            setVolWeight(String((volume / 5000).toFixed(2)))
+        }
+    }, [form.watch('orderBoxLength'), form.watch('orderBoxWidth'), form.watch('orderBoxHeight')])
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let numericValue = e.target.value.replace(/[^0-9.]/g, '');
         const parts = numericValue?.split('.');
@@ -117,8 +124,6 @@ export const RateCalcForm = () => {
         // }
         setIsAPILoading(true)
         try {
-            const volume = Number(values.orderBoxLength) * Number(values.orderBoxWidth) * Number(values.orderBoxHeight);
-            setVolWeight(String((volume / 5000).toFixed(2)))
             const res = await calcRate({
                 pickupPincode: values.pickupPincode,
                 deliveryPincode: values.deliveryPincode,

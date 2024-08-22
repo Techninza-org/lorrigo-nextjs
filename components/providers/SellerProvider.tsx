@@ -42,7 +42,7 @@ interface SellerContextType {
   getCourierPartners: (orderId: string, type: string) => Promise<any>;
   getBulkCourierPartners: (orderIds:  string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
-  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
+  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge, type }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number, type: string }) => boolean | Promise<boolean>;
   handleCreateBulkD2CShipment: ({ orderIdWCharges, carrierId, carrierNickName }: { orderIdWCharges: any, carrierNickName: string, carrierId: Number }) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
@@ -610,13 +610,14 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
-  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number }) => {
+  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge, type }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number, type: string }) => {
     const payload = {
       orderId: orderId,
       carrierId: carrierId,
       carrierNickName,
       charge: charge,
       orderType: 0,
+      type: type
     }
     try {
       const res = await axiosIWAuth.post('/shipment', payload);
@@ -799,7 +800,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosIWAuth.get('/seller');
       if (res.data.valid) {
-        const showKycAlert = !res.data?.seller?.kycDetails?.submitted && onOpen("alert-kyc");
+        const isAlertShown = localStorage.getItem("kyc-alert");
+        console.log("isAlertShown", isAlertShown);
+        const showKycAlert = !res.data?.seller?.kycDetails?.submitted && !isAlertShown && onOpen("alert-kyc");
         setSeller(res.data.seller)
         setInvoices(res.data.seller.invoices)
       }
