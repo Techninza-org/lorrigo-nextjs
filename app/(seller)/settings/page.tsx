@@ -22,12 +22,14 @@ interface SettingsCardProps {
   logo: any;
 }
 
+const isServer = typeof window === 'undefined';
+
 const SettingsCard: React.FC<SettingsCardProps> = ({ title, links, logo }) => (
   <Card className="drop-shadow-md p-1 rounded-2xl">
     <CardContent className="pt-4 h-[187px]">
       <div className="flex">
         <div className="mr-3">
-          <Image src={logo} alt="Settings Icon" width={30} height={30} />
+          {!isServer && <Image src={logo} alt="Settings Icon" width={30} height={30} />}
         </div>
         <div className="grid place-content-center">
           <h3 className="font-medium text-lg">{title}</h3>
