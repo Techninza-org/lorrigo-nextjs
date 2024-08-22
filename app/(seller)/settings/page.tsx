@@ -2,14 +2,14 @@
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
-import { ChevronRight } from 'lucide-react';
-import Workflow from '@/components/SVGs/channel.svg';
-import FIcon from '@/components/SVGs/file.svg';
+import { Building2, ChevronRight, ReceiptText, ScrollText, Truck, Wallet, Workflow } from 'lucide-react';
+// import Workflow from '@/components/SVGs/channel.svg';
+// import FIcon from '@/components/SVGs/fileIcon.svg';
 
-import CarPNG from '@/components/SVGs/car.png';
-import CompanyPNG from '@/components/SVGs/company.png';
-import PrinterPNG from '@/components/SVGs/printer.png';
-import UserPNG from '@/components/SVGs/user.png';
+// import CarPNG from '@/components/SVGs/car.png';
+// import CompanyPNG from '@/components/SVGs/company.png';
+// import PrinterPNG from '@/components/SVGs/printer.png';
+// import UserPNG from '@/components/SVGs/user.png';
 
 interface LinkItem {
   href: string;
@@ -58,12 +58,12 @@ const Settings = () => {
         { href: '/settings/company/kyc', label: 'KYC' },
         { href: '/settings/company/change-password', label: 'Change Password' },
       ],
-      logo: CompanyPNG,
+      logo: Building2,
     },
     {
       title: 'COD Payments',
       links: [{ href: '/settings/cod-payments/bank-details', label: 'Bank Details' }],
-      logo: UserPNG,
+      logo: Wallet,
     },
     {
       title: 'Billing',
@@ -71,7 +71,7 @@ const Settings = () => {
         { href: '/settings/billing/gstin-invoicing', label: 'GSTIN Invoicing' },
         { href: '/settings/billing/billing-address', label: 'Billing Address' },
       ],
-      logo: PrinterPNG,
+      logo: ReceiptText,
     },
     {
       title: 'Pickup Address',
@@ -81,7 +81,7 @@ const Settings = () => {
           label: 'Manage Pickup Addresses',
         },
       ],
-      logo: CarPNG,
+      logo: Truck,
     },
     {
       title: 'Couriers Price',
@@ -101,7 +101,7 @@ const Settings = () => {
         { href: '/settings/policies/shipment-and-delivery', label: 'Shipment and Delivery' },
         { href: '/settings/policies/terms-and-conditions', label: 'Terms and Conditions' },
       ],
-      logo: FIcon,
+      logo: ScrollText,
     },
   ];
 
