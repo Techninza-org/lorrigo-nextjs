@@ -1,59 +1,43 @@
 import {
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 import { ScrollArea } from "@/components/ui/scroll-area"
+
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 
 import { useModal } from "@/hooks/use-model-store";
 import { useSellerProvider } from "../providers/SellerProvider";
-import { formatCurrencyForIndia, getSvg, removeWhitespaceAndLowercase } from "@/lib/utils";
-import { Fragment, useEffect, useState } from "react";
-import { B2COrderType, OrderType } from "@/types/types";
+import { cn, formatCurrencyForIndia, getSvg, removeWhitespaceAndLowercase } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { B2COrderType } from "@/types/types";
 import { useAuth } from "../providers/AuthProvider";
 import { Button } from "../ui/button";
 import Image from "next/image";
-import { Loader2, LucideZap } from "lucide-react";
+import { Info, Loader2, } from "lucide-react";
 import HoverCardToolTip from "../hover-card-tooltip";
+import { Checkbox } from "../ui/checkbox";
+import { Label } from "../ui/label";
 
 function mergeCouriers(couriers: any[]) {
-    const mergedData = Object.values(
-        couriers.reduce((acc, courier) => {
-            if (acc[courier.name]) {
-                acc[courier.name].charge += courier.charge;
-                acc[courier.name].rtoCharges += courier.rtoCharges;
-            } else {
-                acc[courier.name] = { ...courier };
-            }
-            return acc;
-        }, {})
-    );
-
     const orderIdWCharges = couriers.reduce((acc, courier) => {
-        if (!acc[courier.name]) {
-            acc[courier.name] = [];
+        const courierNameWNick = courier.name + " " + courier.nickName;
+        if (!acc[courierNameWNick]) {
+            acc[courierNameWNick] = [];
         }
 
-        const existingOrder = acc[courier.name].find(
+        const existingOrder = acc[courierNameWNick].find(
             (order: any) => order.orderRefId === courier.orderRefId
         );
 
         if (existingOrder) {
             existingOrder.charges += courier.charge;
         } else {
-            acc[courier.name].push({
-                orderRefId: courier.orderRefId,
-                charges: courier.charge,
+            acc[courierNameWNick].push({
+                ...courier
             });
         }
 
@@ -61,7 +45,6 @@ function mergeCouriers(couriers: any[]) {
     }, {} as Record<string, any[]>);
 
     return {
-        mergedData,
         orderIdWCharges
     }
 }
@@ -69,13 +52,11 @@ function mergeCouriers(couriers: any[]) {
 function groupAndMergeCouriers(data: any[]) {
     if (!data || data.length === 0) return { groupedData: {}, mergedData: [] };
 
-    const groupedByZone = Object.groupBy(data, courier => courier.order_zone);
+    const groupedByRefId = Object.groupBy(data, courier => courier.orderRefId);
 
-    const groupedData = groupedByZone;
+    const { orderIdWCharges } = mergeCouriers(data ?? [])
 
-    const { mergedData, orderIdWCharges } = mergeCouriers(data ?? [])
-
-    return { groupedData, mergedData, orderIdWCharges };
+    return { groupedByRefId, orderIdWCharges };
 }
 
 export const BulkShipNowModal = () => {
@@ -92,12 +73,19 @@ export const BulkShipNowModal = () => {
 
     const [courierPartners, setCourierPartners] = useState<any>()
 
-    const [loading, setLoading] = useState(false)
+    const [selectedItems, setSelectedItems] = useState<any[]>([])
+    const handleCheckboxChange = (value: any) => {
+        if (selectedItems.includes(value)) {
+            setSelectedItems(selectedItems.filter((item) => item !== value))
+        } else {
+            setSelectedItems([...selectedItems, value])
+        }
+    }
 
     useEffect(() => {
         async function fetchCourierPartners() {
             const res = await getBulkCourierPartners(orderIds)
-            setCourierPartners(groupAndMergeCouriers(res?.courierPartner || []))
+            setCourierPartners(groupAndMergeCouriers(res?.courierPartner))
         }
 
         fetchCourierPartners()
@@ -112,8 +100,15 @@ export const BulkShipNowModal = () => {
 
     const handleClose = () => {
         onClose();
+        setSelectedItems([])
     }
 
+    function calcTotalCharge() {
+        return selectedItems.reduce((acc, item) => acc + item.charge, 0)
+    }
+
+    console.log(selectedItems);
+    
 
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
@@ -124,107 +119,88 @@ export const BulkShipNowModal = () => {
                     </DialogTitle>
                 </DialogHeader>
 
-                <div className="h-60 scrollbar-hide w-full overflow-x-scroll">
-                    <div className="grid grid-cols-[auto] gap-4">
-                        {/* Header Row for Zones */}
-                        <div className="grid grid-flow-col text-sm auto-cols-max">
-                            {Object.entries(courierPartners?.groupedData || {}).map(([zone, couriers]) => (
-                                <div key={zone} className="flex flex-col min-w-max">
-                                    <div className="font-bold border-b grid grid-cols-2 border-gray-300 p-1">
-                                        {!!zone && (
-                                            <>
-                                                <div>{zone}</div>
-                                                <div className="text-sm">Order Ref Id</div>
-                                            </>
-                                        )}
-
-                                    </div>
-
-                                    {/* Second Row for OrderRefId and CourierName */}
-                                    <div className="grid grid-cols-2 gap-2 p-1">
-                                        {(couriers as any)?.map((courier: any) => (
-                                            <>
-                                                <div key={courier.carrierID} className="flex flex-col">
-                                                    <div className="text-sm">{courier.name}</div>
-                                                    <div className="text-xs text-gray-500">{courier.nickName}</div>
-                                                </div>
-                                                <div>
-                                                    {courier.orderRefId}
-                                                </div>
-                                            </>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
+                <ScrollArea className="h-96 w-full rounded-md">
+                    <div className="border rounded-lg w-full">
+                        <div className="bg-muted px-4 py-3 text-sm font-medium">
+                            <div className="grid grid-cols-[100px_1fr_100px_100px] items-center gap-4">
+                                <div>Courier Name</div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        <Accordion type="single" collapsible>
+                            {courierPartners?.orderIdWCharges ? Object?.keys(courierPartners?.orderIdWCharges)?.map((partner: any, i: number) => {
+                                return (
+                                    <AccordionItem key={i} value={partner}>
+                                        <AccordionTrigger className="flex items-center h-16 justify-between bg-muted px-4 py-3 text-sm font-medium">
+                                            <div className="flex items-center gap-3">
+                                                <Image className="mr-2 mix-blend-multiply"
+                                                    src={getSvg(removeWhitespaceAndLowercase(partner))}
+                                                    width={50} height={50} alt="logo" />
+                                                {partner}
+                                            </div>
+                                        </AccordionTrigger>
+                                        {courierPartners?.orderIdWCharges[partner].map((item: any) => {
+                                            const itemAlreadySelected: any = selectedItems.find((selectedItem: any) => selectedItem.orderRefId === item.orderRefId)
+                                            const isDisable = itemAlreadySelected && !(`${itemAlreadySelected?.name} ${itemAlreadySelected?.nickName}` === partner)
+                                            return (
+                                                <AccordionContent key={item.orderRefId} className="p-3 border-t">
+                                                    <div className="grid grid-cols-4 px-6 items-center gap-4">
+                                                        <div className="flex gap-3 items-center cursor-pointer">
+                                                            <Checkbox
+                                                                id={item.orderRefId}
+                                                                checked={itemAlreadySelected ? true : false}
+                                                                disabled={isDisable}
+                                                                onCheckedChange={() => handleCheckboxChange(item)}
+                                                            />
+                                                            <Label htmlFor={item.orderRefId} className={cn("font-medium",
+                                                                isDisable ? "line-through" : ""
+                                                            )}>{item.orderRefId}</Label>
 
-                <ScrollArea className="h-96 border w-full rounded-md p-2">
+                                                            {isDisable && <HoverCardToolTip Icon={<Info size={18} />} className="font-semibold">
+                                                                <h3>{itemAlreadySelected.orderRefId} is already selected</h3>
+                                                                <div className="flex gap-3 items-center pt-2 font-medium">
+                                                                    <span>
+                                                                        {itemAlreadySelected.name} {itemAlreadySelected.nickName}
+                                                                    </span>
+                                                                    <span>
+                                                                        {formatCurrencyForIndia(itemAlreadySelected.charge)}
+                                                                    </span>
+                                                                </div>
+                                                            </HoverCardToolTip>}
 
-                    {
-                        courierPartners?.mergedData ? courierPartners?.mergedData?.map((partner: any, i: number) => {
-
-                            return <TableRow key={i}>
-                                <TableCell>
-                                    <div className="flex items-center">
-                                        <Image
-                                            className="mr-2 mix-blend-multiply"
-                                            src={getSvg(removeWhitespaceAndLowercase(partner.name))}
-                                            width={60} height={60} alt="logo" />
-                                        {partner.name}
-                                        <span className="text-slate-500 mx-1">({partner.nickName})</span> | Min. weight: {partner.minWeight}kg
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex gap-2 items-center">
-                                        <div className="flex items-center">
-                                            {formatCurrencyForIndia(partner.charge)}
-                                        </div>
-                                        <HoverCardToolTip side="top" className="overflow-auto max-h-24 p-3 scrollbar-hide" Icon={<LucideZap size={14} />} >
-                                                {
-                                                    courierPartners?.orderIdWCharges[partner.name]?.map((order: any, i: number) => (
-                                                        <div key={i} className="grid grid-cols-2 text-xs text-gray-500">
-                                                            <span>
-                                                                {order.orderRefId}
-                                                            </span>
-                                                            <span>
-                                                                {formatCurrencyForIndia(order.charges)}
-                                                            </span>
                                                         </div>
-                                                    ))
-                                                }
-                                        </HoverCardToolTip>
-                                    </div>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <Button disabled={loading} type="submit" variant={"themeButton"} size={"sm"} onClick={async () => {
-                                        setLoading(true)
-                                        try {
-                                            const res = await handleCreateBulkD2CShipment({
-                                                orderIdWCharges: courierPartners?.orderIdWCharges[partner.name],
-                                                carrierId: partner.carrierID,
-                                                carrierNickName: partner.nickName,
-                                            })
-                                        } finally {
-                                            setLoading(false)
-                                        }
-                                    }}>Ship now</Button>
-                                </TableCell>
-                            </TableRow>
-                        }) : <div className="text-gray-600 text-center">
-                            <Loader2 size={18} className="animate-spin mx-auto my-6" />
-                            <span className="block text-center">
-                                Please wait while we fetch the courier partners for you,
-                            </span>
-                            <span className="block">
-                                this may take a few seconds.
-                            </span>
-                        </div>
-                    }
+                                                        <div className="text-right">
+                                                            <p className="font-medium">{item.minWeight}kg</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="font-medium">{item.order_zone}</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="font-medium">{formatCurrencyForIndia(item.charge)}</p>
+                                                        </div>
+                                                    </div>
+                                                </AccordionContent>
+                                            )
+                                        })}
+                                    </AccordionItem>
+                                )
+                            }) : <Loader2 className="w-6 h-6 animate-spin mx-auto" />}
+                        </Accordion>
+                    </div>
                 </ScrollArea>
 
+                <DialogFooter className="flex lg:justify-between">
+                    <Button variant={'outline'}>Selected order {selectedItems.length} out of {courierPartners?.groupedByRefId && Object?.keys(courierPartners?.groupedByRefId).length}</Button>
+                    <div className="flex gap-2">
+                        <Button variant={'outline'}>{formatCurrencyForIndia(calcTotalCharge())}</Button>
+                        <Button
+                            variant={'themeNavActiveBtn'}
+                            disabled={selectedItems.length <= 0}
+                            onClick={() => handleCreateBulkD2CShipment(selectedItems, calcTotalCharge())}
+                        >Ship now</Button>
+                    </div>
+                </DialogFooter>
+
             </DialogContent>
-        </Dialog>
+        </Dialog >
     )
 };

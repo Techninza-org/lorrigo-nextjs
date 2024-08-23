@@ -81,7 +81,6 @@ export function CloneB2BOrderDrawer() {
 
     const isLoading = form.formState.isSubmitting;
     const { errors } = form.formState;
-    console.log(errors)
 
     const handleClose = () => {
         // form.reset();
