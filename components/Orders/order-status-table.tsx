@@ -69,13 +69,13 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   // const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
   const filteredDataMemo = React.useMemo(() => {
     let filtered = filterData(data, filtering);
-  
+
     if (assignedAwb) {
-      filtered = filtered.filter((row: { awb: null }) => row.awb === null);
+      filtered = filtered.filter((row: { awb: null }) => !((row.awb === "") || (row.awb === null) || (row.awb === undefined)));
     }
-  
+
     return filtered;
-  }, [data, filtering, assignedAwb]);	
+  }, [data, filtering, assignedAwb]);
 
 
 
@@ -210,7 +210,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
           <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
             <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
           </CsvDownloader>
-          <Button variant={'webPageBtn'} onClick={() => setAssignedAwb(!assignedAwb)} size={'sm'}>{assignedAwb ? "Show All" : "Awaited AWB"}</Button>
+          <Button variant={'webPageBtn'} onClick={() => setAssignedAwb(!assignedAwb)} size={'sm'}>{!assignedAwb ? "Show All" : "Assigned AWB"}</Button>
         </div>
         <div>
           {
