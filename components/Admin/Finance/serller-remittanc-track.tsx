@@ -23,6 +23,7 @@ import { LoadingComponent } from "@/components/loading-spinner";
 import CsvDownloader from 'react-csv-downloader';
 import { useAdminProvider } from "@/components/providers/AdminProvider";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const TrackSellerRemittance = () => {
     const params = useParams()
@@ -139,7 +140,7 @@ const TrackSellerRemittance = () => {
                                     // const formattedDate = formatDate(date, 'dd-MM-yyyy')
                                     return (
                                         <TableRow key={index}>
-                                            <TableCell>{order.awb}</TableCell>
+                                            <TableCell><Link href={`/track/${order.awb}`}>{order.awb}</Link></TableCell>
                                             <TableCell>{formatCurrencyForIndia(Number(order?.amount2Collect))}</TableCell>
                                             <TableCell>
                                                 {date && format(date || new Date(), 'dd/MM/yyyy')}

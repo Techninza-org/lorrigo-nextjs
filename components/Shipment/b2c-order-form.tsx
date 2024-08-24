@@ -17,6 +17,7 @@ import { SellerType } from '@/types/types';
 interface OrderDetailFormProps {
     seller?: SellerType | null;
     form: any;
+    isDisabledPaymentMode?: boolean;
     isLoading: boolean;
     orderRefDisable?: boolean;
     handleIncrement: () => void;
@@ -24,7 +25,7 @@ interface OrderDetailFormProps {
     collectableFeild: boolean;
 }
 
-export const OrderDetailForm = ({ seller, form, isLoading, handleIncrement, handleDecrement, collectableFeild, orderRefDisable }: OrderDetailFormProps) => {
+export const OrderDetailForm = ({ isDisabledPaymentMode, seller, form, isLoading, handleIncrement, handleDecrement, collectableFeild, orderRefDisable }: OrderDetailFormProps) => {
     const currentDate = new Date();
     const yesterday = new Date(currentDate);
     yesterday.setDate(yesterday.getDate() - 1);
@@ -366,7 +367,7 @@ export const OrderDetailForm = ({ seller, form, isLoading, handleIncrement, hand
                                 Payment Mode <span className='text-red-500'>*</span>
                             </FormLabel>
                             <Select
-                                disabled={isLoading || form.watch("isReverseOrder") === true }
+                                disabled={isLoading || form.watch("isReverseOrder") === true}
                                 onValueChange={field.onChange}
                             >
                                 <FormControl>
@@ -377,8 +378,12 @@ export const OrderDetailForm = ({ seller, form, isLoading, handleIncrement, hand
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value={"COD"}>Cash on Delivery</SelectItem>
-                                    <SelectItem  value={"Prepaid"}>Prepaid</SelectItem>
+                                    <SelectItem
+                                        disabled={isDisabledPaymentMode}
+                                        value={"COD"}>Cash on Delivery</SelectItem>
+                                    <SelectItem
+                                        disabled={isDisabledPaymentMode}
+                                        value={"Prepaid"}>Prepaid</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormMessage />

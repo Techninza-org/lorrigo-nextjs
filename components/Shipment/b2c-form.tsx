@@ -57,6 +57,41 @@ export const formDataSchema = z.object({
     isReverseOrder: z.boolean().default(false).optional()
 });
 
+const B2CFormSchema = z.object({
+    client_order_reference_id: z.string().optional(),
+    order_reference_id: z.string().min(1, "Order reference id is required"),
+    fragile_items: z.boolean().default(false).optional(),
+    payment_mode: z.string().min(1, "Payment mode is required"),
+    orderWeight: z.string().min(1, "Order weight is required"),
+    order_invoice_date: z.date(),
+    order_invoice_number: z.string().optional(),
+    numberOfBoxes: z.enum(["1", "2", "3", "4", "5"], {
+        required_error: "You need to select a notification type.",
+    }),
+    orderSizeUnit: z.string().min(1, "Order size unit is required"),
+    orderBoxHeight: z.string().min(1, "Order box height is required"),
+    orderBoxWidth: z.string().min(1, "Order box width is required"),
+    orderBoxLength: z.string().min(1, "Order box length is required"),
+    amount2Collect: z.string().optional(),
+    productDetails: productDetailsSchema,
+    ewaybill: z.string().optional(),
+    pickupAddress: z.string().min(1, "Pickup address is required"),
+    isReverseOrder: z.boolean().default(false).optional()
+}).refine(data => {
+    if (data.payment_mode === "COD") {
+        return data.amount2Collect !== "";
+    }
+    return true;
+}).refine(data => {
+    if (Number(data.productDetails.taxableValue) >= 50000) {
+        return data.ewaybill !== "";
+    }
+    return true;
+}, {
+    message: "E-way bill is required for taxable value greater than 50000",
+    path: ["ewaybill"]
+});
+
 
 export const B2CForm = () => {
     const { handleCreateOrder, seller, orders, getAllOrdersByStatus } = useSellerProvider();
@@ -69,7 +104,7 @@ export const B2CForm = () => {
     yesterday.setDate(yesterday.getDate() - 1);
 
     const form = useForm({
-        resolver: zodResolver(formDataSchema),
+        resolver: zodResolver(B2CFormSchema),
         defaultValues: {
             order_reference_id: `${user?.name}`,
             fragile_items: false,
@@ -128,7 +163,7 @@ export const B2CForm = () => {
     };
 
 
-    const onSubmit = async (values: z.infer<typeof formDataSchema>) => {
+    const onSubmit = async (values: z.infer<typeof B2CFormSchema>) => {
 
         values.productDetails.taxableValue = (Number(form.watch('productDetails.taxableValue')) + (Number(form.watch('productDetails.taxRate')) / 100) * Number(form.watch('productDetails.taxableValue'))).toString();
 
@@ -157,7 +192,7 @@ export const B2CForm = () => {
         }
     }
 
-    function navigateToShipment(){
+    function navigateToShipment() {
         router.push("/orders")
     }
 
@@ -173,7 +208,7 @@ export const B2CForm = () => {
                             <CardDescription>Order Details</CardDescription>
                         </CardHeader>
                         <OrderDetailForm
-                        seller={seller}
+                            seller={seller}
                             form={form}
                             isLoading={isLoading}
                             handleDecrement={handleDecrement}
@@ -218,7 +253,7 @@ export const B2CForm = () => {
                                 handleClose={() => {
                                     getAllOrdersByStatus("all")
                                     router.push('/orders')
-                                    
+
                                 }}
                                 acceptFileTypes={{ "text/csv": [".csv"] }}
                             />

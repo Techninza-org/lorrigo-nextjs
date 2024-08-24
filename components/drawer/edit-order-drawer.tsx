@@ -54,33 +54,33 @@ export const EditFormSchema = formDataSchema.merge(customerDetailsSchema).merge(
     message: "Pincode should be of 6 digits",
     path: ["sellerDetails", "sellerPincode"]
 })
-.refine(data => {
-    if (data.sellerDetails.isSellerAddressAdded) {
-        return isValidPhoneNumber(data?.sellerDetails?.sellerPhone ?? '');
-    }
-    return true;
-}, {
-    message: "Phone number should be of 10 digits",
-    path: ["sellerDetails", "sellerPhone"]
-})
-.refine(data => {
-    if (data.sellerDetails.isSellerAddressAdded) {
-        return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
-    }
-    return true;
-}, {
-    message: "Address is required",
-    path: ["sellerDetails", "sellerAddress"]
-}).refine(data => {
-    console.log(Number(data.productDetails.taxableValue) >= 50000)
-    if (Number(data.productDetails.taxableValue) >= 50000) {
-        return (data.ewaybill ?? "").length > 0;
-    }
-    return true;
-}, {
-    message: "Ewaybill is required for order value < 50000",
-    path: ["ewaybill"]
-});
+    .refine(data => {
+        if (data.sellerDetails.isSellerAddressAdded) {
+            return isValidPhoneNumber(data?.sellerDetails?.sellerPhone ?? '');
+        }
+        return true;
+    }, {
+        message: "Phone number should be of 10 digits",
+        path: ["sellerDetails", "sellerPhone"]
+    })
+    .refine(data => {
+        if (data.sellerDetails.isSellerAddressAdded) {
+            return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
+        }
+        return true;
+    }, {
+        message: "Address is required",
+        path: ["sellerDetails", "sellerAddress"]
+    }).refine(data => {
+        console.log(Number(data.productDetails.taxableValue) >= 50000)
+        if (Number(data.productDetails.taxableValue) >= 50000) {
+            return (data.ewaybill ?? "").length > 0;
+        }
+        return true;
+    }, {
+        message: "Ewaybill is required for order value < 50000",
+        path: ["ewaybill"]
+    });
 
 
 export function EditOrderDrawer() {
@@ -289,6 +289,7 @@ export function EditOrderDrawer() {
                                         <Package className='mr-3' size={20} />Order Details
                                     </h4>
                                     <OrderDetailForm
+                                        isDisabledPaymentMode={true}
                                         seller={seller}
                                         form={form}
                                         orderRefDisable={true}
