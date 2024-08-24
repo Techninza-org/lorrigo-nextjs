@@ -142,4 +142,14 @@ export const AdminShipmentListingCol: ColumnDef<any>[] = [
             )
         }
     },
+    {
+        header: 'Invoice Date',
+        accessorKey: 'order_invoice_date',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <p>{rowData.createdAt && formatDate(`${rowData.order_invoice_date}`, 'dd MM yyyy | HH:mm a')}</p>
+            )
+        }
+    },
 ];

@@ -41,8 +41,8 @@ export default function CourierPage() {
             setCourierPartners(res)
             const volume = res?.orderDetails?.orderBoxLength * res?.orderDetails?.orderBoxWidth * res?.orderDetails?.orderBoxHeight;
             const b2bVol = res?.orderDetails?.packageDetails?.reduce((sum: any, box: any) => sum + parseFloat(String(box.orderBoxHeight * box.orderBoxLength * box.orderBoxWidth) || '0'), 0);
-            console.log(volume, b2bVol)
-            setVolWeight((volume || b2bVol) / 5000)
+            const vol = (volume || b2bVol) / (params.type == "b2c" ? 5000 : 4500)
+            setVolWeight(vol)
         }
 
         fetchCourierPartners()
@@ -94,7 +94,7 @@ export default function CourierPage() {
                         </div>
                         <div>
                             <p className="text-sm font-semibold">Volumetric Weight (kg)</p>
-                            <p className="text-sm">{volWeight} kg</p>
+                            <p className="text-sm">{volWeight.toFixed(2)} kg</p>
                         </div>
                         {courierPartners.orderDetails.payment_mode != 0 && <div>
                             <p className="text-sm font-semibold">Collectable Amount</p>

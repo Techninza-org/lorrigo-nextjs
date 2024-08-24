@@ -67,7 +67,7 @@ export const B2BInvoicePage = ({ order }: { order?: B2BOrderType }) => {
             const imgHeight = canvas.height;
             const scaleX = itemWidth / imgWidth;
             const scaleY = itemHeight / imgHeight;
-            const scale = Math.min(scaleX, scaleY); 
+            const scale = Math.min(scaleX, scaleY);
 
             const scaledWidth = imgWidth * scale;
             const scaledHeight = imgHeight * scale;
@@ -165,7 +165,7 @@ export const GenerateManifest = ({ order }: { order?: B2COrderType }) => {
         <>
             <Button size={"sm"} variant={"webPageBtn"} onClick={printDocument}>Download Manifest</Button>
             <div className="w-full p-4" id="divToPrint">
-                <GenerateManifestTemplate order={order} />
+                <GenerateManifestTemplate orders={(order && [order]) || []} sellerName={order?.sellerDetails?.sellerName ?? ""} courierName={order?.carrierName ?? ""} />
             </div>
         </>
     )
@@ -193,7 +193,7 @@ export const GenerateB2BManifest = ({ order }: { order?: B2BOrderType }) => {
     )
 }
 
-export const InvoiceBulk = ({ orders }: {orders: B2COrderType[]}) => {
+export const InvoiceBulk = ({ orders }: { orders: B2COrderType[] }) => {
     const { toPDF, targetRef } = usePDF({ filename: 'bulk_label.pdf' });
 
     const chunkArray = (array: B2COrderType[], size: number) => {
@@ -214,7 +214,7 @@ export const InvoiceBulk = ({ orders }: {orders: B2COrderType[]}) => {
                     chunkedOrders.map((orderChunk, pageIndex) => (
                         <div key={pageIndex} className={`page-break grid grid-cols-2 gap-14 justify-items-center ${pageIndex > 0 ? 'mt-[650px]' : ''}`}>
                             {
-                                orderChunk.map((order:B2COrderType) => (
+                                orderChunk.map((order: B2COrderType) => (
                                     <div key={order._id} className="w-full">
                                         <InvoiceTemplate order={order} />
                                     </div>
@@ -231,14 +231,27 @@ export const InvoiceBulk = ({ orders }: {orders: B2COrderType[]}) => {
 
 export const GenerateBulkManifest = ({ orders }: { orders: B2COrderType[] }) => {
     const { toPDF, targetRef } = usePDF({ filename: 'bulk_Manifest.pdf' });
+    const groupOrderByCourierName = (orders: B2COrderType[]) => {
+        const groupedOrders: { [key: string]: B2COrderType[] } = {};
+        orders.forEach(order => {
+            if (!order?.carrierName) return null;
+            if (!groupedOrders[order?.carrierName]) {
+                groupedOrders[order?.carrierName] = [];
+            }
+            groupedOrders[order?.carrierName].push(order);
+        });
+        return groupedOrders;
+    }
+
+    const groupedOrders = groupOrderByCourierName(orders)
     return (
         <>
             <Button size={"sm"} variant={"webPageBtn"} onClick={() => toPDF()}>Download Manifest</Button>
             <div ref={targetRef} className="mx-auto w-full h-full flex flex-col gap-16 p-10  justify-center">
                 {
-                    orders.map((order, index) => (
-                        <div key={order._id} className={` ${index % 2 === 1 ? 'mt-[410px]' : ''}`}>
-                            <GenerateManifestTemplate order={order} />
+                    groupedOrders && Object?.keys(groupedOrders).map((courier, index) => (
+                        <div key={index} className="w-full">
+                            <GenerateManifestTemplate orders={groupedOrders[courier]} sellerName={groupedOrders[courier][0].sellerDetails?.sellerName || ''} courierName={courier} />
                         </div>
                     ))
                 }

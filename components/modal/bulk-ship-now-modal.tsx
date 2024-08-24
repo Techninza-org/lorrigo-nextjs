@@ -107,9 +107,6 @@ export const BulkShipNowModal = () => {
         return selectedItems.reduce((acc, item) => acc + item.charge, 0)
     }
 
-    console.log(selectedItems);
-    
-
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
             <DialogContent className="scrollbar-hide bg-white dark:text-white  text-black p-6 max-w-screen-md">

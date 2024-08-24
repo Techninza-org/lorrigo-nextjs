@@ -15,6 +15,7 @@ import { B2BCourierPriceConfigureSchema } from "../Admin/User/user-b2b-courier-c
 import { UserConfigSchema } from "../Admin/User/user-config";
 import { B2BOrderType } from "@/types/B2BTypes";
 import { WalletDeductionSchema } from "../Admin/Finance/manual-wallet-deduction-form";
+import { formatDate } from "date-fns";
 
 interface AdminContextType {
     users: SellerType[];
@@ -29,6 +30,7 @@ interface AdminContextType {
     futureRemittance: RemittanceType[] | null;
     handleCreateHub: (hub: AdminType) => void;
     handleSignup: (credentials: any, user: any) => void;
+    getAllOrders: (status: string, { fromDate, toDate }: { fromDate: string, toDate: string }) => void;
     handleEditUser: (sellerId: string, user: any) => void;
 
     upateSellerB2BAssignedCouriers: ({ couriers }: { couriers: string[] }) => void;
@@ -69,6 +71,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const router = useRouter()
     const searchParams = useSearchParams()
     const sellerId = searchParams.get('sellerId')
+    const defaultToDate = new Date();
+    const defaultFromDate = new Date(
+        defaultToDate.getFullYear(),
+        defaultToDate.getMonth() - 1,
+    );
 
 
     const handleCreateHub = useCallback(async (hub: AdminType) => {
@@ -174,8 +181,8 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
     }
 
-    const getAllOrders = async (status: string) => {
-        let url = status === "all" ? `/admin/all-orders` : `/admin/?status=${status}`
+    const getAllOrders = async (status: string, { fromDate, toDate }: { fromDate: string, toDate: string }) => {
+        let url = status === "all" ? `/admin/all-orders?from=${fromDate}&to=${toDate}` : `/admin/?status=${status}`;
         try {
             const res = await axiosIWAuth.get(url);
             if (res.data?.valid) {
@@ -408,13 +415,13 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
-            getAllOrders("all")
+            // getAllOrders("all", { fromDate: defaultFromDate, toDate: defaultToDate });
             getAllSellers();
             getAllRemittance();
 
-            getAllCouriers(),
-                getSellerAssignedCouriers(),
-                getFutureRemittance()
+            getAllCouriers()
+            getSellerAssignedCouriers()
+            getFutureRemittance()
             getClientNVendorBillingData()
         }
     }, [user, userToken])
@@ -433,6 +440,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 users,
                 currSeller,
                 allRemittance,
+                getAllOrders,
                 shippingB2BOrders,
                 futureRemittance,
                 shippingOrders,

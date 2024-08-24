@@ -38,10 +38,13 @@ import { DateRange } from "react-day-picker"
 import { filterData } from "@/lib/utils"
 import { DatePickerWithRange } from "@/components/DatePickerWithRange"
 import { formatDate } from "date-fns";
+import { useAdminProvider } from "@/components/providers/AdminProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export function ShipmentListingTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const searchParams = useSearchParams();
+  const { getAllOrders } = useAdminProvider();
+  const {userToken} = useAuth();
   const [filtering, setFiltering] = React.useState<string>("");
 
   const [rowSelection, setRowSelection] = React.useState({});
@@ -52,10 +55,9 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
   });
 
   const defaultToDate = new Date();
-  const defaultFromDate = new Date(
-    defaultToDate.getFullYear(),
-    defaultToDate.getMonth() - 1,
-  );
+  const defaultFromDate = new Date();
+  defaultFromDate.setDate(defaultToDate.getDate() - 7);
+
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
     to: defaultToDate,
@@ -150,6 +152,12 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
       orderCreationDate: row?.createdAt,
     }
   })
+
+  React.useEffect(() => {
+
+    if (date?.from && date?.to) getAllOrders("all", { fromDate: formatDate(date?.from.toString(), "MM/dd/yyyy"), toDate: formatDate(date?.to.toString(), "MM/dd/yyyy") })
+  
+  }, [userToken, date]);
 
   return (
     <div className="w-full">

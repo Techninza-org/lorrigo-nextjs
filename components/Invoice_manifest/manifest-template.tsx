@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { Square } from "lucide-react";
 import Barcode from "react-barcode"
 
-export default function GenerateManifestTemplate({ order }: { order?: B2COrderType }) {
+export default function GenerateManifestTemplate({ orders, courierName, sellerName }: { sellerName: string, courierName: string, orders?: B2COrderType[] }) {
 
     return (
         <div className="w-full p-4 border-black border-double border-2 h-full">
@@ -22,11 +22,11 @@ export default function GenerateManifestTemplate({ order }: { order?: B2COrderTy
             <div className="flex justify-between">
                 <div>
                     <div className="max-w-72">
-                        Seller: <span className="font-bold text-lg  text-wrap">{order?.sellerDetails?.sellerName}</span>
+                        Seller: <span className="font-bold text-lg  text-wrap">{sellerName}</span>
                     </div>
                     <div>
                         <div className="max-w-72">
-                            Courier: <span className="font-bold text-lg  text-wrap">{order?.carrierName}</span>
+                            Courier: <span className="font-bold text-lg  text-wrap">{courierName}</span>
                         </div>
                     </div>
                 </div>
@@ -36,7 +36,7 @@ export default function GenerateManifestTemplate({ order }: { order?: B2COrderTy
                     </div>
                     <div>
                         <div className="max-w-72">
-                            Total shipments to dispatch : 1
+                            Total shipments to dispatch : {orders?.length}
                         </div>
                     </div>
                 </div>
@@ -51,19 +51,24 @@ export default function GenerateManifestTemplate({ order }: { order?: B2COrderTy
 
             </div>
 
-            <div className="grid grid-cols-6 p-1 px-3 border-b-2 border-gray-300">
-                <div>1</div>
-                <div>{order?.order_reference_id}</div>
-                <div><Square /></div>
-                <div>{order?.awb}</div>
-                <div>Shoes</div>
-                <div>
-                    <Barcode value={`${order?.awb}`} renderer="svg" width={1.2} height={36} displayValue={false} />
+            {orders?.map((order, idx) => (
+                <div key={order._id} className="grid grid-cols-6 p-1 px-3 border-b-2 border-gray-300">
+                    <div>{idx + 1}</div>
+                    <div>{order?.order_reference_id}</div>
+                    <div><Square /></div>
+                    <div>{order?.awb}</div>
+                    <div>
+                        {(order.productId?.name?.length ?? 0) > 50
+                            ? order?.productId?.name.slice(0, 55).concat('...')
+                            : order.productId?.name ?? 'No Name Available'}
+                    </div>                    <div>
+                        <Barcode value={`${order?.awb}`} renderer="svg" width={1.2} height={36} displayValue={false} />
+                    </div>
                 </div>
-            </div>
+            ))}
 
             <div className="border-y-2 border-dashed font-bold text-xl p-1 pb-3 border-gray-500 text-center my-9">
-                To Be Filled By {order?.carrierName} Executive
+                To Be Filled By {courierName} Executive
             </div>
 
             <div className="grid  grid-cols-2 container  justify-items-center gap-5">
@@ -90,11 +95,11 @@ export default function GenerateManifestTemplate({ order }: { order?: B2COrderTy
                 </div>
 
             </div>
-            <div className="text-center my-3">
+            {/* <div className="text-center my-3">
                 <div className="capitalize">{order?.pickupAddress.address1.toLowerCase()}, {order?.pickupAddress.city.toLowerCase()}, {order?.pickupAddress.state.toLowerCase()}</div>
                 <div>{order?.pickupAddress.city.toLowerCase()}, {order?.pickupAddress.state.toLowerCase()}-{order?.pickupAddress.pincode}.</div>
                 <div>Contact : <span className="font-bold">+{order?.pickupAddress.phone}</span></div>
-            </div>
+            </div> */}
             <div className="my-3 text-center">
                 This is a system generated document
             </div>
