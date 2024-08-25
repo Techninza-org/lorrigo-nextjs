@@ -1,7 +1,7 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings } from "lucide-react";
+import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings, Wallet } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -121,7 +121,11 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 }
             ]
         },
-
+        {
+            title: "Wallet transactions",
+            icon: Wallet,
+            href: "/admin/users/wallet-txn",
+        },
     ];
 
     const navLinks = isAdmin ? ADMIN_NAV_LINKS : SELLER_NAV_LINKS;

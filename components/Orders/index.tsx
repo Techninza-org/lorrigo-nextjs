@@ -28,7 +28,7 @@ export default function Orders() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-                <OrderStatusTable columns={OrderStatusCol} data={orders} />
+                <OrderStatusTable columns={OrderStatusCol} data={orders || []} />
             </CardContent>
         </Card>
     )

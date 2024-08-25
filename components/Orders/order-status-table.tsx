@@ -29,7 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useSellerProvider } from "../providers/SellerProvider"
 import { cn, filterData } from "@/lib/utils"
 import { useModal } from "@/hooks/use-model-store"
@@ -42,7 +42,8 @@ import { format } from "date-fns"
 
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
-  const { handleOrderSync, seller } = useSellerProvider()
+  const { handleOrderSync, seller, orders } = useSellerProvider()
+  const router = useRouter();
   const [filtering, setFiltering] = React.useState<string>("")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -97,7 +98,6 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     onGlobalFilterChange: setFiltering
   });
 
-  const router = useRouter()
   const { onOpen } = useModal();
   const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
   const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 0)
@@ -122,10 +122,6 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     });
     setFilteredData(a);
   }, [data, date]);
-
-  React.useEffect(() => {
-    setFilteredData(data)
-  }, [data])
 
   const cols = [
     {

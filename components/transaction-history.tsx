@@ -27,6 +27,40 @@ import Link from "next/link";
 import { CircleAlertIcon, CircleX, Move, MoveDownLeft, MoveRightIcon, MoveUpRightIcon } from "lucide-react";
 import { Input } from "./ui/input";
 
+
+const iconMap: { [key: string]: { component: any; color: string } } = {
+    "PAYMENT_INITIATED": {
+        component: CircleX,
+        color: "text-red-500",
+    },
+    "PAYMENT_SUCCESS": {
+        component: MoveDownLeft,
+        color: "text-green-600",
+    },
+    "PAYMENT_PENDING": {
+        component: CircleAlertIcon,
+        color: "text-yellow-600",
+    },
+    "PAYMENT_ERROR": {
+        component: CircleX,
+        color: "text-red-600",
+    },
+    "CREDIT": {
+        component: MoveDownLeft,
+        color: "text-green-600",
+    },
+    "DEBIT": {
+        component: MoveUpRightIcon,
+        color: "text-red-600",
+    },
+    // Add more mappings here as needed
+};
+
+export const IconComponent = ({ item }: { item: any }) => {
+    const { component: Icon, color } = iconMap[item.code] || {};
+    return Icon ? <Icon size={18} className={color} /> : null;
+};
+
 export const TransactionsHistory = () => {
     const { getAllTransactions } = usePaymentGateway();
     const { axiosIWAuth } = useAxios();
@@ -63,38 +97,6 @@ export const TransactionsHistory = () => {
     });
 
 
-    const iconMap: { [key: string]: { component: any; color: string } } = {
-        "PAYMENT_INITIATED": {
-            component: CircleX,
-            color: "text-red-500",
-        },
-        "PAYMENT_SUCCESS": {
-            component: MoveDownLeft,
-            color: "text-green-600",
-        },
-        "PAYMENT_PENDING": {
-            component: CircleAlertIcon,
-            color: "text-yellow-600",
-        },
-        "PAYMENT_ERROR": {
-            component: CircleX,
-            color: "text-red-600",
-        },
-        "CREDIT": {
-            component: MoveDownLeft,
-            color: "text-green-600",
-        },
-        "DEBIT": {
-            component: MoveUpRightIcon,
-            color: "text-red-600",
-        },
-        // Add more mappings here as needed
-    };
-
-    const IconComponent = ({ item }: {item: any}) => {
-        const { component: Icon, color } = iconMap[item.code] || {};
-        return Icon ? <Icon size={18} className={color} /> : null;
-    };
 
 
 
@@ -126,11 +128,11 @@ export const TransactionsHistory = () => {
                         {filteredTransactions?.length > 0 ? filteredTransactions?.map((item) => {
                             const stage = item?.stage[item?.stage?.length - 1];
                             const { action, dateTime } = stage;
-                            const status: any = ["Completed","PAYMENT_SUCCESSFUL"].includes(action) ? "success" : "destructive";
+                            const status: any = ["Completed", "PAYMENT_SUCCESSFUL"].includes(action) ? "success" : "destructive";
                             return (
                                 <TableRow key={item._id}>
                                     <TableCell className="font-medium">
-                                    <IconComponent item={item} />
+                                        <IconComponent item={item} />
                                     </TableCell>
                                     <TableCell className="font-medium">PID-{item?.merchantTransactionId}</TableCell>
                                     <TableCell>

@@ -46,6 +46,8 @@ interface AdminContextType {
 
 
     manageRemittance: ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => Promise<boolean>;
+    getAllWalletTxn: ({ fromDate, toDate }: { fromDate: string, toDate: string }) => void;
+    allTxn: any[];
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -66,6 +68,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [assignedCouriers, setAssignedCouriers] = useState<ShippingRate[]>([]);
     const [assignedB2BCouriers, setAssignedB2BCouriers] = useState<ShippinB2BgRate[]>([]);
     const [clientNVendorBills, setClientNVendorBills] = useState<any>([]);
+    const [allTxn, setAllTxn] = useState<any>([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -189,6 +192,18 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 setOrders(res.data.response.orders);
                 setB2BOrders(res.data.response.b2borders);
                 return res.data.response.orders
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    const getAllWalletTxn = async ({ fromDate, toDate }: { fromDate: string, toDate: string }) => {
+        let url = `/admin/all-wallet?from=${fromDate}&to=${toDate}`
+        try {
+            const res = await axiosIWAuth.get(url);
+            if (res.data?.valid) {
+                setAllTxn(res.data.response.walletTxns);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -462,7 +477,10 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 manageRemittance,
                 clientNVendorBills,
                 getClientNVendorBillingData,
-                walletDeduction
+                walletDeduction,
+                getAllWalletTxn,
+                allTxn
+
             }}
         >
             {children}

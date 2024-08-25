@@ -588,9 +588,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "Order updated successfully",
         });
-        getSellerDashboardDetails();
         getAllOrdersByStatus(status || "all");
-        router.refresh();
+        getSellerDashboardDetails();
         return true;
       } else {
         toast({
