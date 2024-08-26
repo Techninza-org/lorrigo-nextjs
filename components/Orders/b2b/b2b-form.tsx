@@ -46,20 +46,38 @@ export const b2bformDataSchema = z.object({
                 qty: z
                     .string()
                     .min(1, "Quantity is required")
-                    .refine((val) => !isNaN(parseFloat(val)), {
-                        message: "Box quantity must be a valid number",
+                    .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
+                        message: "Box quantity must be a valid number greater than zero",
                         path: ["qty"],
                     }),
-                orderBoxLength: z.string().optional(),
-                orderBoxWidth: z.string().optional(),
-                orderBoxHeight: z.string().optional(),
+                orderBoxLength: z
+                    .string()
+                    .optional()
+                    .refine((val) => val === undefined || (val && !isNaN(parseFloat(val)) && parseFloat(val) > 0), {
+                        message: "Length must be a valid number greater than zero",
+                        path: ["orderBoxLength"],
+                    }),
+                orderBoxWidth: z
+                    .string()
+                    .optional()
+                    .refine((val) => val === undefined || (val && !isNaN(parseFloat(val)) && parseFloat(val) > 0), {
+                        message: "Width must be a valid number greater than zero",
+                        path: ["orderBoxWidth"],
+                    }),
+                orderBoxHeight: z
+                    .string()
+                    .optional()
+                    .refine((val) => val === undefined || (val && !isNaN(parseFloat(val)) && parseFloat(val) > 0), {
+                        message: "Height must be a valid number greater than zero",
+                        path: ["orderBoxHeight"],
+                    }),
                 orderBoxWeight: z
                     .string()
-                    .refine((val) => !isNaN(parseFloat(val)), {
-                        message: "Box weight must be a valid number",
+                    .optional()
+                    .refine((val) => val === undefined || (val && !isNaN(parseFloat(val)) && parseFloat(val) > 0), {
+                        message: "Weight must be a valid number greater than zero",
                         path: ["orderBoxWeight"],
-                    })
-                    .optional(),
+                    }),
                 boxWeightUnit: z.string().optional(),
                 boxSizeUnit: z.string().optional(),
             })
@@ -72,39 +90,39 @@ export const b2bformDataSchema = z.object({
     invoice: z.any().optional(),
     supporting_document: z.any().optional(),
 })
-.refine((data) => {
-    const totalWeight = parseFloat(data.total_weight);
-    const quantity = parseFloat(data.quantity);
+    .refine((data) => {
+        const totalWeight = parseFloat(data.total_weight);
+        const quantity = parseFloat(data.quantity);
 
-    const totalBoxWeight = data.boxes.reduce(
-        (sum, box) => sum + parseFloat(box.orderBoxWeight || '0') * parseFloat(box.qty),
-        0
-    );
-    const totalBoxQuantity = data.boxes.reduce(
-        (sum, box) => sum + parseFloat(box.qty || '0'),
-        0
-    );
+        const totalBoxWeight = data.boxes.reduce(
+            (sum, box) => sum + parseFloat(box.orderBoxWeight || '0') * parseFloat(box.qty),
+            0
+        );
+        const totalBoxQuantity = data.boxes.reduce(
+            (sum, box) => sum + parseFloat(box.qty || '0'),
+            0
+        );
 
-    if (totalWeight !== totalBoxWeight) {
-        return false;
-    }
-    if (quantity !== totalBoxQuantity) {
-        return false;
-    }
+        if (totalWeight !== totalBoxWeight) {
+            return false;
+        }
+        if (quantity !== totalBoxQuantity) {
+            return false;
+        }
 
-    return true;
-}, {
-    message: "Total weight is the sum of the weights of all the products.",
-    path: ["total_weight"],
-}).refine(data => {
-    if (parseFloat(data.amount) >= 50000) {
-        return data.ewaybill !== "";
-    }
-    return true;
-},{
-    message: "E-waybill is required for amount greater than 50000",
-    path: ["ewaybill"]
-});
+        return true;
+    }, {
+        message: "Total weight is the sum of the weights of all the products.",
+        path: ["total_weight"],
+    }).refine(data => {
+        if (parseFloat(data.amount) >= 50000) {
+            return data.ewaybill !== "";
+        }
+        return true;
+    }, {
+        message: "E-waybill is required for amount greater than 50000",
+        path: ["ewaybill"]
+    });
 
 
 export default function B2BForm() {
@@ -203,7 +221,7 @@ export default function B2BForm() {
 
 
 export const B2BShipmentDetailsForm = ({ form, isLoading }: { form: any, isLoading: boolean }) => {
-    const { fields, append } = useFieldArray({
+    const { fields, append, remove } = useFieldArray({
         control: form.control,
         name: "boxes"
     });
@@ -320,12 +338,15 @@ export const B2BShipmentDetailsForm = ({ form, isLoading }: { form: any, isLoadi
                 <CardHeader>
                     <CardTitle className='flex items-center'><PackageOpen size={23} className='mr-3' />Dimensions</CardTitle>
                 </CardHeader>
-                <B2bBoxDetails
-                    form={form}
-                    isLoading={isLoading}
-                    fields={fields}
-                    append={append}
-                />
+                <CardContent>
+                    <B2bBoxDetails
+                        form={form}
+                        isLoading={isLoading}
+                        fields={fields}
+                        append={append}
+                        remove={remove}
+                    />
+                </CardContent>
             </Card>
         </>
     )

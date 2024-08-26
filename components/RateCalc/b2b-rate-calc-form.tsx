@@ -8,7 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,13 +31,32 @@ import {
 } from "@/components/ui/table"
 import Image from "next/image";
 import { LoadingComponent } from "../loading-spinner";
+import { B2bBoxDetails } from "../Orders/b2b/b2b-box-details";
 
 
 export const B2BrateCalcSchema = z.object({
     pickupPincode: z.string().min(6, "Please enter the valid pincode"),
     deliveryPincode: z.string().min(6, "Please enter the valid pincode"),
-    orderWeight: z.string().min(1, "Please enter the weight"),
     amount: z.string().min(1, "Please enter the amount"),
+    boxes: z.array(z.object({
+        qty: z.string().min(1, "Please enter the quantity").refine(value => parseFloat(value) > 0, { message: "Please enter a valid qty" }),
+        orderBoxLength: z.string().min(1, "Please enter the length").refine(value => parseFloat(value) > 0, { message: "Please enter a valid orderBoxLength" }),
+        orderBoxWidth: z.string().min(1, "Please enter the width").refine(value => parseFloat(value) > 0, { message: "Please enter a valid orderBoxWidth" }),
+        orderBoxHeight: z.string().min(1, "Please enter the height").refine(value => parseFloat(value) > 0, { message: "Please enter a valid orderBoxHeight" }),
+        orderBoxWeight: z.string().min(1, "Please enter the weight").refine(value => parseFloat(value) > 0, { message: "Please enter a valid weight" }),
+        boxWeightUnit: z.string().min(1, "Please enter the weight unit"),
+        boxSizeUnit: z.string().min(1, "Please enter the size unit"),
+    })).optional(),
+    orderWeight: z.string().optional()
+}).refine(data => {
+    if (data.boxes) {
+        return data.boxes.length > 0
+    } else {
+        return true
+    }
+}, {
+    message: "Please add atleast one box",
+    path: ["boxes"]
 });
 
 
@@ -51,9 +70,16 @@ export const B2BRateCalcForm = () => {
         defaultValues: {
             pickupPincode: "",
             deliveryPincode: "",
-            orderWeight: "",
             amount: "",
+            boxes: [
+                { qty: "", orderBoxLength: "", orderBoxWidth: "", orderBoxHeight: "", orderBoxWeight: "", boxWeightUnit: "kg", boxSizeUnit: "cm" }
+            ],
         }
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: "boxes"
     });
 
     const isLoading = form.formState.isSubmitting;
@@ -87,7 +113,15 @@ export const B2BRateCalcForm = () => {
     const onSubmit = async (values: z.infer<typeof B2BrateCalcSchema>) => {
         setIsAPILoading(true)
         try {
-            const res = await B2BcalcRate(values)
+            const res = await B2BcalcRate({
+                pickupPincode: values.pickupPincode,
+                deliveryPincode: values.deliveryPincode,
+                amount: values.amount,
+                orderWeight: String(values?.boxes?.reduce(
+                    (sum, box) => sum + parseFloat(box.orderBoxWeight || '0') * parseFloat(box.qty),
+                    0
+                )) ?? '',
+            })
             console.log(res, "res")
             setCourierCalcRate(res);
         } finally {
@@ -201,33 +235,14 @@ export const B2BRateCalcForm = () => {
                                         <div
                                             className="my-2 px-1 uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                                         >
-                                          Total Weight
+                                            Total Weight
                                         </div>
-                                        <FormField
-                                            control={form.control}
-                                            name="orderWeight"
-                                            render={({ field }) => (
-                                                <FormItem className="w-full">
-
-                                                    <FormControl>
-                                                        <div className="flex gap-3 items-center">
-                                                            <Input
-                                                                disabled={isLoading}
-                                                                className={cn("w-full bg-zinc-200/50 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                                    isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
-                                                                )}
-                                                                placeholder="Enter weight"
-                                                                {...field}
-                                                                onChange={handleChange}
-                                                            />
-                                                            <Button type='button' variant={"secondary"}>kg</Button>
-                                                        </div>
-
-                                                    </FormControl>
-                                                    {/* <FormDescription>Package weight should be 0.5kg.</FormDescription> */}
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
+                                        <B2bBoxDetails
+                                            form={form}
+                                            isLoading={isLoading}
+                                            fields={fields}
+                                            append={append}
+                                            remove={remove}
                                         />
                                     </div>
                                     <div>

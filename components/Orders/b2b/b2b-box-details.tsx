@@ -5,20 +5,23 @@ import { CardContent } from "../../ui/card";
 import { FormField, FormItem, FormMessage } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Fragment, useCallback, useEffect, useState } from "react";
-import { PlusCircleIcon } from "lucide-react";
+import { PlusCircleIcon, Trash2Icon } from "lucide-react";
 
 interface BoxDetailsProps {
     form: any;
     isLoading: boolean;
     fields: any[];
     append: (value: any) => void;
+    remove: (index: number) => void;
 }
 
-export const B2bBoxDetails = ({ form, isLoading, fields, append }: BoxDetailsProps) => {
+export const B2bBoxDetails = ({ form, isLoading, fields, append, remove }: BoxDetailsProps) => {
 
     const [boxesLeft, setBoxesLeft] = useState(0);
     const total = form.watch('quantity');
     const boxes = form.watch('boxes');
+    const { formState: { errors } } = form;
+
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number, fieldName: string) => {
         let numericValue = e.target.value.replace(/[^0-9.]/g, '');
@@ -28,31 +31,41 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append }: BoxDetailsPro
         }
         const field = e.target.name;
         form.setValue(field, numericValue);
-    
+
         // Update the boxesLeft state when the quantity changes
         const updatedBoxes = [...boxes];
         updatedBoxes[index][fieldName] = numericValue;
         const updatedTotalQty = updatedBoxes.reduce((sum: number, box: any) => sum + Number(box.qty || 0), 0);
         setBoxesLeft(total - updatedTotalQty);
     }, [form, total, boxes]);
-    
+
     const isError = (name: string) => {
-        return form.formState.isSubmitted && form.formState.errors[name];
+        const nameParts = name.match(/^boxes\[(\d+)\]\.(.+)$/);
+        if (!nameParts) return false;
+
+        const index = parseInt(nameParts[1], 10);
+        const fieldName = nameParts[2];
+
+        return errors?.boxes?.[index]?.[fieldName] ? true : false;
     };
-    
+
     useEffect(() => {
         const totalQty = boxes?.reduce((sum: number, box: any) => sum + Number(box.qty || 0), 0);
         setBoxesLeft(total - totalQty);
     }, [total, boxes]);
-    
+
     const addMoreFields = () => {
         append({ qty: "", orderBoxLength: "", orderBoxWidth: "", orderBoxHeight: "", orderBoxWeight: "", boxSizeUnit: "cm", boxWeightUnit: "kg" });
     };
 
+    const removeFields = (index: number) => {
+        remove(index);
+    }
+
     return (
-        <CardContent className="grid grid-cols-6 gap-3 items-center justify-items-center">
+        <CardContent className="grid grid-cols-7 gap-2 p-0 items-center justify-items-center">
             {fields.map((field: any, index: number) => (
-                <Fragment key={index}>
+                <Fragment key={field.id}>
                     <FormField
                         control={form.control}
                         name={`boxes[${index}].qty`}
@@ -109,7 +122,7 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append }: BoxDetailsPro
                                             )}
                                             placeholder="Length"
                                             {...field}
-                                           onChange={(e) => handleChange(e, index, 'orderBoxLength')}
+                                            onChange={(e) => handleChange(e, index, 'orderBoxLength')}
                                         />
                                     </div>
                                 </div>
@@ -130,7 +143,7 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append }: BoxDetailsPro
                                             )}
                                             placeholder="Width"
                                             {...field}
-                                           onChange={(e) => handleChange(e, index, 'orderBoxWidth')}
+                                            onChange={(e) => handleChange(e, index, 'orderBoxWidth')}
                                         />
                                     </div>
                                 </div>
@@ -151,7 +164,7 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append }: BoxDetailsPro
                                             )}
                                             placeholder="Height"
                                             {...field}
-                                           onChange={(e) => handleChange(e, index, 'orderBoxHeight')}
+                                            onChange={(e) => handleChange(e, index, 'orderBoxHeight')}
                                         />
                                     </div>
                                 </div>
@@ -160,6 +173,15 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append }: BoxDetailsPro
                     />
 
                     <Button type='button' variant={"secondary"}>cm</Button>
+                    <Button
+                        type="button"
+                        size={'icon'}
+                        variant="destructive"
+                        onClick={() => removeFields(index)}
+                        disabled={isLoading || fields?.length <= 1 || boxesLeft <= 0}
+                    >
+                        <Trash2Icon size={18} />
+                    </Button>
                 </Fragment>
             ))}
             <Button
@@ -167,7 +189,8 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append }: BoxDetailsPro
                 variant={'webPageBtn'}
                 size={'icon'}
                 onClick={addMoreFields}
-                disabled={boxesLeft <= 0}>
+                disabled={boxesLeft <= 0}
+            >
                 <PlusCircleIcon size={20} />
             </Button>
             {boxesLeft > 0 && <FormMessage className="col-span-5 text-center text-sm text-red-600">{boxesLeft} boxes left</FormMessage>}
