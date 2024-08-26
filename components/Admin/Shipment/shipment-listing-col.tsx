@@ -148,7 +148,7 @@ export const AdminShipmentListingCol: ColumnDef<any>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p>{rowData.createdAt && formatDate(`${rowData.order_invoice_date}`, 'dd MM yyyy | HH:mm a')}</p>
+                <p>{rowData.createdAt && formatDate(`${rowData.order_invoice_date || rowData.createdAt}`, 'dd MM yyyy | HH:mm a')}</p>
             )
         }
     },

@@ -72,31 +72,39 @@ export const b2bformDataSchema = z.object({
     invoice: z.any().optional(),
     supporting_document: z.any().optional(),
 })
-    .refine((data) => {
-        const totalWeight = parseFloat(data.total_weight);
-        const quantity = parseFloat(data.quantity);
+.refine((data) => {
+    const totalWeight = parseFloat(data.total_weight);
+    const quantity = parseFloat(data.quantity);
 
-        const totalBoxWeight = data.boxes.reduce(
-            (sum, box) => sum + parseFloat(box.orderBoxWeight || '0') * parseFloat(box.qty),
-            0
-        );
-        const totalBoxQuantity = data.boxes.reduce(
-            (sum, box) => sum + parseFloat(box.qty || '0'),
-            0
-        );
+    const totalBoxWeight = data.boxes.reduce(
+        (sum, box) => sum + parseFloat(box.orderBoxWeight || '0') * parseFloat(box.qty),
+        0
+    );
+    const totalBoxQuantity = data.boxes.reduce(
+        (sum, box) => sum + parseFloat(box.qty || '0'),
+        0
+    );
 
-        if (totalWeight !== totalBoxWeight) {
-            return false;
-        }
-        if (quantity !== totalBoxQuantity) {
-            return false;
-        }
+    if (totalWeight !== totalBoxWeight) {
+        return false;
+    }
+    if (quantity !== totalBoxQuantity) {
+        return false;
+    }
 
-        return true;
-    }, {
-        message: "Total weight is the sum of the weights of all the products.",
-        path: ["total_weight"],
-    });
+    return true;
+}, {
+    message: "Total weight is the sum of the weights of all the products.",
+    path: ["total_weight"],
+}).refine(data => {
+    if (parseFloat(data.amount) >= 50000) {
+        return data.ewaybill !== "";
+    }
+    return true;
+},{
+    message: "E-waybill is required for amount greater than 50000",
+    path: ["ewaybill"]
+});
 
 
 export default function B2BForm() {
