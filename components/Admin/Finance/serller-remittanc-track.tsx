@@ -140,7 +140,14 @@ const TrackSellerRemittance = () => {
                                     // const formattedDate = formatDate(date, 'dd-MM-yyyy')
                                     return (
                                         <TableRow key={index}>
-                                            <TableCell><Link href={`/track/${order.awb}`}>{order.awb}</Link></TableCell>
+                                            <TableCell>
+                                                <Link
+                                                    className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center"
+                                                    href={`/track/${order.awb}`}>
+                                                    {order.awb}
+                                                </Link>
+                                            </TableCell>
+                                            
                                             <TableCell>{formatCurrencyForIndia(Number(order?.amount2Collect))}</TableCell>
                                             <TableCell>
                                                 {date && format(date || new Date(), 'dd/MM/yyyy')}

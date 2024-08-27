@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown, DownloadIcon } from "lucide-react"
+import { ChevronDown, DownloadIcon, Truck } from "lucide-react"
 import CsvDownloader from 'react-csv-downloader';
 
 import { Button } from "@/components/ui/button"
@@ -40,13 +40,18 @@ import { DatePickerWithRange } from "@/components/DatePickerWithRange"
 import { formatDate } from "date-fns";
 import { useAdminProvider } from "@/components/providers/AdminProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { OrderStatusFilter } from "@/components/Orders/order-status-filter";
+import { Separator } from "@/components/ui/separator";
 
 export function ShipmentListingTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const { getAllOrders } = useAdminProvider();
-  const {userToken} = useAuth();
-  const [filtering, setFiltering] = React.useState<string>("");
+  const { userToken } = useAuth();
 
+
+  const [statusFilter, setStatusFilter] = React.useState<any>(null)
+
+  const [filtering, setFiltering] = React.useState<string>("");
   const [rowSelection, setRowSelection] = React.useState({});
   const [selectedColumn, setSelectedColumn] = React.useState("order_reference_id");
   const [pagination, setPagination] = React.useState({
@@ -64,17 +69,16 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
   });
 
   const filteredDataMemo = React.useMemo(() => {
-    const filteredByGlobal = filterData(data, filtering);
-    if ((!date?.from || !date?.to) || (date.from === date.to)) return filteredByGlobal;
+    let filteredByGlobal = filterData(data, filtering);
+    if (statusFilter?.value) {
+      filteredByGlobal = filteredByGlobal.filter((row: {
+        orderStages: any; row: any
+      }) => row?.orderStages?.slice(-1)[0].action === statusFilter?.value);
+    }
 
-    return filteredByGlobal.filter((row: any) => {
-      if (date?.from && date?.to) {
-        const createdAt = row.createdAt && new Date(row.createdAt)?.toISOString();
-        return createdAt > new Date(date.from).toISOString() && createdAt < new Date(date.to).toISOString();
-      }
-      return false;
-    });
-  }, [data, filtering, date]);
+    return filteredByGlobal;
+  }, [data, filtering, date, statusFilter?.value]);
+
 
   const table = useReactTable({
     data: filteredDataMemo,
@@ -154,10 +158,22 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
   })
 
   React.useEffect(() => {
-
     if (date?.from && date?.to) getAllOrders("all", { fromDate: formatDate(date?.from.toString(), "MM/dd/yyyy"), toDate: formatDate(date?.to.toString(), "MM/dd/yyyy") })
-  
   }, [userToken, date]);
+
+  const distinctCategories = data.reduce((acc: Record<string, string>, row: any) => {
+    const category = row?.orderStages?.slice(-1)[0].action;
+    acc[category] = category;
+    return acc;
+  }, {});
+
+  const statuses = Object.values(distinctCategories).map((category: any) => {
+    return {
+      label: category,
+      value: category,
+      icon: Truck
+    }
+  })
 
   return (
     <div className="w-full">
@@ -185,6 +201,7 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
           <CsvDownloader filename="shipment-listing" datas={datas} columns={cols}>
             <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
           </CsvDownloader>
+          <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -35,6 +35,9 @@ export const EditUserSchema = z.object({
     accType: z.string().optional(),
     accNumber: z.string().optional(),
     ifscNumber: z.string().optional(),
+    coi: z.string().optional(),
+    llpAggreement: z.string().optional(),
+    memoradum: z.string().optional(),
 })
 
 const EditUserForm = () => {
@@ -63,6 +66,9 @@ const EditUserForm = () => {
             accType: '',
             accNumber: '',
             ifscNumber: '',
+            coi: '',
+            llpAggreement: '',
+            memoradum: '',
         }
     });
 
@@ -86,8 +92,8 @@ const EditUserForm = () => {
                 gst: values.gst,
                 isVerified: values.verified,
                 // kycDetails: {
-                //     ...(olduser?.kycDetails ?? {}),
-                //     verified: values.verified
+                // ...(olduser?.kycDetails ?? {}),
+                // verified: values.verified
                 // },
                 isActive: values.active,
                 bankDetails: {
@@ -105,13 +111,34 @@ const EditUserForm = () => {
 
     useEffect(() => {
         if (user) {
+            const { document1Type, document2Type } = user.kycDetails || {}
+
+            // document1Type
+            const isPan = document1Type === 'pan'
+            const isAadhar = document1Type === 'aadhar'
+            const isCoi = document1Type === 'coi'
+            const isLlpAggreement = document1Type === 'llp-aggreement'
+            const isMemoradum = document1Type === 'memoradum'
+
+            // document2Type
+            const isPan2 = document2Type === 'pan'
+            const isAadhar2 = document2Type === 'aadhar'
+            const isCoi2 = document2Type === 'coi'
+            const isLlpAggreement2 = document2Type === 'llp-aggreement'
+            const isMemoradum2 = document2Type === 'memoradum'
+
             form.setValue('name', user.name || '')
             form.setValue('phone', user.billingAddress?.phone || '')
             form.setValue('companyName', user.companyProfile?.companyName || '')
             form.setValue('companyEmail', user.companyProfile?.companyEmail || '')
             form.setValue('prefix', user.prefix || '')
-            form.setValue('pan', user.pan || '')
-            form.setValue('aadhar', user.aadhar || '')
+
+            form.setValue('pan', user.pan || (isPan && user.kycDetails.document1Feild) || (isPan2 && user.kycDetails.document2Feild) || '')
+            form.setValue('aadhar', user.aadhar || (isAadhar && user.kycDetails.document1Feild) || (isAadhar2 && user.kycDetails.document2Feild) || '')
+            form.setValue('coi', (isCoi && user.kycDetails.document1Feild) || (isCoi2 && user.kycDetails.document2Feild) || '')
+            form.setValue('llpAggreement', (isLlpAggreement && user.kycDetails.document1Feild) || (isLlpAggreement2 && user.kycDetails.document2Feild) || '')
+            form.setValue('memoradum', (isMemoradum && user.kycDetails.document1Feild) || (isMemoradum2 && user.kycDetails.document2Feild) || '')
+
             form.setValue('gst', user.gst || '')
             form.setValue('verified', user.isVerified || false)
             form.setValue('active', user.isActive || false)
@@ -204,23 +231,6 @@ const EditUserForm = () => {
                         )} />
                     <FormField
                         control={form.control}
-                        name={'prefix'}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    Prefix
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        disabled={isLoading}
-                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                        {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    <FormField
-                        control={form.control}
                         name={'pan'}
                         render={({ field }) => (
                             <FormItem>
@@ -243,6 +253,57 @@ const EditUserForm = () => {
                             <FormItem>
                                 <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
                                     Aadhar
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        disabled={isLoading}
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    <FormField
+                        control={form.control}
+                        name={'coi'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    COI
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        disabled={isLoading}
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    <FormField
+                        control={form.control}
+                        name={'llpAggreement'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    LLP Aggrement
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        disabled={isLoading}
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                    <FormField
+                        control={form.control}
+                        name={'memoradum'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                    Memoradum
                                 </FormLabel>
                                 <FormControl>
                                     <Input
@@ -341,28 +402,28 @@ const EditUserForm = () => {
                     {
                         !user?.isVerified &&
                         <FormField
-                        control={form.control}
-                        name={'verified'}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <div className="flex items-center space-x-2">
-                                        <Checkbox
-                                            id="verified"
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                        <label
-                                            htmlFor="verified"
-                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                        >
-                                            Verified
-                                        </label>
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />}
+                            control={form.control}
+                            name={'verified'}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="verified"
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                            <label
+                                                htmlFor="verified"
+                                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                            >
+                                                Verified
+                                            </label>
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )} />}
                     <FormField
                         control={form.control}
                         name={'active'}

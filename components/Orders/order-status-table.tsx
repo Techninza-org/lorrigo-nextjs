@@ -50,11 +50,6 @@ import { OrderStatusFilter } from "./order-status-filter"
 
 const statuses = [
   {
-    value: "all",
-    label: "All Orders",
-    icon: HelpCircle,
-  },
-  {
     value: "unassigned",
     label: "Unassigned",
     icon: HelpCircle,
@@ -243,7 +238,6 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
           <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
             <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
           </CsvDownloader>
-          {/* <Button variant={'webPageBtn'} onClick={() => setAssignedAwb(!assignedAwb)} size={'sm'}>{!assignedAwb ? "Show All" : "Assigned AWB"}</Button> */}
           <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
         </div>
         <div>

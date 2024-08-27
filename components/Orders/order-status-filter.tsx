@@ -4,6 +4,7 @@ import * as React from "react"
 import {
     LucideIcon,
     Filter,
+    CircleXIcon,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -40,12 +41,12 @@ export function OrderStatusFilter({
     const [open, setOpen] = React.useState(false)
 
     return (
-        <div className={cn("flex items-center space-x-4")}>
+        <div className={cn("flex items-center space-x-1")}>
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
                         variant="webPageBtn"
-                        className=" justify-start p-3 w-32"
+                        className=" justify-start p-3 min-w-32"
                     >
                         {value ? (
                             <>
@@ -57,6 +58,15 @@ export function OrderStatusFilter({
                         )}
                     </Button>
                 </PopoverTrigger>
+                <>
+                    {value?.label && <Button
+                        variant="webPageBtn"
+                        size={'icon'}
+                        onClick={() => onChange(null)}
+                    >
+                        <CircleXIcon size={17}/>
+                    </Button>}
+                </>
                 <PopoverContent className="p-0" side="right" align="start">
                     <Command>
                         <CommandInput placeholder="Change status..." />
