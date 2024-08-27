@@ -10,7 +10,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { DownloadIcon } from "lucide-react"
+import { DownloadIcon, LucideIcon } from "lucide-react"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
@@ -39,7 +39,38 @@ import { DateRange } from "react-day-picker"
 import CsvDownloader from 'react-csv-downloader';
 import { getBucketStatus } from "./order-action-button"
 import { format } from "date-fns"
+import {
+  ArrowUpCircle,
+  CheckCircle2,
+  Circle,
+  HelpCircle,
+  XCircle,
+} from "lucide-react"
+import { OrderStatusFilter } from "./order-status-filter"
 
+const statuses = [
+  {
+    value: "all",
+    label: "All Orders",
+    icon: HelpCircle,
+  },
+  {
+    value: "unassigned",
+    label: "Unassigned",
+    icon: HelpCircle,
+  },
+  {
+    value: "assigned",
+    label: "Assigned",
+    icon: HelpCircle,
+  },
+]
+
+type IFilterStatus = {
+  value: string;
+  label: string;
+  icon: LucideIcon;
+}
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const { handleOrderSync, seller, orders } = useSellerProvider()
@@ -48,7 +79,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
-  const [assignedAwb, setAssignedAwb] = React.useState<boolean>(false)
+  const [statusFilter, setStatusFilter] = React.useState<IFilterStatus | null>(null)
   const [rowSelection, setRowSelection] = React.useState({})
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -66,17 +97,21 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   })
 
   const [filteredData, setFilteredData] = React.useState<any[]>(data)
-  // Memoize filtered data to avoid unnecessary re-renders
-  // const filteredDataMemo = React.useMemo(() => filterData(data, filtering), [data, filtering]);
+
   const filteredDataMemo = React.useMemo(() => {
     let filtered = filterData(data, filtering);
 
-    if (assignedAwb) {
-      filtered = filtered.filter((row: { awb: null }) => !((row.awb === "") || (row.awb === null) || (row.awb === undefined)));
+    if (statusFilter?.value === "unassigned") {
+      filtered = filtered.filter((row: { awb: null }) => (row.awb === "") || (row.awb === null) || (row.awb === undefined));
+    } else if (statusFilter?.value === "assigned") {
+      filtered = filtered.filter((row: { awb: string | null }) => row.awb !== "" && row.awb !== null && row.awb !== undefined);
+    } else if (statusFilter?.value === "all") {
+      filtered = filtered;
     }
 
+
     return filtered;
-  }, [data, filtering, assignedAwb]);
+  }, [data, filtering, statusFilter?.value]);
 
 
 
@@ -99,9 +134,11 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   });
 
   const { onOpen } = useModal();
+
   const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
   const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 0)
   const newOrders = allNewStageOrders.map(row => row.original)
+
   const handleMultiLableDownload = () => {
     onOpen("downloadLabels", { orders: selectedRows })
     router.push('/print/invoices')
@@ -206,7 +243,8 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
           <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
             <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
           </CsvDownloader>
-          <Button variant={'webPageBtn'} onClick={() => setAssignedAwb(!assignedAwb)} size={'sm'}>{!assignedAwb ? "Show All" : "Assigned AWB"}</Button>
+          {/* <Button variant={'webPageBtn'} onClick={() => setAssignedAwb(!assignedAwb)} size={'sm'}>{!assignedAwb ? "Show All" : "Assigned AWB"}</Button> */}
+          <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
         </div>
         <div>
           {

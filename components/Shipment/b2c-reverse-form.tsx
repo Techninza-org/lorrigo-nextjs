@@ -51,10 +51,18 @@ export const formDataSchema = z.object({
     orderBoxLength: z.string().min(1, "Order box length is required"),
     amount2Collect: z.string().optional(),
     productDetails: productDetailsSchema,
+    ewaybill: z.string().optional(),
     pickupAddress: z.string().min(1, "Pickup address is required"),
     isReverseOrder: z.boolean().default(false).optional()
+}).refine(data => {
+    if (Number(data.productDetails.taxableValue) >= 50000) {
+        return (data.ewaybill ?? "").length === 12;
+    }
+    return true;
+}, {
+    message: "Ewaybill is required and must be 12 digits for order value >= 50,000",
+    path: ["ewaybill"]
 });
-
 
 export const B2CReverseForm = () => {
     const { handleCreateOrder, seller, orders, getAllOrdersByStatus } = useSellerProvider();

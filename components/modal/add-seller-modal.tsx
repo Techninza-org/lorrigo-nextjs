@@ -273,6 +273,7 @@ export const SellerForm = ({ isLoading, form, isPinLoading }: { isLoading: boole
                                             disabled={isLoading}
                                             className="bg-zinc-300/10 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             defaultCountry='IN'
+                                            maxLength={11}
                                             placeholder='Enter the contact number'
                                             {...field}
                                         />

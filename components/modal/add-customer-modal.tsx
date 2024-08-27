@@ -188,7 +188,7 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                                         {...field}
                                         onChange={field.onChange}
                                         value={field.value}
-
+                                        maxLength={11}
                                         defaultCountry='IN'
                                         className="bg-zinc-300/10 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                         placeholder='Enter the contact number'

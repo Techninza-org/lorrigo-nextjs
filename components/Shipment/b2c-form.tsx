@@ -84,11 +84,11 @@ const B2CFormSchema = z.object({
     return true;
 }).refine(data => {
     if (Number(data.productDetails.taxableValue) >= 50000) {
-        return data.ewaybill !== "";
+        return (data.ewaybill ?? "").length === 12;
     }
     return true;
 }, {
-    message: "E-way bill is required for taxable value greater than 50000",
+    message: "Ewaybill is required and must be 12 digits for order value >= 50,000",
     path: ["ewaybill"]
 });
 

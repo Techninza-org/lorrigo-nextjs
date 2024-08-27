@@ -22,16 +22,18 @@ export type DocumentUploadSchema = {
 }
 
 export const DocumentUploadFormSchema = z.object({
+    document1Type: z.string().min(1, "Required"),
     document1Feild: z.string().min(1, "Required"),
+
     document1Front: z.instanceof(File),
     document1Back: z.instanceof(File),
+
+    document2Type: z.string().min(1, "Required"),
     document2Feild: z.string().min(1, "Required"),
+
     document2Front: z.instanceof(File),
     document2Back: z.instanceof(File),
-    document1Type: z.string().min(1, "Required"),
-    document2Type: z.string().min(1, "Required"),
-})
-
+});
 
 export const DocumentUploadForm = () => {
     const { onHandleBack, formData, setFormData, verifyOtpOpen, setVerifyOtpOpen, onHandleNext } = useKycProvider();
@@ -40,9 +42,12 @@ export const DocumentUploadForm = () => {
     const form = useForm({
         resolver: zodResolver(DocumentUploadFormSchema),
         defaultValues: {
+            document1Type: "",
             document1Feild: "",
             document1Front: typeof File,
             document1Back: typeof File,
+
+            document2Type: "",
             document2Feild: "",
             document2Front: typeof File,
             document2Back: typeof File,
@@ -50,13 +55,49 @@ export const DocumentUploadForm = () => {
     });
 
     useEffect(() => {
-        console.log(form.formState.errors, "errors")
         Object.keys(form.formState.errors).some((field) => toast({
             variant: 'destructive',
             title: "Documents not uploaded",
             description: `Please upload document ${field} is missing`,
         }))
     }, [form.formState.errors])
+
+    const { watch, setError } = form;
+
+    const document1Type = watch('document1Type');
+    const document1Feild = watch('document1Feild');
+    const document2Type = watch('document2Type');
+    const document2Feild = watch('document2Feild');
+
+    useEffect(() => {
+        console.log(document1Type, "document1Type")
+        if (document1Type === 'aadhar' && document1Feild.length > 0 && document1Feild.length !== 12) {
+            setError('document1Feild', {
+                type: 'manual',
+                message: 'Aadhaar Card number must be 12 digits long',
+            });
+        } else if (document1Type === 'pan' && document1Feild.length > 0 && document1Feild.length !== 10) {
+            setError('document1Feild', {
+                type: 'manual',
+                message: 'PAN Card number must be 10 digits long',
+            });
+        }
+    }, [document1Type, setError, form.formState.isSubmitting]);
+
+    useEffect(() => {
+        console.log(document2Type, "document2Type")
+        if (document2Type === 'aadhar' && document2Feild.length > 0 && document2Feild.length !== 12) {
+            setError('document2Feild', {
+                type: 'manual',
+                message: 'Aadhaar Card number must be 12 digits long',
+            });
+        } else if (document2Type === 'pan' && document2Feild.length > 0 && document2Feild.length !== 10) {
+            setError('document2Feild', {
+                type: 'manual',
+                message: 'PAN Card number must be 10 digits long',
+            });
+        }
+    }, [document2Type, setError, form.formState.isSubmitting]);
 
 
     const onSubmit = async (values: DocumentUploadSchema) => {
@@ -121,12 +162,6 @@ export const DocumentUploadForm = () => {
                     <div className='grid grid-cols-2 p-10 h-full'>
                         {[1, 2].map((index) => (
                             <div key={index} className='w-2/3 space-y-3'>
-                                {/* <Select onValueChange={field.onChange}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select document type" />
-                                    </SelectTrigger>
-                                    <SelectContent>{renderDocumentTypeOptions()}</SelectContent>
-                                </Select> */}
                                 <FormField
                                     control={form.control}
                                     name={`document${index}Type` as keyof DocumentUploadSchema}

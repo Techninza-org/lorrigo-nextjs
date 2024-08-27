@@ -72,13 +72,12 @@ export const EditFormSchema = formDataSchema.merge(customerDetailsSchema).merge(
         message: "Address is required",
         path: ["sellerDetails", "sellerAddress"]
     }).refine(data => {
-        console.log(Number(data.productDetails.taxableValue) >= 50000)
         if (Number(data.productDetails.taxableValue) >= 50000) {
-            return (data.ewaybill ?? "").length > 0;
+            return (data.ewaybill ?? "").length === 12;
         }
         return true;
     }, {
-        message: "Ewaybill is required for order value < 50000",
+        message: "Ewaybill is required and must be 12 digits for order value >= 50,000",
         path: ["ewaybill"]
     });
 

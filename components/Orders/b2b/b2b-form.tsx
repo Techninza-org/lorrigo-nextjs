@@ -116,11 +116,11 @@ export const b2bformDataSchema = z.object({
         path: ["total_weight"],
     }).refine(data => {
         if (parseFloat(data.amount) >= 50000) {
-            return data.ewaybill !== "";
+            return (data.ewaybill ?? "").length === 12;
         }
         return true;
     }, {
-        message: "E-waybill is required for amount greater than 50000",
+        message: "Ewaybill is required and must be 12 digits for order value >= 50,000",
         path: ["ewaybill"]
     });
 
