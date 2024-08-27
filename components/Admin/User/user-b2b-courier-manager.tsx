@@ -57,7 +57,7 @@ export const UserB2BCourierManager = () => {
             const res = upateSellerB2BAssignedCouriers({ couriers: couriers })
            
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 

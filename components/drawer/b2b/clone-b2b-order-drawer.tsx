@@ -89,14 +89,13 @@ export function CloneB2BOrderDrawer() {
 
     const onSubmit = async (values: z.infer<typeof b2bformDataSchema>) => {
         try {
-            console.log(values)
             const isSuccess = await handleCreateB2BOrder({ client_order_reference_id: `${form.watch("order_reference_id")}_C`, ...values })
             if (isSuccess == true) {
                 // form.reset();
                 handleClose()
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

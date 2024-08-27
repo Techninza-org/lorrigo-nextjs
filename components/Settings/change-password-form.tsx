@@ -38,7 +38,7 @@ const ChangePasswordForm = () => {
         try {
             const isPassChanged = await handleChangePassword(formData)
         } catch (error) {
-            console.log(error, "error[ChangePasswordForm]")
+            console.error(error, "error[ChangePasswordForm]")
         }
     }
 

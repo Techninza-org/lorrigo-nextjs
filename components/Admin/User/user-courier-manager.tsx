@@ -56,7 +56,7 @@ export const UserCourierManager = () => {
             const res = await upateSellerAssignedCouriers({ couriers: couriers })
            
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 

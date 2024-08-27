@@ -67,7 +67,7 @@ export const ManualDeductionForm = () => {
             await walletDeduction(values);
             form.reset();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

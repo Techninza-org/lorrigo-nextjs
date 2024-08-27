@@ -62,7 +62,7 @@ export const CompanyProfileForm = () => {
       await updateCompanyProfile(values);
       await getSeller();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

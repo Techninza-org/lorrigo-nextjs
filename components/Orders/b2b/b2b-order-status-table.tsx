@@ -94,7 +94,6 @@ export function B2BOrderStatusTable({ data, columns }: { data: any[], columns: C
   })
 
   const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
-  console.log(selectedRows, "selectedRows")
 
   return (
     <div className="w-full">

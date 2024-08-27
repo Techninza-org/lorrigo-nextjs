@@ -181,7 +181,7 @@ export default function B2BForm() {
                 router.push('/orders/b2b');
             }
         } catch (error) {
-            console.log(error, "error")
+            console.error(error, "error")
         }
     }
 

@@ -252,7 +252,7 @@ export function CloneOrderDrawer() {
                 handleClose()
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

@@ -110,7 +110,7 @@ export const AddB2BCustomerModal = () => {
             }
             onClose();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

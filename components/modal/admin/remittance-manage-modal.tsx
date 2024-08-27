@@ -51,7 +51,6 @@ export const AdminRemittanceUpdateModal = () => {
 
     const onSubmit = async (values: z.infer<typeof AdminRemittanceUpdateSchema>) => {
         try {
-            console.log(values, 'values', remittance?._id)
             const updateRemittance = await manageRemittance({
                 remittanceId: remittance?._id || "",
                 ...values
@@ -61,7 +60,7 @@ export const AdminRemittanceUpdateModal = () => {
                 onClose();
             }
         } catch (error) {
-            console.log(error, "AdminRemittanceUpdateModal")
+            console.error(error, "AdminRemittanceUpdateModal")
         }
     }
 

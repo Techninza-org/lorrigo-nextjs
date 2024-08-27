@@ -257,7 +257,7 @@ export function EditOrderDrawer() {
                 handleClose()
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

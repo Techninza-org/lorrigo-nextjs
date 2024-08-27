@@ -76,7 +76,7 @@ export const SchedulePickupModal = () => {
                 onClose();
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

@@ -798,7 +798,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       const res = await axiosIWAuth.get('/seller');
       if (res.data.valid) {
         const isAlertShown = localStorage.getItem("kyc-alert");
-        console.log("isAlertShown", isAlertShown);
         const showKycAlert = !res.data?.seller?.kycDetails?.submitted && !isAlertShown && onOpen("alert-kyc");
         setSeller(res.data.seller)
         setInvoices(res.data.seller.invoices)
@@ -1267,7 +1266,6 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosIWAuth.get(`/seller/invoice/${id}`);
       return res.data.invoice;
-      console.log(res.data.invoice);
 
     } catch (error) {
       console.error('Error fetching data:', error);

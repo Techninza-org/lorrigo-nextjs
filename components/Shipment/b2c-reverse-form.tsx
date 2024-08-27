@@ -151,7 +151,7 @@ export const B2CReverseForm = () => {
                 router.push('/orders/reverse');
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

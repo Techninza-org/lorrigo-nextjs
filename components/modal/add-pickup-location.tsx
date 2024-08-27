@@ -154,7 +154,7 @@ export const AddPickupLocationModal = () => {
             router.refresh();
             onClose();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

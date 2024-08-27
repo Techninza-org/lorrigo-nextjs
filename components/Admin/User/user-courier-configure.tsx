@@ -154,7 +154,7 @@ export const UserCourierConfigure = () => {
             const sellerId = searchParams.get("sellerId") || ""; // Set a default value of an empty string if sellerId is null
             updateSellerCourierPrice({ value, sellerId })
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 

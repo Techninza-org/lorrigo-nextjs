@@ -70,7 +70,6 @@ export const DocumentUploadForm = () => {
     const document2Feild = watch('document2Feild');
 
     useEffect(() => {
-        console.log(document1Type, "document1Type")
         if (document1Type === 'aadhar' && document1Feild.length > 0 && document1Feild.length !== 12) {
             setError('document1Feild', {
                 type: 'manual',
@@ -85,7 +84,6 @@ export const DocumentUploadForm = () => {
     }, [document1Type, setError, form.formState.isSubmitting]);
 
     useEffect(() => {
-        console.log(document2Type, "document2Type")
         if (document2Type === 'aadhar' && document2Feild.length > 0 && document2Feild.length !== 12) {
             setError('document2Feild', {
                 type: 'manual',
@@ -115,7 +113,7 @@ export const DocumentUploadForm = () => {
             setFormData((prev: any) => ({ ...prev, ...values }));
             onHandleNext();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

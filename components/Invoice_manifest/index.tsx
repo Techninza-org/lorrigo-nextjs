@@ -172,7 +172,6 @@ export const GenerateManifest = ({ order }: { order?: B2COrderType }) => {
 }
 
 export const GenerateB2BManifest = ({ order }: { order?: B2BOrderType }) => {
-    console.log(order, "order")
     const printDocument = () => {
         const input = document.getElementById("divToPrint");
         html2canvas(input!)?.then((canvas) => {

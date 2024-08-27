@@ -75,14 +75,13 @@ export function EditB2BOrderDrawer() {
 
     const onSubmit = async (values: z.infer<typeof b2bformDataSchema>) => {
         try {
-            console.log(values)
             const isSuccess = await handleEditB2BOrder(values, b2bOrder?._id || "")
             if (isSuccess == true) {
                 // form.reset();
                 handleClose()
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

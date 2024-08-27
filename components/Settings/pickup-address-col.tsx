@@ -96,7 +96,7 @@ const ToggleSwitch = ({ hub }: { hub: pickupAddressType }) => {
 
         } catch (error) {
             setChecked(!checked);
-            console.log(error)
+            console.error(error)
         }
     }
     return (

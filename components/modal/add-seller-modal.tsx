@@ -130,7 +130,7 @@ export const AddSellerModal = () => {
 
             onClose();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

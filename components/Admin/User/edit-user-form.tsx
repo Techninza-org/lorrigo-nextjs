@@ -99,7 +99,7 @@ const EditUserForm = () => {
             }
             handleEditUser(sellerId ?? '', user)
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

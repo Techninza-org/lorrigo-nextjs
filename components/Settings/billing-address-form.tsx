@@ -78,7 +78,7 @@ const BillingAddressForm = () => {
           
             await updateBillingAddress(values) 
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

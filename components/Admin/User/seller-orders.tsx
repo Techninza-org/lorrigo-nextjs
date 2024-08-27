@@ -26,7 +26,6 @@ export default function SellerOrders({sellerId}: {sellerId: any}) {
     useEffect(() => {
         if (!userToken) return;
         getSellerOrders() 
-        console.log(order);
         
     }, [userToken]);
 

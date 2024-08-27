@@ -51,7 +51,7 @@ const GstinForm = () => {
         try {
             const isGSTUpdated = await uploadGstinInvoicing(values);
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     };
 

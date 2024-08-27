@@ -136,7 +136,7 @@ export const UserB2BCourierConfigure = () => {
             const sellerId = searchParams.get("sellerId") || ""; // Set a default value of an empty string if sellerId is null
             updateSellerB2BCourierPrice({ value, sellerId })
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 

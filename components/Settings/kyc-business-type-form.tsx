@@ -34,7 +34,7 @@ export const KycBusinessTypeForm = () => {
             setFormData((prev: any) => ({ ...prev, ...values }));
             onHandleNext();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

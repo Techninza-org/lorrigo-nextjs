@@ -110,7 +110,7 @@ export const AddCustomerModal = () => {
             }
             onClose();
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

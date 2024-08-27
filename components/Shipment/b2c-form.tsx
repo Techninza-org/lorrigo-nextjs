@@ -188,7 +188,7 @@ export const B2CForm = () => {
                 router.push('/orders');
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 

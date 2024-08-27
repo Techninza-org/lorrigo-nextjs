@@ -54,7 +54,7 @@ const BankDetailsForm = () => {
         try {
             const updateBankDetailsAPI = await updateBankDetails(values);
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
     return (

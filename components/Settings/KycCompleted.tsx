@@ -119,7 +119,7 @@ const KycCompleted = () => {
       }
       router.push('/settings')
     } catch (error: any) {
-      console.log(error)
+      console.error(error)
       toast({
         variant: "destructive",
         title: "Error",

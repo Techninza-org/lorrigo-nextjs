@@ -122,7 +122,6 @@ export const B2BRateCalcForm = () => {
                     0
                 )) ?? '',
             })
-            console.log(res, "res")
             setCourierCalcRate(res);
         } finally {
             setIsAPILoading(false)

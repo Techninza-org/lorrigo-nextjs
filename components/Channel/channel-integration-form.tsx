@@ -49,7 +49,7 @@ export const ChannelIntegrationForm = () => {
             const response = await createChannel(values) ? setIsSubmitted(true) : setIsSubmitted(false);
 
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
