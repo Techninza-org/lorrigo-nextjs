@@ -72,6 +72,7 @@ interface SellerContextType {
   handleCreateCustomer: (customer: any) => boolean | Promise<boolean>;
 
   sellerBilling: any; // Type should be updated
+  sellerB2BBilling: any
 
   handleCreateB2BOrder: (order: z.infer<typeof b2bformDataSchema>) => boolean | Promise<boolean>;
   getB2BOrders: () => Promise<void>;
@@ -131,6 +132,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [courierPartners, setCourierPartners] = useState<OrderType>();
   const [b2bCustomers, setB2bCustomers] = useState<any[]>([]);
   const [sellerBilling, setSellerBilling] = useState<any>(null);  // Type should be updated
+  const [sellerB2BBilling, setSellerB2BBilling] = useState<any>(null);  // Type should be updated
   const [invoices, setInvoices] = useState<any>(null);
   const [codprice, setCodprice] = useState<any>(0);
   const [assignedCouriers, setAssignedCouriers] = useState<any[]>([]);
@@ -1235,6 +1237,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       const res = await axiosIWAuth.get('/seller/billing');
       if (res.data?.valid) {
         setSellerBilling(res.data?.billing);
+        setSellerB2BBilling(res.data?.b2bBills);
         return res.data.billing;
       }
     } catch (error) {
@@ -1333,6 +1336,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getSeller,
         handleOrderNDR,
 
+        sellerB2BBilling,
         updateBankDetails,
         uploadGstinInvoicing,
         updateBillingAddress,

@@ -34,6 +34,8 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
     const [rowSelection, setRowSelection] = React.useState({})
     const [filteredData, setFilteredData] = React.useState<any[]>(data)
 
+    console.log(data, "data")
+
     const [pagination, setPagination] = React.useState({
         pageIndex: 0, //initial page index
         pageSize: 20, //default page size
@@ -71,19 +73,6 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
         },
         onGlobalFilterChange: setFiltering
     })
-
-
-    React.useEffect(() => {
-        if ((!date?.from || !date?.to) || (date.from === date.to)) return
-        const a = data.filter((row) => {
-            if (date?.from && date?.to) {
-                return row.billingDate > new Date(date.from).toISOString() && row.billingDate < new Date(date.to).toISOString()
-            }
-            return false;
-        });
-        setFilteredData(a);
-    }, [data, date]);
-
 
 
     const cols = [
@@ -140,23 +129,23 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
             displayName: "RTO Applicable"
         },
     ]
-    const datas = filteredData.map((row) => {
-        return {
-            date: format(row.billingDate, "dd/MM/yyyy"),
-            orderRefId: row.orderRefId,
-            awb: row.awb,
-            rtoAwb: row.rtoAwb,
-            shipmentType: row.shipmentType ? "COD" : "Prepaid",
-            recipientName: row.recipientName,
-            toCity: row.toCity,
-            fromCity: row.fromCity,
-            chargedWeight: row.chargedWeight,
-            billingAmount: row.billingAmount || 0,
-            zone: row.zone,
-            isForwardApplicable: row.isForwardApplicable === true ? "Yes" : "No",
-            isRTOApplicable: row.isRTOApplicable === true ? "Yes" : "No",
-        }
-    })
+    // const datas = filteredData.map((row) => {
+    //     return {
+    //         date: format(row.billingDate, "dd/MM/yyyy"),
+    //         orderRefId: row.orderRefId,
+    //         awb: row.awb,
+    //         rtoAwb: row.rtoAwb,
+    //         shipmentType: row.shipmentType ? "COD" : "Prepaid",
+    //         recipientName: row.recipientName,
+    //         toCity: row.toCity,
+    //         fromCity: row.fromCity,
+    //         chargedWeight: row.chargedWeight,
+    //         billingAmount: row.billingAmount || 0,
+    //         zone: row.zone,
+    //         isForwardApplicable: row.isForwardApplicable === true ? "Yes" : "No",
+    //         isRTOApplicable: row.isRTOApplicable === true ? "Yes" : "No",
+    //     }
+    // })
 
     return (
         <div className="w-full">
@@ -167,10 +156,10 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
                     onChange={(e) => setFiltering(e.target.value)}
                     className="max-w-sm"
                 />
-                <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
-                <CsvDownloader filename="billing" datas={datas} columns={cols}>
+                {/* <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} /> */}
+                {/* <CsvDownloader filename="billing" datas={datas} columns={cols}>
                     <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
-                </CsvDownloader>
+                </CsvDownloader> */}
 
             </div>
 

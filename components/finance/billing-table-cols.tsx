@@ -147,3 +147,74 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
         }
     },
 ];
+ 
+export const SellerB2BBillingCols: ColumnDef<B2COrderType>[] = [
+    {
+        header: 'Order ID',
+        accessorKey: 'orderRefId',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("orderRefId")}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'AWB number',
+        accessorKey: 'awb',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("awb")}</p>
+                </div>
+            )
+        }
+
+    },
+    {
+        header: 'Weight',
+        accessorKey: 'orderWeight',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("orderWeight")}kg</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'ODA Applicable',
+        accessorKey: 'isODAApplicable',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("isODAApplicable") || "False"}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Other Charges',
+        accessorKey: 'otherCharges',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{formatCurrencyForIndia(row.getValue("otherCharges") || 0)}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Charged Amount',
+        accessorKey: 'billingAmount',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{formatCurrencyForIndia(row.getValue("billingAmount") || 0)}</p>
+                </div>
+            )
+        }
+    },
+
+];
