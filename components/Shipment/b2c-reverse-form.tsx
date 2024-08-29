@@ -203,7 +203,7 @@ export const B2CReverseForm = () => {
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle className='flex justify-between items-center'><PackageOpen size={23} className='mr-3' />Bulk Uplaod
+                                <CardTitle className='flex justify-between items-center'><PackageOpen size={23} className='mr-3' />Bulk Upload
                                     <Button type='button' variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("order-bulk-sample.csv")}>
                                         <Download size={18} />
                                     </Button>

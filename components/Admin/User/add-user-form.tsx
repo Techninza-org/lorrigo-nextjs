@@ -60,26 +60,30 @@ const AddUserForm = () => {
                     description: 'Passwords do not match'
                 })
             }
-            const { name, email, password, phone, company, prefix, pan, aadhar, gstin } = values;
-            const credentials = {
-                'name': name,
-                'email': email,
-                'password': password
-            }
-            const user = {
-                'billingAddress': {
-                    'phone': phone,
+            const { name, email, password } = values;
+            const credentials = { name, email, password };
+
+            const payload = {
+                billingAddress: {
+                    phone: values.phone
                 },
-                'companyProfile': {
-                    'companyName': company,
+                companyProfile: {
+                    companyName: values.company
                 },
-                'prefix': prefix,
-                'pan': pan,
-                'aadhar': aadhar,
-                'gst': gstin,
+                prefix: values.prefix,
+                kycDetails: {
+                    document1Type: 'pan',
+                    document1: values.pan,
+                    document2Type: 'aadhar',
+                    document2: values.aadhar,
+                },
+                gstInvoice: {
+                    gstin: values.gstin
+                },
             }
 
-            handleSignup(credentials, user)
+            await handleSignup(credentials, payload);
+
             form.reset();
             router.refresh();
         } catch (error) {
@@ -252,7 +256,7 @@ const AddUserForm = () => {
                             </FormItem>
                         )} />
                 </div>
-                <Button variant={'themeButton'} size={'lg'} type='submit' className='mt-6'><Plus size={16} /> Add User</Button>
+                <Button variant={'themeButton'} size={'lg'} type='submit' className='mt-6'><Plus size={16} className='mr-2' /> Add User</Button>
             </form>
         </Form>
     )

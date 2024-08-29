@@ -27,7 +27,7 @@ import {
 import { useModal } from "@/hooks/use-model-store"
 import { handleFileDownload } from "@/lib/utils"
 
-export function VendorBillingTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
+export function VendorBillingTable({ data, columns, type }: { data: any[], columns: ColumnDef<any, any>[], type: string }) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [filtering, setFiltering] = React.useState<string>("")
 
@@ -72,10 +72,10 @@ export function VendorBillingTable({ data, columns }: { data: any[], columns: Co
                     className="max-w-sm"
                 />
                 <div className="space-x-3">
-                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("client_billing_sample_format.csv")}>
+                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload(type === "b2c" ? "client_billing_sample_format.csv" : "B2B_client_billing_sample_format.csv")}>
                         <Download size={18} />
                     </Button>
-                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => onOpen("ClientBillingUpload")}>
+                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => onOpen(type === "b2c" ? "ClientBillingUpload" : "B2BClientBillingUpload")}>
                         <UploadCloudIcon size={18} />
                     </Button>
                 </div>

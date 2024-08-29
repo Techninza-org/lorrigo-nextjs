@@ -40,6 +40,7 @@ interface AdminContextType {
     upateSellerAssignedCouriers: ({ couriers }: { couriers: string[] }) => void;
     getSellerRemittanceID: (sellerId: string, remittanceId: string) => Promise<RemittanceType> | null;
     clientNVendorBills: any;
+    b2bClientNVendorBills: any;
     getClientNVendorBillingData: () => void;
     handleUserConfig: (values: z.infer<typeof UserConfigSchema>) => Promise<boolean> | undefined;
     walletDeduction: (values: z.infer<typeof WalletDeductionSchema>) => Promise<boolean> | undefined;
@@ -68,6 +69,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [assignedCouriers, setAssignedCouriers] = useState<ShippingRate[]>([]);
     const [assignedB2BCouriers, setAssignedB2BCouriers] = useState<ShippinB2BgRate[]>([]);
     const [clientNVendorBills, setClientNVendorBills] = useState<any>([]);
+    const [b2bClientNVendorBills, setB2BClientNVendorBills] = useState<any>([]);
     const [allTxn, setAllTxn] = useState<any>([]);
 
     const { toast } = useToast();
@@ -139,7 +141,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         try {
             const response = await axiosIWAuth.post('/auth/signup', credentials);
             if (response.data.user) {
-                const sellerId = response.data.user.id;
+                const sellerId = response?.data?.user?.id;
                 const res = await axiosIWAuth.put(`/admin/seller?sellerId=${sellerId}`, user);
                 if (res.data.seller) {
                     return toast({
@@ -359,6 +361,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         try {
             const res = await axiosIWAuth.get('/admin/billing/client');
             setClientNVendorBills(res.data.data)
+            setB2BClientNVendorBills(res.data.b2bData)
             return res.data;
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -479,6 +482,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 getClientNVendorBillingData,
                 walletDeduction,
                 getAllWalletTxn,
+                b2bClientNVendorBills,
                 allTxn
 
             }}

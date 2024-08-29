@@ -10,7 +10,7 @@ export default function UsersListing() {
                    Add User
                 </CardTitle>
             </CardHeader>
-            <CardContent className="pl-2 mt-6">
+            <CardContent>
                 <AdminProvider>
                     <AddUserForm />
                 </AdminProvider>

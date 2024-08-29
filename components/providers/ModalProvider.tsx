@@ -21,6 +21,7 @@ import { AdminRemittanceUpdateModal } from "../modal/admin/remittance-manage-mod
 import { AddB2BCustomerModal } from "../Orders/b2b/b2b-customer-form";
 import { AlertKycModal } from "../modal/alert-kyc-modal";
 import { BulkShipNowModal } from "../modal/bulk-ship-now-modal";
+import { B2BClientBillingUpload } from "../modal/admin/upload-b2b-client-billing-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -62,6 +63,7 @@ export const ModalProvider = () => {
       <AlertKycModal/>
 
       <DownloadB2BManifestModal />
+      <B2BClientBillingUpload/>
 
     </>
   );

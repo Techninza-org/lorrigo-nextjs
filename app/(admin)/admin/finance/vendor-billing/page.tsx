@@ -7,10 +7,10 @@ export default function VendorBillingPage() {
         <Card className="col-span-4">
             <CardHeader>
                 <CardTitle className="md:flex justify-between space-y-3">
-                  Vendor Billing
+                    Vendor Billing
                 </CardTitle>
             </CardHeader>
-            <CardContent className="pl-2">
+            <CardContent>
                 <VendorBilling />
             </CardContent>
         </Card>

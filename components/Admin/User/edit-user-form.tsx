@@ -23,6 +23,7 @@ import { PhoneInput } from '@/components/ui/phone-input';
 export const EditUserSchema = z.object({
     name: z.string().min(1, "name is required"),
     phone: z.string().optional(),
+
     companyEmail: z.string().min(1, "email is required"),
     companyName: z.string().min(1, "company is required"),
     prefix: z.string().optional(),
@@ -31,10 +32,12 @@ export const EditUserSchema = z.object({
     gst: z.string().optional(),
     verified: z.boolean().optional(),
     active: z.boolean().optional(),
+
     accHolderName: z.string().optional(),
     accType: z.string().optional(),
     accNumber: z.string().optional(),
     ifscNumber: z.string().optional(),
+
     coi: z.string().optional(),
     llpAggreement: z.string().optional(),
     memoradum: z.string().optional(),
@@ -46,6 +49,8 @@ const EditUserForm = () => {
     const { users } = useAdminProvider();
 
     const user = users.find((user: any) => user._id === sellerId);
+    const { document1Type, document2Type } = user?.kycDetails || {}
+
     const router = useRouter();
     const { handleEditUser } = useAdminProvider()
 
@@ -75,35 +80,49 @@ const EditUserForm = () => {
     const isLoading = form.formState.isSubmitting;
 
     const onSubmit = async (values: z.infer<typeof EditUserSchema>) => {
-        // const olduser = users.find((user: any) => user._id === sellerId);
         try {
-            const user = {
+
+            const isPan = document1Type === 'pan'
+            const isAadhar = document1Type === 'aadhar'
+            const isCoi = document1Type === 'coi'
+            const isLlpAggreement = document1Type === 'llp-aggreement'
+            const isMemoradum = document1Type === 'memoradum'
+
+            // document2Type
+            const isPan2 = document2Type === 'pan'
+            const isAadhar2 = document2Type === 'aadhar'
+            const isCoi2 = document2Type === 'coi'
+            const isLlpAggreement2 = document2Type === 'llp-aggreement'
+            const isMemoradum2 = document2Type === 'memoradum'
+
+
+            const payload = {
                 name: values.name,
                 billingAddress: {
                     phone: values.phone
                 },
-                companyProfile: {
-                    companyName: values?.companyName,
-                    companyEmail: values.companyEmail
-                },
-                prefix: values.prefix,
-                pan: values.pan,
-                aadhar: values.aadhar,
-                gst: values.gst,
                 isVerified: values.verified,
-                // kycDetails: {
-                // ...(olduser?.kycDetails ?? {}),
-                // verified: values.verified
-                // },
                 isActive: values.active,
+                companyProfile: {
+                    companyName: values.companyName,
+                    companyEmail: values.companyEmail,
+                    prefix: values.prefix,
+                },
                 bankDetails: {
                     accHolderName: values.accHolderName,
                     accType: values.accType,
                     accNumber: values.accNumber,
-                    ifscNumber: values.ifscNumber
+                    ifscNumber: values.ifscNumber,
+                },
+                kycDetails: {
+                    pan: values.pan,
+                    adhaar: values.aadhar,
+                    document1Feild: (isPan ? values.pan : "") || (isAadhar ? values.aadhar : "") || (isCoi ? values.coi : "") || (isLlpAggreement ? values.llpAggreement : "") || (isMemoradum ? values.memoradum : ""),
+                    document2Feild: (isPan2 ? values.pan : "") || (isAadhar2 ? values.aadhar : "") || (isCoi2 ? values.coi : "") || (isLlpAggreement2 ? values.llpAggreement : "") || (isMemoradum2 ? values.memoradum : ""),
+                    verified: values.verified,
                 }
             }
-            handleEditUser(sellerId ?? '', user)
+            handleEditUser(sellerId ?? '', payload)
         } catch (error) {
             console.error(error);
         }
@@ -127,14 +146,16 @@ const EditUserForm = () => {
             const isLlpAggreement2 = document2Type === 'llp-aggreement'
             const isMemoradum2 = document2Type === 'memoradum'
 
+
+            form.setValue('active', user.isActive || false)
             form.setValue('name', user.name || '')
             form.setValue('phone', user.billingAddress?.phone || '')
             form.setValue('companyName', user.companyProfile?.companyName || '')
             form.setValue('companyEmail', user.companyProfile?.companyEmail || '')
             form.setValue('prefix', user.prefix || '')
 
-            form.setValue('pan', user.pan || (isPan && user.kycDetails.document1Feild) || (isPan2 && user.kycDetails.document2Feild) || '')
-            form.setValue('aadhar', user.aadhar || (isAadhar && user.kycDetails.document1Feild) || (isAadhar2 && user.kycDetails.document2Feild) || '')
+            form.setValue('pan', (isPan && user.kycDetails.document1Feild) || (isPan2 && user.kycDetails.document2Feild) || '')
+            form.setValue('aadhar', (isAadhar && user.kycDetails.document1Feild) || (isAadhar2 && user.kycDetails.document2Feild) || '')
             form.setValue('coi', (isCoi && user.kycDetails.document1Feild) || (isCoi2 && user.kycDetails.document2Feild) || '')
             form.setValue('llpAggreement', (isLlpAggreement && user.kycDetails.document1Feild) || (isLlpAggreement2 && user.kycDetails.document2Feild) || '')
             form.setValue('memoradum', (isMemoradum && user.kycDetails.document1Feild) || (isMemoradum2 && user.kycDetails.document2Feild) || '')
@@ -179,10 +200,6 @@ const EditUserForm = () => {
                                     Phone <span className='text-red-600'>*</span>
                                 </FormLabel>
                                 <FormControl>
-                                    {/* <Input
-                                    disabled={isLoading}
-                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                        {...field} /> */}
                                     <PhoneInput
                                         disabled={isLoading}
                                         className="bg-white border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
@@ -399,31 +416,31 @@ const EditUserForm = () => {
                                 <FormMessage />
                             </FormItem>
                         )} />
-                    {
-                        !user?.isVerified &&
-                        <FormField
-                            control={form.control}
-                            name={'verified'}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <div className="flex items-center space-x-2">
-                                            <Checkbox
-                                                id="verified"
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                            <label
-                                                htmlFor="verified"
-                                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                            >
-                                                Verified
-                                            </label>
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />}
+
+                    <FormField
+                        control={form.control}
+                        name={'verified'}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                            id="verified"
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                            disabled={user?.isVerified || isLoading}
+                                        />
+                                        <label
+                                            htmlFor="verified"
+                                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        >
+                                            Verified
+                                        </label>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
                     <FormField
                         control={form.control}
                         name={'active'}
@@ -448,7 +465,7 @@ const EditUserForm = () => {
                             </FormItem>
                         )} />
                 </div>
-                <Button variant={'themeButton'} size={'lg'} type='submit' className='mt-6'> Edit User</Button>
+                <Button variant={'themeButton'} size={'lg'} type='submit' className='mt-6'>Edit User</Button>
             </form>
         </Form>
     )

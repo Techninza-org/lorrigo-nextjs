@@ -15,6 +15,8 @@ import { Button } from '../ui/button';
 
 import { useKycProvider } from '../providers/KycProvider';
 import { Card, CardDescription, CardTitle } from '../ui/card';
+import { useSellerProvider } from '../providers/SellerProvider';
+import { AlertNRedirect } from '../AlertNRedirect';
 
 const BusinessTypeSchema = z.object({
     businessType: z.enum(["Individual", "Sole Proprietor", "Company"], {
@@ -24,6 +26,9 @@ const BusinessTypeSchema = z.object({
 
 export const KycBusinessTypeForm = () => {
     const { formData, onHandleNext, setFormData } = useKycProvider();
+    const { seller } = useSellerProvider();
+    const gstInvoice = seller?.gstInvoice;
+    const billingAddress = seller?.billingAddress;
 
     const form = useForm<z.infer<typeof BusinessTypeSchema>>({
         resolver: zodResolver(BusinessTypeSchema),
@@ -43,6 +48,14 @@ export const KycBusinessTypeForm = () => {
             form.setValue('businessType', formData.businessType as "Individual" | "Sole Proprietor" | "Company")
         }
     }, [form, formData]);
+
+    if (!gstInvoice?.gstin || !billingAddress?.address_line_1) {
+        return <AlertNRedirect
+            billingAddress={!billingAddress?.address_line_1}
+            gstInvoice={!gstInvoice?.gstin}
+            message='Please fill in your GST Invoice and Billing Address details first.'
+        />;
+    }
 
 
     return (
