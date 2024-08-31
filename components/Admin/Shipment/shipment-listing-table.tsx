@@ -41,7 +41,6 @@ import { formatDate } from "date-fns";
 import { useAdminProvider } from "@/components/providers/AdminProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { OrderStatusFilter } from "@/components/Orders/order-status-filter";
-import { Separator } from "@/components/ui/separator";
 
 export function ShipmentListingTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -61,7 +60,7 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
 
   const defaultToDate = new Date();
   const defaultFromDate = new Date();
-  defaultFromDate.setDate(defaultToDate.getDate() - 7);
+  defaultFromDate.setDate(defaultToDate.getDate() - 2);
 
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
