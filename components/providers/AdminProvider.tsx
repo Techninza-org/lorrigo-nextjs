@@ -226,6 +226,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
     const getSellerAssignedCouriers = async () => {
         try {
+            if (!sellerId) return
             const res = await axiosIWAuth.get(`/admin/seller-couriers?sellerId=${sellerId}`);
             setAssignedCouriers(res.data.couriers)
 
