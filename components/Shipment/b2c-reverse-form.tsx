@@ -211,7 +211,7 @@ export const B2CReverseForm = () => {
                             </CardHeader>
                             <ImageUpload
                                 uploadUrl='/order/b2c/bulk'
-                                handleClose={() => getAllOrdersByStatus("all")}
+                                handleClose={() => getAllOrdersByStatus({ status: "all" })}
                                 acceptFileTypes={{ "text/csv": [".csv"] }}
                             />
                         </Card>

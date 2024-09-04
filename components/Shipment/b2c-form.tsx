@@ -251,7 +251,7 @@ export const B2CForm = () => {
                             <ImageUpload
                                 uploadUrl='/order/b2c/bulk'
                                 handleClose={() => {
-                                    getAllOrdersByStatus("all")
+                                    getAllOrdersByStatus({ status: "all" })
                                     router.push('/orders')
 
                                 }}

@@ -87,7 +87,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
 
   const defaultToDate = new Date();
   const defaultFromDate = new Date();
-  defaultFromDate.setDate(defaultToDate.getDate() - 7);
+  defaultFromDate.setDate(defaultToDate.getDate() - 10);
 
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
@@ -227,7 +227,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   })
 
   React.useEffect(() => {
-    if (userToken && date?.from && date?.to) getAllOrdersByStatus({ status: status || "all", fromDate: formatDate(date?.from.toString(), "MM/dd/yyyy"), toDate: formatDate(date?.to.toString(), "MM/dd/yyyy") })
+    if (date?.from && date?.to) getAllOrdersByStatus({ status: status || "all", fromDate: formatDate(date?.from.toString(), "MM/dd/yyyy"), toDate: formatDate(date?.to.toString(), "MM/dd/yyyy") })
   }, [userToken, date, status]);
 
 
