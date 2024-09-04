@@ -68,7 +68,7 @@ type IFilterStatus = {
 }
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
-  const { handleOrderSync, seller, orders } = useSellerProvider()
+  const { handleOrderSync, seller } = useSellerProvider()
   const router = useRouter();
   const [filtering, setFiltering] = React.useState<string>("")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

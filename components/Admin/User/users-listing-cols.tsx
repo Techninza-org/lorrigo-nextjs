@@ -25,7 +25,7 @@ export const AdminUsersListingCols: ColumnDef<SellerType>[] = [
                                 :
                                 null
                         }
-                        {rowData?.kycDetails.submitted && <ViewSellerDocsBtn seller={rowData} />}
+                        {/* {rowData?.kycDetails.submitted && <ViewSellerDocsBtn seller={rowData} />} */}
 
                     </p>
                 </div>

@@ -60,7 +60,7 @@ export function ShipmentListingTable({ data, columns }: { data: any[], columns: 
 
   const defaultToDate = new Date();
   const defaultFromDate = new Date();
-  defaultFromDate.setDate(defaultToDate.getDate() - 2);
+  defaultFromDate.setDate(defaultToDate.getDate() - 1);
 
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
