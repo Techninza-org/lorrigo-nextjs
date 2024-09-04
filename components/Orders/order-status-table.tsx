@@ -38,7 +38,7 @@ import { DatePickerWithRange } from "../DatePickerWithRange"
 import { DateRange } from "react-day-picker"
 import CsvDownloader from 'react-csv-downloader';
 import { getBucketStatus } from "./order-action-button"
-import { format } from "date-fns"
+import { format, formatDate } from "date-fns"
 import {
   ArrowUpCircle,
   CheckCircle2,
@@ -47,6 +47,7 @@ import {
   XCircle,
 } from "lucide-react"
 import { OrderStatusFilter } from "./order-status-filter"
+import { useAuth } from "../providers/AuthProvider"
 
 const statuses = [
   {
@@ -68,8 +69,11 @@ type IFilterStatus = {
 }
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
-  const { handleOrderSync, seller } = useSellerProvider()
+  const { userToken } = useAuth();
+  const { handleOrderSync, seller, getAllOrdersByStatus } = useSellerProvider()
   const router = useRouter();
+  const status = useSearchParams().get("status");
+
   const [filtering, setFiltering] = React.useState<string>("")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -82,10 +86,9 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   });
 
   const defaultToDate = new Date();
-  const defaultFromDate = new Date(
-    defaultToDate.getFullYear(),
-    defaultToDate.getMonth() - 1,
-  );
+  const defaultFromDate = new Date();
+  defaultFromDate.setDate(defaultToDate.getDate() - 7);
+
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
     to: defaultToDate,
@@ -222,6 +225,10 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
       status: getBucketStatus(row.bucket),
     }
   })
+
+  React.useEffect(() => {
+    if (userToken && date?.from && date?.to) getAllOrdersByStatus({ status: status || "all", fromDate: formatDate(date?.from.toString(), "MM/dd/yyyy"), toDate: formatDate(date?.to.toString(), "MM/dd/yyyy") })
+  }, [userToken, date, status]);
 
 
   return (

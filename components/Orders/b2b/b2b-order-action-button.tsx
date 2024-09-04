@@ -2,7 +2,6 @@
 import Link from "next/link";
 import React from "react";
 import { Button } from "../../ui/button";
-import { B2COrderType } from "@/types/types";
 import { useModal } from "@/hooks/use-model-store";
 import {
     DropdownMenu,

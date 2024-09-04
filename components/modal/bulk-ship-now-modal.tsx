@@ -87,8 +87,7 @@ export const BulkShipNowModal = () => {
             const res = await getBulkCourierPartners(orderIds)
             setCourierPartners(groupAndMergeCouriers(res?.courierPartner))
         }
-
-        fetchCourierPartners()
+        if (orderIds?.length) fetchCourierPartners()
         return () => {
             setCourierPartners(undefined)
         }

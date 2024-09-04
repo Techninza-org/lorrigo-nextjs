@@ -38,7 +38,7 @@ interface SellerContextType {
   handleUpdateOrder: (order: z.infer<typeof EditFormSchema>) => boolean | Promise<boolean>;
   orders: B2COrderType[];
   reverseOrders: B2COrderType[];
-  getAllOrdersByStatus: (status: string) => Promise<any[]>;
+  getAllOrdersByStatus: ({ status, fromDate, toDate }: { status: string, fromDate?: string, toDate?: string }) => Promise<any[]>;
   getCourierPartners: (orderId: string, type: string) => Promise<any>;
   getBulkCourierPartners: (orderIds: string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
@@ -232,8 +232,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const getAllOrdersByStatus = async (status: string) => {
-    let url = status === "all" ? `/order` : `/order?status=${status}`
+  const getAllOrdersByStatus = async ({ status, fromDate, toDate }: { status: string, fromDate?: string, toDate?: string }) => {
+    let url = status === "all" ? `/order?from=${fromDate}&to=${toDate}` : `/order?status=${status}&from=${fromDate}&to=${toDate}`
     try {
       const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
@@ -466,7 +466,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         })
 
         getSellerDashboardDetails();
-        getAllOrdersByStatus("all");
+        getAllOrdersByStatus({ status: "all" });
         router.refresh();
         return true;
       } else {
@@ -590,7 +590,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "Order updated successfully",
         });
-        getAllOrdersByStatus(status || "all");
+        getAllOrdersByStatus({ status: status || "all" });;
         getSellerDashboardDetails();
         return true;
       } else {
@@ -628,7 +628,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order created successfully",
           description: "Order has been created successfully",
         });
-        getAllOrdersByStatus(status || "all")
+        getAllOrdersByStatus({ status: status || "all" });
         fetchWalletBalance();
         router.push('/orders')
         return true;
@@ -663,7 +663,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order created successfully",
           description: "Order has been created successfully",
         });
-        getAllOrdersByStatus(status || "all")
+        getAllOrdersByStatus({ status: status || "all" });
         fetchWalletBalance();
         router.push('/orders')
         return true;
@@ -697,7 +697,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "Order cancellation request generated",
         });
-        getAllOrdersByStatus(status || "all")
+        getAllOrdersByStatus({ status: status || "all" });
         getB2BOrders();
         fetchWalletBalance();
         return true;
@@ -730,7 +730,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "Order manifested successfully",
         });
-        getAllOrdersByStatus(status || "all")
+        getAllOrdersByStatus({ status: status || "all" });
         getB2BOrders();
         router.refresh();
         return true;
@@ -855,7 +855,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "NDR request generated",
         });
-        getAllOrdersByStatus(status || "all")
+        getAllOrdersByStatus({ status: status || "all" });
         return true;
       }
       toast({
@@ -1000,7 +1000,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Success",
           description: "Order Sync successfully.",
         });
-        getAllOrdersByStatus(status || "all")
+        getAllOrdersByStatus({ status: status || "all" });
         return true;
       }
       return false;
@@ -1026,7 +1026,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Orders",
           description: "Orders pickup address updated",
         });
-        getAllOrdersByStatus(status || "all")
+        getAllOrdersByStatus({ status: status || "all" });
         getB2BOrders();
         return true;
       }
@@ -1063,7 +1063,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Orders",
           description: "Orders updated Successfully",
         });
-        getAllOrdersByStatus(status || "all")
+        getAllOrdersByStatus({ status: status || "all" });
         return true;
       }
       toast({
@@ -1210,7 +1210,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         getB2BOrders();
         fetchWalletBalance();
-        getAllOrdersByStatus(status || "all")
+        getAllOrdersByStatus({ status: status || "all" });
         router.push('/orders/b2b')
         return true;
       }
@@ -1286,25 +1286,25 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
-      getHub();
-      getSeller();
-      getB2BCustomers();
-      getSellerDashboardDetails()
-      getSellerRemittance();
-      getSellerBillingDetails();
-      getInvoices();
-      getCodPrice();
-      getSellerAssignedCourier()
+      // getAllOrdersByStatus({ status: status || "all" });;
+      getB2BOrders();
     }
-  }, [user, userToken])
+  }, [user, userToken, status]);
 
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
-      getAllOrdersByStatus(status || "all");
-      getB2BOrders();
+      getSellerDashboardDetails()
+      getHub();
+      getSeller();
+      getB2BCustomers();
+      getSellerAssignedCourier()
+      getSellerRemittance();
+      getSellerBillingDetails();
+      getInvoices();
+      // getCodPrice(); // Dont know why this is here
     }
+  }, [user, userToken])
 
-  }, [user, userToken, status]);
 
   return (
     <SellerContext.Provider

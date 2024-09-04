@@ -78,7 +78,7 @@ export const DataAnalysis = () => {
                         </CardHeader>
                         <CardContent className="flex items-center justify-between gap-1">
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">{sellerDashboard?.shipmentDetails?.totalShipments?.length}</span>
+                                <span className="p-3">{sellerDashboard?.shipmentDetails?.totalShipments}</span>
                                 <Label>Total Shipments</Label>
                             </div>
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
