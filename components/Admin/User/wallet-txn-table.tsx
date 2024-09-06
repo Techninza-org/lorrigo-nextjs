@@ -107,7 +107,7 @@ export function WalletTxnTable({ data, columns }: { data: any[], columns: Column
         return {
             dateTime: format(new Date(dateTime), 'dd-MM-yyyy hh:mm:ss a'),
             txnId: row?.merchantTransactionId,
-            clientName: row?.sellerId.name,
+            clientName: row?.sellerId?.name,
             status: row?.code,
             amount: row?.amount,
             desc: row?.desc,

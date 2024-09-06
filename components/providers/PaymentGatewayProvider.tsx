@@ -16,6 +16,7 @@ interface PaymentGatewayContextType {
     getAllTransactions: () => Promise<PaymentTransaction[]>;
     payInvoiceIntent: (amount: number, invoiceId: string) => Promise<void>;
     confirmInvoicePayment: ({ params, invoiceId }: { params: string, invoiceId: string }) => Promise<void>;
+    refetchLast5txn: () => Promise<PaymentTransaction[]>;
 }
 
 const PaymentGatewayContext = createContext<PaymentGatewayContextType | null>(null);
@@ -108,6 +109,19 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const refetchLast5txn = async () => {
+        try {
+            const response = await axiosIWAuth.get('/seller/last-transactions');
+            return response.data.transactions;
+        } catch (error: any) {
+            toast({
+                title: 'Error',
+                description: error?.response?.data?.message || "An error occurred",
+                variant: 'destructive'
+            });
+        }
+    }
+
     useEffect(() => {
         if ((user || userToken) && user?.role === "seller") {
             fetchWalletBalance();
@@ -122,7 +136,8 @@ function PaymentGatewayProvider({ children }: { children: React.ReactNode }) {
             fetchWalletBalance,
             getAllTransactions,
             payInvoiceIntent,
-            confirmInvoicePayment
+            confirmInvoicePayment,
+            refetchLast5txn
         }}>
             {children}
         </PaymentGatewayContext.Provider>

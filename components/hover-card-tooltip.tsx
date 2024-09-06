@@ -8,6 +8,7 @@ interface HoverCardToolTipProps {
     children: React.ReactNode;
     className?: string;
     Icon?: React.ReactNode;
+    triggerClassName?: string;
 }
 const HoverCardToolTip = ({
     side,
@@ -16,12 +17,14 @@ const HoverCardToolTip = ({
     children,
     className,
     Icon,
+    triggerClassName,
 }: HoverCardToolTipProps) => {
     return (
         <HoverCard openDelay={50}>
             <HoverCardTrigger
-                className={cn("text-blue-900 cursor-pointer w-min text-nowrap capitalize",
-                    !Icon && "border-dashed border-b border-blue-600 underline-offset-1"
+                className={cn("text-blue-900  cursor-pointer w-min text-nowrap capitalize",
+                    !Icon && "border-dashed border-b border-blue-600 underline-offset-1",
+                    triggerClassName
                 )}
             >
                 {label}{Icon}

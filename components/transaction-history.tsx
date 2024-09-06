@@ -17,15 +17,17 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "./ui/badge"
-import { formatCurrencyForIndia } from "@/lib/utils"
+import { cn, formatCurrencyForIndia } from "@/lib/utils"
 import { PaymentTransaction } from "@/types/types"
 import { useEffect, useState } from "react"
 import { usePaymentGateway } from "./providers/PaymentGatewayProvider";
 import { useAxios } from "./providers/AxiosProvider";
 import { format } from "date-fns";
 import Link from "next/link";
-import { CircleAlertIcon, CircleX, Move, MoveDownLeft, MoveRightIcon, MoveUpRightIcon } from "lucide-react";
+import { CircleAlertIcon, CircleX, MoveDownLeft, MoveUpRightIcon, RotateCwIcon } from "lucide-react";
 import { Input } from "./ui/input";
+import { buttonVariants } from "./ui/button";
+import HoverCardToolTip from "./hover-card-tooltip";
 
 
 const iconMap: { [key: string]: { component: any; color: string } } = {
@@ -62,10 +64,11 @@ export const IconComponent = ({ item }: { item: any }) => {
 };
 
 export const TransactionsHistory = () => {
-    const { getAllTransactions } = usePaymentGateway();
+    const { getAllTransactions, refetchLast5txn } = usePaymentGateway();
     const { axiosIWAuth } = useAxios();
     const [transactions, setTransactions] = useState<PaymentTransaction[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function fetchTransactions() {
@@ -98,8 +101,6 @@ export const TransactionsHistory = () => {
 
 
 
-
-
     return (
         <Card>
             <CardHeader>
@@ -107,13 +108,37 @@ export const TransactionsHistory = () => {
                 <CardDescription>Recent Transaction on Your Account!</CardDescription>
             </CardHeader>
             <CardContent>
-                <Input
-                    type="text"
-                    placeholder="Search transactions..."
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                    className="max-w-xs rounded"
-                />
+                <div className="flex justify-between">
+                    <Input
+                        type="text"
+                        placeholder="Search transactions..."
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        className="max-w-xs rounded"
+                    />
+                    <div onClick={async () => {
+                        setLoading(true);
+                        const response = await refetchLast5txn();
+                        setLoading(false);
+                        setTransactions(response ?? []);
+                    }}>
+
+                        <HoverCardToolTip
+                            side="top"
+                            label="Refresh last 5 Transaction"
+                            triggerClassName={cn("gap-2", buttonVariants({
+                                variant: "outline",
+                            }))}
+                            Icon={<RotateCwIcon size={18} className={cn(loading && "animate-spin")} />}
+                            className="text-gray-600 text-sm rounded-lg max-w-52 p-3" align="center"
+                        >
+                            <div className="text-center">
+                                If your amount is debited and not credited, please click here to refresh the last 5 transaction or If the issue persists, please contact our support team.
+                            </div>
+                        </HoverCardToolTip>
+                    </div>
+
+                </div>
                 <Table className="text-center">
                     <TableHeader>
                         <TableRow>

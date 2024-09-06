@@ -37,7 +37,7 @@ export const WalletTxnCol: ColumnDef<any>[] = [
         cell: ({ row }) => {
             const rowData = row.original;
             return (
-                <p className="capitalize">{rowData.sellerId.name || ""}</p>
+                <p className="capitalize">{rowData?.sellerId?.name || ""}</p>
             )
         }
     },

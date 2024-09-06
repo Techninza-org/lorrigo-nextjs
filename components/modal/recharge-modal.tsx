@@ -51,7 +51,7 @@ const schema = z.object({
 export const RechargeModal = () => {
     const { isOpen, onClose, type, data } = useModal();
     const router = useRouter();
-    const { rechargeWallet } = usePaymentGateway();
+    const { rechargeWallet, walletBalance } = usePaymentGateway();
 
     const isModalOpen = isOpen && type === "wallet";
 
@@ -96,7 +96,7 @@ export const RechargeModal = () => {
                         Recharge You Wallet
                     </DialogTitle>
                     <DialogDescription>
-                        Current Wallet Amount: {formatCurrencyForIndia(1000)}
+                        Current Wallet Amount: {formatCurrencyForIndia(walletBalance || 0)}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
