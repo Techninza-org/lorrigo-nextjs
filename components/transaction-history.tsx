@@ -125,7 +125,6 @@ export const TransactionsHistory = () => {
 
                         <HoverCardToolTip
                             side="top"
-                            label="Refresh last 5 Transaction"
                             triggerClassName={cn("gap-2", buttonVariants({
                                 variant: "outline",
                             }))}

@@ -36,9 +36,9 @@ export const WalletDeductionSchema = z.object({
     amt: z.string().refine(
         v => {
             let n = Number(v);
-            return !isNaN(n) && v?.length > 0 && n >= 50 && n <= 10000;
+            return !isNaN(n) && v?.length > 0;
         },
-        { message: "Invalid amount or recharge amount must be between 500 and 10000" }
+        { message: "Invalid amount" }
     ),
     type: z.enum(['Credit', 'Debit']),
     desc: z.string().min(5).max(100),

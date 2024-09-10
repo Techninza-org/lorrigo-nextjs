@@ -76,6 +76,13 @@ export const cloneFormSchema = formDataSchema.merge(customerDetailsSchema).merge
 }, {
     message: "Ewaybill is required and must be 12 digits for order value >= 50,000",
     path: ["ewaybill"]
+}).refine(data => {
+    if (data.payment_mode === "COD") {
+        return Number(data.amount2Collect) <= Number(data.productDetails.taxableValue);
+    }
+}, {
+    message: "Amount to collect should be <= taxable value",
+    path: ["amount2Collect"]
 });
 
 
