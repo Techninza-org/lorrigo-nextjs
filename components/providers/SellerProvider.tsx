@@ -77,7 +77,7 @@ interface SellerContextType {
   handleCreateB2BOrder: (order: z.infer<typeof b2bformDataSchema>) => boolean | Promise<boolean>;
   getB2BOrders: () => Promise<void>;
   b2bOrders: B2BOrderType[];
-  handleCreateB2BShipment: ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierNickName: string, carrierId: Number, charge: Number }) => boolean | Promise<boolean>;
+  handleCreateB2BShipment: ({ orderId, carrierId, carrierNickName, charge, eway_bill_no, invoiceNumber, pickupDateTime, invoiceDate }: { orderId: string, carrierNickName: string, carrierId: Number, charge: Number, eway_bill_no?: string, invoiceNumber?: string, pickupDateTime?: string, invoiceDate?: string }) => boolean | Promise<boolean>;
 
   handleEditB2BOrder: (order: z.infer<typeof b2bformDataSchema>, orderId: string) => boolean | Promise<boolean>;
   B2BcalcRate: (values: z.infer<typeof B2BrateCalcSchema>) => Promise<OrderType>;
@@ -1192,13 +1192,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       console.error('Error fetching data:', error);
     }
   }
-  const handleCreateB2BShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge }: { orderId: string, carrierId: Number, carrierNickName: string, charge: Number }) => {
+  const handleCreateB2BShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge, eway_bill_no, invoiceNumber, pickupDateTime, invoiceDate }: { orderId: string, carrierNickName: string, carrierId: Number, charge: Number, eway_bill_no?: string, invoiceNumber?: string, pickupDateTime?: string, invoiceDate?: string }) => {
     const payload = {
       orderId: orderId,
       carrierId: carrierId,
       carrierNickName,
       charge: charge,
       orderType: 0,
+      eway_bill_no,
+      invoiceNumber,
+      pickupDateTime,
+      invoiceDate
     }
     try {
       const res = await axiosIWAuth.post('/shipment/b2b', payload);

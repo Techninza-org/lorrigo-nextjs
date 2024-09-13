@@ -171,6 +171,7 @@ export interface B2COrderType {
   payment_mode?: number;
   order_invoice_date?: string;
   order_invoice_number?: string;
+  invoiceNumber?: string;
   isContainFragileItem?: boolean;
   numberOfBoxes?: number;
   orderBoxHeight?: number;
@@ -204,6 +205,8 @@ export interface OrderType {
     name: string;
     nickName: string;
     rtoCharges?: number;
+    transportId?: string;
+    transporterName?: string;
     minWeight: number;
     cod: number;
     isReversedCourier?: boolean

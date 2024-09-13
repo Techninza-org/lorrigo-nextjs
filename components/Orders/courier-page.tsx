@@ -21,6 +21,7 @@ import { useAuth } from "../providers/AuthProvider"
 import { useFormStatus } from "react-dom";
 import { LoadingComponent } from "../loading-spinner"
 import { OrderType } from "@/types/types"
+import { useModal } from "@/hooks/use-model-store"
 
 export const dynamic = 'force-dynamic'
 
@@ -30,6 +31,8 @@ export default function CourierPage() {
     const { userToken } = useAuth()
     const { pending } = useFormStatus();
     const [volWeight, setVolWeight] = useState(0)
+
+    const { onOpen } = useModal()
 
     const [courierPartners, setCourierPartners] = useState<OrderType>()
 
@@ -146,7 +149,7 @@ export default function CourierPage() {
                                                 <TableCell>{partner.order_zone}</TableCell>
                                                 <TableCell>{formatCurrencyForIndia(partner.charge)}</TableCell>
                                                 <TableCell className="text-right">
-                                                    <Button disabled={pending} type="submit" variant={"themeButton"} size={"sm"} onClick={async () => {
+                                                    {partner.name.toUpperCase() === "SMARTR" ? <Button disabled={pending} type="submit" variant={"themeButton"} size={"sm"} onClick={async () => {
                                                         setLoading(true)
                                                         try {
                                                             if (params.type == "b2c") {
@@ -170,6 +173,18 @@ export default function CourierPage() {
                                                             setLoading(false)
                                                         }
                                                     }}>Ship now</Button>
+                                                        : <Button disabled={pending} type="submit" variant={"themeButton"} size={"sm"} onClick={() => onOpen("B2BShipNow", {
+                                                            form: {
+                                                                transportId: partner.transportId,
+                                                                transportName: partner.transporterName,
+                                                                invoiceNumber: courierPartners.orderDetails.invoiceNumber,
+                                                                orderId: courierPartners.orderDetails._id,
+                                                                carrierId: partner.carrierID,
+                                                                carrierNickName: partner.nickName,
+                                                                charge: partner.charge,
+                                                                type: partner.type || '',
+                                                            }
+                                                        })}>Ship now</Button>}
                                                 </TableCell>
                                             </TableRow>
                                         })
