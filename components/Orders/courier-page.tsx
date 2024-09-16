@@ -149,7 +149,7 @@ export default function CourierPage() {
                                                 <TableCell>{partner.order_zone}</TableCell>
                                                 <TableCell>{formatCurrencyForIndia(partner.charge)}</TableCell>
                                                 <TableCell className="text-right">
-                                                    {partner.name.toUpperCase() === "SMARTR" ? <Button disabled={pending} type="submit" variant={"themeButton"} size={"sm"} onClick={async () => {
+                                                    {params.type === "b2c" || partner.name.toUpperCase() === "SMARTR" ? <Button disabled={pending} type="submit" variant={"themeButton"} size={"sm"} onClick={async () => {
                                                         setLoading(true)
                                                         try {
                                                             if (params.type == "b2c") {

@@ -24,6 +24,7 @@ import { B2BOrderType } from "@/types/B2BTypes";
 import { b2bformDataSchema } from "../Orders/b2b/b2b-form";
 import { B2BrateCalcSchema } from "../RateCalc/b2b-rate-calc-form";
 import { useModal } from "@/hooks/use-model-store";
+import { format, subDays } from "date-fns";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -233,7 +234,17 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   }
 
   const getAllOrdersByStatus = async ({ status, fromDate, toDate }: { status: string, fromDate?: string, toDate?: string }) => {
-    let url = status === "all" ? `/order?from=${fromDate}&to=${toDate}` : `/order?status=${status}&from=${fromDate}&to=${toDate}`
+    const today = new Date();
+    const formattedToDate = toDate ? toDate : format(today, 'MM/dd/yyyy');
+
+    const formattedFromDate = fromDate
+      ? fromDate
+      : format(subDays(today, 10), 'MM/dd/yyyy');
+
+    let url =
+      status === 'all'
+        ? `/order?from=${formattedFromDate}&to=${formattedToDate}`
+        : `/order?status=${status}&from=${formattedFromDate}&to=${formattedToDate}`;
     try {
       const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
@@ -730,7 +741,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "Order manifested successfully",
         });
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         getB2BOrders();
         router.refresh();
         return true;
@@ -741,11 +752,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         description: res.data.message,
       });
       return false
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Something went wrong",
+        description: error.response.data.message || "Something went wrong",
       });
       return false
     }
