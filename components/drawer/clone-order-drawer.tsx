@@ -32,17 +32,7 @@ import { Box, MapPin, Package, Undo2 } from "lucide-react";
 import useFetchCityState from "@/hooks/use-fetch-city-state";
 import { isValidPhoneNumber } from "react-phone-number-input";
 
-export const cloneFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema).refine((data) => {
-    if (data.payment_mode === 'Prepaid') {
-        return true;
-    } else {
-        // @ts-ignore
-        return data?.amount2Collect?.length > 0;
-    }
-}, {
-    message: "Collectable amount is required.",
-    path: ["amount2Collect"],
-}).refine(data => {
+export const cloneFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema).refine(data => {
     if (data.sellerDetails.isSellerAddressAdded) {
         return (data?.sellerDetails?.sellerPincode ?? '').length === 6;
     }
@@ -80,6 +70,7 @@ export const cloneFormSchema = formDataSchema.merge(customerDetailsSchema).merge
     if (data.payment_mode === "COD") {
         return Number(data.amount2Collect) <= Number(data.productDetails.taxableValue);
     }
+    return true;
 }, {
     message: "Amount to collect should be <= taxable value",
     path: ["amount2Collect"]
@@ -151,6 +142,8 @@ export function CloneOrderDrawer() {
             isReverseOrder: false
         }
     });
+
+    console.log(form.formState.errors);
 
     const customerPincode = form.watch("customerDetails.pincode").toString();
 

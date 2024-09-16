@@ -78,11 +78,6 @@ const B2CFormSchema = z.object({
     pickupAddress: z.string().min(1, "Pickup address is required"),
     isReverseOrder: z.boolean().default(false).optional()
 }).refine(data => {
-    if (data.payment_mode === "COD") {
-        return data.amount2Collect !== "";
-    }
-    return true;
-}).refine(data => {
     if (Number(data.productDetails.taxableValue) >= 50000) {
         return (data.ewaybill ?? "").length === 12;
     }
@@ -94,6 +89,7 @@ const B2CFormSchema = z.object({
     if (data.payment_mode === "COD") {
         return Number(data.amount2Collect) <= Number(data.productDetails.taxableValue);
     }
+    return true;
 }, {
     message: "Amount to collect should be <= taxable value",
     path: ["amount2Collect"]
