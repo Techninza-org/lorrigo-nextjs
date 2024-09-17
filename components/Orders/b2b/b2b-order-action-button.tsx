@@ -176,7 +176,7 @@ export const B2BOrderButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData })
 export const OrderCancelButton = ({ rowData }: { rowData: B2BOrderType }) => {
     const { onOpen } = useModal();
     return (
-        <DropdownMenuItem onClick={() => onOpen("cancelOrder", { b2bOrder: rowData })} className="text-red-500">Cancel Order</DropdownMenuItem>
+        <DropdownMenuItem disabled onClick={() => onOpen("cancelOrder", { b2bOrder: rowData })} className="text-red-500">Cancel Order</DropdownMenuItem>
     );
 }
 
