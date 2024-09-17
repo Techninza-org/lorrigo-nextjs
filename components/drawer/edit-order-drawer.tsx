@@ -35,58 +35,40 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 export const EditFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema).extend({
     orderId: z.string(),
     productId: z.string(),
-}).refine((data) => {
-    if (data.payment_mode === 'Prepaid') {
-        return true;
-    } else {
-        // @ts-ignore
-        return data?.amount2Collect?.length > 0;
-    }
-}, {
-    message: "Collectable amount is required.",
-    path: ["amount2Collect"],
 }).refine(data => {
     if (data.sellerDetails.isSellerAddressAdded) {
-        return (data?.sellerDetails?.sellerPincode ?? '').length === 6;
+        return isValidPhoneNumber(data?.sellerDetails?.sellerPhone ?? '');
     }
     return true;
 }, {
-    message: "Pincode should be of 6 digits",
-    path: ["sellerDetails", "sellerPincode"]
+    message: "Phone number should be of 10 digits",
+    path: ["sellerDetails", "sellerPhone"]
 })
-    .refine(data => {
-        if (data.sellerDetails.isSellerAddressAdded) {
-            return isValidPhoneNumber(data?.sellerDetails?.sellerPhone ?? '');
-        }
-        return true;
-    }, {
-        message: "Phone number should be of 10 digits",
-        path: ["sellerDetails", "sellerPhone"]
-    })
-    .refine(data => {
-        if (data.sellerDetails.isSellerAddressAdded) {
-            return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
-        }
-        return true;
-    }, {
-        message: "Address is required",
-        path: ["sellerDetails", "sellerAddress"]
-    }).refine(data => {
-        if (Number(data.productDetails.taxableValue) >= 50000) {
-            return (data.ewaybill ?? "").length === 12;
-        }
-        return true;
-    }, {
-        message: "Ewaybill is required and must be 12 digits for order value >= 50,000",
-        path: ["ewaybill"]
-    }).refine(data => {
-        if (data.payment_mode === "COD") {
-            return Number(data.amount2Collect) <= Number(data.productDetails.taxableValue);
-        }
-    }, {
-        message: "Amount to collect should be <= taxable value",
-        path: ["amount2Collect"]
-    });
+.refine(data => {
+    if (data.sellerDetails.isSellerAddressAdded) {
+        return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
+    }
+    return true;
+}, {
+    message: "Address is required",
+    path: ["sellerDetails", "sellerAddress"]
+}).refine(data => {
+    if (Number(data.productDetails.taxableValue) >= 50000) {
+        return (data.ewaybill ?? "").length === 12;
+    }
+    return true;
+}, {
+    message: "Ewaybill is required and must be 12 digits for order value >= 50,000",
+    path: ["ewaybill"]
+}).refine(data => {
+    if (data.payment_mode === "COD") {
+        return Number(data.amount2Collect) <= Number(data.productDetails.taxableValue);
+    }
+    return true;
+}, {
+    message: "Amount to collect should be <= taxable value",
+    path: ["amount2Collect"]
+});
 
 
 export function EditOrderDrawer() {
