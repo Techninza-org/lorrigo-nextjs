@@ -477,7 +477,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         })
 
         getSellerDashboardDetails();
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         router.refresh();
         return true;
       } else {
@@ -601,7 +601,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "Order updated successfully",
         });
-        getAllOrdersByStatus({ status: "all" });
+        getAllOrdersByStatus({ status: status || "all" });
         getSellerDashboardDetails();
         return true;
       } else {
@@ -639,7 +639,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order created successfully",
           description: "Order has been created successfully",
         });
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         fetchWalletBalance();
         router.push('/orders')
         return true;
@@ -674,7 +674,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order created successfully",
           description: "Order has been created successfully",
         });
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         fetchWalletBalance();
         router.push('/orders')
         return true;
@@ -708,7 +708,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "Order cancellation request generated",
         });
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         getB2BOrders();
         fetchWalletBalance();
         return true;
@@ -866,7 +866,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Order",
           description: "NDR request generated",
         });
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         return true;
       }
       toast({
@@ -1011,7 +1011,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Success",
           description: "Order Sync successfully.",
         });
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         return true;
       }
       return false;
@@ -1037,7 +1037,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Orders",
           description: "Orders pickup address updated",
         });
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         getB2BOrders();
         return true;
       }
@@ -1074,7 +1074,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Orders",
           description: "Orders updated Successfully",
         });
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         return true;
       }
       toast({
@@ -1225,7 +1225,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         getB2BOrders();
         fetchWalletBalance();
-        getAllOrdersByStatus({ status: "all" })
+        getAllOrdersByStatus({ status: status || "all" })
         router.push('/orders/b2b')
         return true;
       }
@@ -1301,7 +1301,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
-      getAllOrdersByStatus({ status: "all" });
+      getAllOrdersByStatus({ status: status || "all" });
       getB2BOrders();
     }
 
