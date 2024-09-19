@@ -183,6 +183,7 @@ export default function CourierPage() {
                                                                 carrierNickName: partner.nickName,
                                                                 charge: partner.charge,
                                                                 type: partner.type || '',
+                                                                shipmentValue: courierPartners.orderDetails?.amount
                                                             }
                                                         })}>Ship now</Button>}
                                                 </TableCell>

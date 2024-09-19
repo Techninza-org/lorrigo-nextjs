@@ -143,8 +143,6 @@ export function CloneOrderDrawer() {
         }
     });
 
-    console.log(form.formState.errors);
-
     const customerPincode = form.watch("customerDetails.pincode").toString();
 
     const { cityState: customerCityState, isTyping: isCusPinLoading, loading } = useFetchCityState(customerPincode);

@@ -24,7 +24,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-model-store";
-import { useHubProvider } from '../providers/HubProvider';
 import { useEffect } from 'react';
 import { useToast } from '../ui/use-toast';
 import {
@@ -39,7 +38,7 @@ import { cn } from '@/lib/utils';
 import { useSellerProvider } from '../providers/SellerProvider';
 
 export const pickupAddressFormSchema = z.object({
-    eway_bill_no: z.string().min(1, "E-way bill Number is required").max(50),
+    eway_bill_no: z.string(),
     invoiceNumber: z.string().min(1, "Invoice Number is required").max(50),
     pickupDateTime: z.date(),
     invoiceDate: z.date(),
@@ -80,6 +79,19 @@ export const B2BShipNowModal = () => {
     const onSubmit = async (values: z.infer<typeof pickupAddressFormSchema>) => {
         try {
 
+            if (!modalData) {
+                return;
+            }
+
+            if (Number(modalData.shipmentValue) >= 50000 && !values.eway_bill_no) {
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "E-way bill is required for shipment value greater than 50,000",
+                });
+                return;
+            }
+
             const data = {
                 ...values,
                 pickupDateTime: new Date(values.pickupDateTime.setHours(17, 0, 0, 0)).toISOString().slice(0, 19).replace("T", " "),
@@ -94,8 +106,8 @@ export const B2BShipNowModal = () => {
             })
 
             // form.reset();
-            // router.refresh();
-            // onClose();
+            router.refresh();
+            onClose();
         } catch (error) {
             console.error(error);
         }
