@@ -94,7 +94,7 @@ const TrackSellerRemittance = () => {
                 </Badge>
                 <Badge variant={"secondary"}>
 
-                    Processed on: {formatDate(parse(remittanceDetails.remittanceDate, 'yy-MM-dd', new Date()), 'MMM dd, yyyy')}
+                    Processed on: {formatDate(parse(remittanceDetails.remittanceDate, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy')}
                 </Badge>
             </div>
 
