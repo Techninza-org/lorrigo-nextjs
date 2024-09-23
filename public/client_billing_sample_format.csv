@@ -1,2 +1,2 @@
-Date,Awb,RTO Awb,Order id,Recipient Name,Shipment Type,COD Value,Origin City,Destination City,Charged Weight,Zone,Forward Applicable,RTO Applicable,Carrier ID
-18-07-2024,20092669672,NA,LS2425S0059,Alok,Prepaid,0,Bangalore,BANGALORE,0.853,A,Yes,No,6628abf579087bcaf24ef3da
+Awb,Shipment Type,Charged Weight,Zone,Forward Applicable,RTO Applicable,Carrier ID
+,,,,,,
