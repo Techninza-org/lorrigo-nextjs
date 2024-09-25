@@ -20,8 +20,16 @@ import { LoadingComponent } from '../loading-spinner';
 
 export const GstinFormSchema = z.object({
     gstin: z.string().min(1, "GST number is required").max(15, "GST number must be 15 characters"),
-    tan: z.string().min(1, "TAN number is required").max(10, "TAN number must be 10 characters"),
-    deductTDS: z.enum(["yes", "no"]),
+    tan: z.string().optional(),
+    deductTDS: z.enum(["yes", "no"])
+}).refine(data => {
+    if (data.deductTDS === "no") {
+        return true
+    }
+    return false
+}, {
+    message: "TAN is required",
+    path: ["tan"]
 });
 
 const GstinForm = () => {
@@ -41,7 +49,7 @@ const GstinForm = () => {
             if (seller?.gstInvoice) {
                 form.setValue('gstin', seller.gstInvoice.gstin || "");
                 form.setValue('tan', seller.gstInvoice.tan || "");
-                form.setValue('deductTDS', (seller?.gstInvoice?.deductTDS as 'yes' | 'no') || "no" );
+                form.setValue('deductTDS', (seller?.gstInvoice?.deductTDS as 'yes' | 'no') || "no");
             }
         };
         setFormValues();
@@ -58,7 +66,7 @@ const GstinForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-            {form.formState.isSubmitting && <LoadingComponent />}
+                {form.formState.isSubmitting && <LoadingComponent />}
                 <div className="space-y-5">
                     <FormField
                         control={form.control}
