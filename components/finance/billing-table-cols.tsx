@@ -2,6 +2,9 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
 import { formatCurrencyForIndia } from "@/lib/utils";
+import HoverCardToolTip from "@/components/hover-card-tooltip";
+import { InfoIcon } from "lucide-react";
+
 
 export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
     {
@@ -45,7 +48,7 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("shipmentType")  ? "COD" : "Prepaid"}</p>
+                    <p>{row.getValue("shipmentType") ? "COD" : "Prepaid"}</p>
                 </div>
             )
         }
@@ -103,9 +106,16 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
         header: 'Charged Amount',
         accessorKey: 'billingAmount',
         cell: ({ row }) => {
+            const rowData = row.original;
             return (
-                <div className="space-y-1 items-center">
+                <div className="items-center flex gap-1">
                     <p>{formatCurrencyForIndia(Number(row.getValue("billingAmount")) || 0)}</p>
+                    <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
+                        <div>Increment Price: {rowData.incrementPrice}</div>
+                        <div>Base Price: {rowData.basePrice}</div>
+                        <div>Increment Weight: {Number(rowData.incrementWeight).toFixed(2)}</div>
+                        <div>Base Weight: {rowData.baseWeight}</div>
+                    </HoverCardToolTip>
                 </div>
             )
         }
@@ -147,7 +157,7 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
         }
     },
 ];
- 
+
 export const SellerB2BBillingCols: ColumnDef<B2COrderType>[] = [
     {
         header: 'Order ID',

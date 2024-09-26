@@ -129,7 +129,7 @@ export const AdminClientBillingCols: ColumnDef<B2COrderType>[] = [
                         <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
                             <div>Increment Price: {rowData.incrementPrice}</div>
                             <div>Base Price: {rowData.basePrice}</div>
-                            <div>Increment Weight: {rowData.incrementWeight}</div>
+                            <div>Increment Weight: {Number(rowData.incrementWeight).toFixed(2)}</div>
                             <div>Base Weight: {rowData.baseWeight}</div>
                         </HoverCardToolTip>
                     </p>

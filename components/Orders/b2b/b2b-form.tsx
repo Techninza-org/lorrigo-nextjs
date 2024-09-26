@@ -8,7 +8,7 @@ import { useSellerProvider } from '../../providers/SellerProvider'
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from '../../ui/select'
-import { Car, CircleUserRound, PackageOpen, PersonStanding, PersonStandingIcon } from 'lucide-react'
+import { Car, CheckIcon, CircleUserRound, LucideSeparatorHorizontal, PackageOpen, PersonStanding, PersonStandingIcon } from 'lucide-react'
 import { useModal } from '@/hooks/use-model-store'
 import { B2bBoxDetails } from './b2b-box-details'
 import { Button } from '../../ui/button'
@@ -16,9 +16,11 @@ import ImageUpload from '../../file-upload'
 import { Label } from '../../ui/label'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/providers/AuthProvider'
-import { base64ToFile, generateOrderID } from '@/lib/utils'
+import { base64ToFile, cn, generateOrderID } from '@/lib/utils'
 import Image from 'next/image'
 import { useToast } from '@/components/ui/use-toast'
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 export const b2bformDataSchema = z.object({
     client_order_reference_id: z.string().optional(),
@@ -376,35 +378,79 @@ export const B2BAddAmtDocForm = ({ form, isLoading }: { form: any, isLoading: bo
                         control={form.control}
                         name="pickupAddress"
                         render={({ field }) => (
-                            <FormItem className='w-full'>
-                                <FormLabel
-                                    className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
+                            <FormItem className="flex flex-col ">
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                                 >
-                                    Select Facility<span className='text-red-500'>*</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <Select
-                                        disabled={isLoading}
-                                        onValueChange={field.onChange}
+                                    Select Facility <span className='text-red-500'>*</span></FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                className={cn(
+                                                    "justify-between focus-visible:ring-0 text-black focus-visible:ring-offset-0",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value
+                                                    ? sellerFacilities.find(
+                                                        (facility) => facility._id === field.value
+                                                    )?.name
+                                                    : "Select Facility"}
+                                                <LucideSeparatorHorizontal className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="lg:w-[540px] xl:w-[620px] p-0">
+                                        <Command>
+                                            <CommandInput
+                                                placeholder="Search Pickup..."
+                                                className="h-9"
+                                            />
+                                            <CommandList>
+                                                <CommandEmpty>No Pickup Address found.</CommandEmpty>
+                                                <CommandGroup className="p-0">
+                                                    <Button
+                                                        className="h-10 text-center cursor-pointer rounded-none w-full items-center flex justify-center text-rose-500"
+                                                        onClick={() => onOpen("addPickupLocation")}
+                                                        variant={"webPageBtn"}
+                                                    >
 
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={sellerFacilities.find((item) => item._id === form.watch("pickupAddress"))?.name || "Select facility"} />
-                                        </SelectTrigger>
-                                        <SelectContent className="max-h-72">
-                                            <SelectSeparator className="h-10 text-center cursor-pointer items-center flex justify-center text-rose-500" onClick={() => onOpen("addPickupLocation")}><Car size={18} className="mr-3" />Add Pickup location</SelectSeparator>
-                                            {sellerFacilities.length > 0 ? (sellerFacilities.map((facility: any) => (
-                                                <SelectItem key={facility._id} value={facility._id} className="capitalize">
-                                                    {facility.name}
-                                                </SelectItem>
-                                            ))) : (
-                                                <SelectItem value="noFacility" className="capitalize" disabled={true}>
-                                                    No facility available
-                                                </SelectItem>
-                                            )}
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
+                                                        <Car size={18} className="mr-3" />
+                                                        Add Pickup location
+                                                    </Button>
+
+                                                    {sellerFacilities.map((facility) => (
+                                                        <CommandItem
+                                                            value={facility.name}
+                                                            key={facility._id}
+                                                            onSelect={() => {
+                                                                form.setValue("pickupAddress", facility._id)
+                                                            }}
+                                                        >
+                                                            <div className="capitalize">
+                                                                {facility.name}
+                                                                <div className="text-xs pl-1 pt-1">
+                                                                    <span>Address:</span>
+                                                                    <div className="font-semibold">{facility.address1}</div>
+                                                                </div>
+                                                            </div>
+                                                            <CheckIcon
+                                                                className={cn(
+                                                                    "ml-auto h-4 w-4",
+                                                                    facility._id === field.value
+                                                                        ? "opacity-100"
+                                                                        : "opacity-0"
+                                                                )}
+                                                            />
+                                                        </CommandItem>
+                                                    ))}
+                                                </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -420,34 +466,79 @@ export const B2BAddAmtDocForm = ({ form, isLoading }: { form: any, isLoading: bo
                         control={form.control}
                         name="customerDetails"
                         render={({ field }) => (
-                            <FormItem className='w-full'>
-                                <FormLabel
-                                    className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
+                            <FormItem className="flex flex-col">
+                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                                 >
-                                    Select Customer<span className='text-red-500'>*</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <Select
-                                        disabled={isLoading}
-                                        onValueChange={field.onChange}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder={b2bCustomers.find((item) => item._id === form.watch("customerDetails"))?.name || "Select customer"} />
-                                        </SelectTrigger>
-                                        <SelectContent className="max-h-72">
-                                            <SelectSeparator className="h-10 text-center cursor-pointer items-center flex justify-center text-rose-500" onClick={() => onOpen("addCustomer")}><PersonStanding size={18} className="mr-3" />Add New Customer</SelectSeparator>
-                                            {b2bCustomers.length > 0 ? (b2bCustomers.map((customer: any) => (
-                                                <SelectItem key={customer._id} value={customer._id} className="capitalize">
-                                                    {customer.name}
-                                                </SelectItem>
-                                            ))) : (
-                                                <SelectItem value="noFacility" className="capitalize" disabled={true}>
-                                                    No customer available
-                                                </SelectItem>
-                                            )}
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
+                                    Select Customer <span className='text-red-500'>*</span></FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                className={cn(
+                                                    "capitalize justify-between focus-visible:ring-0 text-black focus-visible:ring-offset-0",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value
+                                                    ? b2bCustomers.find(
+                                                        (facility) => facility._id === field.value
+                                                    )?.name
+                                                    : "Select Customer"}
+                                                <LucideSeparatorHorizontal className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="lg:w-[540px] xl:w-[620px]  p-0">
+                                        <Command>
+                                            <CommandInput
+                                                placeholder="Search Pickup..."
+                                                className="h-9"
+                                            />
+                                            <CommandList>
+                                                <CommandEmpty>No Customer found.</CommandEmpty>
+                                                <CommandGroup className="p-0">
+                                                    <Button
+                                                        className="h-10 text-center cursor-pointer rounded-none w-full items-center flex justify-center text-rose-500"
+                                                        onClick={() => onOpen("addCustomer")}
+                                                        variant={"webPageBtn"}
+                                                    >
+
+                                                        <Car size={18} className="mr-3" />
+                                                        Add New Customer
+                                                    </Button>
+
+                                                    {b2bCustomers.map((cust) => (
+                                                        <CommandItem
+                                                            value={cust.name}
+                                                            key={cust._id}
+                                                            onSelect={() => {
+                                                                form.setValue("customerDetails", cust._id)
+                                                            }}
+                                                        >
+                                                            <div className="capitalize">
+                                                                {cust.name}
+                                                                <div className="text-xs pl-1 pt-1">
+                                                                    <span>Address:</span>
+                                                                    <div className="font-semibold">{cust.address}</div>
+                                                                </div>
+                                                            </div>
+                                                            <CheckIcon
+                                                                className={cn(
+                                                                    "ml-auto h-4 w-4",
+                                                                    cust._id === field.value
+                                                                        ? "opacity-100"
+                                                                        : "opacity-0"
+                                                                )}
+                                                            />
+                                                        </CommandItem>
+                                                    ))}
+                                                </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
                                 <FormMessage />
                             </FormItem>
                         )}

@@ -28,9 +28,12 @@ import { OrderDetailForm } from "../Shipment/b2c-order-form";
 import { BoxDetails } from "../Shipment/box-details";
 import { AddCustomerForm, customerDetailsSchema } from "../modal/add-customer-modal";
 import { SellerForm, sellerSchema } from "../modal/add-seller-modal";
-import { Box, MapPin, Package, Undo2 } from "lucide-react";
+import { Box, CheckIcon, LucideSeparatorHorizontal, MapPin, Package, Undo2 } from "lucide-react";
 import useFetchCityState from "@/hooks/use-fetch-city-state";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
+import { cn } from "@/lib/utils";
 
 export const EditFormSchema = formDataSchema.merge(customerDetailsSchema).merge(sellerSchema).extend({
     orderId: z.string(),
@@ -44,31 +47,31 @@ export const EditFormSchema = formDataSchema.merge(customerDetailsSchema).merge(
     message: "Phone number should be of 10 digits",
     path: ["sellerDetails", "sellerPhone"]
 })
-.refine(data => {
-    if (data.sellerDetails.isSellerAddressAdded) {
-        return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
-    }
-    return true;
-}, {
-    message: "Address is required",
-    path: ["sellerDetails", "sellerAddress"]
-}).refine(data => {
-    if (Number(data.productDetails.taxableValue) >= 50000) {
-        return (data.ewaybill ?? "").length === 12;
-    }
-    return true;
-}, {
-    message: "Ewaybill is required and must be 12 digits for order value >= 50,000",
-    path: ["ewaybill"]
-}).refine(data => {
-    if (data.payment_mode === "COD") {
-        return Number(data.amount2Collect) <= Number(data.productDetails.taxableValue);
-    }
-    return true;
-}, {
-    message: "Amount to collect should be <= taxable value",
-    path: ["amount2Collect"]
-});
+    .refine(data => {
+        if (data.sellerDetails.isSellerAddressAdded) {
+            return data?.sellerDetails?.sellerAddress?.length ?? 0 > 0;
+        }
+        return true;
+    }, {
+        message: "Address is required",
+        path: ["sellerDetails", "sellerAddress"]
+    }).refine(data => {
+        if (Number(data.productDetails.taxableValue) >= 50000) {
+            return (data.ewaybill ?? "").length === 12;
+        }
+        return true;
+    }, {
+        message: "Ewaybill is required and must be 12 digits for order value >= 50,000",
+        path: ["ewaybill"]
+    }).refine(data => {
+        if (data.payment_mode === "COD") {
+            return Number(data.amount2Collect) <= Number(data.productDetails.taxableValue);
+        }
+        return true;
+    }, {
+        message: "Amount to collect should be <= taxable value",
+        path: ["amount2Collect"]
+    });
 
 
 export function EditOrderDrawer() {
@@ -313,34 +316,69 @@ export function EditOrderDrawer() {
                                             control={form.control}
                                             name="pickupAddress"
                                             render={({ field }) => (
-                                                <FormItem className='w-full'>
-                                                    <FormLabel
-                                                        className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
+                                                <FormItem className="flex flex-col">
+                                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
                                                     >
-                                                        Select Facility <span className='text-red-500'>*</span>
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Select
-                                                            disabled={isLoading}
-                                                            onValueChange={field.onChange}
-
-                                                        >
-                                                            <SelectTrigger>
-                                                                <SelectValue placeholder={order?.pickupAddress?.name || "Select facility"} />
-                                                            </SelectTrigger>
-                                                            <SelectContent className="max-h-72">
-                                                                {sellerFacilities.length > 0 ? (sellerFacilities.map((facility: any) => (
-                                                                    <SelectItem key={facility._id} value={facility._id} className="capitalize">
-                                                                        {facility.name}
-                                                                    </SelectItem>
-                                                                ))) : (
-                                                                    <SelectItem value="noFacility" className="capitalize" disabled={true}>
-                                                                        No facility available
-                                                                    </SelectItem>
-                                                                )}
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
+                                                        Select Facility <span className='text-red-500'>*</span></FormLabel>
+                                                    <Popover>
+                                                        <PopoverTrigger asChild>
+                                                            <FormControl>
+                                                                <Button
+                                                                    variant="outline"
+                                                                    role="combobox"
+                                                                    className={cn(
+                                                                        "justify-between bg-slate-100 focus-visible:ring-0 text-black focus-visible:ring-offset-0 border-0",
+                                                                        !field.value && "text-muted-foreground"
+                                                                    )}
+                                                                >
+                                                                    {field.value
+                                                                        ? sellerFacilities.find(
+                                                                            (facility) => facility._id === field.value
+                                                                        )?.name
+                                                                        : "Select Facility"}
+                                                                    <LucideSeparatorHorizontal className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                                </Button>
+                                                            </FormControl>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent className="w-[245px] p-0">
+                                                            <Command>
+                                                                <CommandInput
+                                                                    placeholder="Search Pickup..."
+                                                                    className="h-9"
+                                                                />
+                                                                <CommandList>
+                                                                    <CommandEmpty>No Pickup Address found.</CommandEmpty>
+                                                                    <CommandGroup>
+                                                                        {sellerFacilities.map((facility) => (
+                                                                            <CommandItem
+                                                                                value={facility.name}
+                                                                                key={facility._id}
+                                                                                onSelect={() => {
+                                                                                    form.setValue("pickupAddress", facility._id)
+                                                                                }}
+                                                                            >
+                                                                                <div className="capitalize">
+                                                                                    {facility.name}
+                                                                                    <div className="text-xs pl-1 pt-1">
+                                                                                        <span>Address:</span>
+                                                                                        <div className="font-semibold">{facility.address1}</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <CheckIcon
+                                                                                    className={cn(
+                                                                                        "ml-auto h-4 w-4",
+                                                                                        facility._id === field.value
+                                                                                            ? "opacity-100"
+                                                                                            : "opacity-0"
+                                                                                    )}
+                                                                                />
+                                                                            </CommandItem>
+                                                                        ))}
+                                                                    </CommandGroup>
+                                                                </CommandList>
+                                                            </Command>
+                                                        </PopoverContent>
+                                                    </Popover>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
