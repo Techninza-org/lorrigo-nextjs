@@ -82,7 +82,7 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
 
         );
     }
-    if (orderStage === 1 || orderStage === 2) {
+    if (orderStage === 1) {
         return (
             <div className="flex gap-2 items-center">
                 <DropdownMenu>
@@ -97,6 +97,27 @@ export const OrderButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) =>
 
                         <DropdownMenuSeparator />
                         <OrderCancelButton rowData={rowData} />
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+
+        );
+    }
+    if (orderStage === 2) {
+        return (
+            <div className="flex gap-2 items-center">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontalIcon className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                        <OrderCloneButton rowData={rowData} />
+
+                        {/* <DropdownMenuSeparator /> */}
+                        {/* <OrderCancelButton rowData={rowData} /> */}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
