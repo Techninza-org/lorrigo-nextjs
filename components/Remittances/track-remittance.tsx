@@ -29,7 +29,7 @@ const TrackRemittance = () => {
     const { userToken } = useAuth()
 
     const formatDate = (dateString: string, formatString: string) => {
-        const parsedDate = parse(dateString, 'yy-MM-dd', new Date());
+        const parsedDate = parse(dateString, 'yyyy-MM-dd', new Date());
         return format(parsedDate, formatString);
       };
 

@@ -48,6 +48,11 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
     )
+    const [pagination, setPagination] = React.useState({
+        pageIndex: 0,
+        pageSize: 20,
+      });
+    
     const searchParams = useSearchParams()
     const isShipmentVisible = searchParams.get('status') !== 'new'
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
@@ -83,17 +88,18 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
         state: {
             columnFilters,
             columnVisibility,
+            pagination,
             rowSelection,
         },
     })
 
-    // formatDate(parse(row.remittanceDate, 'yy-MM-dd', new Date()), 'MMM dd, yyyy'),
+    // formatDate(parse(row.remittanceDate, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy'),
 
     React.useEffect(() => {
         if ((!date?.from || !date?.to) || (date.from === date.to)) return
         const a = data.filter((row) => {
             if (date?.from && date?.to) {
-                return row.remittanceDate > formatDate(date.from, 'yy-MM-dd') && row.remittanceDate < format(date.to, 'yy-MM-dd')
+                return row.remittanceDate > formatDate(date.from, 'yyyy-MM-dd') && row.remittanceDate < format(date.to, 'yyyy-MM-dd')
             }
             return false;
         });
@@ -231,7 +237,7 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
                 <div className="flex-1 text-sm text-muted-foreground">
                     <Button variant={'outline'}>
                         Page{' '}
-                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()+1}
+                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
                     </Button>
                 </div>
                 <div className="space-x-2">
