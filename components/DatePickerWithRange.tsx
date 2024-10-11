@@ -23,7 +23,7 @@ export function DatePickerWithRange({
   className?: string
   date: DateRange | undefined
   setDate: (date: DateRange) => void
-  disabledDates: Matcher | Matcher[] 
+  disabledDates?: Matcher | Matcher[] 
 }) {
 
   return (

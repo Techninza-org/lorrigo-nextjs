@@ -151,7 +151,7 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
                         }
                         className="w-64"
                     />
-                    <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
+                    <DatePickerWithRange date={date} setDate={setDate} />
                     <CsvDownloader filename="Remittance" datas={datas} columns={cols}>
                         <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
                     </CsvDownloader>
