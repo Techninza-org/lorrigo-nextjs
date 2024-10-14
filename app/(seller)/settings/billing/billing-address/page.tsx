@@ -5,7 +5,7 @@ import React from 'react'
 const BillingAddress = () => {
   return (
       <Card>
-        <CardContent className='px-10 py-5'>
+        <CardContent className='px-1 sm:px-10 py-5'>
           <CardTitle className='py-4 font-semibold'>Billing Address</CardTitle>
           <BillingAddressForm />
         </CardContent>

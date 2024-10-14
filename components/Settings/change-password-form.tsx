@@ -46,9 +46,9 @@ const ChangePasswordForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-            {form.formState.isSubmitting && <LoadingComponent />}
-                <div className="space-y-5 ">
-                    <div className='grid gap-y-6  py-5'>
+                {form.formState.isSubmitting && <LoadingComponent />}
+                <div className="space-y-5 p-4 sm:p-6 lg:p-8">
+                    <div className='grid gap-y-6 py-5'>
                         <FormField
                             control={form.control}
                             name={'old_password'}
@@ -59,7 +59,7 @@ const ChangePasswordForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full sm:w-3/4 md:w-1/2"
                                             {...field} />
                                     </FormControl>
                                     <FormMessage />
@@ -75,7 +75,7 @@ const ChangePasswordForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full sm:w-3/4 md:w-1/2"
                                             {...field} />
                                     </FormControl>
                                     <FormMessage />
@@ -91,7 +91,7 @@ const ChangePasswordForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full sm:w-3/4 md:w-1/2"
                                             {...field} />
                                     </FormControl>
                                     <FormMessage />
@@ -99,10 +99,10 @@ const ChangePasswordForm = () => {
                             )} />
                     </div>
                     <div className='flex gap-x-12'>
-                        {/* <Button variant={'themeGrayBtn'} size={'lg'} >Cancel</Button> */}
                         <Button variant={'themeButton'} size={'lg'} >Save</Button>
                     </div>
                 </div>
+
             </form>
         </Form>
     )

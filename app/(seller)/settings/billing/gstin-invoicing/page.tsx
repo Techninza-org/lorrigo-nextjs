@@ -6,7 +6,7 @@ import React from 'react'
 const GstinInvoicing = () => {
   return (
     <Card>
-      <CardContent className='px-10 py-5'>
+      <CardContent className='px-1 sm:px-10 py-5'>
         <CardTitle className='py-4 font-semibold'>GSTIN Invoicing</CardTitle>
         
         <GstinForm />

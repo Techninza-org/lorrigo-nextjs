@@ -8,24 +8,25 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import ActionTooltip from "../action-tooltip"
-import { Activity, IndianRupee, NotebookText, Package } from "lucide-react"
+import { Activity, IndianRupee, NotebookText } from "lucide-react"
 import { Label } from "../ui/label"
 import { useSellerProvider } from "../providers/SellerProvider"
 import { formatCurrencyForIndia } from "@/lib/utils"
 
 export const DataAnalysis = () => {
-    const {sellerDashboard}  = useSellerProvider()
+    const { sellerDashboard } = useSellerProvider()
+
     return (
-        <div className="grid grid-cols-3 gap-3">
-            <div className="max-w-[27rem] grid grid-rows-3 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+            <div className="max-w-full lg:max-w-[27rem] grid grid-rows-2 md:grid-rows-3 gap-3">
                 <Card className="drop-shadow-md h-32">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
+                    <CardHeader className="flex flex-row items-center justify-between py-2">
                     </CardHeader>
                     <CardContent className="flex items-center">
                         <div className="mr-4">
                             <NotebookText size={35} strokeWidth={1.25} />
                         </div>
-                        <div className="grid grid-cols-2 gap-x-2 ">
+                        <div className="grid grid-cols-2 gap-x-2">
                             <div>Today&apos;s Orders:</div>
                             <div>{sellerDashboard?.todayYesterdayAnalysis?.todayOrdersCount}</div>
                             <div>Yesterday&apos;s Orders:</div>
@@ -35,13 +36,13 @@ export const DataAnalysis = () => {
                 </Card>
 
                 <Card className="drop-shadow-md bg-[#dbf0df]">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
+                    <CardHeader className="flex flex-row items-center justify-between py-2">
                     </CardHeader>
                     <CardContent className="flex items-center">
                         <div className="mr-4">
                             <IndianRupee size={35} strokeWidth={1.25} />
                         </div>
-                        <div className="grid grid-cols-2 gap-x-2 ">
+                        <div className="grid grid-cols-2 gap-x-2">
                             <div>Today&apos;s Revenue:</div>
                             <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.todayRevenue || 0)}</div>
                             <div>Yesterday&apos;s Revenue:</div>
@@ -49,26 +50,12 @@ export const DataAnalysis = () => {
                         </div>
                     </CardContent>
                 </Card>
-
-                {/* <Card className="drop-shadow-md">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
-                    </CardHeader>
-                    <CardContent className="flex items-center">
-                        <div className="mr-4">
-                            <Package size={35} strokeWidth={1.25} />
-                        </div>
-                        <div className="grid grid-cols-2 gap-x-2 ">
-                            <div>Average Shipping:</div>
-                            <div>{formatCurrencyForIndia(sellerDashboard?.todayYesterdayAnalysis?.todayAverageShippingCost)}</div>
-                        </div>
-                    </CardContent>
-                </Card> */}
             </div>
 
-            <div className="col-span-2">
-                <div className="grid grid-rows-3 gap-3">
+            <div className="col-span-1 lg:col-span-2">
+                <div className="grid grid-rows-1 mb-10 gap-3">
                     <Card className="drop-shadow-md">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
+                        <CardHeader className="flex flex-row items-center justify-between py-1">
                             <CardTitle className="text-lg font-medium">
                                 Shipment Details
                             </CardTitle>
@@ -76,7 +63,7 @@ export const DataAnalysis = () => {
                                 <Activity size={20} />
                             </ActionTooltip>
                         </CardHeader>
-                        <CardContent className="flex items-center justify-between gap-1">
+                        <CardContent className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 justify-between">
                             <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
                                 <span className="p-3">{sellerDashboard?.shipmentDetails?.totalShipments}</span>
                                 <Label>Total Shipments</Label>
@@ -103,58 +90,6 @@ export const DataAnalysis = () => {
                             </div>
                         </CardContent>
                     </Card>
-                    {/* <Card className="drop-shadow-md">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
-                            <CardTitle className="text-lg font-medium">
-                                NDR Details
-                            </CardTitle>
-                            <ActionTooltip label="Last 30 days">
-                                <Activity size={20} />
-                            </ActionTooltip>
-                        </CardHeader>
-                        <CardContent className="flex items-center justify-between gap-1 w-full">
-                            <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard?.NDRDetails?.TotalNRD}</span>
-                                <Label>Total NDR</Label>
-                            </div>
-                            <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard?.NDRDetails?.buyerReattempt}</span>
-                                <Label>Your reattempt request</Label>
-                            </div>
-                            <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard?.NDRDetails?.delivered || 0}</span>
-                                <Label>NDR Delivered</Label>
-                            </div>
-                        </CardContent>
-                    </Card> */}
-                    {/* <Card className="drop-shadow-md">
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
-                            <CardTitle className="text-lg font-medium">
-                            COD Status
-                            </CardTitle>
-                            <ActionTooltip label="Last 30 days">
-                                <Activity size={20} />
-                            </ActionTooltip>
-                        </CardHeader>
-                        <CardContent className="flex items-center justify-between gap-1 w-full">
-                            <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard?.CODDetails?.totalCODLast30Days || 0}</span>
-                                <Label>Total COD (Last 30 Days)</Label>
-                            </div>
-                            <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                            <span className="p-3">{sellerDashboard?.CODDetails?.CODAvailable || 0}</span>
-                                <Label>Cod Available</Label>
-                            </div>
-                            <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
-                                <Label>COD Pending (Greater than 8 days)</Label>
-                            </div>
-                            <div className="flex flex-col justify-center shadow-md pb-2 items-center px-3">
-                                <span className="p-3">00</span>
-                                <Label>Last COD Remitted</Label>
-                            </div>
-                        </CardContent>
-                    </Card> */}
                 </div>
             </div>
         </div>

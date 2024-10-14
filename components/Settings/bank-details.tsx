@@ -60,9 +60,9 @@ const BankDetailsForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-            {form.formState.isSubmitting && <LoadingComponent />}
-                <div className="space-y-5 ">
-                    <div className='grid grid-cols-2 gap-y-6 gap-x-28 py-5 mt-6'>
+                {form.formState.isSubmitting && <LoadingComponent />}
+                <div className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-6 sm:gap-x-12 lg:gap-x-28 py-5 mt-6">
                         <FormField
                             control={form.control}
                             name={'accHolderName'}
@@ -74,20 +74,21 @@ const BankDetailsForm = () => {
                                     <FormControl>
                                         <Input
                                             disabled={isLoading || isDisabled}
-                                            className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                             {...field}
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name={'accType'}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                        Account type<span className='text-red-600'>*</span>
+                                        Account type <span className='text-red-600'>*</span>
                                     </FormLabel>
                                     <FormControl>
                                         <Select
@@ -98,9 +99,7 @@ const BankDetailsForm = () => {
                                                 <SelectTrigger
                                                     className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                                 >
-                                                    <SelectValue
-                                                        placeholder={seller?.bankDetails?.accType ?? "Please select Account type"}
-                                                    />
+                                                    <SelectValue placeholder={seller?.bankDetails?.accType ?? "Please select Account type"} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -111,7 +110,8 @@ const BankDetailsForm = () => {
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name={'accNumber'}
@@ -124,13 +124,14 @@ const BankDetailsForm = () => {
                                         <Input
                                             maxLength={16}
                                             disabled={isLoading || isDisabled}
-                                            className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                             {...field}
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
+                            )}
+                        />
                         <FormField
                             control={form.control}
                             name={'ifscNumber'}
@@ -141,16 +142,17 @@ const BankDetailsForm = () => {
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                        maxLength={11}
+                                            maxLength={11}
                                             disabled={isLoading || isDisabled}
-                                            className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
                                             {...field}
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
-                        <div className='flex'>
+                            )}
+                        />
+                        <div className="flex">
                             <Button disabled={isDisabled} variant={'themeButton'} type='submit' className='pr-0 mt-6'>
                                 Save
                                 <div className='bg-red-800 h-10 w-10 grid place-content-center rounded-r-md ml-4' ><Save /></div>
@@ -158,6 +160,7 @@ const BankDetailsForm = () => {
                         </div>
                     </div>
                 </div>
+
             </form>
         </Form>
     )

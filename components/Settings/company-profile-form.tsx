@@ -1,10 +1,9 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Form, FormMessage } from '@/components/ui/form';
-
 import {
   FormControl,
   FormField,
@@ -13,7 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from '../ui/input';
 import { useHubProvider } from '../providers/HubProvider';
-import { Save, Trash2, X } from 'lucide-react';
+import { Save, Trash2 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useSellerProvider } from '../providers/SellerProvider';
 import ImageUpload from '../file-upload';
@@ -26,10 +25,9 @@ export const CompanyProfileSchema = z.object({
   companyEmail: z.string().email("Invalid email address"),
   website: z.string().optional(),
   logo: z.string().optional(),
-})
+});
 
 export const CompanyProfileForm = () => {
-
   const { seller, getSeller } = useSellerProvider();
   const { updateCompanyProfile } = useHubProvider();
 
@@ -54,7 +52,6 @@ export const CompanyProfileForm = () => {
       form.setValue('website', seller.companyProfile?.website || '');
       setIsLogoUploaded(!!seller.companyProfile?.companyLogo || false);
     }
-
   }, [seller, form]);
 
   const onSubmit = async (values: z.infer<typeof CompanyProfileSchema>) => {
@@ -69,9 +66,9 @@ export const CompanyProfileForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-      {form.formState.isSubmitting && <LoadingComponent />}
-        <div className="space-y-5 ">
-          <div className='grid grid-cols-2 gap-y-6 gap-x-20'>
+        {form.formState.isSubmitting && <LoadingComponent />}
+        <div className="space-y-5 p-4 sm:p-6 lg:p-8">
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-10'>
             <FormField
               control={form.control}
               name={'companyId'}
@@ -82,10 +79,10 @@ export const CompanyProfileForm = () => {
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="bg-zinc-300/50  dark:bg-zinc-700 dark:text-white focus-visible:ring-1 text-black focus-visible:ring-offset-1 border-2 shadow-sm"
+                      className="bg-zinc-300/50 dark:bg-zinc-700 dark:text-white focus-visible:ring-1 text-black focus-visible:ring-offset-1 border-2 shadow-sm"
                       placeholder='Company ID'
-                      readOnly={true}
-                      disabled={true}
+                      readOnly
+                      disabled
                       {...field} />
                   </FormControl>
                   <FormMessage />
@@ -152,8 +149,8 @@ export const CompanyProfileForm = () => {
                     Website / Company Logo
                   </FormLabel>
                   <FormControl>
-                    {isLogoUploaded ?
-                      (<>
+                    {isLogoUploaded ? (
+                      <>
                         <Image src={`data:image/jpeg;base64,${seller?.companyProfile?.companyLogo}`} width={80} height={80} alt="Company logo" />
                         <Button
                           variant={'destructive'}
@@ -161,20 +158,18 @@ export const CompanyProfileForm = () => {
                           type='button'
                           onClick={() => setIsLogoUploaded(!isLogoUploaded)}
                           className='ml-auto'>
-                          {isLogoUploaded ? <Trash2 size={16} /> : 'Upload Logo'}
+                          <Trash2 size={16} />
                         </Button>
                       </>
-                      )
-                      : <ImageUpload
+                    ) : (
+                      <ImageUpload
                         uploadUrl={'/seller'}
                         handleClose={() => {
-                          setIsLogoUploaded(!isLogoUploaded)
-                          getSeller()
-
+                          setIsLogoUploaded(!isLogoUploaded);
+                          getSeller();
                         }}
                       />
-                    }
-
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -183,11 +178,13 @@ export const CompanyProfileForm = () => {
           <div className='flex'>
             <Button variant={'themeButton'} type='submit' className='pr-0'>
               Save
-              <div className='bg-red-800 h-10 w-10 grid place-content-center rounded-r-md ml-4' ><Save /></div>
+              <div className='bg-red-800 h-10 w-10 grid place-content-center rounded-r-md ml-4'>
+                <Save />
+              </div>
             </Button>
           </div>
         </div>
       </form>
     </Form>
-  )
+  );
 }
