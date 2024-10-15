@@ -94,7 +94,7 @@ export const KycBusinessTypeForm = () => {
                                         <FormLabel className="font-normal cursor-pointer">
                                             <CardTitle>Sole Proprietor</CardTitle>
                                             <CardDescription className='pt-3'>
-                                                Registered company as 'Sole Proprietor' under the Companies Act 2013
+                                                Registered company as &apos;Sole Proprietor&apos; under the Companies Act 2013
                                             </CardDescription>
                                         </FormLabel>
                                     </FormItem>
@@ -111,7 +111,7 @@ export const KycBusinessTypeForm = () => {
                                         <FormLabel className="font-normal cursor-pointer">
                                             <CardTitle>Company</CardTitle>
                                             <CardDescription className='pt-3'>
-                                                Registered company as 'LLP', 'Private', 'Subsidiary', 'Holding', etc. under the Companies Act 2013
+                                                Registered company as &apos;LLP&apos;, &apos;Private&apos;, &apos;Subsidiary&apos;, &apos;Holding&apos;, etc. under the Companies Act 2013
                                             </CardDescription>
                                         </FormLabel>
                                     </FormItem>
