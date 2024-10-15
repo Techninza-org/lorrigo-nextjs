@@ -147,91 +147,87 @@ export const DocumentUploadForm = () => {
 
     return (
         <Card className='h-full'>
-            <div className='flex p-6 justify-between'>
-                <div>
-                    <CardTitle>KYC by uploading ID & Address Proofs</CardTitle>
-                    <CardDescription>(Upload documents as jpeg, jpg or png)</CardDescription>
-                </div>
-                <div className='cursor-pointer' onClick={handleOpen}><ChevronsUpDown /></div>
-            </div>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className={verifyOtpOpen ? 'hidden' : ''}>
-                    <hr />
-                    <div className='grid grid-cols-2 p-10 h-full'>
-                        {[1, 2].map((index) => (
-                            <div key={index} className='w-2/3 space-y-3'>
-                                <FormField
-                                    control={form.control}
-                                    name={`document${index}Type` as keyof DocumentUploadSchema}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel
-                                                className="font-bold"
-                                            >
-                                                Document Type <span className='text-red-500'>*</span>
-                                            </FormLabel>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                            >
-                                                <FormControl>
-                                                    <SelectTrigger className='capitalize'>
-                                                        <SelectValue placeholder={"Select a Document Type"} />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    {renderDocumentTypeOptions()}
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name={`document${index}Feild` as keyof DocumentUploadSchema}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className='font-semibold'>
-                                                Document {index} <span className='text-red-500'>*</span>
-                                            </FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    placeholder="Enter the Document Number"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <Label className='font-semibold'>Document Image <span className='text-red-500'>*</span></Label>
-                                <div className='flex gap-8'>
-                                    <div className='w-60'>
-                                        <ImageUpload
-                                            Label={"Front Side"}
-                                            handleFileChange={handleFileChange}
-                                            fieldName={`document${index}Front` as keyof DocumentUploadSchema}
+    <div className='flex p-4 md:p-6 justify-between items-center'>
+        <div>
+            <CardTitle>KYC by uploading ID & Address Proofs</CardTitle>
+            <CardDescription>(Upload documents as jpeg, jpg, or png)</CardDescription>
+        </div>
+        <div className='cursor-pointer' onClick={handleOpen}><ChevronsUpDown /></div>
+    </div>
+    <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className={verifyOtpOpen ? 'hidden' : ''}>
+            <hr />
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6 p-4 md:p-10'>
+                {[1, 2].map((index) => (
+                    <div key={index} className='space-y-3'>
+                        <FormField
+                            control={form.control}
+                            name={`document${index}Type` as keyof DocumentUploadSchema}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="font-bold">
+                                        Document Type <span className='text-red-500'>*</span>
+                                    </FormLabel>
+                                    <Select onValueChange={field.onChange}>
+                                        <FormControl>
+                                            <SelectTrigger className='capitalize'>
+                                                <SelectValue placeholder="Select a Document Type" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {renderDocumentTypeOptions()}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name={`document${index}Feild` as keyof DocumentUploadSchema}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className='font-semibold'>
+                                        Document {index} <span className='text-red-500'>*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Enter the Document Number"
+                                            {...field}
                                         />
-                                        <FormMessage />
-                                    </div>
-                                    <div className='w-60'>
-                                        <ImageUpload
-                                            Label={"Back Side"}
-                                            handleFileChange={handleFileChange}
-                                            fieldName={`document${index}Back` as keyof DocumentUploadSchema}
-                                        />
-
-                                    </div>
-                                </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Label className='font-semibold'>Document Image <span className='text-red-500'>*</span></Label>
+                        <div className='flex flex-col md:flex-row gap-4'>
+                            <div className='w-full md:w-60'>
+                                <ImageUpload
+                                    Label="Front Side"
+                                    handleFileChange={handleFileChange}
+                                    fieldName={`document${index}Front` as keyof DocumentUploadSchema}
+                                />
+                                <FormMessage />
                             </div>
-                        ))}
+                            <div className='w-full md:w-60'>
+                                <ImageUpload
+                                    Label="Back Side"
+                                    handleFileChange={handleFileChange}
+                                    fieldName={`document${index}Back` as keyof DocumentUploadSchema}
+                                />
+                            </div>
+                        </div>
                     </div>
-                    <div className='flex justify-between p-5'>
-                        <Button type="button" variant={'themeButton'} onClick={onHandleBack}>Back</Button>
-                        <Button type='submit' variant={'themeButton'}>Submit Documents</Button>
-                    </div>
-                </form>
-            </Form>
-        </Card>
+                ))}
+            </div>
+            <div className='flex justify-between p-4 md:p-5'>
+                <Button type="button" variant='themeButton' onClick={onHandleBack}>Back</Button>
+                <Button type='submit' variant='themeButton'>Submit Documents</Button>
+            </div>
+        </form>
+    </Form>
+</Card>
+
     )
 }

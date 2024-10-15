@@ -6,7 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 
 export default function Login() {
   return (
-    <div className="relative h-[800px] flex-col items-center justify-center max-w-lg mx-auto w-1/2">
+    <div className="relative h-[800px] flex-col items-center justify-center max-w-lg mx-auto w-full">
       {/* <AuthSideContainer
         title="Login"
         desc="This library has saved me countless hours of work and

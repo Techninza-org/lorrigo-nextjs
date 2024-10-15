@@ -136,7 +136,7 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
     return (
         <div className="w-full">
             <div className="flex items-center py-4">
-                <div className="flex gap-3">
+                <div className="grid md:flex gap-3">
                     <Input
                         placeholder="Search by Remittance Number"
                         value={(table.getColumn("remittanceId")?.getFilterValue() as string) ?? ""}
@@ -146,36 +146,38 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
                         className="w-64"
                     />
                     <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
-                    <CsvDownloader filename="Remittance" datas={datas} columns={cols}>
-                        <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
-                    </CsvDownloader>
+                    <div className="flex gap-3">
+                        <CsvDownloader filename="Remittance" datas={datas} columns={cols}>
+                            <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
+                        </CsvDownloader>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    Columns <ChevronDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                {table
+                                    .getAllColumns()
+                                    .filter((column) => column.getCanHide())
+                                    .map((column) => {
+                                        return (
+                                            <DropdownMenuCheckboxItem
+                                                key={column.id}
+                                                className="capitalize"
+                                                checked={column.getIsVisible()}
+                                                onCheckedChange={(value) =>
+                                                    column.toggleVisibility(!!value)
+                                                }
+                                            >
+                                                {column.id}
+                                            </DropdownMenuCheckboxItem>
+                                        )
+                                    })}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDown className="ml-2 h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
-                                )
-                            })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
             </div>
             <div className="rounded-md border">
                 <Table>
@@ -227,11 +229,11 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
                     <Button variant={'outline'}>
                         Page{' '}
-                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()+1}
+                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount() + 1}
                     </Button>
                 </div>
                 <div className="space-x-2">

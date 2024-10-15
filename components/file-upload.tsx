@@ -381,7 +381,7 @@ export default function ImageUpload({ Label,
           onClick={() => handleUpload(filesToUpload[0].File)}
           variant={"webPageBtn"}
           size={"sm"}
-          className="space-x-2 flex items-center ml-auto mt-2">
+          className="space-x-2 flex items-center ml-auto mt-2 mb-4 sm:mb-0">
           <span>Upload </span><Upload size={20} />
         </Button>
       }

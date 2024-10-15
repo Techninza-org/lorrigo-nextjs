@@ -121,7 +121,7 @@ const PhotoIdentification = () => {
                         <div className='flex justify-center'>
                             <Camera size={50} color='#be0c34' />
                         </div>
-                        <p>Please look at the camera and then Capture Selfie</p>
+                        <p className='mt-4 flex text-center'>Please look at the camera and then Capture Selfie</p>
                     </>}
                 </div>}
                 {

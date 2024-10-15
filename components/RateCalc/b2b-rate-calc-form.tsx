@@ -164,14 +164,14 @@ export const B2BRateCalcForm = () => {
             }
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="grid grid-cols-4 gap-2">
-                        <Card className='col-span-3 space-y-3'>
+                    <div className="grid lg:grid-cols-4 gap-2">
+                        <Card className='lg:col-span-3 space-y-3'>
                             <CardHeader>
                                 <CardTitle>B2B Shipping Rate Calculator</CardTitle>
                                 <CardDescription>Order Details</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="grid grid-cols-2 gap-10">
+                                <div className="grid sm:grid-cols-2 gap-10">
                                     <FormField
                                         control={form.control}
                                         name="pickupPincode"
@@ -229,11 +229,9 @@ export const B2BRateCalcForm = () => {
 
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-10">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
                                     <div>
-                                        <div
-                                            className="my-2 px-1 uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
-                                        >
+                                        <div className="my-2 px-1 uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
                                             Total Weight
                                         </div>
                                         <B2bBoxDetails
@@ -250,31 +248,31 @@ export const B2BRateCalcForm = () => {
                                             name="amount"
                                             render={({ field }) => (
                                                 <FormItem className="w-full">
-                                                    <FormLabel
-                                                        className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
-                                                    >
+                                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
                                                         Amount
                                                     </FormLabel>
                                                     <FormControl>
                                                         <div className="flex gap-3 items-center">
                                                             <Input
                                                                 disabled={isLoading}
-                                                                className={cn("w-full bg-zinc-200/50 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                                    isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
+                                                                className={cn(
+                                                                    "w-full bg-zinc-200/50 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
+                                                                    isError(field.name)
+                                                                        ? "border-red-500 dark:border-red-500"
+                                                                        : "border-0 dark:border-0"
                                                                 )}
                                                                 placeholder="Enter Order Amount"
                                                                 {...field}
                                                             />
                                                         </div>
-
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
                                         />
                                     </div>
-
                                 </div>
+
 
                             </CardContent>
                             <CardFooter className='flex-row-reverse gap-3'>
@@ -312,7 +310,7 @@ export const B2BRateCalcForm = () => {
 
             <div className="col-span-2 my-2">
                 <div className="grid gap-3">
-                    <Card className="drop-shadow-md">
+                    <Card className="drop-shadow-md w-4/5 sm:w-full mb-4">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>
                                 Courier Partner

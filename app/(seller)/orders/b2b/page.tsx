@@ -38,7 +38,7 @@ export default function OrdersPage() {
     return (
         <>
             <Suspense fallback={<LoadingComponent/>}>
-            <NavigationItem links={DASHBOARD_LINKS}  />
+            {/* <NavigationItem links={DASHBOARD_LINKS}  /> */}
                 <B2BOrders />
             </Suspense>
         </>

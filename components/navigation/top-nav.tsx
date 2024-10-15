@@ -24,7 +24,7 @@ interface NavProps {
 
 export function TopNav() {
     const { onOpen } = useModal();
-    const { walletBalance } = usePaymentGateway();
+    // const { walletBalance } = usePaymentGateway();
     const { seller } = useSellerProvider();
 
     return (
@@ -47,7 +47,7 @@ export function TopNav() {
                                     </Button>
                                 </ActionTooltip>
                             </Link>
-                            <span>{formatCurrencyForIndia(walletBalance || 0)}</span>
+                            {/* <span>{formatCurrencyForIndia(walletBalance || 0)}</span> */}
                             <Button variant="themeButton" size="sm" onClick={() => onOpen("wallet")}>
                                 Recharge Wallet
                             </Button>

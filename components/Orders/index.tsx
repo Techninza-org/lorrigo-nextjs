@@ -16,7 +16,7 @@ export default function Orders() {
         <Card className="col-span-4">
             <CardHeader>
                 <CardTitle className="md:flex justify-between">
-                    <div>
+                    <div className="mb-4 sm:mb-0">
                         View Shipment
                     </div>
                     <Link href="/new/b2c" className={cn(buttonVariants({

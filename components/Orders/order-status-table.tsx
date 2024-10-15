@@ -234,18 +234,23 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   return (
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
-        <div className="flex gap-3">
+        <div className="grid gap-3">
           <Input
-            placeholder="Filter by AWB or Order Reference ID"
+            placeholder="Filter by AWB or Order ID"
             value={filtering}
             onChange={(e) => setFiltering(e.target.value)}
-            className="w-64"
+            className="w-3/4"
           />
           <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
-          <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
-            <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
-          </CsvDownloader>
-          <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
+          <div className="flex justify-between">
+            <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
+            <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
+              <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
+            </CsvDownloader>
+          </div>
+          {
+            seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
+          }
         </div>
         <div>
           {
@@ -265,9 +270,6 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
                   <DropdownMenuItem onClick={() => onOpen("cancelBulkOrder", { orders: selectedRows })}>Cancel</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>)
-          }
-          {
-            seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
           }
         </div>
       </div>
@@ -321,7 +323,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           <Button variant={'outline'}>
             Page{' '}

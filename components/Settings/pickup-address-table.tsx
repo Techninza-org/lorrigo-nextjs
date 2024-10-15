@@ -119,7 +119,7 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-center py-4 gap-4">
-        <div className="flex flex-wrap gap-3 w-full sm:w-auto">
+        <div className="flex flex-wrap gap-3 w-full sm:w-auto ml-2 sm:ml-0">
           <Input
             placeholder="Search by Facility Name"
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -151,9 +151,9 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
           >
             <Download size={18} />
           </Button>
-          <Button onClick={() => onOpen("addPickupLocation")} variant="themeButton">
-            <PackagePlusIcon size={18} className="mr-2" />
-            Add Pickup Address
+          <Button onClick={() => onOpen("addPickupLocation")} variant="themeButton" className="text-xs">
+            <PackagePlusIcon size={14} className="mr-1 sm:mr-2" />
+            Add Address
           </Button>
         </div>
       </div>
