@@ -4,6 +4,7 @@ import { B2COrderType } from "@/types/types";
 import { formatCurrencyForIndia } from "@/lib/utils";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
 import { InfoIcon } from "lucide-react";
+import { format } from "date-fns";
 
 
 export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
@@ -14,6 +15,17 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
             return (
                 <div className="space-y-1 items-center">
                     <p>{row.getValue("orderRefId")}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Date',
+        accessorKey: 'billingDate',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{format(row.getValue("billingDate"), "dd-MM-yyyy")}</p>
                 </div>
             )
         }

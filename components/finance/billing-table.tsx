@@ -156,21 +156,21 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
                     onChange={(e) => setFiltering(e.target.value)}
                     className="max-w-sm"
                 />
-                {/* <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} /> */}
-                {/* <CsvDownloader filename="billing" datas={datas} columns={cols}>
-                    <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
-                </CsvDownloader> */}
-
             </div>
 
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id}>
+            <div className="w-full border rounded-md">
+                <div className="relative w-full overflow-auto">
+                    <div className="absolute top-0 bottom-0 left-0 w-4 bg-gradient-to-r from-white to-transparent pointer-events-none z-10" />
+                    <div className="absolute top-0 bottom-0 right-0 w-4 bg-gradient-to-l from-white to-transparent pointer-events-none z-10" />
+                    <Table className="min-w-[1200px]"> {/* Adjust this value based on your needs */}
+                        <TableHeader>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow key={headerGroup.id}>
+                                    {headerGroup.headers.map((header, index) => (
+                                        <TableHead
+                                            key={header.id}
+                                            className={`whitespace-nowrap ${index === 0 ? 'sticky left-0 z-20 bg-white' : ''}`}
+                                        >
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -178,40 +178,43 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
                                                     header.getContext()
                                                 )}
                                         </TableHead>
-                                    )
-                                })}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </TableCell>
                                     ))}
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center"
-                                >
-                                    No results.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                            ))}
+                        </TableHeader>
+                        <TableBody>
+                            {table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map((row) => (
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={row.getIsSelected() && "selected"}
+                                    >
+                                        {row.getVisibleCells().map((cell, index) => (
+                                            <TableCell
+                                                key={cell.id}
+                                                className={`whitespace-nowrap ${index === 0 ? 'sticky left-0 z-20 bg-white' : ''}`}
+                                            >
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={columns.length}
+                                        className="h-24 text-center"
+                                    >
+                                        No results.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
