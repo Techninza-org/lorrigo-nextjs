@@ -142,7 +142,7 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
     return (
         <div className="w-full">
             <div className="flex items-center py-4">
-                <div className="flex gap-3">
+                <div className="grid md:flex gap-3">
                     <Input
                         placeholder="Search by Remittance Number"
                         value={(table.getColumn("remittanceId")?.getFilterValue() as string) ?? ""}
@@ -233,7 +233,7 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
                     <Button variant={'outline'}>
                         Page{' '}

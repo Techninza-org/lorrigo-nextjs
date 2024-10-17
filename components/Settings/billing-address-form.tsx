@@ -46,9 +46,9 @@ const BillingAddressForm = () => {
 
     const { cityState, isTyping, loading } = useFetchCityState(pincode);
 
-    const isLoading = loading || form.formState.isSubmitting 
+    const isLoading = loading || form.formState.isSubmitting
 
-    let customDisabledFeild = Boolean(seller?.billingAddress?.city &&  seller?.billingAddress?.state) || form.formState.isSubmitSuccessful;
+    let customDisabledFeild = Boolean(seller?.billingAddress?.city && seller?.billingAddress?.state) || form.formState.isSubmitSuccessful;
 
     useEffect(() => {
         if (seller?.billingAddress) {
@@ -75,8 +75,8 @@ const BillingAddressForm = () => {
 
     const onSubmit = async (values: z.infer<typeof BillingAddressSchema>) => {
         try {
-          
-            await updateBillingAddress(values) 
+
+            await updateBillingAddress(values)
         } catch (error) {
             console.error(error);
         }
@@ -86,8 +86,8 @@ const BillingAddressForm = () => {
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 {form.formState.isSubmitting && <LoadingComponent />}
-                <div className="grid gap-y-6 gap-x-16 py-5 grid-cols-2">
-                    <div className='col-span-2'>
+                <div className="grid gap-y-6 gap-x-16 py-5 grid-cols-1 sm:grid-cols-2">
+                    <div className='col-span-1 sm:col-span-2'>
                         <FormField
                             control={form.control}
                             name={'address_line_1'}
@@ -99,15 +99,17 @@ const BillingAddressForm = () => {
                                     <FormControl>
                                         <Input
                                             disabled={isLoading}
-                                            className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm "
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full"
                                             {...field}
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
+                            )}
+                        />
                     </div>
-                    <div className='col-span-2'>
+
+                    <div className='col-span-1 sm:col-span-2'>
                         <FormField
                             control={form.control}
                             name={'address_line_2'}
@@ -119,103 +121,121 @@ const BillingAddressForm = () => {
                                     <FormControl>
                                         <Input
                                             disabled={isLoading}
-                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full"
                                             {...field}
                                         />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
-                            )} />
+                            )}
+                        />
                     </div>
-                    <FormField
-                        control={form.control}
-                        name={'pincode'}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    Pincode <span className='text-red-600'>*</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        disabled={isLoading || customDisabledFeild}
-                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm "
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    <FormField
-                        control={form.control}
-                        name={'city'}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    City <span className='text-red-600'>*</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <div className='flex items-center rounded-md'>
+
+                    <div className="col-span-1">
+                        <FormField
+                            control={form.control}
+                            name={'pincode'}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                        Pincode <span className='text-red-600'>*</span>
+                                    </FormLabel>
+                                    <FormControl>
                                         <Input
-                                            disabled={isLoading || isTyping || customDisabledFeild}
-                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm "
+                                            disabled={isLoading || customDisabledFeild}
+                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full"
                                             {...field}
                                         />
-                                        {isTyping && <LoadingSpinner />}
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    <FormField
-                        control={form.control}
-                        name={'state'}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    State <span className='text-red-600'>*</span>
-                                </FormLabel>
-                                <FormControl>
-                                    <div className='flex items-center rounded-md'>
-                                        <Input
-                                            disabled={isLoading || isTyping || customDisabledFeild}
-                                            className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div className="col-span-1">
+                        <FormField
+                            control={form.control}
+                            name={'city'}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                        City <span className='text-red-600'>*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <div className='flex items-center rounded-md'>
+                                            <Input
+                                                disabled={isLoading || isTyping || customDisabledFeild}
+                                                className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full"
+                                                {...field}
+                                            />
+                                            {isTyping && <LoadingSpinner />}
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div className="col-span-1">
+                        <FormField
+                            control={form.control}
+                            name={'state'}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                        State <span className='text-red-600'>*</span>
+                                    </FormLabel>
+                                    <FormControl>
+                                        <div className='flex items-center rounded-md'>
+                                            <Input
+                                                disabled={isLoading || isTyping || customDisabledFeild}
+                                                className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full"
+                                                {...field}
+                                            />
+                                            {isTyping && <LoadingSpinner />}
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div className="col-span-1 sm:col-span-2">
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                        Contact Number
+                                    </FormLabel>
+                                    <FormControl>
+                                        <PhoneInput
+                                            disabled={isLoading}
+                                            className="border-2 rounded-md dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full"
+                                            defaultCountry='IN'
+                                            placeholder='Enter the contact number'
                                             {...field}
+                                            maxLength={11}
                                         />
-                                        {isTyping && <LoadingSpinner />}
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )} />
-                    <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    Contact Number
-                                </FormLabel>
-                                <FormControl>
-                                    <PhoneInput
-                                        disabled={isLoading}
-                                        className="border-2 rounded-md dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm"
-                                        defaultCountry='IN'
-                                        placeholder='Enter the contact number'
-                                        {...field}
-                                        maxLength={11}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <div className='flex'>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <div className='col-span-1 sm:col-span-2 flex'>
                         <Button variant={'themeButton'} type='submit' className='pr-0 mt-6'>
                             Save
                             <div className='bg-red-800 h-10 w-10 grid place-content-center rounded-r-md ml-4' ><Save /></div>
                         </Button>
                     </div>
                 </div>
+
             </form>
         </Form>
     )

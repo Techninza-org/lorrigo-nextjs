@@ -57,7 +57,7 @@ export const OrderDetailForm = ({ isDisabledPaymentMode, seller, form, isLoading
             />
             <Separator orientation='horizontal' />
 
-            <div className='grid grid-cols-2 gap-5'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
                 <FormField
                     control={form.control}
                     name="productDetails.name"
@@ -155,7 +155,7 @@ export const OrderDetailForm = ({ isDisabledPaymentMode, seller, form, isLoading
 
             </div>
 
-            <div className='grid grid-cols-5 items-center justify-items-center'>
+            <div className='grid grid-cols-1 sm:grid-cols-5 items-center justify-items-center'>
                 <FormField
                     control={form.control}
                     name="productDetails.taxableValue"
@@ -255,7 +255,7 @@ export const OrderDetailForm = ({ isDisabledPaymentMode, seller, form, isLoading
 
             <Separator orientation='horizontal' />
 
-            <div className='grid grid-cols-3 gap-5'>
+            <div className='grid grid-cols-1 sm:grid-cols-3 gap-5'>
                 <FormField
                     control={form.control}
                     name="order_invoice_number"

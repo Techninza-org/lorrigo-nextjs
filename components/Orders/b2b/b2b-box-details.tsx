@@ -63,7 +63,7 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append, remove }: BoxDe
     }
 
     return (
-        <CardContent className="grid grid-cols-7 gap-2 p-0 items-center justify-items-center">
+        <CardContent className="grid grid-cols-3 sm:grid-cols-7 gap-2 p-0 items-center justify-items-center">
             {fields.map((field: any, index: number) => (
                 <Fragment key={field.id}>
                     <FormField

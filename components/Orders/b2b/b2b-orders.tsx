@@ -17,7 +17,7 @@ export default function B2BOrders() {
         <Card className="col-span-4">
             <CardHeader>
                 <CardTitle className="md:flex justify-between">
-                    <div>
+                    <div className="mb-4 sm:mb-0">
                         View B2B Shipment
                     </div>
                     <Link href="/new/b2b" className={cn(buttonVariants({

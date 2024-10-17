@@ -16,7 +16,7 @@ import { LorrigoLogo } from "@/components/Logos";
 
 function Signup() {
   return (
-    <div className="relative h-[800px] flex-col items-center justify-center max-w-lg mx-auto w-1/2">
+    <div className="relative h-[800px] flex-col items-center justify-center max-w-lg mx-auto w-full">
 
       <div className="lg:p-2 relative">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 lg:max-w-lg shadow-xl rounded-md bg-white">

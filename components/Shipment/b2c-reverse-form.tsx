@@ -158,7 +158,7 @@ export const B2CReverseForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
                     <Card className='col-span-3 space-y-3'>
                         <CardHeader>
                             <CardTitle className='space-x-2'>
@@ -176,10 +176,10 @@ export const B2CReverseForm = () => {
                             handleIncrement={handleIncrement}
                             collectableFeild={collectableFeild}
                         />
-                        <CardFooter className='flex-row-reverse gap-3'>
+                        {/* <CardFooter className='flex-row-reverse gap-3'>
                             <Button disabled={isLoading} type='submit' variant={'themeButton'}>Create Reverse Shipment</Button>
                             <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => router.push("/dashboard")}>Go to dashboard</Button>
-                        </CardFooter>
+                        </CardFooter> */}
                     </Card>
 
                     <div className='space-y-3'>
@@ -215,7 +215,12 @@ export const B2CReverseForm = () => {
                                 acceptFileTypes={{ "text/csv": [".csv"] }}
                             />
                         </Card>
+                        <CardFooter className='flex flex-col-reverse gap-3 md:flex-row-reverse'>
+                            <Button disabled={isLoading} type='submit' variant={'themeButton'}>Create Reverse Shipment</Button>
+                            <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => router.push("/dashboard")}>Go to dashboard</Button>
+                        </CardFooter>
                     </div>
+                    
                 </div>
             </form>
         </Form>

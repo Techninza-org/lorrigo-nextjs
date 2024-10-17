@@ -54,53 +54,62 @@ export const DashboardHeader = () => {
             badgeInfo: {
                 variant: "secondary",
                 text: hub.address1.slice(0, 20) + "..." || ""
-
             }
         }
     })
 
     return (
-        <div className="flex justify-between items-center space-x-6 py-6">
-            <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-6 py-6">
+            <h2 className="scroll-m-20 border-b pb-2 text-2xl lg:text-3xl font-semibold tracking-tight first:mt-0">
                 Dashboard
             </h2>
-            <Select onValueChange={handlebusinessDropdown}>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="D2C" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="D2C">D2C</SelectItem>
-                    <SelectItem value="B2B">B2B</SelectItem>
-                </SelectContent>
-            </Select>
-            <SearchBar
-                data={[
-                    {
-                        label: "Hub",
-                        type: "hub",
-                        data: ordersHubData
-                    },
-                    {
-                        label: "Orders",
-                        type: "order",
-                        data: ordersSearchData
-                    },
-                    {
-                        label: "AWB",
-                        type: "order",
-                        data: ordersAWBData
-                    },
-                ]}
-            />
+            <div className="flex flex-col lg:flex-row items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-6 w-full lg:w-auto">
+                <Select onValueChange={handlebusinessDropdown}>
+                    <SelectTrigger className="w-full md:w-[180px]">
+                        <SelectValue placeholder="D2C" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="D2C">D2C</SelectItem>
+                        <SelectItem value="B2B">B2B</SelectItem>
+                    </SelectContent>
+                </Select>
 
-            <Link href="/new/b2c" className={buttonVariants({
-                variant: "themeButton"
-            })}>Create Forward Shipment</Link>
+                <SearchBar
+                    data={[
+                        {
+                            label: "Hub",
+                            type: "hub",
+                            data: ordersHubData
+                        },
+                        {
+                            label: "Orders",
+                            type: "order",
+                            data: ordersSearchData
+                        },
+                        {
+                            label: "AWB",
+                            type: "order",
+                            data: ordersAWBData
+                        },
+                    ]}
+                />
 
-            <Link href="/new/b2c/reverse" className={buttonVariants({
-                variant: "themeButton"
-            })}>Create Reverse Shipment</Link>
+                <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4 w-full lg:w-auto">
+                    <Link href="/new/b2c" className={buttonVariants({
+                        variant: "themeButton",
+                        className: "w-full lg:w-auto"
+                    })}>
+                        Create Forward Shipment
+                    </Link>
 
+                    <Link href="/new/b2c/reverse" className={buttonVariants({
+                        variant: "themeButton",
+                        className: "w-full lg:w-auto"
+                    })}>
+                        Create Reverse Shipment
+                    </Link>
+                </div>
+            </div>
         </div>
     );
 }

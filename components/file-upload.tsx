@@ -344,7 +344,8 @@ export default function ImageUpload({ Label,
               <span className="font-semibold"> {filesToUpload.length > 0 ? filesToUpload[0].File.name : "Drag files"} </span>
             </p>
             {filesToUpload.length === 0 && <p className="text-xs text-gray-500 px-1 space-x-1">
-              <span>Click to upload files &#40;files should be under 1 MB &#41;</span>
+              <p>Click to upload files</p>
+              <p> &#40;Files should be under 1 MB &#41;</p>
               <span>
                 {
                   Object.values(acceptFileTypes).map((fileType) => fileType.join(', ')).join(', ')
@@ -380,7 +381,7 @@ export default function ImageUpload({ Label,
           onClick={() => handleUpload(filesToUpload[0].File)}
           variant={"webPageBtn"}
           size={"sm"}
-          className="space-x-2 flex items-center ml-auto mt-2">
+          className="space-x-2 flex items-center ml-auto mt-2 mb-4 sm:mb-0">
           <span>Upload </span><Upload size={20} />
         </Button>
       }

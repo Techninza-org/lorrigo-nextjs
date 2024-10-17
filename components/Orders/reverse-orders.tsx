@@ -61,11 +61,11 @@ export default function ReverseOrders() {
     }, [reverseOrders])
     return (
         <>
-            <RevOrderFilter links={DASHBOARD_LINKS} handleRevFilter={handleFilter} />
+            <RevOrderFilter links={DASHBOARD_LINKS} handleRevFilter={handleFilter} activeBucket={undefined} />
             <Card className="col-span-4">
                 <CardHeader>
                     <CardTitle className="md:flex justify-between">
-                        <div>
+                        <div className="mb-4 sm:mb-0">
                         View Reverse Shipment
                         </div>
                         <Link href="/new/b2c/reverse" className={cn(buttonVariants({

@@ -202,10 +202,10 @@ export const B2CForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="grid grid-cols-4 gap-2">
-                    <Card className='col-span-3 space-y-3'>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+                    <Card className="md:col-span-3 space-y-3">
                         <CardHeader>
-                            <CardTitle className='space-x-2'>
+                            <CardTitle className="space-x-2">
                                 <span>Create a new shipment (D2C)</span>
                             </CardTitle>
                             <CardDescription>Order Details</CardDescription>
@@ -218,16 +218,19 @@ export const B2CForm = () => {
                             handleIncrement={handleIncrement}
                             collectableFeild={collectableFeild}
                         />
-                        <CardFooter className='flex-row-reverse gap-3'>
-                            <Button disabled={isLoading} type='submit' variant={'themeButton'} >Create Shipment</Button>
-                            <Button disabled={isLoading} variant={'secondary'} type='button' onClick={() => router.push("/dashboard")}>Go to dashboard</Button>
-                        </CardFooter>
+                        {/* <CardFooter className="flex flex-col-reverse gap-3 md:flex-row-reverse">
+                            <Button disabled={isLoading} type="submit" variant="themeButton">Create Shipment</Button>
+                            <Button disabled={isLoading} variant="secondary" type="button" onClick={() => router.push("/dashboard")}>Go to dashboard</Button>
+                        </CardFooter> */}
                     </Card>
 
-                    <div className='space-y-3'>
+                    <div className="space-y-3">
                         <Card>
                             <CardHeader>
-                                <CardTitle className='flex items-center'><MapPin className='mr-3' size={20} />Delivery Details</CardTitle>
+                                <CardTitle className="flex items-center">
+                                    <MapPin className="mr-3" size={20} />
+                                    Delivery Details
+                                </CardTitle>
                             </CardHeader>
                             <DeliveryDetailsForm
                                 form={form}
@@ -236,7 +239,10 @@ export const B2CForm = () => {
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle className='flex items-center'><PackageOpen size={23} className='mr-3' />Box Size</CardTitle>
+                                <CardTitle className="flex items-center">
+                                    <PackageOpen size={23} className="mr-3" />
+                                    Box Size
+                                </CardTitle>
                             </CardHeader>
                             <BoxDetails
                                 form={form}
@@ -245,24 +251,30 @@ export const B2CForm = () => {
                         </Card>
                         <Card>
                             <CardHeader>
-                                <CardTitle className='flex justify-between items-center'><PackageOpen size={23} className='mr-3' />Bulk Upload
-                                    <Button type='button' variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("order-bulk-sample.csv")}>
+                                <CardTitle className="flex justify-between items-center">
+                                    <PackageOpen size={23} className="mr-3" />
+                                    Bulk Upload
+                                    <Button type="button" variant="webPageBtn" size="icon" onClick={() => handleFileDownload("order-bulk-sample.csv")}>
                                         <Download size={18} />
                                     </Button>
                                 </CardTitle>
                             </CardHeader>
                             <ImageUpload
-                                uploadUrl='/order/b2c/bulk'
+                                uploadUrl="/order/b2c/bulk"
                                 handleClose={() => {
                                     getAllOrdersByStatus({ status: "all" })
-                                    router.push('/orders')
-
+                                    router.push("/orders")
                                 }}
                                 acceptFileTypes={{ "text/csv": [".csv"] }}
                             />
                         </Card>
+                        <CardFooter className="flex flex-col-reverse gap-3 md:flex-row-reverse">
+                            <Button disabled={isLoading} type="submit" variant="themeButton">Create Shipment</Button>
+                            <Button disabled={isLoading} variant="secondary" type="button" onClick={() => router.push("/dashboard")}>Go to dashboard</Button>
+                        </CardFooter>
                     </div>
                 </div>
+
             </form>
         </Form>
     );

@@ -24,40 +24,48 @@ interface NavProps {
 
 export function TopNav() {
     const { onOpen } = useModal();
-    const { walletBalance } = usePaymentGateway();
+    // const { walletBalance } = usePaymentGateway();
     const { seller } = useSellerProvider();
 
     return (
-        <div
-            className="group flex flex-col gap-4 py-2 "
-        >
-            <nav className="flex justify-between gap-1 px-5 min-w-full p-2">
-                <div className="flex space-x-4 cursor-pointer items-center">
-                    <LorrigoLogo />
-
+        <div className="group flex flex-col gap-4 py-2">
+            <nav className="flex flex-row justify-between items-center p-2 w-full">
+                <div className="flex items-center cursor-pointer space-x-4">
+                    <div className="w-20 sm:w-26 md:w-32">
+                        <LorrigoLogo />
+                    </div>
                 </div>
-                <div className="flex items-center space-x-4">
-                    {seller?.config?.isPrepaid && (<>
-                        <div className="flex items-center space-x-3">
+
+                <div className="flex items-center space-x-1 sm:space-x-3">
+                    {/* Wallet Info (Prepaid Only) */}
+                    {seller?.config?.isPrepaid && (
+                        <div className="flex items-center space-x-1 sm:space-x-3">
                             <Link href="/wallet/txn">
-                                <ActionTooltip
-                                    side="bottom"
-                                    align="center"
-                                    label="wallet"
-                                >
-                                    <Button variant={"ghost"} size={"icon"}><Wallet size={24} /></Button>
+                                <ActionTooltip side="bottom" align="center" label="wallet">
+                                    <Button variant="ghost" size="icon">
+                                        <Wallet size={20} />
+                                    </Button>
                                 </ActionTooltip>
                             </Link>
-                            <span>{formatCurrencyForIndia(walletBalance || 0)}</span>
-                            <Button variant={"themeButton"} size={"sm"} onClick={() => onOpen("wallet")}>Recharge Wallet</Button>
+                            {/* <span>{formatCurrencyForIndia(walletBalance || 0)}</span> */}
+                            <Button variant="themeButton" size="sm" onClick={() => onOpen("wallet")}>
+                                Recharge Wallet
+                            </Button>
                         </div>
+                    )}
 
+                    {/* Separator */}
+                    {seller?.config?.isPrepaid && (
                         <Separator orientation="vertical" className="w-[1px] bg-gray-400" />
-                    </>)}
+                    )}
 
-                    <UserAvatar />
+                    {/* User Avatar */}
+                    <div className="flex items-center">
+                        <UserAvatar />
+                    </div>
                 </div>
-            </nav >
-        </div >
+            </nav>
+        </div>
     );
 }
+

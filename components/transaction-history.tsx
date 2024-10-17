@@ -64,7 +64,7 @@ export const IconComponent = ({ item }: { item: any }) => {
 };
 
 export const TransactionsHistory = () => {
-    const { getAllTransactions, refetchLast5txn } = usePaymentGateway();
+    const { getAllTransactions, refetchLast5txn, walletBalance } = usePaymentGateway();
     const { axiosIWAuth } = useAxios();
     const [transactions, setTransactions] = useState<PaymentTransaction[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -106,6 +106,7 @@ export const TransactionsHistory = () => {
             <CardHeader>
                 <CardTitle>View Transaction</CardTitle>
                 <CardDescription>Recent Transaction on Your Account!</CardDescription>
+                <span>Wallet Balance: {formatCurrencyForIndia(walletBalance || 0)}</span>
             </CardHeader>
             <CardContent>
                 <div className="flex justify-between">

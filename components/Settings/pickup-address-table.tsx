@@ -118,77 +118,78 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
-        <div className="flex justify-between w-full">
-          <div className="flex gap-3">
-            <Input
-              placeholder="Search by Facility Name"
-              value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                table.getColumn("name")?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            />
-            <CsvDownloader filename="hubs-list" datas={datas} columns={cols}>
-              <Button variant={'webPageBtn'} size={'sm'}><DownloadIcon size={20} className="mr-3" />Download CSV</Button>
-            </CsvDownloader>
-          </div>
+      <div className="flex flex-wrap items-center py-4 gap-4">
+        <div className="flex flex-wrap gap-3 w-full sm:w-auto ml-2 sm:ml-0">
+          <Input
+            placeholder="Search by Facility Name"
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            className="w-full sm:max-w-sm"
+          />
+          <CsvDownloader filename="hubs-list" datas={datas} columns={cols}>
+            <Button variant="webPageBtn" size="sm">
+              <DownloadIcon size={20} className="mr-3" />
+              Download CSV
+            </Button>
+          </CsvDownloader>
+        </div>
 
-          <div className='flex gap-2'>
-            <Button variant={'webPageBtn'} size={'icon'} onClick={() => onOpen("BulkHubUpload")}>
-              <Upload size={18} />
-            </Button>
-            <Button variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("pickup_bulk_sample.csv")}>
-              <Download size={18} />
-            </Button>
-            <Button onClick={() => onOpen("addPickupLocation")} variant={'themeButton'}>
-              <PackagePlusIcon size={18} className="mr-2" />Add Pickup Address</Button>
-          </div>
+        <div className="flex gap-2 ml-auto">
+          <Button
+            variant="webPageBtn"
+            size="icon"
+            onClick={() => onOpen("BulkHubUpload")}
+          >
+            <Upload size={18} />
+          </Button>
+          <Button
+            variant="webPageBtn"
+            size="icon"
+            onClick={() => handleFileDownload("pickup_bulk_sample.csv")}
+          >
+            <Download size={18} />
+          </Button>
+          <Button onClick={() => onOpen("addPickupLocation")} variant="themeButton" className="text-xs">
+            <PackagePlusIcon size={14} className="mr-1 sm:mr-2" />
+            Add Address
+          </Button>
         </div>
       </div>
-      <div className="rounded-md border">
+
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected()}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected()}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -196,12 +197,13 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+
+      <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-        <div className="space-x-2">
+        <div className="flex gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -221,5 +223,6 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
         </div>
       </div>
     </div>
+
   )
 }

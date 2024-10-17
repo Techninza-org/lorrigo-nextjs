@@ -197,7 +197,7 @@ export const ClientRateCard = ({ isDisabled }: { isDisabled?: boolean }) => {
                                                 variant="outline"
                                                 role="combobox"
                                                 className={cn(
-                                                    "w-[280px] justify-between",
+                                                    "w-full p-1 text-xs sm:text-sm md:w-[280px] justify-between", // Full width on small screens, fixed width on medium and up
                                                     !field.value && "text-muted-foreground"
                                                 )}
                                             >
@@ -210,7 +210,7 @@ export const ClientRateCard = ({ isDisabled }: { isDisabled?: boolean }) => {
                                             </Button>
                                         </FormControl>
                                     </PopoverTrigger>
-                                    <PopoverContent className="w-[280px] p-0">
+                                    <PopoverContent className="w-full md:w-[280px] p-0"> {/* Adjusted width for mobile */}
                                         <Command>
                                             <CommandInput placeholder="Search Courier..." />
                                             <CommandEmpty>No Courier found.</CommandEmpty>
@@ -221,7 +221,7 @@ export const ClientRateCard = ({ isDisabled }: { isDisabled?: boolean }) => {
                                                             value={courier._id}
                                                             key={courier._id}
                                                             onSelect={() => {
-                                                                form.setValue("vendorId", courier._id)
+                                                                form.setValue("vendorId", courier._id);
                                                                 handleCourierChange(courier._id);
                                                             }}
                                                         >
@@ -245,6 +245,7 @@ export const ClientRateCard = ({ isDisabled }: { isDisabled?: boolean }) => {
                             </FormItem>
                         )}
                     />
+
                     <div className="grid grid-cols-2 gap-3">
                         <FormField
                             control={form.control}
@@ -286,7 +287,7 @@ export const ClientRateCard = ({ isDisabled }: { isDisabled?: boolean }) => {
                         />
                     </div>
                     <Tabs defaultValue="withinCity">
-                        <TabsList className="grid w-full grid-cols-5">
+                        <TabsList className="grid w-full grid-cols-2 gap-3 mb-24 sm:grid-cols-5 sm:gap-0 sm:mb-0">
                             <TabsTrigger value="withinCity">With in City</TabsTrigger>
                             <TabsTrigger value="withinZone">With in Zone</TabsTrigger>
                             <TabsTrigger value="withinMetro">With in Metro</TabsTrigger>

@@ -78,14 +78,15 @@ const GstinForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                        className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full sm:w-1/2" // Updated width
                                         {...field}
                                         maxLength={15}
                                     />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )} />
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="deductTDS"
@@ -96,9 +97,9 @@ const GstinForm = () => {
                                     <RadioGroup
                                         {...field}
                                         onValueChange={field.onChange}
-                                        className="flex space-x-1"
+                                        className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4"
                                     >
-                                        <FormItem className="flex items-center space-x-3 space-y-0">
+                                        <FormItem className="flex items-center space-x-3">
                                             <FormControl>
                                                 <RadioGroupItem value="yes" />
                                             </FormControl>
@@ -106,7 +107,7 @@ const GstinForm = () => {
                                                 Yes
                                             </FormLabel>
                                         </FormItem>
-                                        <FormItem className="flex items-center space-x-3 space-y-0">
+                                        <FormItem className="flex items-center space-x-3">
                                             <FormControl>
                                                 <RadioGroupItem value="no" />
                                             </FormControl>
@@ -130,22 +131,24 @@ const GstinForm = () => {
                                 </FormLabel>
                                 <FormControl>
                                     <Input
-                                        className=" border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-1/2"
+                                        className="border-2 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full sm:w-1/2" // Updated width
                                         {...field}
                                         maxLength={10}
                                     />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
-                        )} />
+                        )}
+                    />
                 </div>
-                <div className='flex'>
+                <div className="flex">
                     <Button variant={'themeButton'} type='submit' className='pr-0 mt-6'>
                         Save
                         <div className='bg-red-800 h-10 w-10 grid place-content-center rounded-r-md ml-4' ><Save /></div>
                     </Button>
                 </div>
             </form>
+
 
         </Form>
     )

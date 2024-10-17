@@ -135,26 +135,27 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             <div className="fixed shadow-md w-full bg-white z-50">
                 <TopNav />
             </div>
+
             <div
-                className={cn("z-10 fixed top-16 mt-2 shadow-md h-full flex flex-col transition-all duration-300 ease-in-out bg-gray-800 items-center text-white",
+                className={cn(
+                    "z-50 fixed top-16 mt-2 shadow-md h-full flex flex-col transition-all duration-300 ease-in-out bg-gray-800 items-center text-white",
                     isNavCollapsed ? 'w-16' : ' w-64'
                 )}
                 onClick={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
-                <Nav
-                    isCollapsed={isNavCollapsed}
-                    links={navLinks}
-                />
+                <Nav isCollapsed={isNavCollapsed} links={navLinks} />
             </div>
+
             <div
                 className={cn(
                     "container max-w-screen-2xl transition-all duration-300 ease-in-out pt-20 space-y-3",
-                    isNavCollapsed ? "pl-24" : "pl-72"
+                    "pl-20 sm:pl-24"
                 )}
             >
                 {children}
             </div>
         </div>
+
     );
 }

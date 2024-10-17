@@ -151,7 +151,7 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
         <div className="w-full">
             <div className="flex items-center py-4 gap-2">
                 <Input
-                    placeholder="Filter by AWB or Order Reference ID"
+                    placeholder="Filter by AWB or Order ID"
                     value={filtering}
                     onChange={(e) => setFiltering(e.target.value)}
                     className="max-w-sm"
@@ -216,7 +216,7 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
                     </Table>
                 </div>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 py-4">
                 <div className="flex-1 text-sm text-muted-foreground">
                     <Button variant={'outline'}>
                         Page{' '}

@@ -16,17 +16,17 @@ interface SettingsCardProps {
 
 const SettingsCard = ({ title, links, logo: Icon }: SettingsCardProps) => {
     return (
-        <Card className="drop-shadow-md p-1 rounded-2xl">
-            <CardContent className="pt-4 h-[187px]">
+        <Card className="drop-shadow-md p-2 sm:p-1 rounded-2xl">
+            <CardContent className="pt-2 sm:pt-4 h-[187px]">
                 <div className="flex">
-                    <div className="mr-3">
+                    <div className="mr-1 sm:mr-3">
                         <Icon alt="Settings Icon" className="text-red-500" strokeWidth={1.7} size={30} />
                     </div>
                     <div className="grid place-content-center">
                         <h3 className="font-medium text-lg">{title}</h3>
                     </div>
                 </div>
-                <div className="grid mx-12 gap-1 my-3">
+                <div className="grid mx-4 sm:mx-12 gap-1 my-2 sm:my-3">
                     {links.map(({ href, label }, index) => (
                         <Link key={index} href={href}>
                             <div className="flex justify-between text-sm hover:text-gray-500">
@@ -39,7 +39,8 @@ const SettingsCard = ({ title, links, logo: Icon }: SettingsCardProps) => {
             </CardContent>
         </Card>
     );
-}
+};
+
 
 const Settings = () => {
     const settingsData = [
@@ -100,7 +101,7 @@ const Settings = () => {
     return (
         <div>
             <h1 className="py-5 text-2xl font-semibold">Settings</h1>
-            <div className="grid grid-cols-3 gap-14 pb-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14 pb-5">
                 {settingsData.map((data, index) => (
                     <SettingsCard key={index} title={data.title} links={data.links} logo={data.logo} />
                 ))}

@@ -4,15 +4,16 @@ import PickupAddresses from "@/components/Settings/pickup-addresses";
 export default function ManagePickupAddresses() {
 
     return (
-        <Card className="col-span-4">
+        <Card className="col-span-4 md:col-span-2 lg:col-span-4">
             <CardHeader>
-                <CardTitle className="md:flex justify-between space-y-3">
+                <CardTitle className="flex justify-between">
                     Pickup Addresses
                 </CardTitle>
             </CardHeader>
-            <CardContent className="pl-2">
+            <CardContent className="pl-0 sm:pl-2 md:pl-4 lg:pl-6">
                 <PickupAddresses />
             </CardContent>
         </Card>
+
     )
 }

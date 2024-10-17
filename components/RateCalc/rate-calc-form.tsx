@@ -178,14 +178,14 @@ export const RateCalcForm = () => {
             }
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="grid grid-cols-4 gap-2">
-                        <Card className='col-span-3 space-y-3'>
+                    <div className="grid lg:grid-cols-4 gap-2">
+                        <Card className='lg:col-span-3 space-y-3 '>
                             <CardHeader>
                                 <CardTitle>Shipping Rate Calculator</CardTitle>
                                 <CardDescription>Order Details</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="grid grid-cols-2 gap-10">
+                                <div className="grid sm:grid-cols-2 gap-10">
                                     <FormField
                                         control={form.control}
                                         name="pickupPincode"
@@ -243,7 +243,7 @@ export const RateCalcForm = () => {
 
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-10">
+                                <div className="grid sm:grid-cols-3 gap-10">
                                     <div>
                                         <h4>Weight</h4>
                                         <FormField
@@ -256,7 +256,7 @@ export const RateCalcForm = () => {
                                                         <div className="flex gap-3 items-center">
                                                             <Input
                                                                 disabled={isLoading}
-                                                                className={cn("w-full bg-zinc-200/50 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
+                                                                className={cn("min-w-[100px] bg-zinc-200/50 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
                                                                     isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
                                                                 )}
                                                                 placeholder="Enter weight"
@@ -365,7 +365,7 @@ export const RateCalcForm = () => {
                                                 >
                                                     <FormControl>
                                                         <SelectTrigger
-                                                            className="bg-zinc-300/50 dark:bg-zinc-700 dark:text-white border-0 focus:ring-0 text-black ring-offset-0 focus:ring-offset-0 capitalize outline-none"
+                                                            className=" min-w-[180px] bg-zinc-300/50 dark:bg-zinc-700 dark:text-white border-0 focus:ring-0 text-black ring-offset-0 focus:ring-offset-0 capitalize outline-none"
                                                         >
                                                             <SelectValue placeholder="Select a payment mode" />
                                                         </SelectTrigger>
@@ -452,7 +452,7 @@ export const RateCalcForm = () => {
 
             <div className="col-span-2 my-2">
                 <div className="grid gap-3">
-                    <Card className="drop-shadow-md">
+                    <Card className="drop-shadow-md w-4/5 sm:w-full mb-4">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle>
                                 Courier Partner
@@ -505,7 +505,6 @@ export const RateCalcForm = () => {
                     </Card>
                 </div>
             </div>
-
         </>
     )
 }

@@ -190,22 +190,22 @@ export default function B2BForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-                <Card className='col-span-3 space-y-3'>
+                <div className='col-span-3 space-y-3'>
                     <CardHeader>
-                        <CardTitle className='space-x-2'>
+                        <CardTitle className=''>
                             <span>Create a new shipment (B2B)</span>
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid grid-cols-4 gap-3">
-                            <div className='col-span-2 space-y-4'>
+                        <div className="grid sm:grid-cols-4 gap-3 -ml-4">
+                            <div className='sm:col-span-2 space-y-4'>
                                 <B2BShipmentDetailsForm
                                     form={form}
                                     isLoading={isLoading}
 
                                 />
                             </div>
-                            <div className='col-span-2 space-y-3'>
+                            <div className='sm:col-span-2 space-y-3'>
                                 <B2BAddAmtDocForm
                                     form={form}
                                     isLoading={isLoading}
@@ -213,8 +213,8 @@ export default function B2BForm() {
                             </div>
                         </div>
                     </CardContent>
-                    <Button type='submit' variant={"themeButton"} className='my-6'>Create Shipment</Button>
-                </Card>
+                    <Button type='submit' variant={"themeButton"} className='my-6' style={{marginBottom: '20px'}}>Create Shipment</Button>
+                </div>
             </form>
 
         </Form>
@@ -547,7 +547,7 @@ export const B2BAddAmtDocForm = ({ form, isLoading }: { form: any, isLoading: bo
             </Card>
             <Card>
                 <CardContent>
-                    <div className='grid grid-cols-3 mt-4 gap-4'>
+                    <div className='grid sm:grid-cols-3 mt-4 gap-4'>
                         <FormField
                             control={form.control}
                             name="ewaybill"
@@ -617,7 +617,7 @@ export const B2BAddAmtDocForm = ({ form, isLoading }: { form: any, isLoading: bo
                     <CardTitle>Upload Documents</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className='flex gap-10 justify-around'>
+                    <div className='grid xl:flex gap-10 justify-around'>
                         <div className='w-60'>
                             <Label className='font-semibold'>1. Invoice <span className='text-red-500'>*</span></Label>
 
