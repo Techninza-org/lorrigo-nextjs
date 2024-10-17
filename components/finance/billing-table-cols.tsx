@@ -5,20 +5,11 @@ import { formatCurrencyForIndia } from "@/lib/utils";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
 import { InfoIcon } from "lucide-react";
 import { format } from "date-fns";
+import { useSellerProvider } from "../providers/SellerProvider";
+import { useAuth } from "../providers/AuthProvider";
 
 
 export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
-    {
-        header: 'Order ID',
-        accessorKey: 'orderRefId',
-        cell: ({ row }) => {
-            return (
-                <div className="space-y-1 items-center">
-                    <p>{row.getValue("orderRefId")}</p>
-                </div>
-            )
-        }
-    },
     {
         header: 'Date',
         accessorKey: 'billingDate',
@@ -43,19 +34,18 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
 
     },
     {
-        header: 'RTO AWB',
-        accessorKey: 'rtoAwb',
+        header: 'Order ID',
+        accessorKey: 'orderRefId',
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("rtoAwb")}</p>
+                    <p>{row.getValue("orderRefId")}</p>
                 </div>
             )
         }
-
     },
     {
-        header: 'Shipment Status',
+        header: 'Shipment Type',
         accessorKey: 'shipmentType',
         cell: ({ row }) => {
             return (
@@ -67,40 +57,27 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
 
     },
     {
-        header: 'Recipient Name',
-        accessorKey: 'recipientName',
+        header: 'Carrier Name',
+        accessorKey: 'vendorWNickName',
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("recipientName")}</p>
+                    <p>{row.getValue("vendorWNickName")}</p>
                 </div>
             )
         }
 
     },
     {
-        header: 'Origin City',
-        accessorKey: 'toCity',
+        header: 'Applied Weight',
+        accessorKey: 'orderWeight',
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p className="capitalize">{row.getValue("toCity")?.toString()?.toLowerCase()}</p>
+                    <p>{row.getValue("orderWeight")}</p>
                 </div>
             )
         }
-
-    },
-    {
-        header: 'Destination City',
-        accessorKey: 'fromCity',
-        cell: ({ row }) => {
-            return (
-                <div className="space-y-1 items-center">
-                    <p className="capitalize">{row.getValue("fromCity")?.toString()?.toLowerCase()}</p>
-                </div>
-            )
-        }
-
     },
     {
         header: 'Charged Weight',
@@ -112,26 +89,6 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
                 </div>
             )
         }
-
-    },
-    {
-        header: 'Charged Amount',
-        accessorKey: 'billingAmount',
-        cell: ({ row }) => {
-            const rowData = row.original;
-            return (
-                <div className="items-center flex gap-1">
-                    <p>{formatCurrencyForIndia(Number(row.getValue("billingAmount")) || 0)}</p>
-                    <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
-                        <div>Increment Price: {rowData.incrementPrice}</div>
-                        <div>Base Price: {rowData.basePrice}</div>
-                        <div>Increment Weight: {Number(rowData.incrementWeight).toFixed(2)}</div>
-                        <div>Base Weight: {rowData.baseWeight}</div>
-                    </HoverCardToolTip>
-                </div>
-            )
-        }
-
     },
     {
         header: 'Zone',
@@ -143,7 +100,45 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
                 </div>
             )
         }
-
+    },
+    {
+        header: 'Applied Weight Charges',
+        accessorKey: 'orderCharges',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{formatCurrencyForIndia(Number(row.getValue("orderCharges")))}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Excess Charges',
+        accessorKey: 'billingAmount',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{formatCurrencyForIndia(Number(row.getValue("billingAmount")))}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Total Charge',
+        accessorKey: 'billingAmount',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <div className="items-center flex gap-1">
+                    <p>{formatCurrencyForIndia((Number(row.getValue("billingAmount")) + Number(row.getValue("orderCharges"))) || 0)}</p>
+                    <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
+                        <div>Base Weight: {rowData.baseWeight}</div>
+                        <div>Base Price: {rowData.basePrice}</div>
+                        <div>Increment Price: {rowData.incrementPrice}</div>
+                    </HoverCardToolTip>
+                </div>
+            )
+        }
     },
     {
         header: 'Forward Applicable',
@@ -151,19 +146,34 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("isForwardApplicable") ? "True" : "False"}</p>
+                    <p>{row.getValue("isForwardApplicable") ?
+                        formatCurrencyForIndia((Number(row.getValue("billingAmount")) + Number(row.getValue("orderCharges"))) || 0)
+                        :
+                        "False"
+                    }</p>
                 </div>
             )
         }
 
     },
+    // {
+    //     header: 'RTO Applicable',
+    //     accessorKey: 'isRTOApplicable',
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="space-y-1 items-center">
+    //                 <p>{row.getValue("isRTOApplicable") ? "True" : "False"}</p>
+    //             </div>
+    //         )
+    //     }
+    // },
     {
-        header: 'RTO Applicable',
-        accessorKey: 'isRTOApplicable',
+        header: 'COD Charges',
+        accessorKey: 'codCharge',
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("isRTOApplicable") ? "True" : "False"}</p>
+                    <p>{row.getValue("codCharge")}</p>
                 </div>
             )
         }
@@ -240,3 +250,12 @@ export const SellerB2BBillingCols: ColumnDef<B2COrderType>[] = [
     },
 
 ];
+
+const DisplaySellerName = () => {
+    const { user } = useAuth();
+    return (
+        <div className="space-y-1 items-center">
+            <p className="capitalize">{user?.name}</p>
+        </div>
+    )
+}
