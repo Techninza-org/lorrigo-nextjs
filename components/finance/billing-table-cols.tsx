@@ -9,14 +9,15 @@ import { useSellerProvider } from "../providers/SellerProvider";
 import { useAuth } from "../providers/AuthProvider";
 
 
-export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
+export const SellerBillingCols: ColumnDef<any>[] = [
     {
         header: 'Date',
         accessorKey: 'billingDate',
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{format(row.getValue("billingDate"), "dd-MM-yyyy")}</p>
+                    {/* <div>{row.getValue("billingDate")}</div> */}
+                    <p>{row.getValue("billingDate") ?  format(row.getValue("billingDate"), "dd-MM-yyyy") : null}</p>
                 </div>
             )
         }
@@ -124,6 +125,17 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
         }
     },
     {
+        header: 'Status',
+        accessorKey: 'status',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("status")}</p>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Total Charge',
         accessorKey: 'billingAmount',
         cell: ({ row }) => {
@@ -132,48 +144,10 @@ export const SellerBillingCols: ColumnDef<B2COrderType>[] = [
                 <div className="items-center flex gap-1">
                     <p>{formatCurrencyForIndia((Number(row.getValue("billingAmount")) + Number(row.getValue("orderCharges"))) || 0)}</p>
                     <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
-                        <div>Base Weight: {rowData.baseWeight}</div>
-                        <div>Base Price: {rowData.basePrice}</div>
-                        <div>Increment Price: {rowData.incrementPrice}</div>
+                        <div>Forward Charge: {rowData.isForwardApplicable ? rowData.rtoCharge : 0}</div>
+                        <div>RTO Charge: {rowData.isRTOApplicable ? rowData.rtoCharge : 0}</div>
+                        <div>COD Value: {rowData.codValue}</div>
                     </HoverCardToolTip>
-                </div>
-            )
-        }
-    },
-    {
-        header: 'Forward Applicable',
-        accessorKey: 'isForwardApplicable',
-        cell: ({ row }) => {
-            return (
-                <div className="space-y-1 items-center">
-                    <p>{row.getValue("isForwardApplicable") ?
-                        formatCurrencyForIndia((Number(row.getValue("billingAmount")) + Number(row.getValue("orderCharges"))) || 0)
-                        :
-                        "False"
-                    }</p>
-                </div>
-            )
-        }
-
-    },
-    // {
-    //     header: 'RTO Applicable',
-    //     accessorKey: 'isRTOApplicable',
-    //     cell: ({ row }) => {
-    //         return (
-    //             <div className="space-y-1 items-center">
-    //                 <p>{row.getValue("isRTOApplicable") ? "True" : "False"}</p>
-    //             </div>
-    //         )
-    //     }
-    // },
-    {
-        header: 'COD Charges',
-        accessorKey: 'codCharge',
-        cell: ({ row }) => {
-            return (
-                <div className="space-y-1 items-center">
-                    <p>{row.getValue("codCharge")}</p>
                 </div>
             )
         }
