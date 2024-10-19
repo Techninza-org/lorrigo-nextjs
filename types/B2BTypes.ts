@@ -50,6 +50,7 @@ export interface B2BOrderType {
     bucket?: number;
     orderStages?: IOrderStage[];
     awb?: string;
+    orderShipmentId?: string;
     channelName?: string;
     carrierName?: string;
     invoiceImage?: File;

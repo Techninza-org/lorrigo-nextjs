@@ -10,6 +10,9 @@ import { usePDF } from 'react-to-pdf';
 import { B2BInvoiceTemplate } from "./b2b-invoice-template";
 import { B2BOrderType } from "@/types/B2BTypes";
 import GenerateB2BManifestTemplate from "./b2b-manifest-template";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useRef, useState } from "react";
+import { useSellerProvider } from "../providers/SellerProvider";
 
 export const InvoicePage = ({ order }: { order?: B2COrderType }) => {
     const printDocument = () => {
@@ -193,40 +196,83 @@ export const GenerateB2BManifest = ({ order }: { order?: B2BOrderType }) => {
 }
 
 export const InvoiceBulk = ({ orders }: { orders: B2COrderType[] }) => {
-    const { toPDF, targetRef } = usePDF({ filename: 'bulk_label.pdf' });
+    const LABELS_PER_PAGE = 4
+    
+    const pdfContentRef = useRef<HTMLDivElement>(null)
+    const [isGenerating, setIsGenerating] = useState(false)
 
     const chunkArray = (array: B2COrderType[], size: number) => {
-        const chunkedArray = [];
+        const chunkedArray = []
         for (let i = 0; i < array.length; i += size) {
-            chunkedArray.push(array.slice(i, i + size));
+            chunkedArray.push(array.slice(i, i + size))
         }
-        return chunkedArray;
-    };
+        return chunkedArray
+    }
 
-    const chunkedOrders = chunkArray(orders, 4);
+    const chunkedOrders = chunkArray(orders, LABELS_PER_PAGE)
+
+    const generatePDF = async () => {
+        if (!pdfContentRef.current) return
+        setIsGenerating(true)
+
+        try {
+            const pdf = new jsPDF('p', 'mm', 'a4')
+            const pdfWidth = pdf.internal.pageSize.getWidth()
+            const pdfHeight = pdf.internal.pageSize.getHeight()
+
+            for (let i = 0; i < chunkedOrders.length; i++) {
+                const pageElement = document.getElementById(`page-${i}`)
+                if (pageElement) {
+                    const canvas = await html2canvas(pageElement, {
+                        scale: 2,
+                        logging: false,
+                        useCORS: true,
+                        allowTaint: true
+                    })
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0)
+
+                    if (i > 0) pdf.addPage()
+
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight)
+                }
+            }
+
+            pdf.save(`bulk_label_${Date.now()}.pdf`)
+        } catch (error) {
+            console.error('Error generating PDF:', error)
+            alert('An error occurred while generating the PDF. Please try again.')
+        } finally {
+            setIsGenerating(false)
+        }
+    }
 
     return (
-        <>
-            <Button size={"sm"} variant={"webPageBtn"} onClick={() => toPDF()}>Download Label</Button>
-            <div ref={targetRef} className="mx-auto w-full h-full flex flex-col gap-16 p-10 justify-center">
-                {
-                    chunkedOrders.map((orderChunk, pageIndex) => (
-                        <div key={pageIndex} className={`page-break grid grid-cols-2 gap-14 justify-items-center ${pageIndex > 0 ? 'mt-[650px]' : ''}`}>
-                            {
-                                orderChunk.map((order: B2COrderType) => (
-                                    <div key={order._id} className="w-full">
-                                        <InvoiceTemplate order={order} />
-                                    </div>
-                                ))
-                            }
+        <div className="container mx-auto p-4">
+            <Button
+                size="sm"
+                variant="webPageBtn"
+                onClick={generatePDF}
+                className="mb-4 w-full"
+                disabled={isGenerating}
+            >
+                {isGenerating ? 'Generating PDF...' : 'Download All Labels'}
+            </Button>
+            <div ref={pdfContentRef}>
+                {chunkedOrders.map((orderChunk, pageIndex) => (
+                    <div key={pageIndex} id={`page-${pageIndex}`} className=" p-4">
+                        <div className="grid grid-cols-2 gap-9 h-full p-5">
+                            {orderChunk.map((order: B2COrderType) => (
+                                <div key={order._id} className="w-full p-3 overflow-hidden">
+                                    <InvoiceTemplate order={order} />
+                                </div>
+                            ))}
                         </div>
-                    ))
-                }
+                    </div>
+                ))}
             </div>
-        </>
-    );
-};
-
+        </div>
+    )
+}
 
 export const GenerateBulkManifest = ({ orders }: { orders: B2COrderType[] }) => {
     const { toPDF, targetRef } = usePDF({ filename: 'bulk_Manifest.pdf' });

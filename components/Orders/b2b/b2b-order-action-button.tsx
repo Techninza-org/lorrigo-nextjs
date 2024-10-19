@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontalIcon } from "lucide-react";
 import { B2BOrderType } from "@/types/B2BTypes";
+import { downloadFileYURL } from "@/lib/utils";
 
 export const getBucketStatus = (bucket: number) => {
     switch (bucket) {
@@ -165,7 +166,7 @@ export const B2BOrderButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData })
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
-                <OrderCloneButton rowData={rowData} />
+                    <OrderCloneButton rowData={rowData} />
 
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -196,7 +197,16 @@ export const OrderEditButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData }
 
 export const DownloadLabelButton: React.FC<{ rowData: B2BOrderType }> = ({ rowData }) => {
     const { onOpen } = useModal();
+    const id = rowData.orderShipmentId
+    const isGatiCourier = rowData?.carrierName?.toLowerCase().includes("gati");
     return (
-        <DropdownMenuItem onClick={() => onOpen("downloadB2BLabel", { b2bOrder: rowData })}>Download Label</DropdownMenuItem>
+        <>
+            {(id && isGatiCourier) ? <DropdownMenuItem onClick={() => downloadFileYURL(
+                'http://localhost:4000/api/public/shipment_labels/534916.pdf',
+                'shipment_label_534916.pdf'
+            )}>Download Label</DropdownMenuItem>
+                : <DropdownMenuItem onClick={() => onOpen("downloadB2BLabel", { b2bOrder: rowData })}>Download Label</DropdownMenuItem>
+            }
+        </>
     );
 }

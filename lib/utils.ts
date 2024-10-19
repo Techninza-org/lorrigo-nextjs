@@ -125,6 +125,26 @@ export const downloadFile = (blobData: Blob, fileName: string) => {
   window.URL.revokeObjectURL(url);
 };
 
+export const downloadFileYURL = async (fileUrl: string, fileName: string) => {
+  try {
+    const response = await fetch(fileUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/pdf', // Set to the correct type based on your file type
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('File could not be downloaded');
+    }
+
+    const blob = await response.blob();
+    downloadFile(blob, fileName);
+  } catch (error) {
+    console.error('Error downloading the file:', error);
+  }
+};
+
 export const handleFileDownload = (fileName: string) => {
   const url = `/${fileName}`;
   const anchor = document.createElement('a');

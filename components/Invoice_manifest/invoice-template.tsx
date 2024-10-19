@@ -10,7 +10,7 @@ import { useSellerProvider } from "../providers/SellerProvider"
 export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
     const { seller } = useSellerProvider();
     return (
-        <div className="border border-gray-400 rounded-sm p-3 w-[28rem]">
+        <div className="border border-gray-400 rounded-sm p-3 w-full h-full">
             <div className="flex justify-between">
                 <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
                     Ship To:
