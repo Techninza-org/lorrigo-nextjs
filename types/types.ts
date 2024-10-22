@@ -5,6 +5,7 @@ export type AuthType = {
   name: string;
   email: string;
   role?: "admin" | "seller";
+  rank?: number;
 };
 
 export type SellerType = {

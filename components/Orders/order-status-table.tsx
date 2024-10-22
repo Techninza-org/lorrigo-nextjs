@@ -233,24 +233,24 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4 justify-between">
-        <div className="grid gap-3">
+      <div className="grid sm:flex items-center py-4 justify-between">
+        <div className="grid sm:flex gap-3">
           <Input
-            placeholder="Filter by AWB or Order ID"
+            placeholder="Filter by AWB or Order Reference ID"
             value={filtering}
             onChange={(e) => setFiltering(e.target.value)}
-            className="w-3/4"
+            className="w-64"
           />
           <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
-          <div className="flex justify-between">
-            <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
-            <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
-              <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
-            </CsvDownloader>
-          </div>
+          <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
+            <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={18 } /></Button>
+          </CsvDownloader>
+          <div className="grid grid-cols-2 gap-3 ">
+          <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
           {
             seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
           }
+        </div>
         </div>
         <div>
           {
@@ -271,6 +271,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
                 </DropdownMenuContent>
               </DropdownMenu>)
           }
+
         </div>
       </div>
       <div className="rounded-md border">

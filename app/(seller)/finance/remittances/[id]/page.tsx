@@ -13,7 +13,7 @@ export default function RemittancePage({ params }: { params: { id: string } }) {
                     <span className="text-base text-gray-600">Transaction Details</span>
                     <div className="md:flex  space-y-3 md:space-y-0 md:space-x-3 mt-6 md:mt-0">
                         <NotebookText />
-                        <span>{params.id}</span>
+                        <span className="text-sm sm:text-md">{params.id}</span>
                     </div>
                 </CardTitle>
             </CardHeader>

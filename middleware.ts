@@ -13,6 +13,7 @@ export async function middleware(request: NextRequest) {
   }
   let isAuthenticated = user !== null;
   let userRole = user?.role;
+  let userRank = user?.rank;
 
   const unauthenticatedPaths = ['/login', '/signup', '/forgot-password', '/reset-password', '/admin/login'];
   const authenticatedRoutes = [
@@ -46,6 +47,10 @@ export async function middleware(request: NextRequest) {
     '/contact',
     '/track', // Making '/track' accessible to all users
   ];
+
+  const notRank2adminRoutes = [
+    '/admin/users/add-user'
+  ]
 
   const { pathname } = request.nextUrl;
 
@@ -87,6 +92,11 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
       }
     }
+
+    if(userRole === 'admin' && userRank === 2 && notRank2adminRoutes.some(route => pathname.startsWith(route)) ){
+      return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
+    }
+
   }
 
   return NextResponse.next();

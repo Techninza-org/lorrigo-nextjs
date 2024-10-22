@@ -16,12 +16,10 @@ interface BoxDetailsProps {
 }
 
 export const B2bBoxDetails = ({ form, isLoading, fields, append, remove }: BoxDetailsProps) => {
-
     const [boxesLeft, setBoxesLeft] = useState(0);
     const total = form.watch('quantity');
     const boxes = form.watch('boxes');
     const { formState: { errors } } = form;
-
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>, index: number, fieldName: string) => {
         let numericValue = e.target.value.replace(/[^0-9.]/g, '');
@@ -32,7 +30,6 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append, remove }: BoxDe
         const field = e.target.name;
         form.setValue(field, numericValue);
 
-        // Update the boxesLeft state when the quantity changes
         const updatedBoxes = [...boxes];
         updatedBoxes[index][fieldName] = numericValue;
         const updatedTotalQty = updatedBoxes.reduce((sum: number, box: any) => sum + Number(box.qty || 0), 0);
@@ -63,137 +60,129 @@ export const B2bBoxDetails = ({ form, isLoading, fields, append, remove }: BoxDe
     }
 
     return (
-        <CardContent className="grid grid-cols-3 sm:grid-cols-7 gap-2 p-0 items-center justify-items-center">
+        <CardContent className="grid gap-4 p-2 sm:p-4 md:p-6 items-center justify-items-center">
             {fields.map((field: any, index: number) => (
                 <Fragment key={field.id}>
-                    <FormField
-                        control={form.control}
-                        name={`boxes[${index}].qty`}
-                        render={({ field }) => (
-                            <FormItem className='w-full'>
-                                <div className="flex flex-col space-y-4">
-                                    <div className="flex flex-row justify-between items-center">
-                                        <Input
-                                            disabled={isLoading}
-                                            className={cn("w-full bg-zinc-200/50  text-center dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
-                                            )}
-                                            placeholder="Qty"
-                                            {...field}
-                                            onChange={(e) => handleChange(e, index, 'qty')}
-                                        />
-                                    </div>
-                                </div>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name={`boxes[${index}].orderBoxWeight`}
-                        render={({ field }) => (
-                            <FormItem className='w-full'>
-                                <div className="flex flex-col space-y-4">
-                                    <div className="flex flex-row justify-between items-center">
-                                        <Input
-                                            disabled={isLoading}
-                                            className={cn("w-full bg-zinc-200/50 text-center dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
-                                            )}
-                                            placeholder="Weight"
-                                            {...field}
-                                            onChange={(e) => handleChange(e, index, 'orderBoxWeight')}
-                                        />
-                                    </div>
-                                </div>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name={`boxes[${index}].orderBoxLength`}
-                        render={({ field }) => (
-                            <FormItem className='w-full'>
-                                <div className="flex flex-col space-y-4">
-                                    <div className="flex flex-row justify-between items-center">
-                                        <Input
-                                            disabled={isLoading}
-                                            className={cn("w-full bg-zinc-200/50  text-center dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
-                                            )}
-                                            placeholder="Length"
-                                            {...field}
-                                            onChange={(e) => handleChange(e, index, 'orderBoxLength')}
-                                        />
-                                    </div>
-                                </div>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name={`boxes[${index}].orderBoxWidth`}
-                        render={({ field }) => (
-                            <FormItem className='w-full'>
-                                <div className="flex flex-col space-y-4">
-                                    <div className="flex flex-row justify-between items-center">
-                                        <Input
-                                            disabled={isLoading}
-                                            className={cn("w-full bg-zinc-200/50 text-center dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
-                                            )}
-                                            placeholder="Width"
-                                            {...field}
-                                            onChange={(e) => handleChange(e, index, 'orderBoxWidth')}
-                                        />
-                                    </div>
-                                </div>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name={`boxes[${index}].orderBoxHeight`}
-                        render={({ field }) => (
-                            <FormItem className='w-full'>
-                                <div className="flex flex-col space-y-4">
-                                    <div className="flex flex-row justify-between items-center">
-                                        <Input
-                                            disabled={isLoading}
-                                            className={cn("w-full bg-zinc-200/50 text-center dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0",
-                                                isError(field.name) ? "border-red-500 dark:border-red-500" : "border-0 dark:border-0"
-                                            )}
-                                            placeholder="Height"
-                                            {...field}
-                                            onChange={(e) => handleChange(e, index, 'orderBoxHeight')}
-                                        />
-                                    </div>
-                                </div>
-                            </FormItem>
-                        )}
-                    />
-
-                    <Button type='button' variant={"secondary"}>cm</Button>
-                    <Button
-                        type="button"
-                        size={'icon'}
-                        variant="destructive"
-                        onClick={() => removeFields(index)}
-                        disabled={isLoading || fields?.length <= 1 || boxesLeft <= 0}
-                    >
-                        <Trash2Icon size={18} />
-                    </Button>
+                    <div className="grid grid-cols-2 md:grid-cols-6 gap-2 w-full">
+                        <FormField
+                            control={form.control}
+                            name={`boxes[${index}].qty`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Input
+                                        disabled={isLoading}
+                                        className={cn("w-full text-center bg-zinc-200/50 dark:bg-zinc-700 dark:text-white", 
+                                            isError(field.name) ? "border-red-500" : "border-0"
+                                        )}
+                                        placeholder="Qty"
+                                        {...field}
+                                        onChange={(e) => handleChange(e, index, 'qty')}
+                                    />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name={`boxes[${index}].orderBoxWeight`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Input
+                                        disabled={isLoading}
+                                        className={cn("w-full text-center bg-zinc-200/50 dark:bg-zinc-700 dark:text-white", 
+                                            isError(field.name) ? "border-red-500" : "border-0"
+                                        )}
+                                        placeholder="Weight"
+                                        {...field}
+                                        onChange={(e) => handleChange(e, index, 'orderBoxWeight')}
+                                    />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name={`boxes[${index}].orderBoxLength`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Input
+                                        disabled={isLoading}
+                                        className={cn("w-full text-center bg-zinc-200/50 dark:bg-zinc-700 dark:text-white", 
+                                            isError(field.name) ? "border-red-500" : "border-0"
+                                        )}
+                                        placeholder="Length"
+                                        {...field}
+                                        onChange={(e) => handleChange(e, index, 'orderBoxLength')}
+                                    />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name={`boxes[${index}].orderBoxWidth`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Input
+                                        disabled={isLoading}
+                                        className={cn("w-full text-center bg-zinc-200/50 dark:bg-zinc-700 dark:text-white", 
+                                            isError(field.name) ? "border-red-500" : "border-0"
+                                        )}
+                                        placeholder="Width"
+                                        {...field}
+                                        onChange={(e) => handleChange(e, index, 'orderBoxWidth')}
+                                    />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name={`boxes[${index}].orderBoxHeight`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <Input
+                                        disabled={isLoading}
+                                        className={cn("w-full text-center bg-zinc-200/50 dark:bg-zinc-700 dark:text-white", 
+                                            isError(field.name) ? "border-red-500" : "border-0"
+                                        )}
+                                        placeholder="Height"
+                                        {...field}
+                                        onChange={(e) => handleChange(e, index, 'orderBoxHeight')}
+                                    />
+                                </FormItem>
+                            )}
+                        />
+                        <div className="flex justify-between items-center">
+                            <Button type='button' variant="secondary" className="w-full">
+                                cm
+                            </Button>
+                            <Button
+                                type="button"
+                                size={'icon'}
+                                variant="destructive"
+                                onClick={() => removeFields(index)}
+                                disabled={isLoading || fields?.length <= 1 || boxesLeft <= 0}
+                            >
+                                <Trash2Icon size={18} />
+                            </Button>
+                        </div>
+                    </div>
                 </Fragment>
             ))}
-            <Button
-                type="button"
-                variant={'webPageBtn'}
-                size={'icon'}
-                onClick={addMoreFields}
-                disabled={boxesLeft <= 0}
-            >
-                <PlusCircleIcon size={20} />
-            </Button>
-            {boxesLeft > 0 && <FormMessage className="col-span-5 text-center text-sm text-red-600">{boxesLeft} boxes left</FormMessage>}
+            <div className="flex justify-between items-center w-full">
+                <Button
+                    type="button"
+                    variant={'webPageBtn'}
+                    size={'icon'}
+                    onClick={addMoreFields}
+                    disabled={boxesLeft <= 0}
+                >
+                    <PlusCircleIcon size={20} />
+                </Button>
+                {boxesLeft > 0 && (
+                    <FormMessage className="text-center text-sm text-red-600">
+                        {boxesLeft} boxes left
+                    </FormMessage>
+                )}
+            </div>
         </CardContent>
     );
-}
+};
+
