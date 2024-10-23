@@ -6,7 +6,19 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Trash } from "lucide-react";
 import { useState } from "react";
 
-const ToggleSwitch = ({ dept, path }: { dept: any, path: string }) => {
+const Delete = ({ id }: { id: string }) => { 
+    const { handleDeleteSubadmin } = useAdminProvider();
+
+    return (
+        <div className="space-y-1 items-center">
+            <Button variant={'secondary'} size={'icon'} onClick={() => handleDeleteSubadmin(id)}>
+                <Trash size={18} color="red" />
+            </Button>
+        </div>
+    );
+};
+
+const ToggleSwitch = ({ dept, path }: { dept: any; path: string }) => {
     const [checked, setChecked] = useState(dept.subadminpaths.includes(path));
     const { handleUpdateSubadminPaths } = useAdminProvider();
 
@@ -29,13 +41,14 @@ const ToggleSwitch = ({ dept, path }: { dept: any, path: string }) => {
             <Switch
                 className="bg-red-500"
                 checked={checked}
-                onCheckedChange={(checked) => handleToggle(checked)}
+                onCheckedChange={handleToggle}
                 id={`toggle-${path}-active`}
             />
         </div>
     );
 };
 
+// Column definitions for the listing
 export const ListingCols: ColumnDef<any>[] = [
     {
         header: 'Name',
@@ -82,28 +95,12 @@ export const ListingCols: ColumnDef<any>[] = [
             );
         }
     },
-    // {
-    //     header: 'Wallet',
-    //     cell: ({ row }) => {
-    //         const rowData = row.original;
-    //         return (
-    //             <div className="space-y-1 items-center">
-    //                 <ToggleSwitch dept={rowData} path="users" />
-    //             </div>
-    //         );
-    //     }
-    // },
     {
         header: 'Action',
         cell: ({ row }) => {
             const rowData = row.original;
-            const { handleDeleteSubadmin } = useAdminProvider();
             return (
-                <div className="space-y-1 items-center">
-                    <Button variant={'secondary'} size={'icon'} onClick={() => handleDeleteSubadmin(rowData._id)}>
-                        <Trash size={18} color="red" />
-                    </Button>
-                </div>
+                <Delete id={rowData._id} />
             );
         }
     }
