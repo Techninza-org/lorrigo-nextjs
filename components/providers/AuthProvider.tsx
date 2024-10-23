@@ -364,7 +364,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
                     title: "Success",
                     description: "Signup successfully.",
                 });
-                return router.push("/admin/shipment-listing");
+                return router.push("/admin/sub/list");
             } else if (response.data.message === "user already exists") {
                 return toast({
                     variant: "destructive",

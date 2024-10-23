@@ -14,6 +14,9 @@ export async function middleware(request: NextRequest) {
   let isAuthenticated = user !== null;
   let userRole = user?.role;
   let userRank = user?.rank;
+  let userisSubadmin = user?.issubadmin
+  let subadminpaths = user?.subadminpaths
+  
 
   const unauthenticatedPaths = ['/login', '/signup', '/forgot-password', '/reset-password', '/admin/login'];
   const authenticatedRoutes = [
@@ -40,6 +43,8 @@ export async function middleware(request: NextRequest) {
     '/admin',
     '/admin/shipment-listing',
     '/admin/finance',
+    '/admin/users',
+    '/admin/pincodes'
   ];
 
   const publicRoutes = [
@@ -47,10 +52,6 @@ export async function middleware(request: NextRequest) {
     '/contact',
     '/track', // Making '/track' accessible to all users
   ];
-
-  const notRank2adminRoutes = [
-    '/admin/users/add-user'
-  ]
 
   const { pathname } = request.nextUrl;
 
@@ -82,6 +83,19 @@ export async function middleware(request: NextRequest) {
       if (pathname.includes('/login')) {
         return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
       }
+
+      if (userisSubadmin) {
+        const allowedAdminRoutes = adminRoutes.filter(route => {
+            const department = route.split('/')[2]; 
+            return subadminpaths?.includes(department) || department === 'shipment-listing'; 
+        });
+    
+        if (!allowedAdminRoutes.some(route => pathname.startsWith(route))) {
+            if (!pathname.startsWith('/admin/shipment-listing')) {
+                return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
+            }
+        }
+    }
     }
 
     // Redirect authenticated users to the appropriate dashboard if they try to access unauthenticated paths
@@ -91,10 +105,6 @@ export async function middleware(request: NextRequest) {
       } else if (userRole === 'admin') {
         return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
       }
-    }
-
-    if(userRole === 'admin' && userRank === 2 && notRank2adminRoutes.some(route => pathname.startsWith(route)) ){
-      return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
     }
 
   }

@@ -6,6 +6,8 @@ export type AuthType = {
   email: string;
   role?: "admin" | "seller";
   rank?: number;
+  issubadmin?: boolean;
+  subadminpaths?: string[];
 };
 
 export type SellerType = {
