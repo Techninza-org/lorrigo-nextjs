@@ -4,8 +4,21 @@ import { B2COrderType } from "@/types/types";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
 import { InfoIcon } from "lucide-react";
 import { formatCurrencyForIndia } from "@/lib/utils";
+import { format } from "date-fns";
 
-export const AdminClientBillingCols: ColumnDef<B2COrderType>[] = [
+export const AdminClientBillingCols: ColumnDef<any>[] = [
+    {
+        header: 'Date',
+        accessorKey: 'billingDate',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    {/* <div>{row.getValue("billingDate")}</div> */}
+                    <p>{row.getValue("billingDate") ?  format(row.getValue("billingDate"), "dd-MM-yyyy") : null}</p>
+                </div>
+            )
+        }
+    },
     {
         header: 'Client Name',
         accessorKey: 'sellerId',
@@ -107,6 +120,17 @@ export const AdminClientBillingCols: ColumnDef<B2COrderType>[] = [
         }
     },
     {
+        header: 'Vendor Id',
+        accessorKey: 'carrierID',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p className="capitalize">{row.getValue("carrierID")}</p>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Vendor Name',
         accessorKey: 'vendorWNickName',
         cell: ({ row }) => {
@@ -118,21 +142,23 @@ export const AdminClientBillingCols: ColumnDef<B2COrderType>[] = [
         }
     },
     {
+        header: 'Applied Weight',
+        accessorKey: 'orderWeight',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("orderWeight")}</p>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Charged Weight',
         accessorKey: 'chargedWeight',
         cell: ({ row }) => {
-            const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p className="flex gap-1 items-center">
-                        <span className="flex">{row.getValue("chargedWeight")} Kg</span>
-                        <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
-                            <div>Increment Price: {rowData.incrementPrice}</div>
-                            <div>Base Price: {rowData.basePrice}</div>
-                            <div>Increment Weight: {Number(rowData.incrementWeight).toFixed(2)}</div>
-                            <div>Base Weight: {rowData.baseWeight}</div>
-                        </HoverCardToolTip>
-                    </p>
+                    <p>{row.getValue("chargedWeight")} Kg</p>
                 </div>
             )
         }
@@ -147,27 +173,53 @@ export const AdminClientBillingCols: ColumnDef<B2COrderType>[] = [
                 </div>
             )
         }
-
     },
     {
-        header: 'Forward Applicable',
-        accessorKey: 'isForwardApplicable',
+        header: 'Applied Weight Charges',
+        accessorKey: 'orderCharges',
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("isForwardApplicable") ? "True" : "False"}</p>
+                    <p>{formatCurrencyForIndia(Number(row.getValue("orderCharges")))}</p>
                 </div>
             )
         }
-
     },
     {
-        header: 'RTO Applicable',
-        accessorKey: 'isRTOApplicable',
+        header: 'Excess Charges',
+        accessorKey: 'billingAmount',
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("isRTOApplicable") ? "True" : "False"}</p>
+                    <p>{formatCurrencyForIndia(Number(row.getValue("billingAmount")))}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Status',
+        accessorKey: 'status',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("status")}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Total Charge',
+        accessorKey: 'billingAmount',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <div className="items-center flex gap-1">
+                    <p>{formatCurrencyForIndia((Number(row.getValue("billingAmount")) + Number(row.getValue("orderCharges"))) || 0)}</p>
+                    <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
+                        <div>Forward Charge: {rowData.isForwardApplicable ? rowData.rtoCharge : 0}</div>
+                        <div>RTO Charge: {rowData.isRTOApplicable ? rowData.rtoCharge : 0}</div>
+                        <div>COD Value: {rowData.codValue}</div>
+                    </HoverCardToolTip>
                 </div>
             )
         }

@@ -132,7 +132,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
 
             return (
                 <div className="space-y-1">
-                    <Badge variant={rowData?.bucket == 6 ? "failure" : "success"}>{getBucketStatus(rowData?.bucket ?? 0)}</Badge>
+                    <Badge variant={rowData?.bucket == 6 ? "failure" : "success"}>{rowData?.bucket === 5 ? orderStage?.action : getBucketStatus(rowData?.bucket ?? 0)}</Badge>
                     <p>{formatDate(`${orderStage?.stageDateTime}`, 'dd MM yyyy | HH:mm a')}</p>
                 </div>
             )

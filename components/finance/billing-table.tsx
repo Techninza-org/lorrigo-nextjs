@@ -52,7 +52,7 @@ export function BillingTable({ data, columns }: { data: any[], columns: ColumnDe
     })
 
     const table = useReactTable({
-        data: filteredData,
+        data,
         columns,
         // onSortingChange: setSorting,
         // onColumnFiltersChange: setColumnFilters,

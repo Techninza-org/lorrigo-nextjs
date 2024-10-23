@@ -173,19 +173,28 @@ export default function CourierPage() {
                                                             setLoading(false)
                                                         }
                                                     }}>Ship now</Button>
-                                                        : <Button disabled={pending} type="submit" variant={"themeButton"} size={"sm"} onClick={() => onOpen("B2BShipNow", {
-                                                            form: {
-                                                                transportId: partner.transportId,
-                                                                transportName: partner.transporterName,
-                                                                invoiceNumber: courierPartners.orderDetails.invoiceNumber,
-                                                                orderId: courierPartners.orderDetails._id,
-                                                                carrierId: partner.carrierID,
-                                                                carrierNickName: partner.nickName,
-                                                                charge: partner.charge,
-                                                                type: partner.type || '',
-                                                                shipmentValue: courierPartners.orderDetails?.amount
-                                                            }
-                                                        })}>Ship now</Button>}
+                                                        : <Button
+                                                            disabled={pending}
+                                                            type="submit"
+                                                            variant={"themeButton"}
+                                                            size={"sm"}
+                                                            onClick={() => onOpen("B2BShipNow", {
+                                                                form: {
+                                                                    transportId: partner.transportId,
+                                                                    transportName: partner.transporterName,
+                                                                    invoiceNumber: courierPartners.orderDetails.invoiceNumber,
+                                                                    orderId: courierPartners.orderDetails._id,
+                                                                    carrierId: partner.carrierID,
+                                                                    carrierNickName: partner.nickName,
+                                                                    charge: partner.charge,
+                                                                    type: partner.type || '',
+                                                                    shipmentValue: courierPartners.orderDetails?.amount
+                                                                }
+                                                            })}
+                                                        >
+                                                            Ship now
+                                                        </Button>
+                                                    }
                                                 </TableCell>
                                             </TableRow>
                                         })
