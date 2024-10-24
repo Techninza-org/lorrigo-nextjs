@@ -49,6 +49,9 @@ interface AdminContextType {
     manageRemittance: ({ remittanceId, bankTransactionId, status }: { remittanceId: string, bankTransactionId: string, status: string }) => Promise<boolean>;
     getAllWalletTxn: ({ fromDate, toDate }: { fromDate: string, toDate: string }) => void;
     allTxn: any[];
+    subadmins: any[];
+    handleUpdateSubadminPaths: (id: string, paths: string[]) => Promise<boolean> | undefined;
+    handleDeleteSubadmin: (id: string) => void;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -71,6 +74,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [clientNVendorBills, setClientNVendorBills] = useState<any>([]);
     const [b2bClientNVendorBills, setB2BClientNVendorBills] = useState<any>([]);
     const [allTxn, setAllTxn] = useState<any>([]);
+    const [subadmins, setSubadmins] = useState([])
 
     const { toast } = useToast();
     const router = useRouter()
@@ -432,6 +436,55 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         setCurrSeller(res)
     }
 
+    const getSubadmins = async () => {
+        const res = await axiosIWAuth.get(`/admin/subadmins`);
+        if (res.data?.valid) {
+            setSubadmins(res.data.subadmins)
+        }else{
+            toast({
+                variant: "destructive",
+                title: "Failed to get subadmins",
+            });
+        }
+    }
+
+    const handleUpdateSubadminPaths = async (id: string, paths: string[]) => {
+        try{
+            const res = await axiosIWAuth.put(`/admin/subadmins/${id}`, {paths});
+            if (res.data?.valid) {
+                toast({
+                    variant: "default",
+                    title: "Subadmin Departments Updated Successfully",
+                });
+                getSubadmins();
+                return true;
+            }
+            getSubadmins();
+            return false;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+
+    const handleDeleteSubadmin = async (id: string) => {
+        try{
+            const res = await axiosIWAuth.delete(`/admin/subadmins/delete/${id}`)
+            if (res.data?.valid) {
+                toast({
+                    variant: "default",
+                    title: "Subadmin Deleted Successfully",
+                });
+                getSubadmins();
+                return true;
+            }
+            return false;
+        }catch(err){
+            console.log(err);
+            return false;
+        }
+    }
+
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
             // getAllOrders("all", { fromDate: defaultFromDate, toDate: defaultToDate });
@@ -442,6 +495,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getSellerAssignedCouriers()
             getFutureRemittance()
             getClientNVendorBillingData()
+            getSubadmins()
         }
     }, [user, userToken])
 
@@ -484,7 +538,10 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 walletDeduction,
                 getAllWalletTxn,
                 b2bClientNVendorBills,
-                allTxn
+                allTxn,
+                subadmins,
+                handleUpdateSubadminPaths,
+                handleDeleteSubadmin
 
             }}
         >

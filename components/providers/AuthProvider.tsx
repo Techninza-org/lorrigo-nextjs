@@ -30,6 +30,9 @@ interface AuthContextType {
     // Admin auth 
 
     handleAdminLogin: (formData: FormData) => void;
+
+    handleCreateSubadmin: (formData: FormData) => void;
+
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -333,6 +336,51 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const handleCreateSubadmin = async (formData: FormData) => {
+        try {
+            const name = formData.get("name")?.toString() || "";
+            const email = formData.get("email")?.toString() || "";
+            const password = formData.get("password")?.toString() || "";
+
+            if (!name || name.toString().length <= 2 || !email || !email.toString().includes("@") || !password) {
+                return toast({
+                    variant: "destructive",
+                    title: "Signup Error",
+                    description: "Please enter valid details for all fields.",
+                });
+            }
+
+            const userData = {
+                name,
+                email,
+                password
+            };
+
+            const response = await axiosWOAuth.post("/auth/create-subadmin", userData)
+
+            if (response.data.user) {
+                setLoading(true);
+                toast({
+                    title: "Success",
+                    description: "Signup successfully.",
+                });
+                return router.push("/admin/sub/list");
+            } else if (response.data.message === "user already exists") {
+                return toast({
+                    variant: "destructive",
+                    title: "Signup Error",
+                    description: "User already exists.",
+                });
+            }
+        } catch (error) {
+            return toast({
+                variant: "destructive",
+                title: "Signup Error",
+                description: "An error occurred during signup.",
+            });
+        }
+    };
+
     return (
         <AuthContext.Provider
             value={{
@@ -348,6 +396,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
                 // Admin auth
                 handleAdminLogin,
+                handleCreateSubadmin
 
             }}
         >

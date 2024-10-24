@@ -119,44 +119,53 @@ export function PickupAddressTable({ data, columns }: { data: any[], columns: Co
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-center py-4 gap-4">
-        <div className="flex flex-wrap gap-3 w-full sm:w-auto ml-2 sm:ml-0">
-          <Input
-            placeholder="Search by Facility Name"
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="w-full sm:max-w-sm"
-          />
-          <CsvDownloader filename="hubs-list" datas={datas} columns={cols}>
-            <Button variant="webPageBtn" size="sm">
-              <DownloadIcon size={20} className="mr-3" />
-              Download CSV
-            </Button>
-          </CsvDownloader>
-        </div>
+  {/* Search Input and Download CSV Button */}
+  <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto ml-2 sm:ml-0">
+    <Input
+      placeholder="Search by Facility Name"
+      value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+      onChange={(event) =>
+        table.getColumn("name")?.setFilterValue(event.target.value)
+      }
+      className="w-full sm:max-w-sm"
+    />
+    <CsvDownloader filename="hubs-list" datas={datas} columns={cols}>
+      <Button variant="webPageBtn" size="sm" className="flex items-center gap-2">
+        <DownloadIcon size={20} />
+        Download CSV
+      </Button>
+    </CsvDownloader>
+  </div>
 
-        <div className="flex gap-2 ml-auto">
-          <Button
-            variant="webPageBtn"
-            size="icon"
-            onClick={() => onOpen("BulkHubUpload")}
-          >
-            <Upload size={18} />
-          </Button>
-          <Button
-            variant="webPageBtn"
-            size="icon"
-            onClick={() => handleFileDownload("pickup_bulk_sample.csv")}
-          >
-            <Download size={18} />
-          </Button>
-          <Button onClick={() => onOpen("addPickupLocation")} variant="themeButton" className="text-xs">
-            <PackagePlusIcon size={14} className="mr-1 sm:mr-2" />
-            Add Address
-          </Button>
-        </div>
-      </div>
+  {/* Action Buttons */}
+  <div className="flex gap-3 ml-auto">
+    <Button
+      variant="webPageBtn"
+      size="icon"
+      onClick={() => onOpen("BulkHubUpload")}
+      className="flex items-center justify-center"
+    >
+      <Upload size={18} />
+    </Button>
+    <Button
+      variant="webPageBtn"
+      size="icon"
+      onClick={() => handleFileDownload("pickup_bulk_sample.csv")}
+      className="flex items-center justify-center"
+    >
+      <Download size={18} />
+    </Button>
+    <Button
+      onClick={() => onOpen("addPickupLocation")}
+      variant="themeButton"
+      className="text-xs flex items-center gap-2"
+    >
+      <PackagePlusIcon size={14} />
+      Add Address
+    </Button>
+  </div>
+</div>
+
 
       <div className="rounded-md border overflow-x-auto">
         <Table>

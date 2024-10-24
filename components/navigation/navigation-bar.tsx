@@ -1,15 +1,21 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings, Wallet } from "lucide-react";
+import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings, Wallet, Lock } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { useSellerProvider } from "../providers/SellerProvider";
+import { useAuth } from "../providers/AuthProvider";
 
 
 export function NavigationBar({ children }: { children: React.ReactNode }) {
+    const {user} = useAuth()
+    let userisSubadmin = user?.issubadmin
+    let subadminpaths = user?.subadminpaths || []
+    console.log(subadminpaths, 'paths');
+    
     const { seller } = useSellerProvider()
     const [isNavCollapsed, setIsNavCollapsed] = useState<boolean>(true)
     const handleMouseEnter = () => {
@@ -79,10 +85,12 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             title: "Shipment Listing",
             icon: Truck,
             href: "/admin/shipment-listing",
+            department: 'shipment-listing'
         },
         {
             title: "Finance",
             icon: HandCoins,
+            department: 'finance',
             subLinks: [
                 {
                     title: "Remittances",
@@ -106,10 +114,12 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             title: "Upload Pincodes",
             icon: MapPin,
             href: "/admin/pincodes/upload-pincodes",
+            department: 'pincodes'
         },
         {
             title: "Users",
             icon: User,
+            department: 'users',
             subLinks: [
                 {
                     title: "Users List",
@@ -125,10 +135,46 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             title: "Wallet transactions",
             icon: Wallet,
             href: "/admin/users/wallet-txn",
+            department: 'users'
+        },
+        {
+            title: "Subadmins",
+            icon: Lock,
+            department: 'sub',
+            subLinks: [
+                {
+                    title: "Add Subadmin",
+                    href: "/admin/sub/new",
+                },
+                {
+                    title: "Subadmins",
+                    href: "/admin/sub/list",
+                },
+            ],
         },
     ];
 
-    const navLinks = isAdmin ? ADMIN_NAV_LINKS : SELLER_NAV_LINKS;
+    // const navLinks = isAdmin ? ADMIN_NAV_LINKS : SELLER_NAV_LINKS;
+
+    const filteredAdminLinks = userisSubadmin
+    ? ADMIN_NAV_LINKS.map(link => {
+        if (link.subLinks) {
+            const filteredSubLinks = link.subLinks.filter(subLink => 
+                subadminpaths.includes(link.department) 
+            );
+
+            if (filteredSubLinks.length > 0) {
+                return { ...link, subLinks: filteredSubLinks };
+            }
+        }
+        if (link.department === 'shipment-listing') {
+            return link; 
+        }
+        return subadminpaths.includes(link.department) ? link : null;
+    }).filter(Boolean) 
+    : ADMIN_NAV_LINKS; 
+
+const navLinks = isAdmin ? filteredAdminLinks : SELLER_NAV_LINKS;
 
     return (
         <div className="w-full z-50">
@@ -144,6 +190,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 onClick={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
+                {/* @ts-ignore */}
                 <Nav isCollapsed={isNavCollapsed} links={navLinks} />
             </div>
 

@@ -141,7 +141,7 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
 
     return (
         <div className="w-full">
-            <div className="flex items-center py-4">
+            <div className="grid sm:flex items-center py-4">
                 <div className="grid md:flex gap-3">
                     <Input
                         placeholder="Search by Remittance Number"
