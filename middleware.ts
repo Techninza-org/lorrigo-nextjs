@@ -43,6 +43,10 @@ export async function middleware(request: NextRequest) {
     '/admin',
     '/admin/shipment-listing',
     '/admin/finance',
+    '/admin/finance/manual-deduction',
+    '/admin/finance/remittance',
+    '/admin/finance/vendor-billing',
+    '/admin/finance/client-billing',
     '/admin/users',
     '/admin/pincodes'
   ];
@@ -87,7 +91,9 @@ export async function middleware(request: NextRequest) {
       if (userisSubadmin) {
         const allowedAdminRoutes = adminRoutes.filter(route => {
             const department = route.split('/')[2]; 
-            return subadminpaths?.includes(department) || department === 'shipment-listing'; 
+            const sublink = route.split('/').slice(2).join('/'); 
+            
+            return subadminpaths?.includes(department) || subadminpaths?.includes(sublink) || department === 'shipment-listing';
         });
     
         if (!allowedAdminRoutes.some(route => pathname.startsWith(route))) {
@@ -96,6 +102,7 @@ export async function middleware(request: NextRequest) {
             }
         }
     }
+    
     }
 
     // Redirect authenticated users to the appropriate dashboard if they try to access unauthenticated paths

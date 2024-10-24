@@ -63,17 +63,6 @@ export const ListingCols: ColumnDef<any>[] = [
         }
     },
     {
-        header: 'Finance',
-        cell: ({ row }) => {
-            const rowData = row.original;
-            return (
-                <div className="space-y-1 items-center">
-                    <ToggleSwitch dept={rowData} path="finance" />
-                </div>
-            );
-        }
-    },
-    {
         header: 'Pincodes',
         cell: ({ row }) => {
             const rowData = row.original;
@@ -91,6 +80,50 @@ export const ListingCols: ColumnDef<any>[] = [
             return (
                 <div className="space-y-1 items-center">
                     <ToggleSwitch dept={rowData} path="users" />
+                </div>
+            );
+        }
+    },
+    {
+        header: 'Remittance',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <div className="space-y-1 items-center">
+                    <ToggleSwitch dept={rowData} path="finance/remittance" />
+                </div>
+            );
+        }
+    },
+    {
+        header: 'Vendor Billing',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <div className="space-y-1 items-center">
+                    <ToggleSwitch dept={rowData} path="finance/vendor-billing" />
+                </div>
+            );
+        }
+    },
+    {
+        header: 'Client Billing',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <div className="space-y-1 items-center">
+                    <ToggleSwitch dept={rowData} path="finance/client-billing" />
+                </div>
+            );
+        }
+    },
+    {
+        header: 'Manual Deduction',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <div className="space-y-1 items-center">
+                    <ToggleSwitch dept={rowData} path="finance/manual-deduction" />
                 </div>
             );
         }
