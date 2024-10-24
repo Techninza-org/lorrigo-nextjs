@@ -95,18 +95,22 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 {
                     title: "Remittances",
                     href: "/admin/finance/remittance",
+                    path: 'finance/remittance',
                 },
                 {
                     title: "Vendor Billing",
                     href: "/admin/finance/vendor-billing",
+                    path: 'finance/vendor-billing',
                 },
                 {
                     title: "Client Billing",
                     href: "/admin/finance/client-billing",
+                    path: 'finance/client-billing',
                 },
                 {
                     title: "Manual Wallet Deduction",
                     href: "/admin/finance/manual-deduction",
+                    path: 'finance/manual-deduction',
                 },
             ]
         },
@@ -124,10 +128,12 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 {
                     title: "Users List",
                     href: "/admin/users/users-list",
+                    path: 'users/list',
                 },
                 {
                     title: "Add User",
                     href: "/admin/users/add-user",
+                    path: 'users/add',
                 }
             ]
         },
@@ -145,22 +151,22 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 {
                     title: "Add Subadmin",
                     href: "/admin/sub/new",
+                    path: 'sub/new',
                 },
                 {
                     title: "Subadmins",
                     href: "/admin/sub/list",
+                    path: 'sub/list',
                 },
             ],
         },
     ];
-
-    // const navLinks = isAdmin ? ADMIN_NAV_LINKS : SELLER_NAV_LINKS;
-
+    
     const filteredAdminLinks = userisSubadmin
     ? ADMIN_NAV_LINKS.map(link => {
         if (link.subLinks) {
             const filteredSubLinks = link.subLinks.filter(subLink => 
-                subadminpaths.includes(link.department) 
+                subadminpaths.includes(subLink.path)
             );
 
             if (filteredSubLinks.length > 0) {
@@ -170,11 +176,14 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
         if (link.department === 'shipment-listing') {
             return link; 
         }
-        return subadminpaths.includes(link.department) ? link : null;
+        //@ts-ignore
+        return subadminpaths.includes(link.department) || subadminpaths.includes(link.href) ? link : null;
     }).filter(Boolean) 
-    : ADMIN_NAV_LINKS; 
+    : ADMIN_NAV_LINKS;
 
 const navLinks = isAdmin ? filteredAdminLinks : SELLER_NAV_LINKS;
+
+    
 
     return (
         <div className="w-full z-50">
