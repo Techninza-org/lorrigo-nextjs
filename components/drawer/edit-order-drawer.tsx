@@ -256,8 +256,7 @@ export function EditOrderDrawer() {
 
     return (
         <Drawer open={isModalOpen} direction="right" onClose={handleClose}>
-
-            <DrawerContent className="rounded-t-[10px] h-full fixed bottom-0 left-80">
+            <DrawerContent className="rounded-t-[10px] h-full fixed bottom-0 left-0 sm:left-80 w-full sm:w-auto">
                 <DrawerHeader>
                     <DrawerTitle className="flex items-center space-x-2">
                         <Button size={"icon"} variant={"secondary"} onClick={handleClose}>
@@ -268,15 +267,13 @@ export function EditOrderDrawer() {
                             {order?.order_reference_id}
                         </span>
                     </DrawerTitle>
-                    {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
                 </DrawerHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-
-                        <div className="grid grid-cols-5 gap-2">
-                            <div className="col-span-3 space-y-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                            <div className="col-span-1 sm:col-span-3 space-y-2">
                                 <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
-                                    <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
+                                    <h4 className="flex items-center text-xl font-semibold tracking-tight pl-6">
                                         <Package className='mr-3' size={20} />Order Details
                                     </h4>
                                     <OrderDetailForm
@@ -289,10 +286,9 @@ export function EditOrderDrawer() {
                                         handleIncrement={handleIncrement}
                                         collectableFeild={collectableFeild}
                                     />
-
                                 </div>
                                 <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
-                                    <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
+                                    <h4 className="flex items-center text-xl font-semibold tracking-tight pl-6">
                                         <MapPin className='mr-3' size={20} />Seller Details
                                     </h4>
                                     <SellerForm
@@ -301,25 +297,21 @@ export function EditOrderDrawer() {
                                         isPinLoading={isSellerPinLoading}
                                     />
                                 </div>
-
-
                             </div>
-
-                            <div className="col-span-2 space-y-2">
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
                                 <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
-                                    <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
+                                    <h4 className="flex items-center text-xl font-semibold tracking-tight pl-6">
                                         <MapPin className='mr-3' size={20} />Delivery Details
                                     </h4>
-
                                     <div className="px-6">
                                         <FormField
                                             control={form.control}
                                             name="pickupAddress"
                                             render={({ field }) => (
                                                 <FormItem className="flex flex-col">
-                                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
-                                                    >
-                                                        Select Facility <span className='text-red-500'>*</span></FormLabel>
+                                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500">
+                                                        Select Facility <span className='text-red-500'>*</span>
+                                                    </FormLabel>
                                                     <Popover>
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
@@ -327,14 +319,12 @@ export function EditOrderDrawer() {
                                                                     variant="outline"
                                                                     role="combobox"
                                                                     className={cn(
-                                                                        "justify-between bg-slate-100 focus-visible:ring-0 text-black focus-visible:ring-offset-0 border-0",
+                                                                        "justify-between bg-slate-100 text-black border-0",
                                                                         !field.value && "text-muted-foreground"
                                                                     )}
                                                                 >
                                                                     {field.value
-                                                                        ? sellerFacilities.find(
-                                                                            (facility) => facility._id === field.value
-                                                                        )?.name
+                                                                        ? sellerFacilities.find((facility) => facility._id === field.value)?.name
                                                                         : "Select Facility"}
                                                                     <LucideSeparatorHorizontal className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                                                 </Button>
@@ -342,10 +332,7 @@ export function EditOrderDrawer() {
                                                         </PopoverTrigger>
                                                         <PopoverContent className="w-[245px] p-0">
                                                             <Command>
-                                                                <CommandInput
-                                                                    placeholder="Search Pickup..."
-                                                                    className="h-9"
-                                                                />
+                                                                <CommandInput placeholder="Search Pickup..." className="h-9" />
                                                                 <CommandList>
                                                                     <CommandEmpty>No Pickup Address found.</CommandEmpty>
                                                                     <CommandGroup>
@@ -367,9 +354,7 @@ export function EditOrderDrawer() {
                                                                                 <CheckIcon
                                                                                     className={cn(
                                                                                         "ml-auto h-4 w-4",
-                                                                                        facility._id === field.value
-                                                                                            ? "opacity-100"
-                                                                                            : "opacity-0"
+                                                                                        facility._id === field.value ? "opacity-100" : "opacity-0"
                                                                                     )}
                                                                                 />
                                                                             </CommandItem>
@@ -384,42 +369,31 @@ export function EditOrderDrawer() {
                                             )}
                                         />
                                     </div>
-
-
                                     <AddCustomerForm
                                         form={form}
                                         isLoading={isLoading}
                                         isPinLoading={isCusPinLoading}
                                     />
                                 </div>
-
-
                                 <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
-                                    <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
+                                    <h4 className="flex items-center text-xl font-semibold tracking-tight pl-6">
                                         <Box className='mr-3' size={20} />Box Details
                                     </h4>
-                                    <BoxDetails
-                                        form={form}
-                                        isLoading={isLoading}
-                                    />
+                                    <BoxDetails form={form} isLoading={isLoading} />
                                 </div>
                             </div>
                         </div>
-
                         <DrawerFooter className="flex flex-row-reverse">
                             <Button type="submit" variant={"themeButton"}>Update Order</Button>
-                            <DrawerClose onClick={handleClose} className={buttonVariants({
-                                variant: "secondary",
-                            })}>
+                            <DrawerClose onClick={handleClose} className={buttonVariants({ variant: "secondary" })}>
                                 Cancel
                             </DrawerClose>
-
                         </DrawerFooter>
                     </form>
                 </Form>
-
             </DrawerContent>
         </Drawer>
+
 
 
     )

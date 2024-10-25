@@ -7,7 +7,7 @@ import Barcode from "react-barcode"
 export default function GenerateManifestTemplate({ orders, courierName, sellerName }: { sellerName: string, courierName: string, orders?: B2COrderType[] }) {
 
     return (
-        <div className="w-full p-4 border-black border-double border-2 h-full">
+        <div className="w-full p-2 sm:p-4 border-black border-double border-2 h-full">
             <div>
                 <LorrigoLogo height={140} width={140} />
                 <div className="text-center w-full">
@@ -19,14 +19,14 @@ export default function GenerateManifestTemplate({ orders, courierName, sellerNa
                     </div>
                 </div>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between text-sm">
                 <div>
                     <div className="max-w-72">
-                        Seller: <span className="font-bold text-lg  text-wrap">{sellerName}</span>
+                        Seller: <span className="font-bold text-sm sm:text-lg  text-wrap">{sellerName}</span>
                     </div>
                     <div>
                         <div className="max-w-72">
-                            Courier: <span className="font-bold text-lg  text-wrap">{courierName}</span>
+                            Courier: <span className="font-bold text-sm sm:text-lg  text-wrap">{courierName}</span>
                         </div>
                     </div>
                 </div>
@@ -41,28 +41,30 @@ export default function GenerateManifestTemplate({ orders, courierName, sellerNa
                     </div>
                 </div>
             </div>
-            <div className="border-y-2 pb-4 pt-2 px-3 my-3 border-gray-400 grid grid-cols-6">
+            <div className="border-y-2 pb-4 pt-2 px-3 my-3 border-gray-400 grid grid-cols-3 md:grid-cols-6 text-xs md:text-sm">
                 <div>S.no.</div>
                 <div>Order no</div>
-                <div></div>
+                <div className="hidden md:block"></div> {/* Hidden on small screens */}
                 <div>AWB no</div>
                 <div>Contents</div>
                 <div>Barcode</div>
-
             </div>
 
             {orders?.map((order, idx) => (
-                <div key={order._id} className="grid grid-cols-6 p-1 px-3 border-b-2 border-gray-300">
+                <div key={order._id} className="grid grid-cols-3 md:grid-cols-6 p-1 px-3 border-b-2 border-gray-300 text-xs md:text-sm">
                     <div>{idx + 1}</div>
                     <div>{order?.order_reference_id}</div>
-                    <div><Square /></div>
+                    <div className="hidden md:block">
+                        <Square />
+                    </div> {/* Hidden on small screens */}
                     <div>{order?.awb}</div>
                     <div>
                         {(order.productId?.name?.length ?? 0) > 50
                             ? order?.productId?.name.slice(0, 55).concat('...')
                             : order.productId?.name ?? 'No Name Available'}
-                    </div>                    <div>
-                        <Barcode value={`${order?.awb}`} renderer="svg" width={1.2} height={36} displayValue={false} />
+                    </div>
+                    <div>
+                        <Barcode value={`${order?.awb}`} renderer="svg" width={1} height={36} displayValue={false} />
                     </div>
                 </div>
             ))}
@@ -71,7 +73,7 @@ export default function GenerateManifestTemplate({ orders, courierName, sellerNa
                 To Be Filled By {courierName} Executive
             </div>
 
-            <div className="grid  grid-cols-2 container  justify-items-center gap-5">
+            <div className="grid p-0 sm:grid-cols-2 container  justify-items-center gap-5">
                 <div className="flex items-end gap-2">
                     Pickup Time: <div className="w-40 h-[1.5px]  bg-black" />
                 </div>

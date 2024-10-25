@@ -247,22 +247,22 @@ export const InvoiceBulk = ({ orders }: { orders: B2COrderType[] }) => {
     }
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto sm:p-4 p-1">
             <Button
                 size="sm"
                 variant="webPageBtn"
                 onClick={generatePDF}
-                className="mb-4 w-full"
+                className="mb-4 w-full hidden md:block"
                 disabled={isGenerating}
             >
                 {isGenerating ? 'Generating PDF...' : 'Download All Labels'}
             </Button>
             <div ref={pdfContentRef}>
                 {chunkedOrders.map((orderChunk, pageIndex) => (
-                    <div key={pageIndex} id={`page-${pageIndex}`} className=" p-4">
-                        <div className="grid grid-cols-2 gap-9 h-full p-5">
+                    <div key={pageIndex} id={`page-${pageIndex}`} className="p-1 sm:p-4">
+                        <div className="grid sm:grid-cols-2 gap-9 h-full sm:p-5 p-2">
                             {orderChunk.map((order: B2COrderType) => (
-                                <div key={order._id} className="w-full p-3 overflow-hidden">
+                                <div key={order._id} className="w-full p-1 sm:p-3 overflow-hidden">
                                     <InvoiceTemplate order={order} />
                                 </div>
                             ))}
@@ -291,8 +291,8 @@ export const GenerateBulkManifest = ({ orders }: { orders: B2COrderType[] }) => 
     const groupedOrders = groupOrderByCourierName(orders)
     return (
         <>
-            <Button size={"sm"} variant={"webPageBtn"} onClick={() => toPDF()}>Download Manifest</Button>
-            <div ref={targetRef} className="mx-auto w-full h-full flex flex-col gap-16 p-10  justify-center">
+            <Button size={"sm"} variant={"webPageBtn"} onClick={() => toPDF()} className="hidden md:block">Download Manifest</Button>
+            <div ref={targetRef} className="mx-auto w-full h-full flex flex-col gap-16 p-2 sm:p-10  justify-center">
                 {
                     groupedOrders && Object?.keys(groupedOrders).map((courier, index) => (
                         <div key={index} className="w-full">

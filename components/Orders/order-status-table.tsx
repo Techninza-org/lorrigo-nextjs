@@ -252,7 +252,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
           }
         </div>
         </div>
-        <div>
+        <div className="mt-3 sm:mt-0">
           {
             selectedRows.length > 0 && (
               <DropdownMenu >
