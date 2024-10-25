@@ -259,8 +259,7 @@ export function CloneOrderDrawer() {
 
     return (
         <Drawer open={isModalOpen} direction="right" onClose={handleClose}>
-
-            <DrawerContent className="rounded-t-[10px] h-full fixed bottom-0 left-80">
+            <DrawerContent className="rounded-t-[10px] h-full fixed bottom-0 left-0 md:left-80">
                 <DrawerHeader>
                     <DrawerTitle className="flex items-center space-x-2">
                         <Button size={"icon"} variant={"secondary"} onClick={handleClose}>
@@ -271,13 +270,11 @@ export function CloneOrderDrawer() {
                             #{order?.order_reference_id}
                         </span>
                     </DrawerTitle>
-                    {/* <DrawerDescription>This action cannot be undone.</DrawerDescription> */}
                 </DrawerHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-
-                        <div className="grid grid-cols-5 gap-2">
-                            <div className="col-span-3 space-y-2">
+                        <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
+                            <div className="col-span-1 md:col-span-3 space-y-2">
                                 <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
                                     <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
                                         <Package className='mr-3' size={20} />Order Details
@@ -290,7 +287,6 @@ export function CloneOrderDrawer() {
                                         handleIncrement={handleIncrement}
                                         collectableFeild={collectableFeild}
                                     />
-
                                 </div>
                                 <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
                                     <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
@@ -302,25 +298,22 @@ export function CloneOrderDrawer() {
                                         isPinLoading={isSellerPinLoading}
                                     />
                                 </div>
-
-
                             </div>
 
-                            <div className="col-span-2 space-y-2">
+                            <div className="col-span-1 md:col-span-2 space-y-2">
                                 <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
                                     <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
                                         <MapPin className='mr-3' size={20} />Delivery Details
                                     </h4>
-
                                     <div className="px-6">
                                         <FormField
                                             control={form.control}
                                             name="pickupAddress"
                                             render={({ field }) => (
                                                 <FormItem className="flex flex-col">
-                                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70"
-                                                    >
-                                                        Select Facility <span className='text-red-500'>*</span></FormLabel>
+                                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                                        Select Facility <span className='text-red-500'>*</span>
+                                                    </FormLabel>
                                                     <Popover>
                                                         <PopoverTrigger asChild>
                                                             <FormControl>
@@ -384,18 +377,13 @@ export function CloneOrderDrawer() {
                                                 </FormItem>
                                             )}
                                         />
-
                                     </div>
-
-
                                     <AddCustomerForm
                                         form={form}
                                         isLoading={isLoading}
                                         isPinLoading={isCusPinLoading}
                                     />
                                 </div>
-
-
                                 <div className="space-y-3 border border-gray-200 py-3 rounded-lg">
                                     <h4 className="flex items-center scroll-m-20 text-xl font-semibold tracking-tight pl-6">
                                         <Box className='mr-3' size={20} />Box Details
@@ -407,7 +395,6 @@ export function CloneOrderDrawer() {
                                 </div>
                             </div>
                         </div>
-
                         <DrawerFooter className="flex flex-row-reverse">
                             <Button type="submit" variant={"themeButton"}>Clone Order</Button>
                             <DrawerClose onClick={handleClose} className={buttonVariants({
@@ -415,13 +402,12 @@ export function CloneOrderDrawer() {
                             })}>
                                 Cancel
                             </DrawerClose>
-
                         </DrawerFooter>
                     </form>
                 </Form>
-
             </DrawerContent>
         </Drawer>
+
 
 
     )
