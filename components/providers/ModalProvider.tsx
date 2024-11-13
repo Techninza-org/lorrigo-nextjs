@@ -23,6 +23,8 @@ import { AlertKycModal } from "../modal/alert-kyc-modal";
 import { BulkShipNowModal } from "../modal/bulk-ship-now-modal";
 import { B2BClientBillingUpload } from "../modal/admin/upload-b2b-client-billing-modal";
 import { B2BShipNowModal } from "../modal/b2b-ship-now-modal";
+import { RaiseDisputeModal } from "../modal/raise-dispute-modal";
+import { DisputeDetails } from "../modal/dispute-details-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -66,6 +68,8 @@ export const ModalProvider = () => {
       <DownloadB2BManifestModal />
       <B2BClientBillingUpload/>
       <B2BShipNowModal/>
+      <RaiseDisputeModal />
+      <DisputeDetails />
 
     </>
   );

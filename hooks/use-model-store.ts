@@ -3,7 +3,7 @@ import { B2COrderType, CustomerDetailsType, RemittanceType, SellerType, pickupAd
 import { create } from "zustand";
 
 
-export type ModalType = "wallet" | "addPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest" | "ndrOrder" | "ndrRTOrder" | "BulkHubUpload" | "BulkPincodeUpload" | 'downloadLabels'  | "BulkPickupUpdate" | 'cancelBulkOrder' | "downloadManifests" | "updateShopifyOrders" | "ViewUserDocsAdmin" | "ClientBillingUpload" | "adminRemittanceManage" | "cloneB2BOrder" | "editB2BOrder" | "addB2BCustomer" | "completeKyc" | 'downloadB2BLabel' | 'alert-kyc' | "downloadB2BManifest" | "BulkShipNow" | "B2BClientBillingUpload" | "B2BShipNow";
+export type ModalType = "wallet" | "addPickupLocation" | "addSeller" | "addCustomer" | "schedulePickup" | "cancelOrder" | "cloneOrder" | "trackModal" | "editOrder" | "downloadLabel" | "downloadManifest" | "ndrOrder" | "ndrRTOrder" | "BulkHubUpload" | "BulkPincodeUpload" | 'downloadLabels'  | "BulkPickupUpdate" | 'cancelBulkOrder' | "downloadManifests" | "updateShopifyOrders" | "ViewUserDocsAdmin" | "ClientBillingUpload" | "adminRemittanceManage" | "cloneB2BOrder" | "editB2BOrder" | "addB2BCustomer" | "completeKyc" | 'downloadB2BLabel' | 'alert-kyc' | "downloadB2BManifest" | "BulkShipNow" | "B2BClientBillingUpload" | "B2BShipNow" | "raiseDisputeManage" | "disputeDetails";
 
 interface ModalData {
   form?: any;
@@ -22,6 +22,8 @@ interface ModalData {
   hub?: pickupAddressType;
   apiUrl?: string;
   query?: Record<string, any>;
+  awb?: string;
+  details?: any;
 }
 
 interface ModalStore {

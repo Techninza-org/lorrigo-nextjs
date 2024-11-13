@@ -52,6 +52,10 @@ interface AdminContextType {
     subadmins: any[];
     handleUpdateSubadminPaths: (id: string, paths: string[]) => Promise<boolean> | undefined;
     handleDeleteSubadmin: (id: string) => void;
+    getDisputes: () => void;
+    disputes: any[];
+    handleAcceptDispute: (id: string) => Promise<boolean>;
+    handleRejectDispute: (id: string) => Promise<boolean>;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -75,6 +79,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [b2bClientNVendorBills, setB2BClientNVendorBills] = useState<any>([]);
     const [allTxn, setAllTxn] = useState<any>([]);
     const [subadmins, setSubadmins] = useState([])
+    const [disputes, setDisputes] = useState([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -128,6 +133,75 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             console.error('Error fetching data:', error);
         }
     }
+
+    const getDisputes = async () => {
+        try {
+            const res = await axiosIWAuth.get('/admin/disputes');
+            if (res.data?.valid) {
+                setDisputes(res.data.disputes)
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    const handleAcceptDispute = async (id: string) => {
+        try {
+          const res = await axiosIWAuth.post(`/admin/disputes/accept`, {
+            disputeId: id
+          });
+          if (res.data?.valid) {
+            toast({
+              variant: "default",
+              title: "Dispute",
+              description: "Dispute accepted successfully",
+            });
+            return true;
+          }
+          toast({
+            variant: "destructive",
+            title: "Dispute",
+            description: "Failed to accept dispute",
+          });
+          return false
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: error.response.data.message || "Something went wrong",
+          });
+          return false
+        }
+      }
+
+      const handleRejectDispute = async (id: string) => {
+        try {
+          const res = await axiosIWAuth.post(`/admin/disputes/reject`, {
+            disputeId: id
+          });
+          if (res.data?.valid) {
+            toast({
+              variant: "default",
+              title: "Dispute",
+              description: "Dispute rejected successfully",
+            });
+            return true;
+          }
+          toast({
+            variant: "destructive",
+            title: "Dispute",
+            description: "Failed to reject dispute",
+          });
+          return false
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: error.response.data.message || "Something went wrong",
+          });
+          return false
+        }
+      }
 
     const getFutureRemittance = async () => {
         try {
@@ -496,6 +570,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getFutureRemittance()
             getClientNVendorBillingData()
             getSubadmins()
+            getDisputes()
         }
     }, [user, userToken])
 
@@ -541,7 +616,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 allTxn,
                 subadmins,
                 handleUpdateSubadminPaths,
-                handleDeleteSubadmin
+                handleDeleteSubadmin,
+                getDisputes,
+                disputes,
+                handleAcceptDispute,
+                handleRejectDispute
 
             }}
         >

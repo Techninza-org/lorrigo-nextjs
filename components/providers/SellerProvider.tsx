@@ -89,6 +89,7 @@ interface SellerContextType {
   getSellerAssignedCourier: () => Promise<void>;
   assignedCouriers: any[];
   getInvoiceById: (id: any) => Promise<any>;
+  handleRaiseDispute : (awb: any, description: string, image: string) => boolean | Promise<any>;
 }
 
 interface sellerCustomerFormType {
@@ -1246,6 +1247,38 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, toast])
 
+const handleRaiseDispute = async (awb: string, description: string, image: string) => {
+    try {
+      const res = await axiosIWAuth.post(`/seller/raise-dispute`, {
+        awb,
+        description,
+        image
+      });
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "Dispute",
+          description: "Dispute raised successfully",
+        });
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Dispute",
+        description: "Failed to raise dispute",
+      });
+      return false
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.response.data.message || "Something went wrong",
+      });
+      return false
+    }
+  }
+
+ 
 
   const getSellerBillingDetails = async () => {
     try {
@@ -1386,7 +1419,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getInvoiceById,
 
         getBulkCourierPartners,
-        handleCreateBulkD2CShipment
+        handleCreateBulkD2CShipment,
+        handleRaiseDispute
 
       }}
     >

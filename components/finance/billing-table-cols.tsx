@@ -3,10 +3,12 @@ import { ColumnDef } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
 import { formatCurrencyForIndia } from "@/lib/utils";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, PencilIcon } from "lucide-react";
 import { format } from "date-fns";
 import { useSellerProvider } from "../providers/SellerProvider";
 import { useAuth } from "../providers/AuthProvider";
+import { useModal } from "@/hooks/use-model-store";
+import { Button } from "../ui/button";
 
 
 export const SellerBillingCols: ColumnDef<any>[] = [
@@ -152,6 +154,15 @@ export const SellerBillingCols: ColumnDef<any>[] = [
             )
         }
     },
+    {
+        header: 'Raise Dispute',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <RaiseDisputeButton awb={rowData.awb} />
+            )
+        }
+    },
 ];
 
 export const SellerB2BBillingCols: ColumnDef<B2COrderType>[] = [
@@ -231,5 +242,14 @@ const DisplaySellerName = () => {
         <div className="space-y-1 items-center">
             <p className="capitalize">{user?.name}</p>
         </div>
+    )
+}
+
+const RaiseDisputeButton = ({ awb }: { awb: string }) => {
+    const { onOpen } = useModal();
+    return (
+        <Button variant={'secondary'} size={'icon'} onClick={() => onOpen('raiseDisputeManage', { awb })}>
+            <PencilIcon size={15} />
+        </Button>
     )
 }

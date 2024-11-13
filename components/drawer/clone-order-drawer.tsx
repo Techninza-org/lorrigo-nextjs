@@ -173,7 +173,7 @@ export function CloneOrderDrawer() {
         form.setValue('productDetails.quantity', order?.productId?.quantity?.toString() || "");
         form.setValue('productDetails.taxRate', order?.productId?.tax_rate?.toString() || "");
         form.setValue('productDetails.taxableValue', order?.productId?.taxable_value?.toString() || "");
-        form.setValue('pickupAddress', order?.pickupAddress._id || "");
+        // form.setValue('pickupAddress', order?.pickupAddress._id || "");
 
         form.setValue('sellerDetails.sellerName', order?.sellerDetails?.sellerName || "");
         form.setValue('sellerDetails.sellerGSTIN', order?.sellerDetails?.sellerGSTIN || "");
