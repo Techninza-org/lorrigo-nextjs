@@ -1262,6 +1262,14 @@ const handleRaiseDispute = async (awb: string, description: string, image: strin
         });
         return true;
       }
+      if(res.data?.message === "Dispute already raised"){
+        toast({
+          variant: "destructive",
+          title: "Dispute",
+          description: "Dispute already raised",
+        });
+        return false;
+      }
       toast({
         variant: "destructive",
         title: "Dispute",

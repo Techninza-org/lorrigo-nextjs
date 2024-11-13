@@ -36,11 +36,12 @@ export const AdminDisputeColDefs: ColumnDef<any>[] = [
     },
     {
         header: 'View Details',
-        accessorKey: 'awb',
         cell: ({ row }) => {
             const rowData = row.original;
+            console.log(rowData, "rowData");
+            
             return (
-                <DisputeDetailsButton details={rowData} />
+                <DisputeDetailsButton details={rowData}/>
             )
         }
     },

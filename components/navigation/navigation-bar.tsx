@@ -1,7 +1,7 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings, Wallet, Lock } from "lucide-react";
+import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings, Wallet, Lock, CircleSlash } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -159,6 +159,12 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                     path: 'sub/list',
                 },
             ],
+        },
+        {
+            title: "Disputes",
+            icon: CircleSlash,
+            href: "/admin/disputes",
+            department: 'finance'
         },
     ];
     
