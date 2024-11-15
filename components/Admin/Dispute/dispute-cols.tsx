@@ -38,8 +38,6 @@ export const AdminDisputeColDefs: ColumnDef<any>[] = [
         header: 'View Details',
         cell: ({ row }) => {
             const rowData = row.original;
-            console.log(rowData, "rowData");
-            
             return (
                 <DisputeDetailsButton details={rowData}/>
             )
@@ -51,7 +49,7 @@ const DisputeDetailsButton = ({ details }: { details: any }) => {
     const { onOpen } = useModal();
     return (
         <Button variant={'secondary'} size={'icon'} onClick={() => onOpen('disputeDetails', { details })}>
-            <EyeIcon size={15} />
+           <EyeIcon size={15} />
         </Button>
     )
 }

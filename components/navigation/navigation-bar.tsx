@@ -14,7 +14,6 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
     const {user} = useAuth()
     let userisSubadmin = user?.issubadmin
     let subadminpaths = user?.subadminpaths || []
-    console.log(subadminpaths, 'paths');
     
     const { seller } = useSellerProvider()
     const [isNavCollapsed, setIsNavCollapsed] = useState<boolean>(true)
