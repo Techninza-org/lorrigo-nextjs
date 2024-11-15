@@ -116,11 +116,11 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
         },
     ]
 
-    const datas = filteredData.map((row) => {
+    const datas = filteredData?.map((row) => {
         return {
             client_name: row.sellerId.name,
             Remittance_no: row.remittanceId,
-            awbs: row.orders.map((o: any) => o.awb).join("| "),
+            awbs: row?.orders?.map((o: any) => o.awb).join("| "),
             date: row.remittanceDate,
             txnId: row.BankTransactionId,
             Status: row.remittanceStatus,
