@@ -4,8 +4,6 @@ import * as React from "react"
 import {
     ColumnDef,
     ColumnFiltersState,
-    SortingState,
-    VisibilityState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
@@ -23,8 +21,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { filterData } from "@/lib/utils"
-import { DateRange } from "react-day-picker"
 
 export function DisputeTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
     const [filtering, setFiltering] = React.useState<string>("")
@@ -59,16 +55,12 @@ export function DisputeTable({ data, columns }: { data: any[], columns: ColumnDe
     return (
         <div className="w-full">
             <div className="flex items-center py-4 justify-between">
-                <div className="flex gap-3">
-
-                    <Input
-                        placeholder="Filter by AWB"
-                        value={filtering}
-                        onChange={(e) => setFiltering(e.target.value)}
-                        className="max-w-sm"
-                    />
-       
-                </div>
+                <Input
+                    placeholder="Filter by AWB"
+                    value={filtering}
+                    onChange={(e) => setFiltering(e.target.value)}
+                    className="max-w-sm"
+                />
             </div>
 
             <div className="w-full border rounded-md">

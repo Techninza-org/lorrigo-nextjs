@@ -6,8 +6,6 @@ import { useAdminProvider } from '@/components/providers/AdminProvider'
 
 const AdminDisputeTable = () => {
     const { disputes } = useAdminProvider();
-    console.log(disputes, "disputes");
-
     return (
         <DisputeTable data={disputes || []} columns={AdminDisputeColDefs} />
     )
