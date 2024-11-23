@@ -34,6 +34,7 @@ import { LoadingSpinner } from '../loading-spinner';
 import ImageUpload from '../file-upload';
 import { CardContent } from '../ui/card';
 import { useAdminProvider } from '../providers/AdminProvider';
+import { useAuth } from '../providers/AuthProvider';
 
 export const DisputeDetails = () => {
     const { isOpen, onClose, type, data } = useModal();
@@ -42,9 +43,8 @@ export const DisputeDetails = () => {
     const order = details?.orderId
     console.log(order);
     const seller = details?.sellerId;
-    console.log(seller);
-    
-    
+    // const {userToken} = useAuth();
+    // const isSeller = userToken === "seller";
     
     const {handleAcceptDispute, handleRejectDispute} = useAdminProvider();
 
@@ -87,10 +87,11 @@ export const DisputeDetails = () => {
                                 <img src={`data:image/jpeg;base64,${details?.image}`} alt="dispute" className="rounded-md shadow-md" />
                             </div>
                     </div>
-                    <div className="flex justify-between">
+                    
+                    {/* <div className="flex justify-between">
                         <Button onClick={() => handleAccept(details?._id)} className="mt-4 bg-green-600">Accept</Button>
                         <Button onClick={() => handleReject(details?._id)} className="mt-4 bg-red-700">Reject</Button>
-                    </div>
+                    </div> */}
                 </CardContent>
             </DialogContent>
         </Dialog>

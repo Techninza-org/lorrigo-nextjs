@@ -90,6 +90,8 @@ interface SellerContextType {
   assignedCouriers: any[];
   getInvoiceById: (id: any) => Promise<any>;
   handleRaiseDispute : (awb: any, description: string, image: string) => boolean | Promise<any>;
+  getDisputes: () => Promise<void>;
+  disputes: any[];
 }
 
 interface sellerCustomerFormType {
@@ -138,6 +140,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [invoices, setInvoices] = useState<any>(null);
   const [codprice, setCodprice] = useState<any>(0);
   const [assignedCouriers, setAssignedCouriers] = useState<any[]>([]);
+  const [disputes, setDisputes] = useState<any[]>([]);
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
     sellerForm: {
@@ -1340,6 +1343,15 @@ const handleRaiseDispute = async (awb: string, description: string, image: strin
     }
   }
 
+  const getDisputes = async () => {
+    try {
+      const res = await axiosIWAuth.get('/seller/disputes');
+      setDisputes(res.data.disputes)
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
       getAllOrdersByStatus({ status: status || "all" });
@@ -1360,6 +1372,7 @@ const handleRaiseDispute = async (awb: string, description: string, image: strin
       getInvoices();
       getCodPrice();
       getSellerAssignedCourier()
+      getDisputes();
     }
   }, [user, userToken])
 
@@ -1428,7 +1441,9 @@ const handleRaiseDispute = async (awb: string, description: string, image: strin
 
         getBulkCourierPartners,
         handleCreateBulkD2CShipment,
-        handleRaiseDispute
+        handleRaiseDispute,
+        getDisputes,
+        disputes,
 
       }}
     >

@@ -11,7 +11,7 @@ import { useModal } from "@/hooks/use-model-store";
 import { Button } from "../ui/button";
 
 
-export const SellerBillingCols: ColumnDef<any>[] = [
+export const DisputeSellerBillingCols: ColumnDef<any>[] = [
     {
         header: 'Date',
         accessorKey: 'billingDate',
@@ -154,15 +154,15 @@ export const SellerBillingCols: ColumnDef<any>[] = [
             )
         }
     },
-    // {
-    //     header: 'Raise Dispute',
-    //     cell: ({ row }) => {
-    //         const rowData = row.original;
-    //         return (
-    //             <RaiseDisputeButton awb={rowData.awb} />
-    //         )
-    //     }
-    // },
+    {
+        header: 'Raise Dispute',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            return (
+                <RaiseDisputeButton awb={rowData.awb} />
+            )
+        }
+    },
 ];
 
 export const SellerB2BBillingCols: ColumnDef<B2COrderType>[] = [
