@@ -7,24 +7,21 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-model-store";
 import { CardContent } from '../ui/card';
 import { useAdminProvider } from '../providers/AdminProvider';
 import Image from "next/image";
 import { useAuth } from '../providers/AuthProvider';
-import { NextRequest } from "next/server";
-import { AuthType } from "@/types/types";
+import { Button } from "../ui/button";
 
-export const DisputeDetails = (request: NextRequest) => {
+export const DisputeDetails = () => {
     const { isOpen, onClose, type, data } = useModal();
     const { details } = data;
     const order = details?.orderId
-    const seller = details?.sellerId;
-    // const currentUserToken = request.cookies.get('user')?.value;
-    // const user = JSON.parse(currentUserToken || '') as AuthType;
-    // let userRole = user?.role;
     const {user} = useAuth();
+    const role = user?.role
+    const isAdmin = role === 'admin'
+    
     
 
     const {handleAcceptDispute, handleRejectDispute} = useAdminProvider();
@@ -68,10 +65,11 @@ export const DisputeDetails = (request: NextRequest) => {
                             </div>
                     </div>
                     
-                    {/* <div className="flex justify-between">
+                    { isAdmin && <div className="flex justify-between">
                         <Button onClick={() => handleAccept(details?._id)} className="mt-4 bg-green-600">Accept</Button>
                         <Button onClick={() => handleReject(details?._id)} className="mt-4 bg-red-700">Reject</Button>
-                    </div> */}
+                    </div>
+                    }
                 </CardContent>
             </DialogContent>
         </Dialog>
