@@ -89,9 +89,10 @@ interface SellerContextType {
   getSellerAssignedCourier: () => Promise<void>;
   assignedCouriers: any[];
   getInvoiceById: (id: any) => Promise<any>;
-  handleRaiseDispute : (awb: any, description: string, image: string) => boolean | Promise<any>;
+  handleRaiseDispute : (awb: any, description: string, image: string, orderBoxHeight: number, orderBoxLength: number, orderBoxWidth: number, orderWeight: number ) => boolean | Promise<any>;
   getDisputes: () => Promise<void>;
   disputes: any[];
+  handleAcceptDispute: (awb: string) => Promise<boolean>;
 }
 
 interface sellerCustomerFormType {
@@ -1250,12 +1251,18 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, toast])
 
-const handleRaiseDispute = async (awb: string, description: string, image: string) => {
+const handleRaiseDispute = async (awb: string, description: string, image: string, orderBoxHeight: number, orderBoxLength: number, orderBoxWidth: number, orderWeight: number ) => {
     try {
       const res = await axiosIWAuth.post(`/seller/raise-dispute`, {
         awb,
         description,
-        image
+        image,
+        orderBoxHeight,
+        orderBoxLength,
+        orderBoxWidth,
+        orderWeight,
+        orderSizeUnit: "cm",
+        orderWeightUnit: "kg",
       });
       if (res.data?.valid) {
         toast({
@@ -1352,6 +1359,35 @@ const handleRaiseDispute = async (awb: string, description: string, image: strin
     }
   }
 
+  const handleAcceptDispute = async (awb: string) => {
+    try {
+      const res = await axiosIWAuth.post(`/seller/disputes/accept`, {
+        awb: awb
+      });
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "Dispute",
+          description: "Dispute accepted successfully",
+        });
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Dispute",
+        description: "Failed to accept dispute",
+      });
+      return false
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.response.data.message || "Something went wrong",
+      });
+      return false
+    }
+  }
+
   useEffect(() => {
     if ((!!user || !!userToken) && user?.role === "seller") {
       getAllOrdersByStatus({ status: status || "all" });
@@ -1444,6 +1480,7 @@ const handleRaiseDispute = async (awb: string, description: string, image: strin
         handleRaiseDispute,
         getDisputes,
         disputes,
+        handleAcceptDispute
 
       }}
     >

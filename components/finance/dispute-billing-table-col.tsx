@@ -139,7 +139,7 @@ export const DisputeSellerBillingCols: ColumnDef<any>[] = [
     },
     {
         header: 'Total Charge',
-        accessorKey: 'billingAmount',
+        // accessorKey: 'billingAmount',
         cell: ({ row }) => {
             const rowData = row.original;
             return (
@@ -158,8 +158,10 @@ export const DisputeSellerBillingCols: ColumnDef<any>[] = [
         header: 'Raise Dispute',
         cell: ({ row }) => {
             const rowData = row.original;
+            console.log(rowData.awb, 'row data');
+            
             return (
-                <RaiseDisputeButton awb={rowData.awb} />
+                <RaiseDisputeButton awb={rowData.awb} date={row.getValue("billingDate")} />
             )
         }
     },
@@ -233,7 +235,6 @@ export const SellerB2BBillingCols: ColumnDef<B2COrderType>[] = [
             )
         }
     },
-
 ];
 
 const DisplaySellerName = () => {
@@ -245,11 +246,28 @@ const DisplaySellerName = () => {
     )
 }
 
-const RaiseDisputeButton = ({ awb }: { awb: string }) => {
+const RaiseDisputeButton = ({ awb, date }: { awb: string, date: any}) => {
     const { onOpen } = useModal();
+    const currentDate = new Date();
+    const disputeDate = new Date(date);
+    console.log(awb, 'button');
+    
+    
+    const daysLeft = Math.max(0, 7 - Math.ceil((currentDate.getTime() - disputeDate.getTime()) / (1000 * 60 * 60 * 24)));
+    
     return (
-        <Button variant={'secondary'} size={'icon'} onClick={() => onOpen('raiseDisputeManage', { awb })}>
-            <PencilIcon size={15} />
-        </Button>
+        <div className="flex gap-4">
+            <p className="text-blue-500 cursor-pointer" onClick={() => onOpen('raiseDisputeManage', { awb })}>{daysLeft} Days Left To Raise Dispute</p>
+            <AcceptButton awb={awb} />
+        </div>
+    )
+}
+
+const AcceptButton = ({ awb }: { awb: string }) => {
+    console.log(awb, 'accept');
+    
+    const {handleAcceptDispute} = useSellerProvider();
+    return (
+        <p className="text-green-700 cursor-pointer" onClick={() => handleAcceptDispute(awb)}>Accept</p>
     )
 }

@@ -34,7 +34,6 @@ export function DisputeBillingTable({ data, columns }: { data: any[], columns: C
     const [rowSelection, setRowSelection] = React.useState({})
     const [filteredData, setFilteredData] = React.useState<any[]>(data)
 
-    console.log(data, "data")
 
     const [pagination, setPagination] = React.useState({
         pageIndex: 0, //initial page index
