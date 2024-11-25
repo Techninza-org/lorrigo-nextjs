@@ -37,11 +37,11 @@ export const RaiseDisputeSchema = z.object({
     disputeDetails: z.object({
         description: z.string().min(1, "Description is required"),
         image: z.string().optional(),
-        orderBoxHeight: z.number().min(1, "Height is required"),
-        orderBoxWidth: z.number().min(1, "Width is required"),
-        orderBoxLength: z.number().min(1, "Length is required"),
+        orderBoxHeight: z.string().min(1, "Height is required"),
+        orderBoxWidth: z.string().min(1, "Width is required"),
+        orderBoxLength: z.string().min(1, "Length is required"),
         // orderSizeUnit: z.string().min(1, "Unit is required"),
-        orderWeight: z.number().min(1, "Weight is required"),
+        orderWeight: z.string().min(1, "Weight is required"),
         // orderWeightUnit: z.string().min(1, "Unit is required"),
     })
 });
@@ -66,11 +66,11 @@ export const RaiseDisputeModal = () => {
             disputeDetails: {
                 description: "",
                 image: "",
-                orderBoxHeight: 0,
-                orderBoxWidth: 0,
-                orderBoxLength: 0,
+                orderBoxHeight: '',
+                orderBoxWidth: '',
+                orderBoxLength: '',
                 orderSizeUnit: 'cm',
-                orderWeight: 0,
+                orderWeight: '',
                 orderWeightUnit: 'kg',
             }
         }
@@ -83,7 +83,7 @@ export const RaiseDisputeModal = () => {
         try {
             console.log(values, awb, "values");
 
-            handleRaiseDispute(awb, values.disputeDetails.description, values.disputeDetails.image ?? "", values.disputeDetails.orderBoxHeight, values.disputeDetails.orderBoxWidth, values.disputeDetails.orderBoxLength, values.disputeDetails.orderWeight);
+            handleRaiseDispute(awb, values.disputeDetails.description, values.disputeDetails.image ?? "", Number(values.disputeDetails.orderBoxHeight) , Number(values.disputeDetails.orderBoxWidth), Number(values.disputeDetails.orderBoxLength), Number(values.disputeDetails.orderWeight));
 
             onClose();
         } catch (error) {
@@ -163,7 +163,6 @@ export const RaiseDisputeForm = ({ form, isLoading }: { form: any, isLoading: bo
                         </FormLabel>
                         <FormControl>
                             <Input
-                                type='number'
                                 disabled={isLoading}
                                 className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                 placeholder="Length"
@@ -184,7 +183,6 @@ export const RaiseDisputeForm = ({ form, isLoading }: { form: any, isLoading: bo
                         </FormLabel>
                         <FormControl>
                             <Input
-                                type='number'
                                 disabled={isLoading}
                                 className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                 placeholder="Width"
@@ -205,7 +203,6 @@ export const RaiseDisputeForm = ({ form, isLoading }: { form: any, isLoading: bo
                         </FormLabel>
                         <FormControl>
                             <Input
-                                type='number'
                                 disabled={isLoading}
                                 className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                 placeholder="Height"
@@ -226,7 +223,6 @@ export const RaiseDisputeForm = ({ form, isLoading }: { form: any, isLoading: bo
                         </FormLabel>
                         <FormControl>
                             <Input
-                                type='number'
                                 disabled={isLoading}
                                 className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                 placeholder="Weight"

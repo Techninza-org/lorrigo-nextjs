@@ -13,12 +13,19 @@ import { CardContent } from '../ui/card';
 import { useAdminProvider } from '../providers/AdminProvider';
 import Image from "next/image";
 import { useAuth } from '../providers/AuthProvider';
+import { NextRequest } from "next/server";
+import { AuthType } from "@/types/types";
 
-export const DisputeDetails = () => {
+export const DisputeDetails = (request: NextRequest) => {
     const { isOpen, onClose, type, data } = useModal();
     const { details } = data;
     const order = details?.orderId
     const seller = details?.sellerId;
+    // const currentUserToken = request.cookies.get('user')?.value;
+    // const user = JSON.parse(currentUserToken || '') as AuthType;
+    // let userRole = user?.role;
+    const {user} = useAuth();
+    
 
     const {handleAcceptDispute, handleRejectDispute} = useAdminProvider();
 

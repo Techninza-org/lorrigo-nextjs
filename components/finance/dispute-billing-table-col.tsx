@@ -158,10 +158,12 @@ export const DisputeSellerBillingCols: ColumnDef<any>[] = [
         header: 'Raise Dispute',
         cell: ({ row }) => {
             const rowData = row.original;
-            console.log(rowData.awb, 'row data');
+            const isR  = rowData.isDisputeRaised
+            
+            
             
             return (
-                <RaiseDisputeButton awb={rowData.awb} date={row.getValue("billingDate")} />
+                <RaiseDisputeButton awb={rowData.awb} date={row.getValue("billingDate")} isRaised={isR} />
             )
         }
     },
@@ -246,20 +248,22 @@ const DisplaySellerName = () => {
     )
 }
 
-const RaiseDisputeButton = ({ awb, date }: { awb: string, date: any}) => {
+const RaiseDisputeButton = ({ awb, date, isRaised }: { awb: string, date: any, isRaised: any}) => {
     const { onOpen } = useModal();
     const currentDate = new Date();
     const disputeDate = new Date(date);
     console.log(awb, 'button');
+    console.log(isRaised, 'rr');
+    
     
     
     const daysLeft = Math.max(0, 7 - Math.ceil((currentDate.getTime() - disputeDate.getTime()) / (1000 * 60 * 60 * 24)));
     
     return (
         <div className="flex gap-4">
-            <p className="text-blue-500 cursor-pointer" onClick={() => onOpen('raiseDisputeManage', { awb })}>{daysLeft} Days Left To Raise Dispute</p>
-            <AcceptButton awb={awb} />
-        </div>
+            {isRaised ? <p className="text-red-500">Dispute Raised</p> : <p className="text-blue-500 cursor-pointer" onClick={() => onOpen('raiseDisputeManage', { awb })}>{daysLeft} Days Left To Raise Dispute</p>}
+            {!isRaised && <AcceptButton awb={awb} />}
+        </div>  
     )
 }
 
