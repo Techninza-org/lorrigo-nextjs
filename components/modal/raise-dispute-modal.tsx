@@ -37,6 +37,12 @@ export const RaiseDisputeSchema = z.object({
     disputeDetails: z.object({
         description: z.string().min(1, "Description is required"),
         image: z.string().optional(),
+        orderBoxHeight: z.number().min(1, "Height is required"),
+        orderBoxWidth: z.number().min(1, "Width is required"),
+        orderBoxLength: z.number().min(1, "Length is required"),
+        // orderSizeUnit: z.string().min(1, "Unit is required"),
+        orderWeight: z.number().min(1, "Weight is required"),
+        // orderWeightUnit: z.string().min(1, "Unit is required"),
     })
 });
 
@@ -59,7 +65,13 @@ export const RaiseDisputeModal = () => {
         defaultValues: {
             disputeDetails: {
                 description: "",
-                image: ""
+                image: "",
+                orderBoxHeight: 0,
+                orderBoxWidth: 0,
+                orderBoxLength: 0,
+                orderSizeUnit: 'cm',
+                orderWeight: 0,
+                orderWeightUnit: 'kg',
             }
         }
     });
@@ -71,7 +83,7 @@ export const RaiseDisputeModal = () => {
         try {
             console.log(values, awb, "values");
 
-            handleRaiseDispute(awb, values.disputeDetails.description, values.disputeDetails.image ?? "");
+            handleRaiseDispute(awb, values.disputeDetails.description, values.disputeDetails.image ?? "", values.disputeDetails.orderBoxHeight, values.disputeDetails.orderBoxWidth, values.disputeDetails.orderBoxLength, values.disputeDetails.orderWeight);
 
             onClose();
         } catch (error) {
@@ -138,6 +150,94 @@ export const RaiseDisputeForm = ({ form, isLoading }: { form: any, isLoading: bo
                     </FormItem>
                 )}
             />
+            <div className='grid grid-cols-2 gap-4'>
+
+            
+            <FormField
+                control={form.control}
+                name="disputeDetails.orderBoxLength"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                            Length <span className='text-red-500'>*</span>
+                        </FormLabel>
+                        <FormControl>
+                            <Input
+                                type='number'
+                                disabled={isLoading}
+                                className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                placeholder="Length"
+                                {...field}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="disputeDetails.orderBoxWidth"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                            Width <span className='text-red-500'>*</span>
+                        </FormLabel>
+                        <FormControl>
+                            <Input
+                                type='number'
+                                disabled={isLoading}
+                                className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                placeholder="Width"
+                                {...field}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="disputeDetails.orderBoxHeight"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                            Height <span className='text-red-500'>*</span>
+                        </FormLabel>
+                        <FormControl>
+                            <Input
+                                type='number'
+                                disabled={isLoading}
+                                className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                placeholder="Height"
+                                {...field}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="disputeDetails.orderWeight"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                            Weight <span className='text-red-500'>*</span>
+                        </FormLabel>
+                        <FormControl>
+                            <Input
+                                type='number'
+                                disabled={isLoading}
+                                className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                placeholder="Weight"
+                                {...field}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            </div>
             <FormField
                 control={form.control}
                 name="disputeDetails.image"

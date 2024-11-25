@@ -12,6 +12,7 @@ import { useModal } from "@/hooks/use-model-store";
 import { CardContent } from '../ui/card';
 import { useAdminProvider } from '../providers/AdminProvider';
 import Image from "next/image";
+import { useAuth } from '../providers/AuthProvider';
 
 export const DisputeDetails = () => {
     const { isOpen, onClose, type, data } = useModal();
@@ -59,10 +60,11 @@ export const DisputeDetails = () => {
                                 <Image height={100} width={100} src={`data:image/jpeg;base64,${details?.image}`} alt="dispute" className="rounded-md shadow-md" />
                             </div>
                     </div>
-                    <div className="flex justify-between">
+                    
+                    {/* <div className="flex justify-between">
                         <Button onClick={() => handleAccept(details?._id)} className="mt-4 bg-green-600">Accept</Button>
                         <Button onClick={() => handleReject(details?._id)} className="mt-4 bg-red-700">Reject</Button>
-                    </div>
+                    </div> */}
                 </CardContent>
             </DialogContent>
         </Dialog>
