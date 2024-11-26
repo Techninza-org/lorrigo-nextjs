@@ -10,7 +10,7 @@ import { DisputeSellerBillingCols } from "./dispute-billing-table-col"
 export const DisputeBilling = () => {
     const { sellerBilling, sellerB2BBilling } = useSellerProvider()
     
-    const disputeSellerBilling = sellerBilling?.filter((bill: { billingAmount: number, disputeAcceptedBySeller: boolean }) => bill.billingAmount > 0 && !bill.disputeAcceptedBySeller)
+    const disputeSellerBilling = sellerBilling?.filter((bill: { billingAmount: number, disputeAcceptedBySeller: boolean, paymentStatus: string }) => bill.billingAmount > 0 && !bill.disputeAcceptedBySeller && bill.paymentStatus !== "PAID")
     const disputeSellerBillingb2b = sellerB2BBilling?.filter((bill: { billingAmount: number }) => bill.billingAmount > 0)
     
     return (
