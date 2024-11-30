@@ -2,15 +2,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 import { useSellerProvider } from "../providers/SellerProvider"
-import { BillingTable } from "./billing-table"
-import { SellerB2BBillingCols, SellerBillingCols } from "./billing-table-cols"
 import { DisputeBillingTable } from "./dispute-billing-table"
 import { DisputeSellerBillingCols } from "./dispute-billing-table-col"
 
 export const DisputeBilling = () => {
     const { sellerBilling, sellerB2BBilling } = useSellerProvider()
     
-    const disputeSellerBilling = sellerBilling?.filter((bill: { billingAmount: number, disputeAcceptedBySeller: boolean, paymentStatus: string }) => bill.billingAmount > 0 && !bill.disputeAcceptedBySeller && bill.paymentStatus !== "PAID")
+    const disputeSellerBilling = sellerBilling?.filter((bill: { billingAmount: number, disputeAcceptedBySeller: boolean }) => !bill.disputeAcceptedBySeller)
     const disputeSellerBillingb2b = sellerB2BBilling?.filter((bill: { billingAmount: number }) => bill.billingAmount > 0)
     
     return (

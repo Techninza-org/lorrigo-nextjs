@@ -14,7 +14,7 @@ export const AdminClientBillingCols: ColumnDef<any>[] = [
             return (
                 <div className="space-y-1 items-center">
                     {/* <div>{row.getValue("billingDate")}</div> */}
-                    <p>{row.getValue("billingDate") ?  format(row.getValue("billingDate"), "dd-MM-yyyy") : null}</p>
+                    <p>{row.getValue("billingDate") ? format(row.getValue("billingDate"), "dd-MM-yyyy") : null}</p>
                 </div>
             )
         }
@@ -145,9 +145,10 @@ export const AdminClientBillingCols: ColumnDef<any>[] = [
         header: 'Applied Weight',
         accessorKey: 'orderWeight',
         cell: ({ row }) => {
+            const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("orderWeight")}</p>
+                    <p>{Math.max(row.getValue("orderWeight"), rowData.baseWeight)}</p>
                 </div>
             )
         }
@@ -186,12 +187,26 @@ export const AdminClientBillingCols: ColumnDef<any>[] = [
         }
     },
     {
-        header: 'Excess Charges',
-        accessorKey: 'billingAmount',
+        header: 'Forward Excess Weight Charges',
+        accessorKey: 'fwExcessCharge',
         cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{formatCurrencyForIndia(Number(row.getValue("billingAmount")))}</p>
+                    <p>{formatCurrencyForIndia(Number(row.getValue("fwExcessCharge") || 0))}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'RTO Excess Weight Charges',
+        accessorKey: 'fwExcessCharge',
+        cell: ({ row }) => {
+            const rowData = row.original;
+
+            return (
+                <div className="space-y-1 items-center">
+
+                    <p> {formatCurrencyForIndia(rowData.isRTOApplicable ? Number(row.getValue("fwExcessCharge") || 0) : 0)}</p>
                 </div>
             )
         }
@@ -214,9 +229,9 @@ export const AdminClientBillingCols: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 <div className="items-center flex gap-1">
-                    <p>{formatCurrencyForIndia((Number(row.getValue("billingAmount")) + Number(row.getValue("orderCharges"))) || 0)}</p>
+                    <p>{formatCurrencyForIndia((Number(row.getValue("billingAmount")) + Number(row.getValue("orderCharges")) + Number(row.getValue("fwExcessCharge") || 0)) || 0)}</p>
                     <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
-                        <div>Forward Charge: {rowData.isForwardApplicable ? rowData.rtoCharge : 0}</div>
+                        <div>Forward Charge: { rowData.rtoCharge }</div>
                         <div>RTO Charge: {rowData.isRTOApplicable ? rowData.rtoCharge : 0}</div>
                         <div>COD Value: {rowData.codValue}</div>
                     </HoverCardToolTip>

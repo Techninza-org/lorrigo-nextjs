@@ -56,10 +56,13 @@ export const DisputeDetails = () => {
                             <p className='flex justify-between'><span className='font-semibold'>Order ID</span> {details?._id}</p>
                             <p className='flex justify-between'><span className='font-semibold'>AWB</span> {details?.awb}</p>
                             <p className='flex justify-between'><span className='font-semibold'>Dispute Description</span> {details?.description}</p>
+                            <p className='flex justify-between'><span className='font-semibold'>Applied Order Charges</span> {order?.orderCharges}</p>
                             <p className='flex justify-between'><span className='font-semibold'>Order Weight</span> {order?.orderWeight}</p>
                             <p className='flex justify-between'><span className='font-semibold'>Charged Weight</span> {order?.chargedWeight}</p>
-                            <p className='flex justify-between'><span className='font-semibold'>Billing Amount</span> {order?.billingAmount}</p>
-                            <p className='flex justify-between'><span className='font-semibold'>Order Charges</span> {order?.orderCharges}</p>
+                            <p className='flex justify-between'><span className='font-semibold'>Forward Excess Charge</span> {order?.fwExcessCharge}</p>
+                            <p className='flex justify-between'><span className='font-semibold'>Forward Charge</span> {order?.rtoCharge}</p>
+                            {/* <p className='flex justify-between'><span className='font-semibold'>Forward Charge</span> {String(order?.isRTOApplicable)}</p> */}
+
                             <div>
                                 <Image height={100} width={100} src={`data:image/jpeg;base64,${details?.image}`} alt="dispute" className="rounded-md shadow-md" />
                             </div>
