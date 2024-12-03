@@ -147,61 +147,61 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
     const handleAcceptDispute = async (id: string) => {
         try {
-          const res = await axiosIWAuth.post(`/admin/disputes/accept`, {
-            disputeId: id
-          });
-          if (res.data?.valid) {
-            toast({
-              variant: "default",
-              title: "Dispute",
-              description: "Dispute accepted successfully",
+            const res = await axiosIWAuth.post(`/admin/disputes/accept`, {
+                disputeId: id
             });
-            return true;
-          }
-          toast({
-            variant: "destructive",
-            title: "Dispute",
-            description: "Failed to accept dispute",
-          });
-          return false
+            if (res.data?.valid) {
+                toast({
+                    variant: "default",
+                    title: "Dispute",
+                    description: "Dispute accepted successfully",
+                });
+                return true;
+            }
+            toast({
+                variant: "destructive",
+                title: "Dispute",
+                description: "Failed to accept dispute",
+            });
+            return false
         } catch (error: any) {
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: error.response.data.message || "Something went wrong",
-          });
-          return false
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.response.data.message || "Something went wrong",
+            });
+            return false
         }
-      }
+    }
 
-      const handleRejectDispute = async (id: string) => {
+    const handleRejectDispute = async (id: string) => {
         try {
-          const res = await axiosIWAuth.post(`/admin/disputes/reject`, {
-            disputeId: id
-          });
-          if (res.data?.valid) {
-            toast({
-              variant: "default",
-              title: "Dispute",
-              description: "Dispute rejected successfully",
+            const res = await axiosIWAuth.post(`/admin/disputes/reject`, {
+                disputeId: id
             });
-            return true;
-          }
-          toast({
-            variant: "destructive",
-            title: "Dispute",
-            description: "Failed to reject dispute",
-          });
-          return false
+            if (res.data?.valid) {
+                toast({
+                    variant: "default",
+                    title: "Dispute",
+                    description: "Dispute rejected successfully",
+                });
+                return true;
+            }
+            toast({
+                variant: "destructive",
+                title: "Dispute",
+                description: "Failed to reject dispute",
+            });
+            return false
         } catch (error: any) {
-          toast({
-            variant: "destructive",
-            title: "Error",
-            description: error.response.data.message || "Something went wrong",
-          });
-          return false
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.response.data.message || "Something went wrong",
+            });
+            return false
         }
-      }
+    }
 
     const getFutureRemittance = async () => {
         try {
@@ -511,20 +511,28 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     }
 
     const getSubadmins = async () => {
-        const res = await axiosIWAuth.get(`/admin/subadmins`);
-        if (res.data?.valid) {
-            setSubadmins(res.data.subadmins)
-        }else{
-            toast({
-                variant: "destructive",
-                title: "Failed to get subadmins",
-            });
+        try {
+            const res = await axiosIWAuth.get(`/admin/subadmins`);
+            if (res.data?.valid) {
+                setSubadmins(res.data.subadmins)
+            } else {
+                toast({
+                    variant: "destructive",
+                    title: "Failed to get subadmins",
+                });
+            }
+        } catch (error) {
+            // toast({
+            //     variant: "destructive",
+            //     title: "Failed to get subadmins",
+            // });
+
         }
     }
 
     const handleUpdateSubadminPaths = async (id: string, paths: string[]) => {
-        try{
-            const res = await axiosIWAuth.put(`/admin/subadmins/${id}`, {paths});
+        try {
+            const res = await axiosIWAuth.put(`/admin/subadmins/${id}`, { paths });
             if (res.data?.valid) {
                 toast({
                     variant: "default",
@@ -535,14 +543,14 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             }
             getSubadmins();
             return false;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false;
         }
     }
 
     const handleDeleteSubadmin = async (id: string) => {
-        try{
+        try {
             const res = await axiosIWAuth.delete(`/admin/subadmins/delete/${id}`)
             if (res.data?.valid) {
                 toast({
@@ -553,7 +561,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 return true;
             }
             return false;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return false;
         }

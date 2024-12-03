@@ -159,6 +159,7 @@ export default function CourierPage() {
                                                                     carrierId: partner.carrierID,
                                                                     carrierNickName: partner.nickName,
                                                                     charge: partner.charge,
+                                                                    codCharge: partner.cod,
                                                                     type: partner.type || ''
                                                                 })
                                                             } else {

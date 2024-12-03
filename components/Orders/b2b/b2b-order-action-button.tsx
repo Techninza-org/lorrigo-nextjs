@@ -202,8 +202,8 @@ export const DownloadLabelButton: React.FC<{ rowData: B2BOrderType }> = ({ rowDa
     return (
         <>
             {(id && isGatiCourier) ? <DropdownMenuItem onClick={() => downloadFileYURL(
-                'http://localhost:4000/api/public/shipment_labels/534916.pdf',
-                'shipment_label_534916.pdf'
+                `http://localhost:4000/api/public/shipment_labels/${id}.pdf`,
+                `shipment_label_${id}.pdf`
             )}>Download Label</DropdownMenuItem>
                 : <DropdownMenuItem onClick={() => onOpen("downloadB2BLabel", { b2bOrder: rowData })}>Download Label</DropdownMenuItem>
             }

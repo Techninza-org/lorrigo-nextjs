@@ -43,7 +43,7 @@ interface SellerContextType {
   getCourierPartners: (orderId: string, type: string) => Promise<any>;
   getBulkCourierPartners: (orderIds: string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
-  handleCreateD2CShipment: ({ orderId, carrierId, carrierNickName, charge, type }: { orderId: any, carrierNickName: string, carrierId: Number, charge: Number, type: string }) => boolean | Promise<boolean>;
+  handleCreateD2CShipment: ({ codCharge, orderId, carrierId, carrierNickName, charge, type }: { codCharge: number, orderId: any, carrierNickName: string, carrierId: Number, charge: Number, type: string }) => boolean | Promise<boolean>;
   handleCreateBulkD2CShipment: (orderWCouriers: any, charge: number) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
@@ -89,7 +89,7 @@ interface SellerContextType {
   getSellerAssignedCourier: () => Promise<void>;
   assignedCouriers: any[];
   getInvoiceById: (id: any) => Promise<any>;
-  handleRaiseDispute : (awb: any, description: string, image: string, orderBoxHeight: number, orderBoxLength: number, orderBoxWidth: number, orderWeight: number ) => boolean | Promise<any>;
+  handleRaiseDispute: (awb: any, description: string, image: string, orderBoxHeight: number, orderBoxLength: number, orderBoxWidth: number, orderWeight: number) => boolean | Promise<any>;
   getDisputes: () => Promise<void>;
   disputes: any[];
   handleAcceptDispute: (awb: string) => Promise<boolean>;
@@ -627,12 +627,13 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, sellerCustomerForm, toast]);
 
-  const handleCreateD2CShipment = useCallback(async ({ orderId, carrierId, carrierNickName, charge, type }: { orderId: any, carrierId: Number, carrierNickName: string, charge: Number, type: string }) => {
+  const handleCreateD2CShipment = useCallback(async ({ codCharge, orderId, carrierId, carrierNickName, charge, type }: { codCharge: number, orderId: any, carrierId: Number, carrierNickName: string, charge: Number, type: string }) => {
     const payload = {
       orderId: orderId,
       carrierId: carrierId,
       carrierNickName,
       charge: charge,
+      codCharge,
       orderType: 0,
       type: type
     }
@@ -1222,28 +1223,28 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       const res = await axiosIWAuth.post('/shipment/b2b', payload);
-      if (res.data?.valid && res.data?.order.awb) {
-        toast({
-          variant: "default",
-          title: "Order created successfully",
-          description: "Order has been created successfully",
-        });
-        getB2BOrders();
-        fetchWalletBalance();
-        getAllOrdersByStatus({ status: status || "all" })
-        router.push('/orders/b2b')
-        return true;
-      }
+      // if (res.data?.valid) {
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: res?.data?.message || "Something went wrong",
+        variant: "default",
+        title: res?.data?.message || "Order created successfully",
+        description: "Order has been created successfully",
       });
-      return false
+      getB2BOrders();
+      fetchWalletBalance();
+      getAllOrdersByStatus({ status: status || "all" })
+      router.push('/orders/b2b')
+      return true;
+      // }
+      // toast({
+      //   variant: "destructive",
+      //   title: "Error",
+      //   description: res?.data?.message || "Something went wrong",
+      // });
+      // return false
     } catch (error: any) {
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: "default",
+        title: "Alert",
         description: error?.message ?? "Something went wrong",
       });
       return false
@@ -1251,7 +1252,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [axiosIWAuth, router, toast])
 
-const handleRaiseDispute = async (awb: string, description: string, image: string, orderBoxHeight: number, orderBoxLength: number, orderBoxWidth: number, orderWeight: number ) => {
+  const handleRaiseDispute = async (awb: string, description: string, image: string, orderBoxHeight: number, orderBoxLength: number, orderBoxWidth: number, orderWeight: number) => {
     try {
       const res = await axiosIWAuth.post(`/seller/raise-dispute`, {
         awb,
@@ -1272,7 +1273,7 @@ const handleRaiseDispute = async (awb: string, description: string, image: strin
         });
         return true;
       }
-      if(res.data?.message === "Dispute already raised"){
+      if (res.data?.message === "Dispute already raised") {
         toast({
           variant: "destructive",
           title: "Dispute",
@@ -1296,7 +1297,7 @@ const handleRaiseDispute = async (awb: string, description: string, image: strin
     }
   }
 
- 
+
 
   const getSellerBillingDetails = async () => {
     try {
