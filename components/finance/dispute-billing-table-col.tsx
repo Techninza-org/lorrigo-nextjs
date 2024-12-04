@@ -266,11 +266,6 @@ const RaiseDisputeButton = ({ awb, date, isRaised }: { awb: string, date: any, i
     const { onOpen } = useModal();
     const currentDate = new Date();
     const disputeDate = new Date(date);
-    console.log(awb, 'button');
-    console.log(isRaised, 'rr');
-    
-    
-    
     const daysLeft = Math.max(0, 7 - Math.ceil((currentDate.getTime() - disputeDate.getTime()) / (1000 * 60 * 60 * 24)));
     
     return (
@@ -282,8 +277,6 @@ const RaiseDisputeButton = ({ awb, date, isRaised }: { awb: string, date: any, i
 }
 
 const AcceptButton = ({ awb }: { awb: string }) => {
-    console.log(awb, 'accept');
-    
     const {handleAcceptDispute} = useSellerProvider();
     return (
         <p className="text-green-700 cursor-pointer" onClick={() => handleAcceptDispute(awb)}>Accept</p>

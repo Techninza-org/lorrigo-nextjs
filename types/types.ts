@@ -164,7 +164,7 @@ export interface B2COrderType {
     stage: number;
     stageDateTime: string;
     action: string;
-    activiity?: string;
+    activity?: string;
     location?: string;
     _id?: string;
   }[];

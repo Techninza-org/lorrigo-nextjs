@@ -13,6 +13,8 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import CsvDownloader from 'react-csv-downloader';
+
 import {
     Table,
     TableBody,
@@ -21,6 +23,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { DownloadIcon, Upload } from "lucide-react"
+import { useModal } from "@/hooks/use-model-store"
 
 export function DisputeTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
     const [filtering, setFiltering] = React.useState<string>("")
@@ -33,7 +37,6 @@ export function DisputeTable({ data, columns }: { data: any[], columns: ColumnDe
         pageIndex: 0, //initial page index
         pageSize: 20, //default page size
     });
-
 
     const table = useReactTable({
         data: data,
@@ -52,15 +55,72 @@ export function DisputeTable({ data, columns }: { data: any[], columns: ColumnDe
         onGlobalFilterChange: setFiltering
     });
 
+    const cols = [
+        {
+            id: "awb",
+            displayName: "AWB"
+        },
+        {
+            id: "chargedWeight",
+            displayName: "Charged Weight"
+        },
+        {
+            id: "clientWeight",
+            displayName: "Client Weight"
+        },
+        {
+            id: "length",
+            displayName: "Length"
+        },
+        {
+            id: "width",
+            displayName: "Width"
+        },
+        {
+            id: "height",
+            displayName: "Height"
+        },
+        {
+            id: "billingMonth",
+            displayName: "Billing Month"
+        },
+    ]
+
+    const datas = data.map((row) => {
+        return {
+            awb: row.awb,
+            chargedWeight: row.chargedWeight,
+            clientWeight: row.orderWeight,
+            length: row.orderBoxLength,
+            width: row.orderBoxWidth,
+            height: row.orderBoxHeight,
+            billingMonth: row.billingMonth,
+        }
+    })
+
+    const { onOpen } = useModal()
+
     return (
         <div className="w-full">
             <div className="flex items-center py-4 justify-between">
-                <Input
-                    placeholder="Filter by AWB"
-                    value={filtering}
-                    onChange={(e) => setFiltering(e.target.value)}
-                    className="max-w-sm"
-                />
+                <div className="flex gap-2">
+                    <Input
+                        placeholder="Filter by AWB"
+                        value={filtering}
+                        onChange={(e) => setFiltering(e.target.value)}
+                        className="max-w-sm"
+                    />
+                    <CsvDownloader filename="Dispute Orders" datas={datas} columns={cols}>
+                        <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={18} /></Button>
+                    </CsvDownloader>
+                </div>
+                <Button
+                    variant="webPageBtn"
+                    size="icon"
+                    onClick={() => onOpen("DisputeUpload")}
+                    className="flex items-center justify-center"
+                > <Upload size={18} />
+                </Button>
             </div>
 
             <div className="w-full border rounded-md">

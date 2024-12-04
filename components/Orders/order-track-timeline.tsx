@@ -37,10 +37,10 @@ export const OrderTrackTimeline: React.FC<OrderTrackTimelineProps> = ({ order })
                                 <div className={cn("bg-slate-100 text-black col-start-4 col-end-12 p-4 rounded-xl my-4 shadow-md w-full", stage.stage === -1 ? "bg-red-100" : "")}>
                                     <h3 className="font-medium mb-1">{stage.action}</h3>
                                     <ul className='list-disc pl-6'>
-                                        {stage?.activiity && <li>{stage?.activiity}</li>}
-                                        {stage?.location && <li> {stage?.location}</li>}
+                                        {stage?.activity && <li className='text-gray-700 text-sm'>{stage?.activity}</li>}
+                                        {stage?.location && <li className='text-gray-700 text-sm'> {stage?.location}</li>}
                                     </ul>
-                                    <div className="text-xs leading-tight text-justify w-full">
+                                    <div className="text-xs leading-tight w-full mt-2 text-right">
                                         {formatDate(`${stage?.stageDateTime}`, 'dd-MM-yyyy | HH:mm a')}
                                     </div>
                                 </div>

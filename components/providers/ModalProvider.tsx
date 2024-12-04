@@ -25,6 +25,7 @@ import { B2BClientBillingUpload } from "../modal/admin/upload-b2b-client-billing
 import { B2BShipNowModal } from "../modal/b2b-ship-now-modal";
 import { RaiseDisputeModal } from "../modal/raise-dispute-modal";
 import { DisputeDetails } from "../modal/dispute-details-modal";
+import { DisputeUploadModal } from "../modal/dispute-upload-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -66,6 +67,7 @@ export const ModalProvider = () => {
       <AlertKycModal/>
 
       <DownloadB2BManifestModal />
+      <DisputeUploadModal />
       <B2BClientBillingUpload/>
       <B2BShipNowModal/>
       <RaiseDisputeModal />

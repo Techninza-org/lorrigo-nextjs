@@ -54,7 +54,7 @@ interface AdminContextType {
     handleDeleteSubadmin: (id: string) => void;
     getDisputes: () => void;
     disputes: any[];
-    handleAcceptDispute: (id: string) => Promise<boolean>;
+    handleAcceptDispute: (id: string, chargedWeight: number) => Promise<boolean>;
     handleRejectDispute: (id: string) => Promise<boolean>;
 }
 
@@ -145,10 +145,11 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
-    const handleAcceptDispute = async (id: string) => {
+    const handleAcceptDispute = async (id: string, chargedWeight: number) => {
         try {
             const res = await axiosIWAuth.post(`/admin/disputes/accept`, {
-                disputeId: id
+                disputeId: id,
+                chargedWeight,
             });
             if (res.data?.valid) {
                 toast({
