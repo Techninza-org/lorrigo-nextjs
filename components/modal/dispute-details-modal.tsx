@@ -74,9 +74,9 @@ export const DisputeDetails = () => {
                     </div>
 
                     {isAdmin && <div>
-                        <div>
+                        {/* <div>
                             <Input type="number" onChange={(e) => setChargedWeight(Number(e.target.value))} value={chargedWeight} />
-                        </div>
+                        </div> */}
                         <div className="flex justify-between">
                             <Button onClick={() => handleAccept(details?._id, chargedWeight)} className="mt-4 bg-green-600">Accept</Button>
                             <Button onClick={() => handleReject(details?._id)} className="mt-4 bg-red-700">Reject</Button>
