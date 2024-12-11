@@ -10,7 +10,7 @@ import {
 
 import { useSellerProvider } from "../providers/SellerProvider"
 import { Button } from "../ui/button"
-import { CircleAlert, TriangleAlertIcon } from "lucide-react"
+import { CircleAlert, Loader2Icon, TriangleAlertIcon } from "lucide-react"
 import { useModal } from "@/hooks/use-model-store"
 import { useState } from "react"
 import { B2COrderType } from "@/types/types"
@@ -32,7 +32,7 @@ export const CancelOrderDialog = () => {
     const { onClose, type, isOpen, data } = useModal();
     const [isLoading, setIsLoading] = useState(false)
     let { order, b2bOrder } = data;
-    
+
     let currentOrder: B2COrderType | B2BOrderType | undefined = order;
 
     // Check if order is undefined and assign b2bOrder if it matches the type
@@ -75,7 +75,14 @@ export const CancelOrderDialog = () => {
                         </ul>
                     </div>
                 </DialogHeader>
-                <DialogFooter>
+
+                {isLoading && <DialogFooter>
+                    <Button variant={"destructive"} disabled={isLoading} className="w-full">
+                        <Loader2Icon className="animate-spin" />
+                    </Button>
+                </DialogFooter>}
+                {!isLoading && <DialogFooter>
+
                     <Button variant={"destructive"} disabled={isLoading} className="w-full" onClick={() => handleOrder(currentOrder?._id ?? "", "order")}>
                         Cancel Order
                     </Button>
@@ -88,7 +95,7 @@ export const CancelOrderDialog = () => {
                         ) : null
                     }
 
-                </DialogFooter>
+                </DialogFooter>}
             </DialogContent>
         </Dialog>
     )
