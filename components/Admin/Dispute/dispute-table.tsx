@@ -110,17 +110,17 @@ export function DisputeTable({ data, columns }: { data: any[], columns: ColumnDe
                         onChange={(e) => setFiltering(e.target.value)}
                         className="max-w-sm"
                     />
-                    {/* <CsvDownloader filename="Dispute Orders" datas={datas} columns={cols}>
+                    <CsvDownloader filename="Dispute Orders" datas={datas} columns={cols}>
                         <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={18} /></Button>
-                    </CsvDownloader> */}
+                    </CsvDownloader>
                 </div>
-                {/* <Button
+                <Button
                     variant="webPageBtn"
                     size="icon"
                     onClick={() => onOpen("DisputeUpload")}
                     className="flex items-center justify-center"
                 > <Upload size={18} />
-                </Button> */}
+                </Button>
             </div>
 
             <div className="w-full border rounded-md">
