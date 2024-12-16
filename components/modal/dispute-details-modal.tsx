@@ -24,7 +24,7 @@ export const DisputeDetails = () => {
     const role = user?.role
     const isAdmin = role === 'admin'
 
-    const [chargedWeight, setChargedWeight] = useState(order?.chargedWeight || 0);
+    const [chargedWeight, setChargedWeight] = useState(details?.chargedWeight || 0);
     useEffect(() => {
         if (order) setChargedWeight(Number(order?.chargedWeight))
     }, [order, order?.chargedWeight])
@@ -74,9 +74,9 @@ export const DisputeDetails = () => {
                     </div>
 
                     {isAdmin && <div>
-                        {/* <div>
+                        <div>
                             <Input type="number" onChange={(e) => setChargedWeight(Number(e.target.value))} value={chargedWeight} />
-                        </div> */}
+                        </div>
                         <div className="flex justify-between">
                             <Button type="button" onClick={() => handleAccept(details?._id, chargedWeight)} className="mt-4 bg-green-600">Accept</Button>
                             <Button type="button" onClick={() => handleReject(details?._id)} className="mt-4 bg-red-700">Reject</Button>

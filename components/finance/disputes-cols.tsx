@@ -45,6 +45,32 @@ export const SellerDisputeColDefs: ColumnDef<any>[] = [
             )
         }
     },
+    {
+        header: 'Description',
+        accessorKey: "stage",
+        cell: ({ row }) => {
+
+            const stage = row.getValue('stage');
+            let desc = ''
+            switch(stage){
+                case 1: 
+                    desc = "Raised"
+                    break 
+                case 2: 
+                    desc = "Accepted"
+                    break 
+                case 3: 
+                    desc = "Auto Accepted"
+                    break 
+                case 4: 
+                    desc = "Not Accepeted"
+                    break 
+            }
+            return (
+                <div>{desc}</div>
+            )
+        }
+    },
 ];
 
 const DisputeDetailsButton = ({ details }: { details: any }) => {
