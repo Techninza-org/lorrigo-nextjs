@@ -5,6 +5,11 @@ import InvoiceDetails from "../Admin/User/invoiceDetails";
 import { cn } from "@/lib/utils";
 import { usePaymentGateway } from "../providers/PaymentGatewayProvider";
 import { Badge } from "../ui/badge";
+import CsvDownloader from 'react-csv-downloader';
+import { Button } from "../ui/button";
+import { DownloadIcon } from "lucide-react";
+import { useSellerProvider } from "../providers/SellerProvider";
+import React from "react";
 
 export const InvoiceListingCols: any = [
     {
@@ -66,8 +71,61 @@ export const InvoiceListingCols: any = [
             )
         }
     },
+    {
+        header: "AWB List",
+        cell: ({ row }: { row: any }) => {
+            const rowData = row.original;
+            return (
+                <DownloadCsv id={rowData._id} />
+            )
+        }
+    },
 ];
 
+const DownloadCsv = ({ id }: { id: any }) => {
+    const { getInvoiceAwbTransactions } = useSellerProvider();
+    const [datas, setDatas] = React.useState([]);
+    const cols = [
+        { id: "awb", displayName: "AWB" },
+        { id: "forwardCharges", displayName: "Forward Charges" },
+        { id: "rtoCharges", displayName: "RTO Charges" },
+        { id: "codCharges", displayName: "COD Charges" },
+        { id: "otherCharges", displayName: "Other Charges" },
+        { id: "total", displayName: "Total" },
+    ];
+
+    function getData(): ReturnType<() => void> {
+        getInvoiceAwbTransactions(id)
+            .then((response: any) => {
+                if (response) {
+                    const formattedData = response.map((item: any) => ({
+                        awb: item.awb,
+                        forwardCharges: item.forwardCharges,
+                        rtoCharges: item.rtoCharges,
+                        codCharges: item.codCharges,
+                        otherCharges: item.otherCharges,
+                        total: item.total,
+                    }));
+                    setDatas(formattedData);
+                } else {
+                    console.error("Invalid response format:", response);
+                }
+            })
+            .catch((error: any) => {
+                console.error("Error fetching AWB transactions:", error);
+            });
+    };
+
+    return (
+        <div className="space-y-1 items-center text-blue-500">
+            <CsvDownloader filename="AwbTransacs" datas={datas} columns={cols}>
+                <Button variant={'webPageBtn'} size={'icon'} onClick={getData}>
+                    <DownloadIcon size={18} />
+                </Button>
+            </CsvDownloader>
+        </div>
+    );
+};
 
 const PayNow = ({ row }: { row: any }) => {
     const { payInvoiceIntent } = usePaymentGateway();
@@ -75,17 +133,18 @@ const PayNow = ({ row }: { row: any }) => {
         row?.status?.toLowerCase() === "paid" ? (
             <Badge variant={'secondary'} className="bg-green-100 tracking-wide text-green-500">Paid</Badge>
         ) :
-        (
-            <button
-                disabled={row?.isPrepaidInvoice}
-                onClick={() => payInvoiceIntent(row?.amount, row?._id)}
-                className={cn(
-                    "space-y-1 items-center text-blue-500",
-                    row?.isPrepaidInvoice && "hidden disabled:cursor-not-allowed"
-                )}
-            >
-                Pay Now
-            </button >
-        )
+            (
+                <button
+                    disabled={row?.isPrepaidInvoice}
+                    onClick={() => payInvoiceIntent(row?.amount, row?._id)}
+                    className={cn(
+                        "space-y-1 items-center text-blue-500",
+                        row?.isPrepaidInvoice && "hidden disabled:cursor-not-allowed"
+                    )}
+                >
+                    Pay Now
+                </button >
+            )
     )
 }
+

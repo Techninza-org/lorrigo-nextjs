@@ -34,6 +34,7 @@ export function InvoiceListingTable({ data, columns }: { data: any, columns: Col
         },
         onGlobalFilterChange: setFiltering
     })
+    
 
     return (
         <div className="w-full">
