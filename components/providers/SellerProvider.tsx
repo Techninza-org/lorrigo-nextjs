@@ -93,6 +93,8 @@ interface SellerContextType {
   getDisputes: () => Promise<void>;
   disputes: any[];
   handleAcceptDispute: (awb: string) => Promise<boolean>;
+  getInvoiceAwbTransactions: (id: string) => Promise<any>;
+  
 }
 
 interface sellerCustomerFormType {
@@ -1342,6 +1344,19 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const getInvoiceAwbTransactions = async (id: any) => {
+    try {
+      const res = await axiosIWAuth.get(`/seller/invoice-awbs/${id}`);
+      if(res.data?.valid){
+        return res.data.awbTransacs;
+      }else{
+        return []
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+
   const getCodPrice = async () => {
     try {
       const res = await axiosIWAuth.get('/seller/cod-price');
@@ -1481,7 +1496,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         handleRaiseDispute,
         getDisputes,
         disputes,
-        handleAcceptDispute
+        handleAcceptDispute,
+        getInvoiceAwbTransactions
 
       }}
     >
