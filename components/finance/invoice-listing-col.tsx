@@ -90,7 +90,7 @@ const DownloadCsv = ({ id }: { id: any }) => {
         { id: "forwardCharges", displayName: "Forward Charges" },
         { id: "rtoCharges", displayName: "RTO Charges" },
         { id: "codCharges", displayName: "COD Charges" },
-        { id: "otherCharges", displayName: "Other Charges" },
+        { id: "excessCharges", displayName: "Excess Wt. Charges" },
         { id: "total", displayName: "Total" },
     ];
 
@@ -103,13 +103,14 @@ const DownloadCsv = ({ id }: { id: any }) => {
                         forwardCharges: item.forwardCharges,
                         rtoCharges: item.rtoCharges,
                         codCharges: item.codCharges,
-                        otherCharges: item.otherCharges,
+                        excessCharges: item.excessCharges,
                         total: item.total,
                     }));
                     setDatas(formattedData);
                 } else {
                     console.error("Invalid response format:", response);
                 }
+                
             })
             .catch((error: any) => {
                 console.error("Error fetching AWB transactions:", error);
