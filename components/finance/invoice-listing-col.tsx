@@ -9,7 +9,7 @@ import CsvDownloader from 'react-csv-downloader';
 import { Button } from "../ui/button";
 import { DownloadIcon } from "lucide-react";
 import { useSellerProvider } from "../providers/SellerProvider";
-import React from "react";
+import React, { useEffect } from "react";
 
 export const InvoiceListingCols: any = [
     {
@@ -116,6 +116,11 @@ const DownloadCsv = ({ id }: { id: any }) => {
                 console.error("Error fetching AWB transactions:", error);
             });
     };
+
+    useEffect(() => {
+        getData()
+        return () => getData()
+    }, [])
 
     return (
         <div className="space-y-1 items-center text-blue-500">
