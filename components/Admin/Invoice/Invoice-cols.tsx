@@ -1,73 +1,66 @@
 "use client";
-
-import Link from "next/link";
-import InvoiceDetails from "../Admin/User/invoiceDetails";
-import { cn } from "@/lib/utils";
-import { usePaymentGateway } from "../providers/PaymentGatewayProvider";
-import { Badge } from "../ui/badge";
-import CsvDownloader from 'react-csv-downloader';
-import { Button } from "../ui/button";
+import { useSellerProvider } from "@/components/providers/SellerProvider";
+import { Button } from "@/components/ui/button";
+import { ColumnDef } from "@tanstack/react-table";
 import { DownloadIcon } from "lucide-react";
-import { useSellerProvider } from "../providers/SellerProvider";
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
+import CsvDownloader from 'react-csv-downloader';
 
-export const InvoiceListingCols: any = [
+export const InvoiceCols: ColumnDef<any>[] = [
     {
-        header: 'Invoice Number',
-        accessorKey: 'invoice_id',
-        cell: ({ row }: { row: any }) => {
-            const rowData = row.original;
-            return (
-                <div className="space-y-1 items-center">
-                    <Link href={`/finance/invoice/${rowData._id}`}>
-                        <p className="text-blue-500 hover:text-blue-700">{rowData.invoice_id}</p>
-                    </Link>
-                </div>
-            )
-        }
-    },
-    {
-        header: 'Invoice Date',
+        header: 'Date',
         accessorKey: 'date',
-        cell: ({ row }: { row: any }) => {
-            const rowData = row.original;
+        cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>{rowData.date}</p>
+                    <p>{row.getValue("date")}</p>
                 </div>
             )
         }
     },
     {
-        header: 'Invoice Amount',
+        header: 'Invoice No.',
+        accessorKey: 'invoice_id',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("invoice_id")}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Client Name',
+        accessorKey: 'sellerName',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            const sellerId = rowData.sellerId.name;
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{sellerId}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Amount',
         accessorKey: 'amount',
-        cell: ({ row }: { row: any }) => {
-            const rowData = row.original;
+        cell: ({ row }) => {
             return (
                 <div className="space-y-1 items-center">
-                    <p>&#8377; {rowData.amount}</p>
+                    <p>{row.getValue("amount")}</p>
                 </div>
             )
         }
     },
     {
-        header: "Download",
-        accessorKey: 'pdf',
-        cell: ({ row }: { row: any }) => {
-            const rowData = row.original;
+        header: 'Status',
+        accessorKey: 'status',
+        cell: ({ row }) => {
             return (
-                <div className="space-y-1 items-center text-blue-500">
-                    <InvoiceDetails pdf={rowData.pdf} />
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("status")}</p>
                 </div>
-            )
-        }
-    },
-    {
-        header: "Pay Now",
-        cell: ({ row }: { row: any }) => {
-            const rowData = row.original;
-            return (
-                <PayNow row={rowData} />
             )
         }
     },
@@ -80,11 +73,12 @@ export const InvoiceListingCols: any = [
             )
         }
     },
-];
+]
+
 
 const DownloadCsv = ({ id }: { id: any }) => {
     const { getInvoiceAwbTransactions } = useSellerProvider();
-    const [datas, setDatas] = React.useState([]);
+    const [datas, setDatas] = useState([]);
     const cols = [
         { id: "awb", displayName: "AWB" },
         { id: "forwardCharges", displayName: "Forward Charges" },
@@ -134,25 +128,3 @@ const DownloadCsv = ({ id }: { id: any }) => {
         </div>
     );
 };
-
-const PayNow = ({ row }: { row: any }) => {
-    const { payInvoiceIntent } = usePaymentGateway();
-    return (
-        row?.status?.toLowerCase() === "paid" ? (
-            <Badge variant={'secondary'} className="bg-green-100 tracking-wide text-green-500">Paid</Badge>
-        ) :
-            (
-                <button
-                    disabled={row?.isPrepaidInvoice}
-                    onClick={() => payInvoiceIntent(row?.amount, row?._id)}
-                    className={cn(
-                        "space-y-1 items-center text-blue-500",
-                        row?.isPrepaidInvoice && "hidden disabled:cursor-not-allowed"
-                    )}
-                >
-                    Pay Now
-                </button >
-            )
-    )
-}
-

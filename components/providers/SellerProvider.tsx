@@ -821,7 +821,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         const isAlertShown = localStorage.getItem("kyc-alert");
         const showKycAlert = !res.data?.seller?.kycDetails?.submitted && !isAlertShown && onOpen("alert-kyc");
         setSeller(res.data.seller)
-        setInvoices(res.data.seller.invoices)
+        // setInvoices(res.data.seller.invoices)
       }
     } catch (error) {
       console.error('Error fetching seller:', error);

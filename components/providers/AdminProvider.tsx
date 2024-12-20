@@ -56,6 +56,8 @@ interface AdminContextType {
     disputes: any[];
     handleAcceptDispute: (id: string, chargedWeight: number) => Promise<boolean>;
     handleRejectDispute: (id: string) => Promise<boolean>;
+    getAllInvoices: () => void;
+    invoices: any[];
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -80,6 +82,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [allTxn, setAllTxn] = useState<any>([]);
     const [subadmins, setSubadmins] = useState([])
     const [disputes, setDisputes] = useState([]);
+    const [invoices, setInvoices] = useState<any[]>([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -531,6 +534,17 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const getAllInvoices = async () => {
+        try {
+            const res = await axiosIWAuth.get(`/admin/invoices`);
+            if (res.data?.valid) {
+                setInvoices(res.data.invoices)
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
     const handleUpdateSubadminPaths = async (id: string, paths: string[]) => {
         try {
             const res = await axiosIWAuth.put(`/admin/subadmins/${id}`, { paths });
@@ -580,6 +594,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getClientNVendorBillingData()
             getSubadmins()
             getDisputes()
+            getAllInvoices()
         }
     }, [user, userToken])
 
@@ -629,7 +644,9 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 getDisputes,
                 disputes,
                 handleAcceptDispute,
-                handleRejectDispute
+                handleRejectDispute,
+                getAllInvoices,
+                invoices
 
             }}
         >
