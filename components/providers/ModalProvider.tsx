@@ -26,6 +26,7 @@ import { B2BShipNowModal } from "../modal/b2b-ship-now-modal";
 import { RaiseDisputeModal } from "../modal/raise-dispute-modal";
 import { DisputeDetails } from "../modal/dispute-details-modal";
 import { DisputeUploadModal } from "../modal/dispute-upload-modal";
+import { AlertPaymentModal } from "../modal/alert-payment-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -65,6 +66,7 @@ export const ModalProvider = () => {
       <AdminRemittanceUpdateModal/>
       <AddB2BCustomerModal/>
       <AlertKycModal/>
+      <AlertPaymentModal />
 
       <DownloadB2BManifestModal />
       <DisputeUploadModal />

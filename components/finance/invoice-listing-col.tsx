@@ -99,7 +99,7 @@ const DownloadCsv = ({ id }: { id: any }) => {
             .then((response: any) => {
                 if (response) {
                     const formattedData = response.map((item: any) => ({
-                        awb: item.awb,
+                        awb: String(item.awb),
                         forwardCharges: item.forwardCharges,
                         rtoCharges: item.rtoCharges,
                         codCharges: item.codCharges,

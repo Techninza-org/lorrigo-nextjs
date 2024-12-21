@@ -1,10 +1,10 @@
 "use client";
+import { useAdminProvider } from "@/components/providers/AdminProvider";
 import { useSellerProvider } from "@/components/providers/SellerProvider";
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { DownloadIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import CsvDownloader from 'react-csv-downloader';
 
 export const InvoiceCols: ColumnDef<any>[] = [
     {
@@ -23,8 +23,8 @@ export const InvoiceCols: ColumnDef<any>[] = [
         accessorKey: 'invoice_id',
         cell: ({ row }) => {
             return (
-                <div className="space-y-1 items-center">
-                    <p>{row.getValue("invoice_id")}</p>
+                <div className="space-y-1 items-center text-blue-500">
+                    <a href={`/admin/invoice/${row.getValue("invoice_id")}`}><p>{row.getValue("invoice_id")}</p></a>
                 </div>
             )
         }
@@ -64,67 +64,26 @@ export const InvoiceCols: ColumnDef<any>[] = [
             )
         }
     },
-    {
-        header: "AWB List",
-        cell: ({ row }: { row: any }) => {
-            const rowData = row.original;
-            return (
-                <DownloadCsv id={rowData._id} />
-            )
-        }
-    },
+    // {
+    //     header: "Action",
+    //     cell: ({ row }: { row: any }) => {
+    //         const isUnpaid = row.original.status === 'pending';
+    //         return (
+    //             <div className="space-y-1 items-center text-blue-500">
+    //                { isUnpaid ? <ReminderButton row={row} /> : null }
+    //             </div>
+    //         )
+    //     }
+    // }
 ]
 
-
-const DownloadCsv = ({ id }: { id: any }) => {
-    const { getInvoiceAwbTransactions } = useSellerProvider();
-    const [datas, setDatas] = useState([]);
-    const cols = [
-        { id: "awb", displayName: "AWB" },
-        { id: "forwardCharges", displayName: "Forward Charges" },
-        { id: "rtoCharges", displayName: "RTO Charges" },
-        { id: "codCharges", displayName: "COD Charges" },
-        // { id: "excessCharges", displayName: "Excess Wt. Charges" },
-        { id: "total", displayName: "Total" },
-    ];
-
-    function getData(): ReturnType<() => void> {
-        getInvoiceAwbTransactions(id)
-            .then((response: any) => {
-                if (response) {
-                    const formattedData = response.map((item: any) => ({
-                        awb: item.awb,
-                        forwardCharges: item.forwardCharges,
-                        rtoCharges: item.rtoCharges,
-                        codCharges: item.codCharges,
-                        // excessCharges: item.excessCharges,
-                        total: item.total,
-                    }));
-                    console.log(formattedData, 'formattedData');
-                    
-                    setDatas(formattedData);
-                } else {
-                    console.error("Invalid response format:", response);
-                }
-                
-            })
-            .catch((error: any) => {
-                console.error("Error fetching AWB transactions:", error);
-            });
-    };
-
-    useEffect(() => {
-        getData()
-        return () => getData()
-    }, [])
-
-    return (
-        <div className="space-y-1 items-center text-blue-500">
-            <CsvDownloader filename="AwbTransacs" datas={datas} columns={cols}>
-                <Button variant={'webPageBtn'} size={'icon'} onClick={getData}>
-                    <DownloadIcon size={18} />
-                </Button>
-            </CsvDownloader>
-        </div>
-    );
-};
+// const ReminderButton = ({ row }: { row: any }) => {
+//     // const { sendReminder } = useAdminProvider();
+//     const isReminderSent = row.original.isReminderSent;
+//     const id = row.original.invoice_id;
+//     return (
+//         <Button variant={'themeButton'} disabled={isReminderSent} onClick={() => console.log(id)}>
+//             {isReminderSent ? 'Sent' : 'Send Reminder'}
+//         </Button>
+//     )
+// }
