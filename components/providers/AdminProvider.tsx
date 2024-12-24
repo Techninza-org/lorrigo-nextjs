@@ -58,6 +58,7 @@ interface AdminContextType {
     handleRejectDispute: (id: string) => Promise<boolean>;
     getAllInvoices: () => void;
     invoices: any[];
+    getInvoiceAwbTransactionsAdmin: (id: any) => Promise<any>;
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -582,6 +583,19 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const getInvoiceAwbTransactionsAdmin = async (id: any) => {
+        try {
+          const res = await axiosIWAuth.get(`/admin/invoice-awbs/${id}`);
+          if(res.data?.valid){
+            return res.data.awbTransacs;
+          }else{
+            return []
+          }
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
             // getAllOrders("all", { fromDate: defaultFromDate, toDate: defaultToDate });
@@ -646,7 +660,8 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 handleAcceptDispute,
                 handleRejectDispute,
                 getAllInvoices,
-                invoices
+                invoices,
+                getInvoiceAwbTransactionsAdmin
 
             }}
         >

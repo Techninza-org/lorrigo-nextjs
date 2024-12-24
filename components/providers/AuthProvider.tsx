@@ -165,6 +165,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
             deleteCookie('user');
             setUserToken("");
             localStorage.removeItem("kyc-alert")
+            localStorage.removeItem("payment-alert");
             setUser(null as any);
             toast({
                 className: "bg-black text-white",
