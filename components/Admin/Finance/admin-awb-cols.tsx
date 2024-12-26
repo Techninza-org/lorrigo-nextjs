@@ -14,6 +14,61 @@ export const AdminAwbCols: ColumnDef<any>[] = [
         }
     },
     {
+        header: 'Order Id',
+        accessorKey: 'orderId',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("orderId")}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Zone',
+        accessorKey: 'zone',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("zone")}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Recipient',
+        accessorKey: 'recipientName',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("recipientName")}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'From City',
+        accessorKey: 'fromCity',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("fromCity")}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'To City',
+        accessorKey: 'toCity',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("toCity")}</p>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Forward Charges',
         accessorKey: 'forwardCharges',
         cell: ({ row }) => {
@@ -57,8 +112,6 @@ export const AdminAwbCols: ColumnDef<any>[] = [
             )
         }
     },
-
-
 ]
 
 

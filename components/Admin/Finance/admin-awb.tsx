@@ -19,11 +19,17 @@ export default function AdminAwb() {
             .then((response: any) => {
                 if (response) {
                     const formattedData = response.map((item: any) => ({
+                        invoice_no: id,
                         awb: item.awb,
                         forwardCharges: item.forwardCharges,
                         rtoCharges: item.rtoCharges,
                         codCharges: item.codCharges,
                         total: item.total,
+                        zone: item.zone,
+                        recipientName: item.recipientName,
+                        fromCity: item.fromCity,
+                        toCity: item.toCity,
+                        orderId: item.orderId,
                     }));
                     console.log(formattedData, 'formattedData');
 
@@ -57,11 +63,16 @@ const DownloadCsv = ({ id }: { id: any }) => {
     const { getInvoiceAwbTransactionsAdmin } = useAdminProvider();
     const [datas, setDatas] = useState([]);
     const cols = [
+        { id: "invoice_no", displayName: "Invoice No" },
         { id: "awb", displayName: "AWB" },
+        { id: "orderId", displayName: "Order ID" },
+        { id: "zone", displayName: "Zone" },
+        { id: "recipientName", displayName: "Recipient Name" },
+        { id: "fromCity", displayName: "From City" },
+        { id: "toCity", displayName: "To City" },
         { id: "forwardCharges", displayName: "Forward Charges" },
         { id: "rtoCharges", displayName: "RTO Charges" },
         { id: "codCharges", displayName: "COD Charges" },
-        // { id: "excessCharges", displayName: "Excess Wt. Charges" },
         { id: "total", displayName: "Total" },
     ];
 
@@ -70,14 +81,18 @@ const DownloadCsv = ({ id }: { id: any }) => {
             .then((response: any) => {
                 if (response) {
                     const formattedData = response.map((item: any) => ({
+                        invoice_no: id,
                         awb: item.awb,
                         forwardCharges: item.forwardCharges,
                         rtoCharges: item.rtoCharges,
                         codCharges: item.codCharges,
-                        // excessCharges: item.excessCharges,
                         total: item.total,
+                        zone: item.zone,
+                        recipientName: item.recipientName,
+                        fromCity: item.fromCity,
+                        toCity: item.toCity,
+                        orderId: item.orderId,
                     }));
-                    console.log(formattedData, 'formattedData');
 
                     setDatas(formattedData);
                 } else {
