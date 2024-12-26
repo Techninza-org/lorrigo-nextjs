@@ -3,7 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
 import { formatCurrencyForIndia } from "@/lib/utils";
 
-export const AdminVendorBillingCols: ColumnDef<B2COrderType>[] = [
+export const AdminVendorBillingCols: ColumnDef<any>[] = [
     {
         header: 'Order ID',
         accessorKey: 'orderRefId',
@@ -115,9 +115,11 @@ export const AdminVendorBillingCols: ColumnDef<B2COrderType>[] = [
         header: 'Forward Applicable',
         accessorKey: 'isForwardApplicable',
         cell: ({ row }) => {
+            const rowData = row.original; 
+            const isRTOApplicable = rowData.isRTOApplicable;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{row.getValue("isForwardApplicable") ? "True" : "False"}</p>
+                    <p>{row.getValue("isForwardApplicable") || isRTOApplicable ? "True" : "False"}</p>
                 </div>
             )
         }
