@@ -819,9 +819,10 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       const res = await axiosIWAuth.get('/seller');
       if (res.data.valid) {
         const isAlertShown = localStorage.getItem("kyc-alert");
+        const isPaymentAlertShown = localStorage.getItem("payment-alert");
         const showKycAlert = !res.data?.seller?.kycDetails?.submitted && !isAlertShown && onOpen("alert-kyc");
+        const showPaymentAlert = res.data?.seller?.showPaymentAlert && !isPaymentAlertShown && onOpen("alert-payment");
         setSeller(res.data.seller)
-        setInvoices(res.data.seller.invoices)
       }
     } catch (error) {
       console.error('Error fetching seller:', error);

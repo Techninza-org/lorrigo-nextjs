@@ -90,7 +90,7 @@ const DownloadCsv = ({ id }: { id: any }) => {
         { id: "forwardCharges", displayName: "Forward Charges" },
         { id: "rtoCharges", displayName: "RTO Charges" },
         { id: "codCharges", displayName: "COD Charges" },
-        { id: "excessCharges", displayName: "Excess Wt. Charges" },
+        // { id: "excessCharges", displayName: "Excess Wt. Charges" },
         { id: "total", displayName: "Total" },
     ];
 
@@ -99,13 +99,15 @@ const DownloadCsv = ({ id }: { id: any }) => {
             .then((response: any) => {
                 if (response) {
                     const formattedData = response.map((item: any) => ({
-                        awb: item.awb,
+                        awb: String(item.awb),
                         forwardCharges: item.forwardCharges,
                         rtoCharges: item.rtoCharges,
                         codCharges: item.codCharges,
-                        excessCharges: item.excessCharges,
+                        // excessCharges: item.excessCharges,
                         total: item.total,
                     }));
+                    console.log(formattedData, 'formattedData');
+                    
                     setDatas(formattedData);
                 } else {
                     console.error("Invalid response format:", response);

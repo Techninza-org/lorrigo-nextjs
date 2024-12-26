@@ -48,7 +48,8 @@ export async function middleware(request: NextRequest) {
     '/admin/finance/vendor-billing',
     '/admin/finance/client-billing',
     '/admin/users',
-    '/admin/pincodes'
+    '/admin/pincodes',
+    '/admin/invoice',
   ];
 
   const publicRoutes = [
