@@ -10,6 +10,7 @@ import { OrderButton, getBucketStatus } from "./order-action-button";
 import Link from "next/link";
 import HoverCardToolTip from "../hover-card-tooltip";
 import { Checkbox } from "../ui/checkbox";
+import { format, toZonedTime } from 'date-fns-tz';
 
 export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
     {
@@ -133,7 +134,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
             return (
                 <div className="space-y-1">
                     <Badge variant={rowData?.bucket == 6 ? "failure" : "success"}>{rowData?.bucket === 5 ? orderStage?.action : getBucketStatus(rowData?.bucket ?? 0)}</Badge>
-                    <p>{formatDate(`${orderStage?.stageDateTime}`, 'dd MM yyyy | HH:mm a')}</p>
+                    <p>{format(toZonedTime(`${orderStage?.stageDateTime}`, 'UTC'), 'dd-MM-yyyy | hh:mm a')}</p> 
                 </div>
             )
         }
