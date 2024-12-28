@@ -1,6 +1,7 @@
 import { B2COrderType } from '@/types/types';
 import React from 'react';
 import { formatDate } from "date-fns";
+import { format, toZonedTime } from 'date-fns-tz';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { CANCELED } from './order-action-button';
@@ -41,7 +42,8 @@ export const OrderTrackTimeline: React.FC<OrderTrackTimelineProps> = ({ order })
                                         {stage?.location && <li className='text-gray-700 text-sm'> {stage?.location}</li>}
                                     </ul>
                                     <div className="text-xs leading-tight w-full mt-2 text-right">
-                                        {formatDate(`${stage?.stageDateTime}`, 'dd-MM-yyyy | HH:mm a')}
+                                        {/* {formatDate(`${stage?.stageDateTime}`, 'dd-MM-yyyy | HH:mm a')} */}
+                                        {format(toZonedTime(stage?.stageDateTime, 'UTC'), 'dd-MM-yyyy | hh:mm a')}
                                     </div>
                                 </div>
                             </div>
