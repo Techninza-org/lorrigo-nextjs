@@ -69,6 +69,28 @@ export const AdminAwbCols: ColumnDef<any>[] = [
         }
     },
     {
+        header: 'Created At',
+        accessorKey: 'createdAt',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("createdAt")}</p>
+                </div>
+            )
+        }
+    },
+    {
+        header: 'Delivered At',
+        accessorKey: 'deliveredAt',
+        cell: ({ row }) => {
+            return (
+                <div className="space-y-1 items-center">
+                    <p>{row.getValue("deliveredAt")}</p>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Forward Charges',
         accessorKey: 'forwardCharges',
         cell: ({ row }) => {

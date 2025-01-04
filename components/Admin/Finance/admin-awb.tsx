@@ -30,8 +30,9 @@ export default function AdminAwb() {
                         fromCity: item.fromCity,
                         toCity: item.toCity,
                         orderId: item.orderId,
+                        createdAt: item.createdAt,
+                        deliveredAt: item.deliveredAt,
                     }));
-                    console.log(formattedData, 'formattedData');
 
                     setDatas(formattedData);
                 } else {
@@ -70,6 +71,8 @@ const DownloadCsv = ({ id }: { id: any }) => {
         { id: "recipientName", displayName: "Recipient Name" },
         { id: "fromCity", displayName: "From City" },
         { id: "toCity", displayName: "To City" },
+        { id: "createdAt", displayName: "Created At" },
+        { id: "deliveredAt", displayName: "Delivered At" },
         { id: "forwardCharges", displayName: "Forward Charges" },
         { id: "rtoCharges", displayName: "RTO Charges" },
         { id: "codCharges", displayName: "COD Charges" },
@@ -92,7 +95,11 @@ const DownloadCsv = ({ id }: { id: any }) => {
                         fromCity: item.fromCity,
                         toCity: item.toCity,
                         orderId: item.orderId,
+                        createdAt: item.createdAt,
+                        deliveredAt: item.deliveredAt,
                     }));
+                    console.log(formattedData, 'ddd');
+                    
 
                     setDatas(formattedData);
                 } else {
