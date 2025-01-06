@@ -1328,7 +1328,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const getInvoices = async () => {
     try {
-      const res = await axiosIWAuth.get('/seller/invoice');
+      const res = await axiosIWAuth.get('/seller/invoices');
       setInvoices(res.data.invoices)
     } catch (error) {
       console.error('Error fetching data:', error);

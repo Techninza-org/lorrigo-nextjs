@@ -229,10 +229,17 @@ export const AdminClientBillingCols: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 <div className="items-center flex gap-1">
-                    <p>{formatCurrencyForIndia(( Number(row.getValue("orderCharges")) + Number(row.getValue("fwExcessCharge") || 0)) || 0)}</p>
+                    {formatCurrencyForIndia(
+                        (
+                            (rowData.isForwardApplicable ? Number(rowData.rtoCharge || 0) : 0) +
+                            (rowData.isRTOApplicable ? Number(rowData.rtoCharge || 0) : 0) +
+                            (rowData.isRTOApplicable ? 0 : Number(rowData.codValue || 0))
+                        ) || 0
+                    )}
                     <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
-                        <div>Forward Charge: { rowData.rtoCharge }</div>
+                        <div>Forward Charge: {rowData.isForwardApplicable ? rowData.rtoCharge : 0}</div>
                         <div>RTO Charge: {rowData.isRTOApplicable ? rowData.rtoCharge : 0}</div>
+                        <div>COD Value: {Number(rowData.codValue).toFixed(2)}</div>
                     </HoverCardToolTip>
                 </div>
             )

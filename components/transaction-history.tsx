@@ -147,6 +147,7 @@ export const TransactionsHistory = () => {
                             <TableHead className="text-center">Status</TableHead>
                             <TableHead className="text-center">Description</TableHead>
                             <TableHead className="text-center">Amount</TableHead>
+                            <TableHead className="text-center">Previous Balance</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -172,6 +173,8 @@ export const TransactionsHistory = () => {
                                         <Link className="text-center" href={`/track/${item?.desc?.split(" ")[1]?.replace(/,$/, "")}` || "#"}>{item?.desc}</Link>
                                     </TableCell>
                                     <TableCell>{formatCurrencyForIndia(Number(item?.amount) ?? 0)}</TableCell>
+                                    <TableCell>{isNaN(Number(item?.lastWalletBalance)) ? "" : formatCurrencyForIndia((Number(item?.lastWalletBalance)))}</TableCell>
+
                                 </TableRow>
                             )
                         }) :

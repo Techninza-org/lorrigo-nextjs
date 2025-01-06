@@ -27,6 +27,7 @@ import { RaiseDisputeModal } from "../modal/raise-dispute-modal";
 import { DisputeDetails } from "../modal/dispute-details-modal";
 import { DisputeUploadModal } from "../modal/dispute-upload-modal";
 import { AlertPaymentModal } from "../modal/alert-payment-modal";
+import { PayForInvoice } from "../modal/pay-invoice-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -74,6 +75,7 @@ export const ModalProvider = () => {
       <B2BShipNowModal/>
       <RaiseDisputeModal />
       <DisputeDetails />
+      <PayForInvoice />
 
     </>
   );
