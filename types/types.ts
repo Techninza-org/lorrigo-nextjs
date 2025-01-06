@@ -272,6 +272,7 @@ export interface PaymentTransaction {
   sellerId: string;
   desc: string;
   merchantTransactionId: string;
+  lastWalletBalance: string;
   amount: string;
   code: string;
   data: Record<string, any>;
