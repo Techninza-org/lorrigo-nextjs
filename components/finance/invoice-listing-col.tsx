@@ -10,6 +10,7 @@ import { Button } from "../ui/button";
 import { DownloadIcon } from "lucide-react";
 import { useSellerProvider } from "../providers/SellerProvider";
 import React, { useEffect } from "react";
+import { useModal } from "@/hooks/use-model-store";
 
 export const InvoiceListingCols: any = [
     {
@@ -51,6 +52,17 @@ export const InvoiceListingCols: any = [
         }
     },
     {
+        header: 'Due Amount',
+        cell: ({ row }: { row: any }) => {
+            const rowData = row.original;
+            return (
+                <div className="space-y-1 items-center">
+                    <p>&#8377; {rowData.dueAmount}</p>
+                </div>
+            )
+        }
+    },
+    {
         header: "Download",
         accessorKey: 'pdf',
         cell: ({ row }: { row: any }) => {
@@ -67,7 +79,8 @@ export const InvoiceListingCols: any = [
         cell: ({ row }: { row: any }) => {
             const rowData = row.original;
             return (
-                <PayNow row={rowData} />
+                // <PayNow row={rowData} />
+                <PayNowButton row={rowData} />
             )
         }
     },
@@ -134,6 +147,27 @@ const DownloadCsv = ({ id }: { id: any }) => {
         </div>
     );
 };
+
+const PayNowButton = ({ row }: { row: any }) => {
+    const { onOpen } = useModal();
+    return (
+        row?.status?.toLowerCase() === "paid" ? (
+            <Badge variant={'secondary'} className="bg-green-100 tracking-wide text-green-500">Paid</Badge>
+        ) :
+            (
+                <button
+                    disabled={row?.isPrepaidInvoice}
+                    onClick={() => onOpen('payForInvoice', { invoicePaymentDetails: row })}
+                    className={cn(
+                        "space-y-1 items-center text-blue-500",
+                        row?.isPrepaidInvoice && "hidden disabled:cursor-not-allowed"
+                    )}
+                >
+                    Pay Now
+                </button >
+            )
+    )
+}
 
 const PayNow = ({ row }: { row: any }) => {
     const { payInvoiceIntent } = usePaymentGateway();
