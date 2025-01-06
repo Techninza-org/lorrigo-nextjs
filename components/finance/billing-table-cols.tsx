@@ -19,7 +19,7 @@ export const SellerBillingCols: ColumnDef<any>[] = [
             return (
                 <div className="space-y-1 items-center">
                     {/* <div>{row.getValue("billingDate")}</div> */}
-                    <p>{row.getValue("billingDate") ?  format(row.getValue("billingDate"), "dd-MM-yyyy") : null}</p>
+                    <p>{row.getValue("billingDate") ? format(row.getValue("billingDate"), "dd-MM-yyyy") : null}</p>
                 </div>
             )
         }
@@ -144,11 +144,18 @@ export const SellerBillingCols: ColumnDef<any>[] = [
             const rowData = row.original;
             return (
                 <div className="items-center flex gap-1">
-                    <p>{formatCurrencyForIndia((Number(row.getValue("billingAmount")) + Number(row.getValue("orderCharges"))) || 0)}</p>
+                    {/* <p>{formatCurrencyForIndia((Number(row.getValue("billingAmount")) + Number(row.getValue("orderCharges"))) || 0)}</p> */}
+                    {formatCurrencyForIndia(
+                        (
+                            (rowData.isForwardApplicable ? Number(rowData.rtoCharge || 0) : 0) +
+                            (rowData.isRTOApplicable ? Number(rowData.rtoCharge || 0) : 0) +
+                            Number(rowData.codValue || 0)
+                        ) || 0
+                    )}
                     <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
                         <div>Forward Charge: {rowData.isForwardApplicable ? rowData.rtoCharge : 0}</div>
                         <div>RTO Charge: {rowData.isRTOApplicable ? rowData.rtoCharge : 0}</div>
-                        <div>COD Value: {rowData.codValue}</div>
+                        <div>COD Value: {Number(rowData.codValue).toFixed(2)}</div>
                     </HoverCardToolTip>
                 </div>
             )

@@ -2,7 +2,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
 import { Copy, ShoppingCartIcon } from "lucide-react";
-import { formatDate } from "date-fns";
 import { formatPhoneNumberIntl } from "react-phone-number-input";
 import { formatCurrencyForIndia, handleCopyText } from "@/lib/utils";
 import { Badge } from "../ui/badge";
@@ -45,7 +44,7 @@ export const OrderStatusCol: ColumnDef<B2COrderType>[] = [
                     <p className="font-medium underline underline-offset-4 text-base text-blue-800 flex items-center">
                         <Link href={`/track/${rowData._id}`}>{rowData.order_reference_id}</Link>
                         <Copy className="ml-2 cursor-pointer" size={15} onClick={() => handleCopyText(`${rowData.order_reference_id}`)} /></p>
-                    {rowData?.order_invoice_date && <p>{formatDate(`${rowData?.order_invoice_date}`, 'dd MM yyyy | HH:mm a')}</p>}
+                    {rowData?.order_invoice_date && <p>{format(toZonedTime(`${rowData?.order_invoice_date}`, 'UTC'), 'dd-MM-yyyy | hh:mm a')}</p>}
                     <p className="uppercase flex gap-1"><ShoppingCartIcon size={18} /> {rowData?.channelName?.toLowerCase() === "shopify" ? "Shopify" : "Custom"}</p>
                 </div>
             )
