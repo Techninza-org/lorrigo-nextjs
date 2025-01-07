@@ -239,7 +239,7 @@ export const AdminClientBillingCols: ColumnDef<any>[] = [
                     <HoverCardToolTip Icon={<InfoIcon size={13} />} side="top" className="flex-col max-w-fit">
                         <div>Forward Charge: {rowData.isForwardApplicable ? rowData.rtoCharge : 0}</div>
                         <div>RTO Charge: {rowData.isRTOApplicable ? rowData.rtoCharge : 0}</div>
-                        <div>COD Value: {Number(rowData.codValue).toFixed(2)}</div>
+                        {!rowData.isRTOApplicable && <div>COD Value: {Number(rowData.codValue).toFixed(2)}</div>}
                     </HoverCardToolTip>
                 </div>
             )
