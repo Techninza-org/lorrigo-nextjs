@@ -1,7 +1,7 @@
 "use client";
 
 import { Nav } from "./nav";
-import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings, Wallet, Lock, CircleSlash, DollarSign } from "lucide-react";
+import { HandCoins, HandIcon, Home, MapPin, Settings, ShoppingCart, TrendingUpIcon, Truck, User, LucideSettings, Wallet, Lock, CircleSlash, DollarSign, CreditCard } from "lucide-react";
 import { TopNav } from "./top-nav";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -179,6 +179,12 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             icon: DollarSign,
             href: "/admin/invoice",
             department: 'users'
+        },
+        {
+            title: "NEFT Payments",
+            icon: CreditCard,
+            href: "/admin/neft",
+            department: 'finance'
         },
     ];
     

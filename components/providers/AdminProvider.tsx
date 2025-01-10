@@ -59,6 +59,9 @@ interface AdminContextType {
     getAllInvoices: () => void;
     invoices: any[];
     getInvoiceAwbTransactionsAdmin: (id: any) => Promise<any>;
+    handleCreateNeftPayment: (invoiceNumber: string, paymentReferenceNumber: string, bankName: string, amount: string, transactionDate: string) => Promise<boolean>;
+    getNeftPayments: () => Promise<any>;
+    neft: any[];
 }
 
 const AdminContext = createContext<AdminContextType | null>(null);
@@ -84,6 +87,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
     const [subadmins, setSubadmins] = useState([])
     const [disputes, setDisputes] = useState([]);
     const [invoices, setInvoices] = useState<any[]>([]);
+    const [neft, setNeft] = useState<any[]>([]);
 
     const { toast } = useToast();
     const router = useRouter()
@@ -116,6 +120,48 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
         }
     }, [userToken, axiosIWAuth, getHub, router, toast])
+
+    const handleCreateNeftPayment = async (invoiceNumber: string, paymentReferenceNumber: string, bankName: string, amount: string, transactionDate: any) => {
+        try {
+            const res = await axiosIWAuth.post('/admin/create-neft', {
+                invoiceNumber,
+                paymentReferenceNumber,
+                bankName,
+                amount,
+                transactionDate
+            });
+            if (res.data?.valid) {
+                toast({
+                    variant: "default",
+                    title: "NEFT Payment",
+                    description: "NEFT Payment created successfully",
+                });
+                return true;
+            }
+            toast({
+                variant: "destructive",
+                title: "NEFT Payment",
+                description: "Failed to create NEFT Payment",
+            });
+            return false
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.response.data.message || "Something went wrong",
+            });
+            return false
+        }
+    }
+
+    const getNeftPayments = async () => {
+        try {
+            const res = await axiosIWAuth.get('/admin/neft');
+            setNeft(res.data.neftPayments)
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
 
     const getAllSellers = async () => {
         try {
@@ -609,6 +655,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
             getSubadmins()
             getDisputes()
             getAllInvoices()
+            getNeftPayments()
         }
     }, [user, userToken])
 
@@ -661,7 +708,10 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 handleRejectDispute,
                 getAllInvoices,
                 invoices,
-                getInvoiceAwbTransactionsAdmin
+                getInvoiceAwbTransactionsAdmin,
+                handleCreateNeftPayment,
+                getNeftPayments,
+                neft
 
             }}
         >

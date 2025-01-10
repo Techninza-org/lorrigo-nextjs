@@ -28,6 +28,7 @@ import { DisputeDetails } from "../modal/dispute-details-modal";
 import { DisputeUploadModal } from "../modal/dispute-upload-modal";
 import { AlertPaymentModal } from "../modal/alert-payment-modal";
 import { PayForInvoice } from "../modal/pay-invoice-modal";
+import { NEFTTransactionForm } from "../modal/add-neft-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -76,6 +77,7 @@ export const ModalProvider = () => {
       <RaiseDisputeModal />
       <DisputeDetails />
       <PayForInvoice />
+      <NEFTTransactionForm />
 
     </>
   );
