@@ -99,8 +99,8 @@ const DownloadCsv = ({ id }: { id: any }) => {
     const { getInvoiceAwbTransactions } = useSellerProvider();
     const [datas, setDatas] = React.useState([]);
     const cols = [
-        { id: "invoice_no", displayName: "Invoice No" },
         { id: "awb", displayName: "AWB" },
+        { id: "invoice_no", displayName: "Invoice No" },
         { id: "orderId", displayName: "Order ID" },
         { id: "zone", displayName: "Zone" },
         { id: "recipientName", displayName: "Recipient Name" },
@@ -133,8 +133,6 @@ const DownloadCsv = ({ id }: { id: any }) => {
                     createdAt: item.createdAt,
                     deliveredAt: item.deliveredAt,
                 }));
-                console.log(formattedData, 'ddd');
-                
 
                 setDatas(formattedData);
             } else {
