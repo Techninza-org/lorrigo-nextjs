@@ -70,6 +70,14 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                     title: "Invoice",
                     href: "/finance/invoice",
                 },
+                {
+                    title: "Dispute",
+                    href: "/finance/disputes",
+                },
+                {
+                    title: "Billing Dispute",
+                    href: "/finance/billing-disputes",
+                },
 
             ],
         },
