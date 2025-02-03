@@ -9,7 +9,7 @@ import CsvDownloader from 'react-csv-downloader';
 import { Button } from "../ui/button";
 import { DownloadIcon } from "lucide-react";
 import { useSellerProvider } from "../providers/SellerProvider";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useModal } from "@/hooks/use-model-store";
 
 export const InvoiceListingCols: any = [
@@ -97,7 +97,9 @@ export const InvoiceListingCols: any = [
 
 const DownloadCsv = ({ id }: { id: any }) => {
     const { getInvoiceAwbTransactions } = useSellerProvider();
-    const [datas, setDatas] = React.useState([]);
+    const [datas, setDatas] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
     const cols = [
         { id: "awb", displayName: "AWB" },
         { id: "invoice_no", displayName: "Invoice No" },
@@ -114,9 +116,10 @@ const DownloadCsv = ({ id }: { id: any }) => {
         { id: "total", displayName: "Total" },
     ];
 
-    function getData(): ReturnType<() => void> {
-        getInvoiceAwbTransactions(id)
-        .then((response: any) => {
+    const getData = async () => {
+        setIsLoading(true);
+        try {
+            const response = await getInvoiceAwbTransactions(id);
             if (response) {
                 const formattedData = response.map((item: any) => ({
                     invoice_no: id,
@@ -133,33 +136,102 @@ const DownloadCsv = ({ id }: { id: any }) => {
                     createdAt: item.createdAt,
                     deliveredAt: item.deliveredAt,
                 }));
-
                 setDatas(formattedData);
             } else {
                 console.error("Invalid response format:", response);
             }
-
-        })
-        .catch((error: any) => {
+        } catch (error) {
             console.error("Error fetching AWB transactions:", error);
-        });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     useEffect(() => {
-        getData()
-        return () => getData()
-    }, [])
+        getData();
+    }, [id]);
+
+    const handleDownload = async () => {
+        await getData();
+    };
 
     return (
         <div className="space-y-1 items-center text-blue-500">
             <CsvDownloader filename="AwbTransacs" datas={datas} columns={cols}>
-                <Button variant={'webPageBtn'} size={'icon'} onClick={getData}>
+                <Button variant={'webPageBtn'} size={'icon'} onClick={handleDownload} disabled={isLoading}>
                     <DownloadIcon size={18} />
                 </Button>
             </CsvDownloader>
         </div>
     );
 };
+// const DownloadCsv = ({ id }: { id: any }) => {
+//     const { getInvoiceAwbTransactions } = useSellerProvider();
+//     console.log("id", id);
+    
+//     const [datas, setDatas] = React.useState([]);
+//     const cols = [
+//         { id: "awb", displayName: "AWB" },
+//         { id: "invoice_no", displayName: "Invoice No" },
+//         { id: "orderId", displayName: "Order ID" },
+//         { id: "zone", displayName: "Zone" },
+//         { id: "recipientName", displayName: "Recipient Name" },
+//         { id: "fromCity", displayName: "From City" },
+//         { id: "toCity", displayName: "To City" },
+//         { id: "createdAt", displayName: "Created At" },
+//         { id: "deliveredAt", displayName: "Delivered At" },
+//         { id: "forwardCharges", displayName: "Forward Charges" },
+//         { id: "rtoCharges", displayName: "RTO Charges" },
+//         { id: "codCharges", displayName: "COD Charges" },
+//         { id: "total", displayName: "Total" },
+//     ];
+
+//     function getData(): ReturnType<() => void> {
+//         getInvoiceAwbTransactions(id)
+//         .then((response: any) => {
+//             if (response) {
+//                 const formattedData = response.map((item: any) => ({
+//                     invoice_no: id,
+//                     awb: item.awb,
+//                     forwardCharges: item.forwardCharges,
+//                     rtoCharges: item.rtoCharges,
+//                     codCharges: item.codCharges,
+//                     total: item.total,
+//                     zone: item.zone,
+//                     recipientName: item.recipientName,
+//                     fromCity: item.fromCity,
+//                     toCity: item.toCity,
+//                     orderId: item.orderId,
+//                     createdAt: item.createdAt,
+//                     deliveredAt: item.deliveredAt,
+//                 }));
+
+//                 setDatas(formattedData);
+//             } else {
+//                 console.error("Invalid response format:", response);
+//             }
+
+//         })
+//         .catch((error: any) => {
+//             console.error("Error fetching AWB transactions:", error);
+//         });
+//     };
+
+//     useEffect(() => {
+//         getData()
+//         return () => getData()
+//     }, [])
+
+//     return (
+//         <div className="space-y-1 items-center text-blue-500">
+//             <CsvDownloader filename="AwbTransacs" datas={datas} columns={cols}>
+//                 <Button variant={'webPageBtn'} size={'icon'} onClick={getData}>
+//                     <DownloadIcon size={18} />
+//                 </Button>
+//             </CsvDownloader>
+//         </div>
+//     );
+// };
 
 const PayNowButton = ({ row }: { row: any }) => {
     const { onOpen } = useModal();
