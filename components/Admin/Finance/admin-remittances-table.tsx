@@ -139,7 +139,7 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
                         onChange={(e) => setFiltering(e.target.value)}
                         className="max-w-sm"
                     />
-                    <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
+                    <DatePickerWithRange date={date} setDate={setDate} />
                     <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
                         <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
                     </CsvDownloader>
