@@ -214,7 +214,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
       order_creation_date: row?.createdAt && format(row?.createdAt, 'dd MM yyyy | HH:mm a'),
       order_reference_id: row.order_reference_id,
       awb: row.awb,
-      order_invoice_date: format(row.order_invoice_date, 'dd MM yyyy | HH:mm a'),
+      order_invoice_date: row.order_invoice_date,//format(row?.order_invoice_date, 'dd MM yyyy | HH:mm a'),
       channelName: row.channelName || "Custom",
       customerName: row.customerDetails.name,
       customerEmail: row.customerDetails.email || "",
