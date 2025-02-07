@@ -73,8 +73,9 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
         if ((!date?.from || !date?.to) || (date.from === date.to)) return
         const a = data.filter((row) => {
 
-            if (date?.from && date?.to) {
-                return parse(row?.remittanceDate, 'yyyy-MM-dd', new Date()).toISOString() > new Date(date.from).toISOString() && parse(row?.remittanceDate, 'yyyy-MM-dd', new Date()).toISOString() < new Date(date.to).toISOString()
+            if (date?.from && date?.to && row?.remittanceDate) {
+                const remittanceDate = new Date(row.remittanceDate);
+                return remittanceDate > new Date(date.from) && remittanceDate < new Date(date.to);
             }
             return false;
         });

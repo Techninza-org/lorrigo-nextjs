@@ -30,7 +30,8 @@ export const OrderStatusCol: ColumnDef<RemittanceType>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{formatDate(parse(rowData.remittanceDate, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy')}</p>
+                    {/* <p>{formatDate(parse(rowData.remittanceDate, 'yyyy-MM-dd', new Date()), 'MMM dd, yyyy')}</p> */}
+                    <p>{rowData.remittanceDate}</p>
                 </div>
             )
         }
