@@ -42,6 +42,7 @@ interface AdminContextType {
     clientNVendorBills: any;
     b2bClientNVendorBills: any;
     getClientNVendorBillingData: () => void;
+    invoicePayment: (invoiceNumber: string, amount: string) => Promise<boolean>;
     handleUserConfig: (values: z.infer<typeof UserConfigSchema>) => Promise<boolean> | undefined;
     walletDeduction: (values: z.infer<typeof WalletDeductionSchema>) => Promise<boolean> | undefined;
 
@@ -592,6 +593,23 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
         }
     }
 
+    const invoicePayment = async (invoiceNumber: string, amount: string) => {
+        try {
+            const res = await axiosIWAuth.post(`/admin/invoice/payment`, { amount, invoiceNumber });
+            if (res.data?.valid) {
+                toast({
+                    variant: "default",
+                    title: "Invoice Payment Update Successfully",
+                });
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
+
     const handleUpdateSubadminPaths = async (id: string, paths: string[]) => {
         try {
             const res = await axiosIWAuth.put(`/admin/subadmins/${id}`, { paths });
@@ -631,16 +649,16 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
 
     const getInvoiceAwbTransactionsAdmin = async (id: any) => {
         try {
-          const res = await axiosIWAuth.get(`/admin/invoice-awbs/${id}`);
-          if(res.data?.valid){
-            return res.data.awbTransacs;
-          }else{
-            return []
-          }
+            const res = await axiosIWAuth.get(`/admin/invoice-awbs/${id}`);
+            if (res.data?.valid) {
+                return res.data.awbTransacs;
+            } else {
+                return []
+            }
         } catch (error) {
-          console.error('Error fetching data:', error);
+            console.error('Error fetching data:', error);
         }
-      }
+    }
 
     useEffect(() => {
         if ((!!user || !!userToken) && user?.role === "admin") {
@@ -686,6 +704,7 @@ export default function AdminProvider({ children }: { children: React.ReactNode 
                 handleEditUser,
                 handleUserConfig,
 
+                invoicePayment,
                 upateSellerB2BAssignedCouriers,
                 updateSellerCourierPrice,
                 updateSellerB2BCourierPrice,

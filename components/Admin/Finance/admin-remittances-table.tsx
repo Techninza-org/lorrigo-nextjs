@@ -73,8 +73,9 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
         if ((!date?.from || !date?.to) || (date.from === date.to)) return
         const a = data.filter((row) => {
 
-            if (date?.from && date?.to) {
-                return parse(row?.remittanceDate, 'yyyy-MM-dd', new Date()).toISOString() > new Date(date.from).toISOString() && parse(row?.remittanceDate, 'yyyy-MM-dd', new Date()).toISOString() < new Date(date.to).toISOString()
+            if (date?.from && date?.to && row?.remittanceDate) {
+                const remittanceDate = new Date(row.remittanceDate);
+                return remittanceDate > new Date(date.from) && remittanceDate < new Date(date.to);
             }
             return false;
         });
@@ -121,7 +122,7 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
             client_name: row.sellerId.name,
             Remittance_no: row.remittanceId,
             awbs: row?.orders?.map((o: any) => o.awb).join("| "),
-            date: row.remittanceDate,
+            date: format(new Date(row.remittanceDate), "yyyy-MM-dd"),
             txnId: row.BankTransactionId,
             Status: row.remittanceStatus,
             TAmt: row.remittanceAmount,
@@ -139,7 +140,7 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
                         onChange={(e) => setFiltering(e.target.value)}
                         className="max-w-sm"
                     />
-                    <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
+                    <DatePickerWithRange date={date} setDate={setDate} />
                     <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
                         <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={20} /></Button>
                     </CsvDownloader>

@@ -71,12 +71,12 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                     href: "/finance/invoice",
                 },
                 {
-                    title: "Dispute Billing",
-                    href: "/finance/billing-disputes",
+                    title: "Dispute",
+                    href: "/finance/disputes",
                 },
                 {
-                    title: "Disputes",
-                    href: "/finance/disputes",
+                    title: "Billing Dispute",
+                    href: "/finance/billing-disputes",
                 },
 
             ],
@@ -119,6 +119,11 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                     title: "Manual Wallet Deduction",
                     href: "/admin/finance/manual-deduction",
                     path: 'finance/manual-deduction',
+                },
+                {
+                    title: "NEFT",
+                    href: "/admin/finance/payment",
+                    path: 'finance/payment',
                 },
             ]
         },

@@ -7,7 +7,6 @@ import { SellerB2BBillingCols, SellerBillingCols } from "./billing-table-cols"
 
 export const Billing = () => {
     const { sellerBilling, sellerB2BBilling } = useSellerProvider()
-    console.log(sellerBilling, "sellerB2BBilling")
     return (
         <Tabs defaultValue="b2c">
             <TabsList>

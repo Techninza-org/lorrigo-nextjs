@@ -217,7 +217,7 @@ export default function ImageUpload({ Label,
         {
           onUploadProgress,
           cancelToken: cancelSource.token,
-          responseType: "blob"
+          responseType: "blob",
         }
       );
 
@@ -241,7 +241,7 @@ export default function ImageUpload({ Label,
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Order not found or invalid order id",
+        description: `Please enter the valid Object Id ${error}`,
       });
       return error;
     }

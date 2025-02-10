@@ -8,6 +8,7 @@ import { RemittanceType } from "@/types/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useModal } from "@/hooks/use-model-store";
+import { format } from "date-fns";
 
 export const AdminRemittancesCols: ColumnDef<RemittanceType>[] = [
     {
@@ -56,7 +57,9 @@ export const AdminRemittancesCols: ColumnDef<RemittanceType>[] = [
             const rowData = row.original;
             return (
                 <div className="space-y-1 items-center">
-                    <p>{formatDate(parse(rowData.remittanceDate, "yyyy-MM-dd", new Date()), 'MMM dd, yyyy')}</p>
+                    {/* <p>{formatDate(parse(rowData.remittanceDate, "yyyy-MM-dd", new Date()), 'MMM dd, yyyy')}</p> */}
+                    {/* <p>{rowData.remittanceDate}</p> */}
+                    <p>{format(new Date(rowData.remittanceDate), "yyyy-MM-dd")}</p>
                 </div>
             )
         }
