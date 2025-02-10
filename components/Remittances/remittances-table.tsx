@@ -132,7 +132,7 @@ export function RemittancesTable({ data, columns }: { data: any[], columns: Colu
     const datas = filteredData.map((row) => {
         return {
             remittanceId: row.remittanceId,
-            remittanceDate: row.remittanceDate, //formatDate(parse(row.remittanceDate, 'yyyy-MM-dd', new Date()), 'dd MM yyyy'),
+            remittanceDate: format(new Date(row.remittanceDate), "yyyy-MM-dd"), //formatDate(parse(row.remittanceDate, 'yyyy-MM-dd', new Date()), 'dd MM yyyy'),
             BankTransactionId: row.BankTransactionId,
             remittanceStatus: row.remittanceStatus,
             remittanceAmount: row.remittanceAmount

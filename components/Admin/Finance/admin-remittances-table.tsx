@@ -122,7 +122,7 @@ export function RemittancesTableAdmin({ data, columns }: { data: any[], columns:
             client_name: row.sellerId.name,
             Remittance_no: row.remittanceId,
             awbs: row?.orders?.map((o: any) => o.awb).join("| "),
-            date: row.remittanceDate,
+            date: format(new Date(row.remittanceDate), "yyyy-MM-dd"),
             txnId: row.BankTransactionId,
             Status: row.remittanceStatus,
             TAmt: row.remittanceAmount,
