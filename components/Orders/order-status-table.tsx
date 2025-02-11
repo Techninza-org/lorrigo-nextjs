@@ -38,7 +38,7 @@ import { DatePickerWithRange } from "../DatePickerWithRange"
 import { DateRange } from "react-day-picker"
 import CsvDownloader from 'react-csv-downloader';
 import { getBucketStatus } from "./order-action-button"
-import { format, formatDate } from "date-fns"
+import { format, formatDate, parse } from "date-fns"
 import {
   ArrowUpCircle,
   CheckCircle2,
@@ -70,9 +70,15 @@ type IFilterStatus = {
 
 export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
   const { userToken } = useAuth();
+  const searchParams = useSearchParams();
+
   const { handleOrderSync, seller, getAllOrdersByStatus } = useSellerProvider()
   const router = useRouter();
-  const status = useSearchParams().get("status");
+  const status = searchParams.get("status");
+  const fromDate = searchParams.get("from");
+  const toDate = searchParams.get("to");
+  const urlPageIndex = searchParams.get("page");
+  const initialPageIndex = urlPageIndex ? parseInt(urlPageIndex) - 1 : 0;
 
   const [filtering, setFiltering] = React.useState<string>("")
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -80,19 +86,23 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   )
   const [statusFilter, setStatusFilter] = React.useState<IFilterStatus | null>(null)
   const [rowSelection, setRowSelection] = React.useState({})
+  const [currentPage, setCurrentPage] = React.useState<number>(0);
+
+
   const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
+    pageIndex: initialPageIndex,
     pageSize: 20,
   });
 
-  const defaultToDate = new Date();
-  const defaultFromDate = new Date();
-  defaultFromDate.setDate(defaultToDate.getDate() - 10);
+  const defaultToDate = toDate ? parse(toDate, 'MM/dd/yyyy', new Date()) : new Date();
+  const defaultFromDate = fromDate
+    ? parse(fromDate, 'MM/dd/yyyy', new Date())
+    : new Date(new Date().setDate(new Date().getDate() - 10));
 
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
     to: defaultToDate,
-  })
+  });
 
   const [filteredData, setFilteredData] = React.useState<any[]>(data)
 
@@ -121,7 +131,18 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
+    // onPaginationChange: setPagination,
+    autoResetPageIndex: false,
+    onPaginationChange: (updater) => {
+      if (typeof updater === 'function') {
+        const newPagination = updater(pagination);
+        setPagination(newPagination);
+        setCurrentPage(newPagination.pageIndex);
+      } else {
+        setPagination(updater);
+        setCurrentPage(updater.pageIndex);
+      }
+    },
     state: {
       columnFilters,
       pagination,
@@ -133,18 +154,58 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
 
   const { onOpen } = useModal();
 
+  // Update URL when date range changes
+  const updateURL = React.useCallback((params: {
+    from?: string,
+    to?: string,
+    page?: number,
+    status?: string
+  }) => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        current.set(key, value.toString());
+      }
+    });
+    const search = current.toString();
+    const query = search ? `?${search}` : "";
+    console.log(query, "query")
+    router.push(`/orders${query}`);
+  }, [router, searchParams]);
+
+  const updateURLWithDateRange = React.useCallback((newDate: DateRange | undefined) => {
+    if (!newDate?.from || !newDate?.to) return;
+
+    const fromDateStr = formatDate(newDate.from.toString(), "MM/dd/yyyy");
+    const toDateStr = formatDate(newDate.to.toString(), "MM/dd/yyyy");
+
+    updateURL({
+      from: fromDateStr,
+      to: toDateStr,
+      page: pagination.pageIndex + 1
+    });
+  }, [pagination.pageIndex, updateURL]);
+
+  // Handle date range changes
+  const handleDateRangeChange = (newDate: DateRange | undefined) => {
+    setDate(newDate);
+    if (newDate?.from && newDate?.to) {
+      updateURLWithDateRange(newDate);
+    }
+  };
+
   const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
   const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 0)
   const newOrders = allNewStageOrders.map(row => row.original)
 
   const handleMultiLableDownload = () => {
     onOpen("downloadLabels", { orders: selectedRows })
-    router.push('/print/invoices')
+    router.push(`/print/invoices?page=${currentPage + 1}`)
   }
 
   const handleMultiManifestDownload = () => {
     onOpen("downloadManifests", { orders: selectedRows })
-    router.push('/print/manifest')
+    router.push(`/print/manifest?page=${currentPage + 1}`)
   }
 
   React.useEffect(() => {
@@ -214,7 +275,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
       order_creation_date: row?.createdAt && format(row?.createdAt, 'dd MM yyyy | HH:mm a'),
       order_reference_id: row.order_reference_id,
       awb: row.awb,
-      order_invoice_date: row.order_invoice_date,//format(row?.order_invoice_date, 'dd MM yyyy | HH:mm a'),
+      order_invoice_date: row.order_invoice_date && format(row.order_invoice_date, 'dd MM yyyy | HH:mm a'),
       channelName: row.channelName || "Custom",
       customerName: row.customerDetails.name,
       customerEmail: row.customerDetails.email || "",
@@ -227,9 +288,30 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   })
 
   React.useEffect(() => {
-    if (date?.from && date?.to) getAllOrdersByStatus({ status: status || "all", fromDate: formatDate(date?.from.toString(), "MM/dd/yyyy"), toDate: formatDate(date?.to.toString(), "MM/dd/yyyy") })
+    if (date?.from && date?.to) {
+      getAllOrdersByStatus({
+        status: status || "all",
+        fromDate: formatDate(date.from.toString(), "MM/dd/yyyy"),
+        toDate: formatDate(date.to.toString(), "MM/dd/yyyy"),
+        onSuccess: () => {
+          table.setPageIndex(currentPage);
+        }
+      });
+    }
   }, [userToken, date, status]);
 
+
+  React.useEffect(() => {
+    if (urlPageIndex) {
+      console.log(urlPageIndex, "urlPageIndex")
+      const pageIdx = parseInt(urlPageIndex) - 1; // Convert to 0-based index
+      if (pageIdx !== currentPage) {
+        const idx = parseInt(urlPageIndex) > currentPage ? parseInt(urlPageIndex) : currentPage + 1
+        updateURL({ page: idx });
+        table.setPageIndex(idx - 1);
+      }
+    }
+  }, [urlPageIndex, currentPage, updateURL, table]);
 
   return (
     <div className="w-full">
@@ -241,16 +323,16 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
             onChange={(e) => setFiltering(e.target.value)}
             className="w-64"
           />
-          <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
+          <DatePickerWithRange date={date} setDate={handleDateRangeChange} disabledDates={{ after: new Date() }} />
           <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
-            <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={18 } /></Button>
+            <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={18} /></Button>
           </CsvDownloader>
           <div className="grid grid-cols-2 gap-3 ">
-          <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
-          {
-            seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
-          }
-        </div>
+            <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
+            {
+              seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
+            }
+          </div>
         </div>
         <div className="mt-3 sm:mt-0">
           {

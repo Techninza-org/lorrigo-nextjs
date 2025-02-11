@@ -97,7 +97,7 @@ export default function CourierPage() {
                         </div>
                         <div>
                             <p className="text-sm font-semibold">Volumetric Weight (kg)</p>
-                            <p className="text-sm">{volWeight.toFixed(2)} kg</p>
+                            <p className="text-sm">{volWeight} kg</p>
                         </div>
                         {courierPartners.orderDetails.payment_mode != 0 && <div>
                             <p className="text-sm font-semibold">Collectable Amount</p>

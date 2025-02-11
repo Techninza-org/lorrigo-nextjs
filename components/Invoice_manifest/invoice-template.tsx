@@ -81,7 +81,7 @@ export const InvoiceTemplate = ({ order }: { order?: B2COrderType }) => {
                 <div><span className="font-semibold">GST:</span> {order?.sellerDetails?.sellerGSTIN}</div>
             )}
         </div>
-        <LorrigoLogo />
+        {/* <LorrigoLogo /> */}
     </div>
 </div>
 

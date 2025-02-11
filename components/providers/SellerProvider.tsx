@@ -24,7 +24,7 @@ import { B2BOrderType } from "@/types/B2BTypes";
 import { b2bformDataSchema } from "../Orders/b2b/b2b-form";
 import { B2BrateCalcSchema } from "../RateCalc/b2b-rate-calc-form";
 import { useModal } from "@/hooks/use-model-store";
-import { format, subDays } from "date-fns";
+import { format, parse, subDays } from "date-fns";
 
 interface SellerContextType {
   sellerDashboard: any; // type: "D2C" | "B2B";
@@ -39,7 +39,7 @@ interface SellerContextType {
   handleUpdateOrder: (order: z.infer<typeof EditFormSchema>) => boolean | Promise<boolean>;
   orders: B2COrderType[];
   reverseOrders: B2COrderType[];
-  getAllOrdersByStatus: ({ status, fromDate, toDate }: { status: string, fromDate?: string, toDate?: string }) => Promise<any[]>;
+  getAllOrdersByStatus: ({ status, fromDate, toDate, onSuccess }: { status: string, fromDate?: string, toDate?: string, onSuccess?: () => void }) => Promise<any[]>;
   getCourierPartners: (orderId: string, type: string) => Promise<any>;
   getBulkCourierPartners: (orderIds: string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
@@ -94,7 +94,7 @@ interface SellerContextType {
   disputes: any[];
   handleAcceptDispute: (awb: string) => Promise<boolean>;
   getInvoiceAwbTransactions: (id: string) => Promise<any>;
-  
+
 }
 
 interface sellerCustomerFormType {
@@ -174,8 +174,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const { fetchWalletBalance } = usePaymentGateway();
   const router = useRouter()
 
-  const status = useSearchParams().get("status");
-
+    const searchParams = useSearchParams();
+  
+    const status = searchParams.get("status");
+    const urlFromDate = searchParams.get("from");
+    const urlToDate = searchParams.get("to");
+  
   const getSellerAssignedCourier = async () => {
     try {
       const res = await axiosIWAuth.get(`/seller/couriers`);
@@ -240,18 +244,39 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const getAllOrdersByStatus = async ({ status, fromDate, toDate }: { status: string, fromDate?: string, toDate?: string }) => {
+  const getAllOrdersByStatus = async ({ 
+    status, 
+    fromDate: paramFromDate, 
+    toDate: paramToDate, 
+    onSuccess 
+  }: { 
+    status: string, 
+    fromDate?: string, 
+    toDate?: string, 
+    onSuccess?: () => void 
+  }) => {
+  
     const today = new Date();
-    const formattedToDate = toDate ? toDate : format(today, 'MM/dd/yyyy');
-
-    const formattedFromDate = fromDate
-      ? fromDate
-      : format(subDays(today, 10), 'MM/dd/yyyy');
-
-    let url =
-      status === 'all'
-        ? `/order?from=${formattedFromDate}&to=${formattedToDate}`
-        : `/order?status=${status}&from=${formattedFromDate}&to=${formattedToDate}`;
+    let formattedToDate = paramToDate || urlToDate || format(today, 'MM/dd/yyyy');
+    let formattedFromDate = paramFromDate || urlFromDate || format(subDays(today, 10), 'MM/dd/yyyy');
+  
+    // Validate dates
+    try {
+      // Verify if dates are in correct format
+      parse(formattedFromDate, 'MM/dd/yyyy', new Date());
+      parse(formattedToDate, 'MM/dd/yyyy', new Date());
+    } catch (error) {
+      console.error('Invalid date format:', error);
+      // Fallback to default dates if parsing fails
+      formattedToDate = format(today, 'MM/dd/yyyy');
+      formattedFromDate = format(subDays(today, 10), 'MM/dd/yyyy');
+    }
+  
+    // Construct URL with date parameters
+    const url = status === 'all'
+      ? `/order?from=${formattedFromDate}&to=${formattedToDate}`
+      : `/order?status=${status}&from=${formattedFromDate}&to=${formattedToDate}`;
+  
     try {
       const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
@@ -260,12 +285,18 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         const reverseOrders = orders.filter((order: any) => order.isReverseOrder);
         setOrders(filteredOrders);
         setReverseOrders(reverseOrders);
+        if (onSuccess) onSuccess();
         return orders;
       }
     } catch (error) {
       console.error('Error fetching data:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to fetch orders"
+      });
     }
-  }
+  };
 
   const getCourierPartners = async (orderId: string, type: string) => {
     try {
@@ -684,7 +715,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         });
         getAllOrdersByStatus({ status: status || "all" })
         fetchWalletBalance();
-        router.push('/orders')
+        router.refresh()
         return true;
       }
       toast({
@@ -1274,6 +1305,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
           title: "Dispute",
           description: "Dispute raised successfully",
         });
+        getDisputes();
         return true;
       }
       if (res.data?.message === "Dispute already raised") {
@@ -1348,9 +1380,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const getInvoiceAwbTransactions = async (id: any) => {
     try {
       const res = await axiosIWAuth.get(`/seller/invoice-awbs/${id}`);
-      if(res.data?.valid){
+      if (res.data?.valid) {
         return res.data.awbTransacs;
-      }else{
+      } else {
         return []
       }
     } catch (error) {

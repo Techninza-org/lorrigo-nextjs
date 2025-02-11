@@ -81,9 +81,7 @@ export const RaiseDisputeModal = () => {
 
     const onSubmit = async (values: z.infer<typeof RaiseDisputeSchema>) => {
         try {
-            console.log(values, awb, "values");
-
-            handleRaiseDispute(awb, values.disputeDetails.description, values.disputeDetails.image ?? "", Number(values.disputeDetails.orderBoxHeight) , Number(values.disputeDetails.orderBoxWidth), Number(values.disputeDetails.orderBoxLength), Number(values.disputeDetails.orderWeight));
+            await handleRaiseDispute(awb, values.disputeDetails.description, values.disputeDetails.image ?? "", Number(values.disputeDetails.orderBoxHeight) , Number(values.disputeDetails.orderBoxWidth), Number(values.disputeDetails.orderBoxLength), Number(values.disputeDetails.orderWeight));
 
             onClose();
         } catch (error) {

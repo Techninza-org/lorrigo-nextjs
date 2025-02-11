@@ -196,55 +196,54 @@ export const GenerateB2BManifest = ({ order }: { order?: B2BOrderType }) => {
 }
 
 export const InvoiceBulk = ({ orders }: { orders: B2COrderType[] }) => {
-    const LABELS_PER_PAGE = 4
+    const LABELS_PER_PAGE = 4;
     
-    const pdfContentRef = useRef<HTMLDivElement>(null)
-    const [isGenerating, setIsGenerating] = useState(false)
+    const pdfContentRef = useRef<HTMLDivElement>(null);
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const chunkArray = (array: B2COrderType[], size: number) => {
-        const chunkedArray = []
+        const chunkedArray = [];
         for (let i = 0; i < array.length; i += size) {
-            chunkedArray.push(array.slice(i, i + size))
+            chunkedArray.push(array.slice(i, i + size));
         }
-        return chunkedArray
-    }
+        return chunkedArray;
+    };
 
-    const chunkedOrders = chunkArray(orders, LABELS_PER_PAGE)
+    const chunkedOrders = chunkArray(orders, LABELS_PER_PAGE);
 
     const generatePDF = async () => {
-        if (!pdfContentRef.current) return
-        setIsGenerating(true)
+        if (!pdfContentRef.current) return;
+        setIsGenerating(true);
 
         try {
-            const pdf = new jsPDF('p', 'mm', 'a4')
-            const pdfWidth = pdf.internal.pageSize.getWidth()
-            const pdfHeight = pdf.internal.pageSize.getHeight()
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
 
             for (let i = 0; i < chunkedOrders.length; i++) {
-                const pageElement = document.getElementById(`page-${i}`)
+                const pageElement = document.getElementById(`page-${i}`);
                 if (pageElement) {
                     const canvas = await html2canvas(pageElement, {
                         scale: 2,
                         logging: false,
                         useCORS: true,
-                        allowTaint: true
-                    })
-                    const imgData = canvas.toDataURL('image/jpeg', 1.0)
+                        allowTaint: true,
+                    });
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
 
-                    if (i > 0) pdf.addPage()
-
-                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight)
+                    if (i > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
                 }
             }
 
-            pdf.save(`bulk_label_${Date.now()}.pdf`)
+            pdf.save(`bulk_label_${Date.now()}.pdf`);
         } catch (error) {
-            console.error('Error generating PDF:', error)
-            alert('An error occurred while generating the PDF. Please try again.')
+            console.error('Error generating PDF:', error);
+            alert('An error occurred while generating the PDF. Please try again.');
         } finally {
-            setIsGenerating(false)
+            setIsGenerating(false);
         }
-    }
+    };
 
     return (
         <div className="container mx-auto sm:p-4 p-1">
@@ -259,10 +258,14 @@ export const InvoiceBulk = ({ orders }: { orders: B2COrderType[] }) => {
             </Button>
             <div ref={pdfContentRef}>
                 {chunkedOrders.map((orderChunk, pageIndex) => (
-                    <div key={pageIndex} id={`page-${pageIndex}`} className="p-1 sm:p-4">
-                        <div className="grid sm:grid-cols-2 gap-9 h-full sm:p-5 p-2">
+                    <div
+                        key={pageIndex}
+                        id={`page-${pageIndex}`}
+                        className="p-1 sm:p-4 min-h-[500px] flex flex-col justify-start"
+                    >
+                        <div className="grid sm:grid-cols-2 grid-rows-2 gap-9 h-full sm:p-5 p-2 place-items-start">
                             {orderChunk.map((order: B2COrderType) => (
-                                <div key={order._id} className="w-full p-1 sm:p-3 overflow-hidden">
+                                <div key={order._id} className={`w-full p-1 sm:p-3 overflow-hidden text-sm`}>
                                     <InvoiceTemplate order={order} />
                                 </div>
                             ))}
@@ -271,8 +274,8 @@ export const InvoiceBulk = ({ orders }: { orders: B2COrderType[] }) => {
                 ))}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export const GenerateBulkManifest = ({ orders }: { orders: B2COrderType[] }) => {
     const { toPDF, targetRef } = usePDF({ filename: 'bulk_Manifest.pdf' });
