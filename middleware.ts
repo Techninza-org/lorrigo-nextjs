@@ -31,6 +31,7 @@ export async function middleware(request: NextRequest) {
     '/pay',
 
     // public files
+    '/dispute-sample.csv',
     '/bulk-sample.csv',
     '/pickup_bulk_sample.csv',
     '/order-bulk-sample.csv',
