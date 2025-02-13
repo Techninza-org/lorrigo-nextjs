@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/table"
 import { DownloadIcon, Upload } from "lucide-react"
 import { useModal } from "@/hooks/use-model-store"
+import { handleFileDownload } from "@/lib/utils"
 
 export function DisputeTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
     const [filtering, setFiltering] = React.useState<string>("")
@@ -114,13 +115,18 @@ export function DisputeTable({ data, columns }: { data: any[], columns: ColumnDe
                         <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={18} /></Button>
                     </CsvDownloader>
                 </div>
-                <Button
-                    variant="webPageBtn"
-                    size="icon"
-                    onClick={() => onOpen("DisputeUpload")}
-                    className="flex items-center justify-center"
-                > <Upload size={18} />
-                </Button>
+                <div className="flex gap-2 items-center">
+                    <Button variant={'webPageBtn'} size={'icon'} onClick={() => handleFileDownload("dispute-sample.csv")}>
+                      <DownloadIcon size={18} />
+                    </Button>
+                    <Button
+                        variant="webPageBtn"
+                        size="icon"
+                        onClick={() => onOpen("DisputeUpload")}
+                        className="flex items-center justify-center"
+                    > <Upload size={18} />
+                    </Button>
+                </div>
             </div>
 
             <div className="w-full border rounded-md">

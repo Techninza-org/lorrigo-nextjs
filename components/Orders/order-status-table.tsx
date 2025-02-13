@@ -122,7 +122,6 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   }, [data, filtering, statusFilter?.value]);
 
 
-
   const table = useReactTable({
     data: filteredDataMemo,
     columns,
@@ -131,16 +130,31 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
-    // onPaginationChange: setPagination,
     autoResetPageIndex: false,
     onPaginationChange: (updater) => {
       if (typeof updater === 'function') {
         const newPagination = updater(pagination);
         setPagination(newPagination);
         setCurrentPage(newPagination.pageIndex);
+
+        // Update URL with the correct page number
+        updateURL({
+          page: newPagination.pageIndex + 1,
+          from: date?.from ? formatDate(date.from.toString(), "MM/dd/yyyy") : undefined,
+          to: date?.to ? formatDate(date.to.toString(), "MM/dd/yyyy") : undefined,
+          status: status || "all"
+        });
       } else {
         setPagination(updater);
         setCurrentPage(updater.pageIndex);
+
+        // Update URL with the correct page number
+        updateURL({
+          page: updater.pageIndex + 1,
+          from: date?.from ? formatDate(date.from.toString(), "MM/dd/yyyy") : undefined,
+          to: date?.to ? formatDate(date.to.toString(), "MM/dd/yyyy") : undefined,
+          status: status || "all"
+        });
       }
     },
     state: {
@@ -154,7 +168,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
 
   const { onOpen } = useModal();
 
-  // Update URL when date range changes
+  // important func to update url
   const updateURL = React.useCallback((params: {
     from?: string,
     to?: string,
@@ -169,30 +183,8 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     });
     const search = current.toString();
     const query = search ? `?${search}` : "";
-    console.log(query, "query")
     router.push(`/orders${query}`);
   }, [router, searchParams]);
-
-  const updateURLWithDateRange = React.useCallback((newDate: DateRange | undefined) => {
-    if (!newDate?.from || !newDate?.to) return;
-
-    const fromDateStr = formatDate(newDate.from.toString(), "MM/dd/yyyy");
-    const toDateStr = formatDate(newDate.to.toString(), "MM/dd/yyyy");
-
-    updateURL({
-      from: fromDateStr,
-      to: toDateStr,
-      page: pagination.pageIndex + 1
-    });
-  }, [pagination.pageIndex, updateURL]);
-
-  // Handle date range changes
-  const handleDateRangeChange = (newDate: DateRange | undefined) => {
-    setDate(newDate);
-    if (newDate?.from && newDate?.to) {
-      updateURLWithDateRange(newDate);
-    }
-  };
 
   const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
   const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 0)
@@ -294,24 +286,28 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
         fromDate: formatDate(date.from.toString(), "MM/dd/yyyy"),
         toDate: formatDate(date.to.toString(), "MM/dd/yyyy"),
         onSuccess: () => {
-          table.setPageIndex(currentPage);
+          // Only set page index if URL has a page parameter
+          if (urlPageIndex) {
+            const pageIdx = parseInt(urlPageIndex) - 1;
+            table.setPageIndex(pageIdx);
+          }
         }
       });
     }
-  }, [userToken, date, status]);
-
+  }, [userToken, date, status, urlPageIndex]);
 
   React.useEffect(() => {
     if (urlPageIndex) {
-      console.log(urlPageIndex, "urlPageIndex")
-      const pageIdx = parseInt(urlPageIndex) - 1; // Convert to 0-based index
-      if (pageIdx !== currentPage) {
-        const idx = parseInt(urlPageIndex) > currentPage ? parseInt(urlPageIndex) : currentPage + 1
-        updateURL({ page: idx });
-        table.setPageIndex(idx - 1);
-      }
+      const pageIdx = parseInt(urlPageIndex) - 1;
+      setPagination(prev => ({
+        ...prev,
+        pageIndex: pageIdx
+      }));
+      setCurrentPage(pageIdx);
+      table.setPageIndex(pageIdx);
     }
-  }, [urlPageIndex, currentPage, updateURL, table]);
+  }, [urlPageIndex, table]);
+
 
   return (
     <div className="w-full">
@@ -323,7 +319,7 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
             onChange={(e) => setFiltering(e.target.value)}
             className="w-64"
           />
-          <DatePickerWithRange date={date} setDate={handleDateRangeChange} disabledDates={{ after: new Date() }} />
+          <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
           <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
             <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={18} /></Button>
           </CsvDownloader>
