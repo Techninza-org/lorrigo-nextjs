@@ -6,6 +6,8 @@ interface CodCharge {
 interface PriceDetails {
     basePrice: number;
     incrementPrice: number;
+    isRTOSameAsFW: boolean;
+    flatRTOCharge: number;
 }
 
 export interface ShippingRate {

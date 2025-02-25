@@ -49,6 +49,7 @@ import {
 import { useAdminProvider } from "@/components/providers/AdminProvider"
 import { useEffect } from "react"
 import { useSearchParams } from "next/navigation"
+import { Switch } from "@/components/ui/switch"
 
 
 
@@ -61,22 +62,32 @@ export const CourierPriceConfigureSchema = z.object({
     withinCity: z.object({
         basePrice: z.string().min(1, "Base Price is required"),
         incrementPrice: z.string().min(1, "Increment Price is required"),
+        isRTOSameAsFW: z.boolean().default(true),
+        flatRTOCharge: z.string().optional(),
     }),
     withinZone: z.object({
         basePrice: z.string().min(1, "Base Price is required"),
         incrementPrice: z.string().min(1, "Increment Price is required"),
+        isRTOSameAsFW: z.boolean().default(true),
+        flatRTOCharge: z.string().optional(),
     }),
     withinMetro: z.object({
         basePrice: z.string().min(1, "Base Price is required"),
         incrementPrice: z.string().min(1, "Increment Price is required"),
+        isRTOSameAsFW: z.boolean().default(true),
+        flatRTOCharge: z.string().optional(),
     }),
     withinRoi: z.object({
         basePrice: z.string().min(1, "Base Price is required"),
         incrementPrice: z.string().min(1, "Increment Price is required"),
+        isRTOSameAsFW: z.boolean().default(true),
+        flatRTOCharge: z.string().optional(),
     }),
     northEast: z.object({
         basePrice: z.string().min(1, "Base Price is required"),
         incrementPrice: z.string().min(1, "Increment Price is required"),
+        isRTOSameAsFW: z.boolean().default(true),
+        flatRTOCharge: z.string().optional(),
     }),
 });
 
@@ -95,22 +106,32 @@ export const UserCourierConfigure = () => {
             withinCity: {
                 basePrice: "0",
                 incrementPrice: "0",
+                isRTOSameAsFW: true,
+                flatRTOCharge: "0",
             },
             withinZone: {
                 basePrice: "0",
                 incrementPrice: "0",
+                isRTOSameAsFW: true,
+                flatRTOCharge: "0",
             },
             withinMetro: {
                 basePrice: "0",
                 incrementPrice: "0",
+                isRTOSameAsFW: true,
+                flatRTOCharge: "0",
             },
             withinRoi: {
                 basePrice: "0",
                 incrementPrice: "0",
+                isRTOSameAsFW: true,
+                flatRTOCharge: "0",
             },
             northEast: {
                 basePrice: "0",
                 incrementPrice: "0",
+                isRTOSameAsFW: true,
+                flatRTOCharge: "0",
             },
         }
     })
@@ -122,26 +143,36 @@ export const UserCourierConfigure = () => {
             form.setValue('codCharge', {
                 hard: initialCourier.codCharge?.hard?.toString() || "",
                 percent: initialCourier.codCharge?.percent?.toString() || "",
-            }),
-                form.setValue('withinCity', {
-                    basePrice: initialCourier.withinCity.basePrice.toString(),
-                    incrementPrice: initialCourier.withinCity.incrementPrice.toString(),
-                });
+            });
+            form.setValue('withinCity', {
+                basePrice: initialCourier.withinCity.basePrice.toString(),
+                incrementPrice: initialCourier.withinCity.incrementPrice.toString(),
+                isRTOSameAsFW: initialCourier.withinCity.isRTOSameAsFW || true,
+                flatRTOCharge: initialCourier.withinCity.flatRTOCharge?.toString() || "",
+            });
             form.setValue('withinZone', {
                 basePrice: initialCourier.withinZone.basePrice.toString(),
                 incrementPrice: initialCourier.withinZone.incrementPrice.toString(),
+                isRTOSameAsFW: initialCourier.withinZone.isRTOSameAsFW || true,
+                flatRTOCharge: initialCourier.withinZone.flatRTOCharge?.toString() || "",
             });
             form.setValue('withinMetro', {
                 basePrice: initialCourier.withinMetro.basePrice.toString(),
                 incrementPrice: initialCourier.withinMetro.incrementPrice.toString(),
+                isRTOSameAsFW: initialCourier.withinMetro.isRTOSameAsFW || true,
+                flatRTOCharge: initialCourier.withinMetro.flatRTOCharge?.toString() || "",
             });
             form.setValue('withinRoi', {
                 basePrice: initialCourier.withinRoi.basePrice.toString(),
                 incrementPrice: initialCourier.withinRoi.incrementPrice.toString(),
+                isRTOSameAsFW: initialCourier.withinRoi.isRTOSameAsFW || true,
+                flatRTOCharge: initialCourier.withinRoi.flatRTOCharge?.toString() || "",
             });
             form.setValue('northEast', {
                 basePrice: initialCourier.northEast.basePrice.toString(),
                 incrementPrice: initialCourier.northEast.incrementPrice.toString(),
+                isRTOSameAsFW: initialCourier.northEast.isRTOSameAsFW || true,
+                flatRTOCharge: initialCourier.northEast.flatRTOCharge?.toString() || "",
             });
         }
     }, [assignedCouriers, form]);
@@ -164,26 +195,36 @@ export const UserCourierConfigure = () => {
             form.setValue('codCharge', {
                 hard: selectedCourier.codCharge?.hard?.toString() || "",
                 percent: selectedCourier.codCharge?.percent?.toString() || "",
-            }),
-                form.setValue('withinCity', {
-                    basePrice: selectedCourier.withinCity.basePrice.toString(),
-                    incrementPrice: selectedCourier.withinCity.incrementPrice.toString(),
-                });
+            });
+            form.setValue('withinCity', {
+                basePrice: selectedCourier.withinCity.basePrice.toString(),
+                incrementPrice: selectedCourier.withinCity.incrementPrice.toString(),
+                isRTOSameAsFW: selectedCourier.withinCity.isRTOSameAsFW || true,
+                flatRTOCharge: selectedCourier.withinCity.flatRTOCharge?.toString() || "",
+            });
             form.setValue('withinZone', {
                 basePrice: selectedCourier.withinZone.basePrice.toString(),
                 incrementPrice: selectedCourier.withinZone.incrementPrice.toString(),
+                isRTOSameAsFW: selectedCourier.withinZone.isRTOSameAsFW || true,
+                flatRTOCharge: selectedCourier.withinZone.flatRTOCharge?.toString() || "",
             });
             form.setValue('withinMetro', {
                 basePrice: selectedCourier.withinMetro.basePrice.toString(),
                 incrementPrice: selectedCourier.withinMetro.incrementPrice.toString(),
+                isRTOSameAsFW: selectedCourier.withinMetro.isRTOSameAsFW || true,
+                flatRTOCharge: selectedCourier.withinMetro.flatRTOCharge?.toString() || "",
             });
             form.setValue('withinRoi', {
                 basePrice: selectedCourier.withinRoi.basePrice.toString(),
                 incrementPrice: selectedCourier.withinRoi.incrementPrice.toString(),
+                isRTOSameAsFW: selectedCourier.withinRoi.isRTOSameAsFW || true,
+                flatRTOCharge: selectedCourier.withinRoi.flatRTOCharge?.toString() || "",
             });
             form.setValue('northEast', {
                 basePrice: selectedCourier.northEast.basePrice.toString(),
                 incrementPrice: selectedCourier.northEast.incrementPrice.toString(),
+                isRTOSameAsFW: selectedCourier.northEast.isRTOSameAsFW || true,
+                flatRTOCharge: selectedCourier.northEast.flatRTOCharge?.toString() || "",
             });
         }
     };
@@ -260,7 +301,7 @@ export const UserCourierConfigure = () => {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="text-xs font-bold text-zinc-500 dark:text-secondary/70">
-                                    COD Hard (₹)
+                                        COD Hard (₹)
                                     </FormLabel>
                                     <FormControl>
                                         <Input
@@ -349,6 +390,48 @@ export const UserCourierConfigure = () => {
                                                 </FormItem>
                                             )}
                                         />
+                                        <FormField
+                                            control={form.control}
+                                            name="withinCity.isRTOSameAsFW"
+                                            render={({ field }) => (
+                                                <FormItem className="flex items-center gap-3">
+                                                    <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
+                                                        RTO Same as Forward
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        <Switch
+                                                            checked={field.value}
+                                                            onCheckedChange={() => {
+                                                                field.onChange(!field.value);
+                                                                // form.handleSubmit(onSubmit)(); // Trigger form submission
+                                                            }}
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        {
+                                            !form.watch("withinCity.isRTOSameAsFW") && <FormField
+                                                control={form.control}
+                                                name="withinCity.flatRTOCharge"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel className="text-xs font-bold text-zinc-500 dark:text-secondary/70">
+                                                            Flat RTO Charge {form.watch("withinCity.isRTOSameAsFW")?.toString()}
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                disabled={isLoading}
+                                                                placeholder="Enter Flat RTO Charge"
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        }
                                     </div>
                                 </CardContent>
                                 <CardFooter className="flex justify-between">

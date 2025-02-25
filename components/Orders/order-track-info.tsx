@@ -22,7 +22,6 @@ export const OrderTrackInfo = () => {
     const { getOrderDetails } = useSellerProvider()
     const [order, setOrderDetails] = useState<B2COrderType | null>(null)
 
-
     useEffect(() => {
         async function fetchRemittance() {
             const res = await getOrderDetails(params.orderId.toString())
@@ -164,7 +163,7 @@ export const OrderTrackInfo = () => {
                                     Dead Weight
                                 </span>
                                 <div>
-                                    <p className="capitalize">0.5Kg</p>
+                                    <p className="capitalize">{order.orderWeight}Kg</p>
                                 </div>
                             </div>
                             <div>

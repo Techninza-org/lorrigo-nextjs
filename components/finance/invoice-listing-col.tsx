@@ -21,7 +21,7 @@ export const InvoiceListingCols: any = [
             return (
                 <div className="space-y-1 items-center">
                     <Link href={`/finance/invoice/${rowData._id}`}>
-                        <p className="text-blue-500 hover:text-blue-700">{rowData.invoice_id}</p>
+                        <p className="text-blue-500 hover:text-blue-700">{rowData.invoice_number}</p>
                     </Link>
                 </div>
             )
@@ -104,12 +104,14 @@ const DownloadCsv = ({ id }: { id: any }) => {
         { id: "awb", displayName: "AWB" },
         { id: "invoice_no", displayName: "Invoice No" },
         { id: "orderId", displayName: "Order ID" },
+        { id: "orderInvoiceNumber", displayName: "Order Invoice Number" },
         { id: "zone", displayName: "Zone" },
         { id: "recipientName", displayName: "Recipient Name" },
         { id: "fromCity", displayName: "From City" },
         { id: "toCity", displayName: "To City" },
         { id: "createdAt", displayName: "Created At" },
         { id: "deliveredAt", displayName: "Delivered At" },
+        { id: "chargedWeight", displayName: "Charged Weight" },
         { id: "forwardCharges", displayName: "Forward Charges" },
         { id: "rtoCharges", displayName: "RTO Charges" },
         { id: "codCharges", displayName: "COD Charges" },
@@ -122,13 +124,15 @@ const DownloadCsv = ({ id }: { id: any }) => {
             const response = await getInvoiceAwbTransactions(id);
             if (response) {
                 const formattedData = response.map((item: any) => ({
-                    invoice_no: id,
+                    invoice_no: item.invoiceNo,
                     awb: item.awb,
                     forwardCharges: item.forwardCharges,
+                    orderInvoiceNumber: item.orderInvoiceNumber,
                     rtoCharges: item.rtoCharges,
                     codCharges: item.codCharges,
                     total: item.total,
                     zone: item.zone,
+                    chargedWeight: item.chargedWeight,
                     recipientName: item.recipientName,
                     fromCity: item.fromCity,
                     toCity: item.toCity,
