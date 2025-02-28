@@ -8,6 +8,9 @@ interface PriceDetails {
     incrementPrice: number;
     isRTOSameAsFW: boolean;
     flatRTOCharge: number;
+
+    rtoBasePrice: number;
+    rtoIncrementPrice: number;
 }
 
 export interface ShippingRate {
@@ -18,6 +21,9 @@ export interface ShippingRate {
     incrementWeight: number;
     type: string;
     pickupTime: string;
+    isFwdDeduct: boolean;
+    isRtoDeduct: boolean;
+    isCodDeduct: boolean;
     codCharge: CodCharge;
     withinCity: PriceDetails;
     withinZone: PriceDetails;

@@ -7,16 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useAdminProvider } from '@/components/providers/AdminProvider';
 import { useEffect } from 'react';
-import { useToast } from '@/components/ui/use-toast';
-import { Separator } from '@/components/ui/separator';
 
 export const UserConfigSchema = z.object({
     isD2C: z.boolean(),
     isB2B: z.boolean(),
     isPrepaid: z.boolean(),
-    isFW: z.boolean(),
-    isRTO: z.boolean(),
-    isCOD: z.boolean(),
 });
 
 export const UserConfigure = () => {
@@ -28,9 +23,6 @@ export const UserConfigure = () => {
             isD2C: currSeller?.seller?.config?.isD2C || false,
             isB2B: currSeller?.seller?.config?.isB2B || false,
             isPrepaid: currSeller?.seller?.config?.isPrepaid || false,
-            isFW: currSeller?.seller?.config?.isFW || true,
-            isRTO: currSeller?.seller?.config?.isRTO || true,
-            isCOD: currSeller?.seller?.config?.isCOD || true,
         },
     });
 
@@ -40,9 +32,6 @@ export const UserConfigure = () => {
                 isD2C: currSeller.seller.config.isD2C || false,
                 isB2B: currSeller.seller.config.isB2B || false,
                 isPrepaid: currSeller.seller.config.isPrepaid || false,
-                isFW: currSeller.seller.config.isFW || true,
-                isRTO: currSeller.seller.config.isRTO || true,
-                isCOD: currSeller.seller.config.isCOD || true,
             });
         }
     }, [currSeller, form]);
@@ -121,71 +110,6 @@ export const UserConfigure = () => {
                             </FormItem>
                         )}
                     />
-                    <Separator orientation='vertical' />
-                    <FormField
-                        control={form.control}
-                        name="isFW"
-                        render={({ field }) => (
-                            <FormItem className="flex items-center gap-3">
-                                <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
-                                    Forward
-                                </FormLabel>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={() => {
-                                            field.onChange(!field.value);
-                                            form.handleSubmit(onSubmit)(); // Trigger form submission
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="isRTO"
-                        render={({ field }) => (
-                            <FormItem className="flex items-center gap-3">
-                                <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
-                                    RTO
-                                </FormLabel>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={() => {
-                                            field.onChange(!field.value);
-                                            form.handleSubmit(onSubmit)(); // Trigger form submission
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="isCOD"
-                        render={({ field }) => (
-                            <FormItem className="flex items-center gap-3">
-                                <FormLabel className="font-bold text-zinc-500 dark:text-secondary/70">
-                                    COD
-                                </FormLabel>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={() => {
-                                            field.onChange(!field.value);
-                                            form.handleSubmit(onSubmit)(); // Trigger form submission
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
                 </div>
             </form>
         </Form>

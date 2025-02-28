@@ -28,6 +28,7 @@ import { DisputeDetails } from "../modal/dispute-details-modal";
 import { DisputeUploadModal } from "../modal/dispute-upload-modal";
 import { AlertPaymentModal } from "../modal/alert-payment-modal";
 import { PayForInvoice } from "../modal/pay-invoice-modal";
+import { BulkSchedulePickupModal } from "../modal/bulk-schedule-pickup-modal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -48,6 +49,7 @@ export const ModalProvider = () => {
       <SchedulePickupModal />
       <DownloadLableModal />
       <DownloadB2BLableModal />
+      <BulkSchedulePickupModal />
 
       <DownloadManifestModal />
       <CancelOrderDialog />

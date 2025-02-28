@@ -189,6 +189,8 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
   const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
   const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 0)
   const newOrders = allNewStageOrders.map(row => row.original)
+  const allPickupStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 1 && (row.original.orderStages.find((x: any) => x.stage === 67) ? false : true))
+  const allPickupOrders = allPickupStageOrders.map(row => row.original)
 
   const handleMultiLableDownload = () => {
     onOpen("downloadLabels", { orders: selectedRows })
@@ -330,7 +332,13 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
             }
           </div>
         </div>
-        <div className="mt-3 sm:mt-0">
+        <div className="mt-3 sm:mt-0 flex gap-2">
+          {/* <Button variant={'ghost'} size={'sm'}>
+            {table.getSelectedRowModel().rows.length} Selected
+          </Button> */}
+          <Button variant={'webPageBtn'} size={'sm'} onClick={() => table.toggleAllRowsSelected()}>
+            {table.getIsAllRowsSelected() ? "Deselect All" : "Select All"} ({table.getSelectedRowModel().rows.length}/{table.getRowModel().rows.length})
+          </Button>
           {
             selectedRows.length > 0 && (
               <DropdownMenu >
@@ -339,12 +347,15 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
                   size: "sm"
                 }))}>Bulk Actions</DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => onOpen("updateShopifyOrders", { orders: (newOrders as unknown as B2COrderType[]) })}>Update shopify orders</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onOpen("updateShopifyOrders", { orders: (newOrders as unknown as B2COrderType[]) })}>Update shopify orders ({newOrders.length})</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => onOpen("BulkPickupUpdate", { orders: selectedRows })}>Change pickup location</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onOpen("BulkShipNow", { orders: newOrders })}>Bulk Ship Now</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onOpen("BulkShipNow", { orders: newOrders })}>Bulk Ship Now ({newOrders.length})</DropdownMenuItem>
                   <DropdownMenuItem onClick={handleMultiLableDownload}>Download Label</DropdownMenuItem>
                   <DropdownMenuItem onClick={handleMultiManifestDownload}>Download Manifest</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => onOpen("bulkPickupSchedule", { orders: allPickupOrders })}>Bulk Pickup Schedule  ({allPickupOrders.length})</DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => onOpen("cancelBulkOrder", { orders: selectedRows })}>Cancel</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>)

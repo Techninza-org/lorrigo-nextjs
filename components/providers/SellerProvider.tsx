@@ -47,6 +47,7 @@ interface SellerContextType {
   handleCreateBulkD2CShipment: (orderWCouriers: any, charge: number) => boolean | Promise<boolean>;
   handleCancelOrder: (orderId: string[], type: string) => boolean | Promise<boolean>;
   manifestOrder: ({ orderId, scheduleDate }: { orderId: string, scheduleDate: string }) => boolean | Promise<boolean>;
+  bulkManifestOrder: ({ orderIds, scheduleDate }: { orderIds: string[], scheduleDate: string }) => boolean | Promise<boolean>;
   getCityStateFPincode: (pincode: string) => Promise<{ city: string, state: string }>;
   calcRate: (order: any) => Promise<any>;
   getSellerRemittanceDetails: (id: string) => Promise<RemittanceType | undefined>;
@@ -174,12 +175,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const { fetchWalletBalance } = usePaymentGateway();
   const router = useRouter()
 
-    const searchParams = useSearchParams();
-  
-    const status = searchParams.get("status");
-    const urlFromDate = searchParams.get("from");
-    const urlToDate = searchParams.get("to");
-  
+  const searchParams = useSearchParams();
+
+  const status = searchParams.get("status");
+  const urlFromDate = searchParams.get("from");
+  const urlToDate = searchParams.get("to");
+
   const getSellerAssignedCourier = async () => {
     try {
       const res = await axiosIWAuth.get(`/seller/couriers`);
@@ -244,22 +245,22 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const getAllOrdersByStatus = async ({ 
-    status, 
-    fromDate: paramFromDate, 
-    toDate: paramToDate, 
-    onSuccess 
-  }: { 
-    status: string, 
-    fromDate?: string, 
-    toDate?: string, 
-    onSuccess?: () => void 
+  const getAllOrdersByStatus = async ({
+    status,
+    fromDate: paramFromDate,
+    toDate: paramToDate,
+    onSuccess
+  }: {
+    status: string,
+    fromDate?: string,
+    toDate?: string,
+    onSuccess?: () => void
   }) => {
-  
+
     const today = new Date();
     let formattedToDate = paramToDate || urlToDate || format(today, 'MM/dd/yyyy');
     let formattedFromDate = paramFromDate || urlFromDate || format(subDays(today, 10), 'MM/dd/yyyy');
-  
+
     // Validate dates
     try {
       // Verify if dates are in correct format
@@ -271,12 +272,12 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       formattedToDate = format(today, 'MM/dd/yyyy');
       formattedFromDate = format(subDays(today, 10), 'MM/dd/yyyy');
     }
-  
+
     // Construct URL with date parameters
     const url = status === 'all'
       ? `/order?from=${formattedFromDate}&to=${formattedToDate}`
       : `/order?status=${status}&from=${formattedFromDate}&to=${formattedToDate}`;
-  
+
     try {
       const res = await axiosIWAuth.get(url);
       if (res.data?.valid) {
@@ -772,6 +773,39 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await axiosIWAuth.post(`/shipment/manifest`, {
         orderId: orderId,
+        pickupDate: scheduleDate
+      });
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "Order",
+          description: "Order manifested successfully",
+        });
+        getAllOrdersByStatus({ status: status || "all" })
+        getB2BOrders();
+        router.refresh();
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Order",
+        description: res.data.message,
+      });
+      return false
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.response.data.message || "Something went wrong",
+      });
+      return false
+    }
+  }
+
+  const bulkManifestOrder = async ({ orderIds, scheduleDate }: { orderIds: string[], scheduleDate: string }) => {
+    try {
+      const res = await axiosIWAuth.post(`/shipment/bulk-manifest`, {
+        orderIds: orderIds,
         pickupDate: scheduleDate
       });
       if (res.data?.valid) {
@@ -1482,6 +1516,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         handleCreateD2CShipment,
         handleCancelOrder,
         manifestOrder,
+        bulkManifestOrder,
         getCityStateFPincode,
         sellerDashboard,
         handleUpdateOrder,
