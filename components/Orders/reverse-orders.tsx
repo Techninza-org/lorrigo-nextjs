@@ -77,7 +77,7 @@ export default function ReverseOrders() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                    <OrderStatusTable columns={OrderStatusCol} data={reverseFilterOrders} />
+                    <OrderStatusTable paginationInfo={{}} columns={OrderStatusCol} data={reverseFilterOrders} />
                 </CardContent>
             </Card>
         </>

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { BoxIcon } from "lucide-react";
 
 export default function Orders() {
-    const { orders } = useSellerProvider()
+    const { orders, pagination } = useSellerProvider()
 
     return (
         <Card className="col-span-4">
@@ -28,7 +28,7 @@ export default function Orders() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="pl-2">
-                <OrderStatusTable columns={OrderStatusCol} data={orders || []} />
+                <OrderStatusTable columns={OrderStatusCol} data={orders || []}  paginationInfo={pagination?.b2corder || {}}/>
             </CardContent>
         </Card>
     )

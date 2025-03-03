@@ -39,7 +39,7 @@ interface SellerContextType {
   handleUpdateOrder: (order: z.infer<typeof EditFormSchema>) => boolean | Promise<boolean>;
   orders: B2COrderType[];
   reverseOrders: B2COrderType[];
-  getAllOrdersByStatus: ({ status, fromDate, toDate, onSuccess }: { status: string, fromDate?: string, toDate?: string, onSuccess?: () => void }) => Promise<any[]>;
+  getAllOrdersByStatus: ({ status, fromDate, toDate, page, limit, onSuccess }: { limit?: number, status: string, fromDate?: string, page?: number, toDate?: string, onSuccess?: () => void }) => Promise<any[]>;
   getCourierPartners: (orderId: string, type: string) => Promise<any>;
   getBulkCourierPartners: (orderIds: string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
@@ -95,7 +95,7 @@ interface SellerContextType {
   disputes: any[];
   handleAcceptDispute: (awb: string) => Promise<boolean>;
   getInvoiceAwbTransactions: (id: string) => Promise<any>;
-
+  pagination: any;
 }
 
 interface sellerCustomerFormType {
@@ -145,6 +145,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const [codprice, setCodprice] = useState<any>(0);
   const [assignedCouriers, setAssignedCouriers] = useState<any[]>([]);
   const [disputes, setDisputes] = useState<any[]>([]);
+  const [pagination, setPagination] = useState<any>({});
 
   const [sellerCustomerForm, setSellerCustomerForm] = useState<sellerCustomerFormType>({
     sellerForm: {
@@ -249,53 +250,71 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     status,
     fromDate: paramFromDate,
     toDate: paramToDate,
-    onSuccess
+    onSuccess,
+    page = 1,
+    limit = 50,
+    search,
   }: {
-    status: string,
-    fromDate?: string,
-    toDate?: string,
-    onSuccess?: () => void
+    status: string;
+    fromDate?: string;
+    toDate?: string;
+    page?: number;
+    limit?: number;
+    search?: string;
+    onSuccess?: () => void;
   }) => {
-
     const today = new Date();
-    let formattedToDate = paramToDate || urlToDate || format(today, 'MM/dd/yyyy');
-    let formattedFromDate = paramFromDate || urlFromDate || format(subDays(today, 10), 'MM/dd/yyyy');
+    let formattedToDate = paramToDate || format(today, 'MM/dd/yyyy');
+    let formattedFromDate = paramFromDate || format(subDays(today, 10), 'MM/dd/yyyy');
 
     // Validate dates
     try {
-      // Verify if dates are in correct format
       parse(formattedFromDate, 'MM/dd/yyyy', new Date());
       parse(formattedToDate, 'MM/dd/yyyy', new Date());
     } catch (error) {
       console.error('Invalid date format:', error);
-      // Fallback to default dates if parsing fails
       formattedToDate = format(today, 'MM/dd/yyyy');
       formattedFromDate = format(subDays(today, 10), 'MM/dd/yyyy');
     }
 
-    // Construct URL with date parameters
-    const url = status === 'all'
-      ? `/order?from=${formattedFromDate}&to=${formattedToDate}`
-      : `/order?status=${status}&from=${formattedFromDate}&to=${formattedToDate}`;
+    let url = `/order?from=${formattedFromDate}&to=${formattedToDate}`;
+
+    if (status !== 'all') {
+      url += `&status=${status}`;
+    }
+
+    url += `&page=${page}&limit=${limit}`;
+
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
 
     try {
       const res = await axiosIWAuth.get(url);
+
       if (res.data?.valid) {
         const orders = res.data.response.orders;
+        const pagination = res.data.response.pagination;
+        setPagination({ b2corder: { ...pagination } });
+
         const filteredOrders = orders.filter((order: any) => !order.isReverseOrder);
         const reverseOrders = orders.filter((order: any) => order.isReverseOrder);
+
         setOrders(filteredOrders);
         setReverseOrders(reverseOrders);
+
         if (onSuccess) onSuccess();
         return orders;
       }
+      return [];
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch orders"
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to fetch orders',
       });
+      return [];
     }
   };
 
@@ -1565,7 +1584,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         getDisputes,
         disputes,
         handleAcceptDispute,
-        getInvoiceAwbTransactions
+        getInvoiceAwbTransactions,
+        pagination
 
       }}
     >

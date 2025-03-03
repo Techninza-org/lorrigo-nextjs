@@ -269,10 +269,9 @@ export const SellerForm = ({ isLoading, form, isPinLoading }: { isLoading: boole
                                         Contact Number
                                     </FormLabel>
                                     <FormControl>
-                                        <PhoneInput
+                                        <Input
                                             disabled={isLoading}
-                                            className="bg-zinc-300/10 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                            defaultCountry='IN'
+                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             maxLength={11}
                                             placeholder='Enter the contact number'
                                             {...field}

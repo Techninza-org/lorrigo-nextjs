@@ -46,7 +46,7 @@ const SellerOrdersAdmin = () => {
                     Shipments
                 </CardTitle>
                 <CardContent className="pl-2">
-                    <OrderStatusTable columns={OrderStatusColAdmin} data={orders} />
+                    <OrderStatusTable paginationInfo={{}} columns={OrderStatusColAdmin} data={orders} />
                 </CardContent>
             </CardHeader>
         </Card>

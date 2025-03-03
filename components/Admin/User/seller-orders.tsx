@@ -32,7 +32,7 @@ export default function SellerOrders({sellerId}: {sellerId: any}) {
 
     return (
         <CardContent className="pl-2">
-            <OrderStatusTable columns={OrderStatusCol} data={order || []} />
+            <OrderStatusTable paginationInfo={{}} columns={OrderStatusCol} data={order || []} />
         </CardContent>
     )
 }

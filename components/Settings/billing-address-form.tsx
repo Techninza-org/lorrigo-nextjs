@@ -213,10 +213,9 @@ const BillingAddressForm = () => {
                                         Contact Number
                                     </FormLabel>
                                     <FormControl>
-                                        <PhoneInput
+                                        <Input
                                             disabled={isLoading}
-                                            className="border-2 rounded-md dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0 shadow-sm w-full"
-                                            defaultCountry='IN'
+                                            className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                             placeholder='Enter the contact number'
                                             {...field}
                                             maxLength={11}

@@ -200,11 +200,9 @@ const EditUserForm = () => {
                                     Phone <span className='text-red-600'>*</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <PhoneInput
+                                    <Input
                                         disabled={isLoading}
                                         className="bg-white border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                        inputComponent={Input}
-                                        defaultCountry='IN'
                                         placeholder='Enter the contact number'
                                         {...field}
                                     />

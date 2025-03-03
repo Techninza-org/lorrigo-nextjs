@@ -1,53 +1,29 @@
 "use client"
 
-import * as React from "react"
+import React from "react"
 import {
-  ColumnDef,
-  ColumnFiltersState,
+  type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { DownloadIcon, LucideIcon } from "lucide-react"
-
-import { Button, buttonVariants } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useSellerProvider } from "../providers/SellerProvider"
-import { cn, filterData } from "@/lib/utils"
+import { filterData } from "@/lib/utils"
 import { useModal } from "@/hooks/use-model-store"
-import { B2COrderType } from "@/types/types"
-import { DatePickerWithRange } from "../DatePickerWithRange"
-import { DateRange } from "react-day-picker"
-import CsvDownloader from 'react-csv-downloader';
-import { getBucketStatus } from "./order-action-button"
+import type { DateRange } from "react-day-picker"
 import { format, formatDate, parse } from "date-fns"
-import {
-  ArrowUpCircle,
-  CheckCircle2,
-  Circle,
-  HelpCircle,
-  XCircle,
-} from "lucide-react"
-import { OrderStatusFilter } from "./order-status-filter"
+import { HelpCircle } from "lucide-react"
 import { useAuth } from "../providers/AuthProvider"
+import { OrderTableFilters } from "./table-component/OrderTableFilters"
+import { OrderTableBulkActions } from "./table-component/OrderTableBulkActions"
+import { OrderTablePagination } from "./table-component/OrderTablePagination"
+import { OrderStatusSkeleton } from "./table-component/OrderStatusSkeleton"
+import { useDebounce } from "../ui/MultipleSelector"
 
 const statuses = [
   {
@@ -63,135 +39,156 @@ const statuses = [
 ]
 
 type IFilterStatus = {
-  value: string;
-  label: string;
-  icon: LucideIcon;
+  value: string
+  label: string
+  icon: React.ElementType
 }
 
-export function OrderStatusTable({ data, columns }: { data: any[], columns: ColumnDef<any, any>[] }) {
-  const { userToken } = useAuth();
-  const searchParams = useSearchParams();
-
+export function OrderStatusTable({
+  data,
+  columns,
+  paginationInfo,
+}: { data: any[]; columns: ColumnDef<any, any>[]; paginationInfo: any }) {
+  const { userToken } = useAuth()
+  const searchParams = useSearchParams()
   const { handleOrderSync, seller, getAllOrdersByStatus } = useSellerProvider()
-  const router = useRouter();
-  const status = searchParams.get("status");
-  const fromDate = searchParams.get("from");
-  const toDate = searchParams.get("to");
-  const urlPageIndex = searchParams.get("page");
-  const initialPageIndex = urlPageIndex ? parseInt(urlPageIndex) - 1 : 0;
+  const router = useRouter()
+  const pathname = usePathname()
 
-  const [filtering, setFiltering] = React.useState<string>("")
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+  // Get URL parameters
+  const status = searchParams.get("status")
+  const fromDate = searchParams.get("from")
+  const toDate = searchParams.get("to")
+  const urlPageIndex = searchParams.get("page")
+  const urlFilter = searchParams.get("filter")
+  const urlStatusFilter = searchParams.get("statusFilter")
+
+  const initialPageIndex = urlPageIndex ? Number.parseInt(urlPageIndex) - 1 : 0
+
+  // State for filters and pagination
+  const [filtering, setFiltering] = React.useState<string>(urlFilter || "")
+  const debouncedFilter = useDebounce(filtering, 500)
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [statusFilter, setStatusFilter] = React.useState<IFilterStatus | null>(
+    urlStatusFilter ? statuses.find((s) => s.value === urlStatusFilter) || null : null,
   )
-  const [statusFilter, setStatusFilter] = React.useState<IFilterStatus | null>(null)
   const [rowSelection, setRowSelection] = React.useState({})
-  const [currentPage, setCurrentPage] = React.useState<number>(0);
-
+  const [currentPage, setCurrentPage] = React.useState<number>(initialPageIndex)
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
+  const [lastFetchParams, setLastFetchParams] = React.useState<string>("")
+  const [tableData, setTableData] = React.useState<any[]>(data)
 
   const [pagination, setPagination] = React.useState({
     pageIndex: initialPageIndex,
     pageSize: 20,
-  });
+  })
 
-  const defaultToDate = toDate ? parse(toDate, 'MM/dd/yyyy', new Date()) : new Date();
+  // Set up date range from URL or defaults
+  const defaultToDate = toDate ? parse(toDate, "MM/dd/yyyy", new Date()) : new Date()
   const defaultFromDate = fromDate
-    ? parse(fromDate, 'MM/dd/yyyy', new Date())
-    : new Date(new Date().setDate(new Date().getDate() - 10));
+    ? parse(fromDate, "MM/dd/yyyy", new Date())
+    : new Date(new Date().setDate(new Date().getDate() - 10))
 
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
     to: defaultToDate,
-  });
+  })
 
-  const [filteredData, setFilteredData] = React.useState<any[]>(data)
+  // Update table data when data prop changes
+  React.useEffect(() => {
+    if (data && Array.isArray(data) && data.length > 0) {
+      setTableData(data)
+    }
+  }, [data])
 
+  // Filter data based on search and status filter
   const filteredDataMemo = React.useMemo(() => {
-    let filtered = filterData(data, filtering);
-
-    if (statusFilter?.value === "unassigned") {
-      filtered = filtered.filter((row: { awb: null }) => (row.awb === "") || (row.awb === null) || (row.awb === undefined));
-    } else if (statusFilter?.value === "assigned") {
-      filtered = filtered.filter((row: { awb: string | null }) => row.awb !== "" && row.awb !== null && row.awb !== undefined);
-    } else if (statusFilter?.value === "all") {
-      filtered = filtered;
+    if (!data || !Array.isArray(data)) {
+      return []
     }
 
+    let filtered = filterData(data, debouncedFilter)
 
-    return filtered;
-  }, [data, filtering, statusFilter?.value]);
+    if (statusFilter?.value === "unassigned") {
+      filtered = filtered.filter((row: { awb: null }) => row.awb === "" || row.awb === null || row.awb === undefined)
+    } else if (statusFilter?.value === "assigned") {
+      filtered = filtered.filter(
+        (row: { awb: string | null }) => row.awb !== "" && row.awb !== null && row.awb !== undefined,
+      )
+    }
 
+    return filtered
+  }, [urlPageIndex, data, debouncedFilter, statusFilter?.value])
 
+  // Set up table
   const table = useReactTable({
-    data: filteredDataMemo,
+    data: tableData, // Use tableData instead of data
     columns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
-    autoResetPageIndex: false,
-    onPaginationChange: (updater) => {
-      if (typeof updater === 'function') {
-        const newPagination = updater(pagination);
-        setPagination(newPagination);
-        setCurrentPage(newPagination.pageIndex);
-
-        // Update URL with the correct page number
-        updateURL({
-          page: newPagination.pageIndex + 1,
-          from: date?.from ? formatDate(date.from.toString(), "MM/dd/yyyy") : undefined,
-          to: date?.to ? formatDate(date.to.toString(), "MM/dd/yyyy") : undefined,
-          status: status || "all"
-        });
-      } else {
-        setPagination(updater);
-        setCurrentPage(updater.pageIndex);
-
-        // Update URL with the correct page number
-        updateURL({
-          page: updater.pageIndex + 1,
-          from: date?.from ? formatDate(date.from.toString(), "MM/dd/yyyy") : undefined,
-          to: date?.to ? formatDate(date.to.toString(), "MM/dd/yyyy") : undefined,
-          status: status || "all"
-        });
-      }
-    },
     state: {
       columnFilters,
       pagination,
       rowSelection,
-      globalFilter: filtering
+      globalFilter: debouncedFilter,
     },
-    onGlobalFilterChange: setFiltering
-  });
+    onGlobalFilterChange: setFiltering,
+    manualPagination: true, // Add this to indicate we're handling pagination manually
+    pageCount: paginationInfo?.totalPages || 0, // Add this to set the total page count
+  })
 
-  const { onOpen } = useModal();
+  const { onOpen } = useModal()
 
-  // important func to update url
-  const updateURL = React.useCallback((params: {
-    from?: string,
-    to?: string,
-    page?: number,
-    status?: string
-  }) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        current.set(key, value.toString());
+  const updateURL = React.useCallback(
+    (params: {
+      from?: string
+      to?: string
+      page?: number
+      status?: string
+      filter?: string
+      statusFilter?: string
+    }) => {
+      const current = new URLSearchParams(Array.from(searchParams.entries()))
+
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          current.set(key, value.toString())
+        }
+      })
+
+      if (params.page === undefined && current.get("page") === "1") {
+        current.delete("page")
       }
-    });
-    const search = current.toString();
-    const query = search ? `?${search}` : "";
-    router.push(`/orders${query}`);
-  }, [router, searchParams]);
+      if (current.get("filter") === "") {
+        current.delete("filter")
+      }
 
-  const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
-  const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 0)
-  const newOrders = allNewStageOrders.map(row => row.original)
-  const allPickupStageOrders = table.getFilteredSelectedRowModel().rows.filter(row => row.original.bucket === 1 && (row.original.orderStages.find((x: any) => x.stage === 67) ? false : true))
-  const allPickupOrders = allPickupStageOrders.map(row => row.original)
+      if (statusFilter?.value == null) {
+        current.delete("statusFilter")
+      }
 
+      const search = current.toString()
+      const query = search ? `?${search}` : ""
+      router.push(`${pathname}${query}`)
+    },
+    [router, searchParams, pathname, statusFilter],
+  )
+
+  // Get selected rows for bulk actions
+  const selectedRows = table.getFilteredSelectedRowModel().rows.map((row) => row.original)
+  const allNewStageOrders = table.getFilteredSelectedRowModel().rows.filter((row) => row.original.bucket === 0)
+  const newOrders = allNewStageOrders.map((row) => row.original)
+  const allPickupStageOrders = table
+    .getFilteredSelectedRowModel()
+    .rows.filter(
+      (row) => row.original.bucket === 1 && (row.original.orderStages.find((x: any) => x.stage === 67) ? false : true),
+    )
+  const allPickupOrders = allPickupStageOrders.map((row) => row.original)
+
+  // Handlers for bulk actions
   const handleMultiLableDownload = () => {
     onOpen("downloadLabels", { orders: selectedRows })
     router.push(`/print/invoices?page=${currentPage + 1}`)
@@ -202,243 +199,213 @@ export function OrderStatusTable({ data, columns }: { data: any[], columns: Colu
     router.push(`/print/manifest?page=${currentPage + 1}`)
   }
 
-  React.useEffect(() => {
-    if ((!date?.from || !date?.to) || (date.from === date.to)) return
-    const a = data.filter((row) => {
-      if (date?.from && date?.to) {
-        return row.order_invoice_date > new Date(date.from).toISOString() && row.order_invoice_date < new Date(date.to).toISOString()
-      }
-      return false;
-    });
-    setFilteredData(a);
-  }, [data, date]);
+  // Handle page change
+  const handlePageChange = (pageIndex: number) => {
+    setCurrentPage(pageIndex)
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: pageIndex,
+    }))
+    updateURL({ page: pageIndex + 1 })
 
-  const cols = [
-    {
-      id: "order_creation_date",
-      displayName: "Order Created At"
-    },
-    {
-      id: "order_reference_id",
-      displayName: "Order Reference ID"
-    },
-    {
-      id: "awb",
-      displayName: "AWB"
-    },
-    {
-      id: "order_invoice_date",
-      displayName: "Order Invoice Date"
-    },
-    {
-      id: "channelName",
-      displayName: "Channel Name"
-    },
-    {
-      id: "customerName",
-      displayName: "Customer Name"
-    },
-    {
-      id: "customerPhone",
-      displayName: "Customer Phone"
-    },
-    {
-      id: "customerEmail",
-      displayName: "Customer Email"
-    },
-    {
-      id: "packageName",
-      displayName: "Package Name"
-    },
-    {
-      id: "packageDimensions",
-      displayName: "Package Dimensions"
-    },
-    {
-      id: "packageWeight",
-      displayName: "Package Weight"
-    },
-    {
-      id: "status",
-      displayName: "Status"
-    },
+    // Refetch data to ensure the table updates
+    if (date?.from && date?.to) {
+      const fromDateStr = formatDate(date.from.toString(), "MM/dd/yyyy")
+      const toDateStr = formatDate(date.to.toString(), "MM/dd/yyyy")
+      const currentStatus = status || "all"
+
+      setIsLoading(true)
+
+      getAllOrdersByStatus({
+        status: currentStatus,
+        fromDate: fromDateStr,
+        toDate: toDateStr,
+        page: pageIndex + 1,
+        onSuccess: () => {
+          // if (newData && Array.isArray(newData)) {
+          //   setTableData(newData)
+          // }
+          setIsLoading(false)
+        },
+      })
+    }
+  }
+
+  // CSV export data
+  const csvColumns = [
+    { id: "order_creation_date", displayName: "Order Created At" },
+    { id: "order_reference_id", displayName: "Order Reference ID" },
+    { id: "awb", displayName: "AWB" },
+    { id: "order_invoice_date", displayName: "Order Invoice Date" },
+    { id: "channelName", displayName: "Channel Name" },
+    { id: "customerName", displayName: "Customer Name" },
+    { id: "customerPhone", displayName: "Customer Phone" },
+    { id: "customerEmail", displayName: "Customer Email" },
+    { id: "packageName", displayName: "Package Name" },
+    { id: "packageDimensions", displayName: "Package Dimensions" },
+    { id: "packageWeight", displayName: "Package Weight" },
+    { id: "status", displayName: "Status" },
   ]
 
-  const datas = filteredData.map((row) => {
-    return {
-      order_creation_date: row?.createdAt && format(row?.createdAt, 'dd MM yyyy | HH:mm a'),
+  const csvData = React.useMemo(() => {
+    if (!tableData || !Array.isArray(tableData)) {
+      return []
+    }
+
+    return tableData.map((row) => ({
+      order_creation_date: row?.createdAt && format(new Date(row?.createdAt), "dd MM yyyy | HH:mm a"),
       order_reference_id: row.order_reference_id,
       awb: row.awb,
-      order_invoice_date: row.order_invoice_date && format(row.order_invoice_date, 'dd MM yyyy | HH:mm a'),
+      order_invoice_date: row.order_invoice_date && format(new Date(row.order_invoice_date), "dd MM yyyy | HH:mm a"),
       channelName: row.channelName || "Custom",
-      customerName: row.customerDetails.name,
-      customerEmail: row.customerDetails.email || "",
-      customerPhone: row?.customerDetails?.phone?.slice(3, 12),
-      packageName: row.productId.name,
-      packageDimensions: `${row.orderBoxLength} x ${row.orderBoxWidth} x ${row.orderBoxHeight}`,
-      packageWeight: `${row.orderWeight} ${row.orderWeightUnit}`,
-      status: getBucketStatus(row.bucket),
-    }
-  })
+      customerName: row.customerDetails?.name || "",
+      customerEmail: row.customerDetails?.email || "",
+      customerPhone: row?.customerDetails?.phone ? row.customerDetails.phone.slice(3, 12) : "",
+      packageName: row.productId?.name || "",
+      packageDimensions: `${row.orderBoxLength || 0} x ${row.orderBoxWidth || 0} x ${row.orderBoxHeight || 0}`,
+      packageWeight: `${row.orderWeight || 0} ${row.orderWeightUnit || "kg"}`,
+      status: row.bucket,
+    }))
+  }, [tableData])
 
+  // Fetch data when filters or page changes
   React.useEffect(() => {
-    if (date?.from && date?.to) {
-      getAllOrdersByStatus({
-        status: status || "all",
-        fromDate: formatDate(date.from.toString(), "MM/dd/yyyy"),
-        toDate: formatDate(date.to.toString(), "MM/dd/yyyy"),
-        onSuccess: () => {
-          // Only set page index if URL has a page parameter
-          if (urlPageIndex) {
-            const pageIdx = parseInt(urlPageIndex) - 1;
-            table.setPageIndex(pageIdx);
-          }
-        }
-      });
-    }
-  }, [userToken, date, status, urlPageIndex]);
+    if (!date?.from || !date?.to || !userToken) return
 
+    const fromDateStr = formatDate(date.from.toString(), "MM/dd/yyyy")
+    const toDateStr = formatDate(date.to.toString(), "MM/dd/yyyy")
+    const currentStatus = status || "all"
+
+    // Create a unique key for this fetch to avoid duplicate requests
+    const fetchParamsKey = `${fromDateStr}-${toDateStr}-${currentStatus}-${currentPage}`
+
+    // Only fetch if parameters have changed
+    if (fetchParamsKey !== lastFetchParams) {
+      setIsLoading(true)
+
+      getAllOrdersByStatus({
+        status: currentStatus,
+        fromDate: fromDateStr,
+        toDate: toDateStr,
+        page: currentPage + 1, // Add 1 because API pagination is 1-indexed
+        onSuccess: () => {
+          // if (newData && Array.isArray(newData)) {
+          //   setTableData(newData)
+          // }
+          setIsLoading(false)
+        },
+      })
+
+      setLastFetchParams(fetchParamsKey)
+
+      // Update URL with date parameters
+      updateURL({
+        from: fromDateStr,
+        to: toDateStr,
+        status: currentStatus,
+        page: currentPage + 1,
+      })
+    }
+  }, [userToken, date, status, currentPage, getAllOrdersByStatus, updateURL, lastFetchParams])
+
+  // Update URL when filter changes
+  React.useEffect(() => {
+    updateURL({ filter: debouncedFilter })
+  }, [debouncedFilter, updateURL])
+
+  // Update URL when status filter changes
+  React.useEffect(() => {
+    const currentStatusFilterValue = statusFilter?.value || undefined
+    if (currentStatusFilterValue !== urlStatusFilter) {
+      updateURL({ statusFilter: currentStatusFilterValue })
+    }
+  }, [statusFilter, urlStatusFilter, updateURL])
+
+  // Set pagination from URL on initial load
   React.useEffect(() => {
     if (urlPageIndex) {
-      const pageIdx = parseInt(urlPageIndex) - 1;
-      setPagination(prev => ({
+      const pageIdx = Number.parseInt(urlPageIndex) - 1
+      setPagination((prev) => ({
         ...prev,
-        pageIndex: pageIdx
-      }));
-      setCurrentPage(pageIdx);
-      table.setPageIndex(pageIdx);
+        pageIndex: pageIdx,
+      }))
+      setCurrentPage(pageIdx)
+      table.setPageIndex(pageIdx)
     }
-  }, [urlPageIndex, table]);
-
+  }, [urlPageIndex, table])
 
   return (
     <div className="w-full">
-      <div className="grid sm:flex items-center py-4 justify-between">
-        <div className="grid sm:flex gap-3">
-          <Input
-            placeholder="Filter by AWB or Order Reference ID"
-            value={filtering}
-            onChange={(e) => setFiltering(e.target.value)}
-            className="w-64"
-          />
-          <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
-          <CsvDownloader filename="view-shipment" datas={datas} columns={cols}>
-            <Button variant={'webPageBtn'} size={'icon'}><DownloadIcon size={18} /></Button>
-          </CsvDownloader>
-          <div className="grid grid-cols-2 gap-3 ">
-            <OrderStatusFilter value={statusFilter} onChange={setStatusFilter} statuses={statuses} />
-            {
-              seller?.channelPartners[0]?.isOrderSync && <Button variant={'webPageBtn'} onClick={handleOrderSync} size={"sm"}>Sync Order</Button>
-            }
-          </div>
-        </div>
-        <div className="mt-3 sm:mt-0 flex gap-2">
-          {/* <Button variant={'ghost'} size={'sm'}>
-            {table.getSelectedRowModel().rows.length} Selected
-          </Button> */}
-          <Button variant={'webPageBtn'} size={'sm'} onClick={() => table.toggleAllRowsSelected()}>
-            {table.getIsAllRowsSelected() ? "Deselect All" : "Select All"} ({table.getSelectedRowModel().rows.length}/{table.getRowModel().rows.length})
-          </Button>
-          {
-            selectedRows.length > 0 && (
-              <DropdownMenu >
-                <DropdownMenuTrigger className={cn("mr-3", buttonVariants({
-                  variant: "webPageBtn",
-                  size: "sm"
-                }))}>Bulk Actions</DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => onOpen("updateShopifyOrders", { orders: (newOrders as unknown as B2COrderType[]) })}>Update shopify orders ({newOrders.length})</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onOpen("BulkPickupUpdate", { orders: selectedRows })}>Change pickup location</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => onOpen("BulkShipNow", { orders: newOrders })}>Bulk Ship Now ({newOrders.length})</DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleMultiLableDownload}>Download Label</DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleMultiManifestDownload}>Download Manifest</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onOpen("bulkPickupSchedule", { orders: allPickupOrders })}>Bulk Pickup Schedule  ({allPickupOrders.length})</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onOpen("cancelBulkOrder", { orders: selectedRows })}>Cancel</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>)
-          }
+      <div className="grid sm:flex items-center justify-between">
+        <OrderTableFilters
+          filtering={filtering}
+          setFiltering={setFiltering}
+          date={date}
+          setDate={setDate}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          statuses={statuses}
+          csvData={csvData}
+          csvColumns={csvColumns}
+          handleOrderSync={handleOrderSync}
+          showSyncButton={!!seller?.channelPartners[0]?.isOrderSync}
+        />
 
-        </div>
+        <OrderTableBulkActions
+          table={table}
+          selectedRows={selectedRows}
+          newOrders={newOrders}
+          allPickupOrders={allPickupOrders}
+          onMultiLabelDownload={handleMultiLableDownload}
+          onMultiManifestDownload={handleMultiManifestDownload}
+          onOpen={onOpen}
+        />
       </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
+
+      {isLoading ? (
+        <OrderStatusSkeleton columns={columns.length} />
+      ) : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          <Button variant={'outline'}>
-            Page{' '}
-            {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-          </Button>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      )}
+
+      <OrderTablePagination
+        table={table}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+        pagination={paginationInfo}
+      />
     </div>
   )
 }
+

@@ -169,12 +169,12 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                                         className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                         placeholder="Enter the customer name"
                                         {...field}
-                                    />
+                                        />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                        />
                     <FormField
                         control={form.control}
                         name="customerDetails.phone"
@@ -184,13 +184,12 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                                     Contact Number <span className='text-red-500'>*</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <PhoneInput
+                                    <Input
                                         {...field}
                                         onChange={field.onChange}
                                         value={field.value}
                                         maxLength={11}
-                                        defaultCountry='IN'
-                                        className="bg-zinc-300/10 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
+                                        className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                         placeholder='Enter the contact number'
                                         disabled={isLoading}
                                     />

@@ -89,7 +89,7 @@ export const AddB2BCustomerModal = () => {
         try {
             //create customer
             handleCreateCustomer(values)
-            
+
 
             setSellerCustomerForm({
                 ...sellerCustomerForm,
@@ -184,10 +184,9 @@ export const AddCustomerForm = ({ form, isLoading, isPinLoading }: { form: any, 
                                     Contact Number <span className='text-red-500'>*</span>
                                 </FormLabel>
                                 <FormControl>
-                                    <PhoneInput
+                                    <Input
                                         disabled={isLoading}
-                                        className="bg-zinc-300/10 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-                                        defaultCountry='IN'
+                                        className="bg-zinc-300/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-0 text-black focus-visible:ring-offset-0"
                                         placeholder='Enter the contact number'
                                         {...field}
                                     />
