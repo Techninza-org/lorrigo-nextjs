@@ -35,7 +35,7 @@ import { LoadingSpinner } from '../loading-spinner';
 export const customerDetailsSchema = z.object({
     customerDetails: z.object({
         name: z.string().min(1, "Name is required"),
-        phone: z.string().refine(isValidPhoneNumber, { message: "Phone number is required" }),
+        phone: z.string(),
         address: z.string().min(1, "Address is required"),
         address2: z.string().optional(),
         state: z.string().min(1, "State is required"),

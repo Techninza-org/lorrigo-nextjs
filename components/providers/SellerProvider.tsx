@@ -39,7 +39,7 @@ interface SellerContextType {
   handleUpdateOrder: (order: z.infer<typeof EditFormSchema>) => boolean | Promise<boolean>;
   orders: B2COrderType[];
   reverseOrders: B2COrderType[];
-  getAllOrdersByStatus: ({ status, fromDate, toDate, page, limit, onSuccess }: { limit?: number, status: string, fromDate?: string, page?: number, toDate?: string, onSuccess?: () => void }) => Promise<any[]>;
+  getAllOrdersByStatus: ({ status, fromDate, toDate, page, limit, statusFilter, onSuccess, filter }: { limit?: number, status: string, statusFilter?: string, filter?: string, fromDate?: string, page?: number, toDate?: string, onSuccess?: () => void }) => Promise<any[]>;
   getCourierPartners: (orderId: string, type: string) => Promise<any>;
   getBulkCourierPartners: (orderIds: string[] | undefined) => Promise<any>;
   courierPartners: OrderType | undefined;
@@ -95,7 +95,9 @@ interface SellerContextType {
   disputes: any[];
   handleAcceptDispute: (awb: string) => Promise<boolean>;
   getInvoiceAwbTransactions: (id: string) => Promise<any>;
+  generateBulkInvoices: (orderIds?: string[]) => Promise<any>
   pagination: any;
+  handleCreateBulkD2CShipmentV2: (partner: any) => Promise<boolean>
 }
 
 interface sellerCustomerFormType {
@@ -179,8 +181,11 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams();
 
   const status = searchParams.get("status");
-  const urlFromDate = searchParams.get("from");
-  const urlToDate = searchParams.get("to");
+  const statusFilter = searchParams.get("statusFilter");
+  const urlFrom = searchParams.get("from")
+  const urlTo = searchParams.get("to")
+  const url_b2c_order_bulk_action = searchParams.get("b2c_order_bulk_action") === "true"
+
 
   const getSellerAssignedCourier = async () => {
     try {
@@ -254,6 +259,8 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     page = 1,
     limit = 50,
     search,
+    statusFilter,
+    filter
   }: {
     status: string;
     fromDate?: string;
@@ -261,11 +268,13 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     page?: number;
     limit?: number;
     search?: string;
+    statusFilter?: string;
+    filter?: string;
     onSuccess?: () => void;
   }) => {
     const today = new Date();
-    let formattedToDate = paramToDate || format(today, 'MM/dd/yyyy');
-    let formattedFromDate = paramFromDate || format(subDays(today, 10), 'MM/dd/yyyy');
+    let formattedToDate = paramToDate || format(today || urlTo, 'MM/dd/yyyy');
+    let formattedFromDate = paramFromDate || format(subDays(today || urlFrom, 10), 'MM/dd/yyyy');
 
     // Validate dates
     try {
@@ -288,6 +297,15 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
     if (search) {
       url += `&search=${encodeURIComponent(search)}`;
     }
+
+    if (statusFilter) {
+      url += `&statusFilter=${statusFilter}`;
+    }
+
+    if (filter) {
+      url += `&search=${filter}`;
+    }
+
 
     try {
       const res = await axiosIWAuth.get(url);
@@ -317,6 +335,86 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       return [];
     }
   };
+
+  async function generateBulkInvoices(orderIds?: string[]): Promise<{ success: boolean; singlePdf: boolean; filename: any; pdfBuffer: any; pdfs?: undefined; error?: undefined; } | { success: boolean; singlePdf: boolean; pdfs: any; filename?: undefined; pdfBuffer?: undefined; error?: undefined; } | { success: boolean; error: string; }> {
+    try {
+      // Create request config
+      const config: any = {
+        responseType: 'arraybuffer'
+      };
+
+      // If specific order IDs are provided, send them in request body
+      let response;
+      if (orderIds && orderIds.length > 0) {
+        response = await axiosIWAuth.post(
+          '/seller/generate-bulk-invoice',
+          { orders: orderIds },
+          config
+        );
+      } else {
+        // Otherwise use the default endpoint without specifying orders
+        response = await axiosIWAuth.get('/seller/generate-bulk-invoice', config);
+      }
+
+      const contentType = response.headers['content-type'];
+
+      // Check if the response is a PDF
+      if (contentType.includes('application/pdf')) {
+        // Handle single PDF response
+        const contentDisposition = response.headers['content-disposition'] || '';
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        const filename = filenameMatch ? filenameMatch[1] : 'invoice.pdf';
+
+        return {
+          success: true,
+          singlePdf: true,
+          filename,
+          pdfBuffer: response.data,
+        };
+      } else {
+        // Handle multiple PDFs as JSON
+        try {
+          // First try to parse as JSON directly
+          const data = JSON.parse(Buffer.from(response.data).toString('utf8'));
+
+          return {
+            success: true,
+            singlePdf: false,
+            pdfs: data.pdfs.map((pdf: any) => ({
+              filename: pdf.filename,
+              pdfBuffer: Buffer.from(pdf.pdfBase64, 'base64'),
+            })),
+          };
+        } catch (parseError) {
+          console.error('Failed to parse response as JSON:', parseError);
+          return {
+            success: false,
+            error: 'Invalid response format from server',
+          };
+        }
+      }
+    } catch (error: any) {
+      console.error('Error generating bulk invoices:', error);
+
+      // Try to extract error message from response if possible
+      let errorMessage = error.message || 'Failed to generate invoices';
+
+      if (error.response && error.response.data) {
+        try {
+          // Try to parse error response as JSON
+          const errorData = JSON.parse(Buffer.from(error.response.data).toString('utf8'));
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // If parsing fails, use default error message
+        }
+      }
+
+      return {
+        success: false,
+        error: errorMessage
+      };
+    }
+  }
 
   const getCourierPartners = async (orderId: string, type: string) => {
     try {
@@ -360,7 +458,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const getBulkCourierPartners = async (orderIds: string[] | undefined) => {
     try {
-      let url = `/order/courier/b2b/SR/`
+      let url = `/order/courier/b2c/SR?bulk=${url_b2c_order_bulk_action}`
       const res = await axiosIWAuth.post(url, {
         orderIds: orderIds
       });
@@ -726,7 +824,55 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       charge
     }
     try {
-      const res = await axiosIWAuth.post('/shipment/bulk', payload);
+      const res = await axiosIWAuth.post(`/shipment/bulk`, payload);
+      if (res.data?.valid) {
+        toast({
+          variant: "default",
+          title: "Order created successfully",
+          description: "Order has been created successfully",
+        });
+        getAllOrdersByStatus({ status: status || "all" })
+        fetchWalletBalance();
+        router.refresh()
+        return true;
+      }
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: res?.data?.message,
+      });
+      return false
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error?.response?.data?.message ?? "Something went wrong",
+      });
+      return false
+
+    }
+  }, [axiosIWAuth, router, toast])
+
+  const handleCreateBulkD2CShipmentV2 = useCallback(async (partner: any) => {
+    const today = new Date();
+    let formattedToDate = format(urlTo || today , 'MM/dd/yyyy');
+    let formattedFromDate = format(subDays(urlFrom || today , 10), 'MM/dd/yyyy');
+
+    // Validate dates
+    try {
+      parse(formattedFromDate, 'MM/dd/yyyy', new Date());
+      parse(formattedToDate, 'MM/dd/yyyy', new Date());
+    } catch (error) {
+      console.error('Invalid date format:', error);
+      formattedToDate = format(today, 'MM/dd/yyyy');
+      formattedFromDate = format(subDays(today, 10), 'MM/dd/yyyy');
+    }
+
+    const payload = {
+      partner,
+    }
+    try {
+      const res = await axiosIWAuth.post(`/shipment/v2/bulk?from=${formattedFromDate}&to=${formattedToDate}`, payload);
       if (res.data?.valid) {
         toast({
           variant: "default",
@@ -1120,7 +1266,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const handleBulkPickupChange = async (orderIds: string[], pickupAddress: string) => {
     try {
-      const res = await axiosIWAuth.put(`${pathname.includes('/b2b') ? "/order/b2b/bulk-pickup" : "/order/b2c/bulk-pickup"}`, {
+      const res = await axiosIWAuth.put(`${pathname.includes('/b2b') ? "/order/b2b/bulk-pickup" : `/order/b2c/bulk-pickup?from=${urlFrom}&to=${urlTo}&bulk=${url_b2c_order_bulk_action}`}`, {
         orderIds,
         pickupAddress
       });
@@ -1152,7 +1298,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
 
   const handleBulkUpdateShopifyOrders = async ({ orderIds, values }: { orderIds: string[], values: z.infer<typeof BulkUpdateShopifyOrdersSchema> }) => {
     try {
-      const res = await axiosIWAuth.patch(`/order/update/b2c/shopify`, {
+      const res = await axiosIWAuth.patch(`/order/update/b2c/shopify?from=${urlFrom}&to=${urlTo}&bulk=${url_b2c_order_bulk_action}`, {
         orderIds: orderIds,
         pickupAddressId: values.pickupAddressId,
         orderSizeUnit: "cm",
@@ -1511,6 +1657,7 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
       getCodPrice();
       getSellerAssignedCourier()
       getDisputes();
+      generateBulkInvoices()
     }
   }, [user, userToken])
 
@@ -1585,8 +1732,9 @@ function SellerProvider({ children }: { children: React.ReactNode }) {
         disputes,
         handleAcceptDispute,
         getInvoiceAwbTransactions,
-        pagination
-
+        pagination,
+        generateBulkInvoices,
+        handleCreateBulkD2CShipmentV2
       }}
     >
       {children}

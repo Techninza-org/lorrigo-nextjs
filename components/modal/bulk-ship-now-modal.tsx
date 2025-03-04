@@ -21,6 +21,7 @@ import { Info, Loader2, } from "lucide-react";
 import HoverCardToolTip from "../hover-card-tooltip";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
+import { useSearchParams } from "next/navigation";
 
 function mergeCouriers(couriers: any[]) {
     const orderIdWCharges = couriers.reduce((acc, courier) => {
@@ -63,12 +64,14 @@ export const BulkShipNowModal = () => {
 
     const { isOpen, onClose, type, data } = useModal();
     const { orders } = data ?? {};
+    const searchParms = useSearchParams()
+    const isBulk = searchParms.get("b2c_order_bulk_action") === 'true'
 
     const orderIds = orders?.map((order: B2COrderType) => order._id)
 
     const isModalOpen = isOpen && type === "BulkShipNow";
 
-    const { getBulkCourierPartners, handleCreateBulkD2CShipment } = useSellerProvider()
+    const { getBulkCourierPartners, handleCreateBulkD2CShipment, handleCreateBulkD2CShipmentV2 } = useSellerProvider()
     const { userToken } = useAuth()
 
     const [courierPartners, setCourierPartners] = useState<any>()
@@ -106,6 +109,7 @@ export const BulkShipNowModal = () => {
         return selectedItems.reduce((acc, item) => acc + item.charge, 0)
     }
 
+    console.log(courierPartners?.orderIdWCharges, "courierPartners?.orderIdWCharges")
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
             <DialogContent className="scrollbar-hide bg-white dark:text-white  text-black p-6 max-w-screen-md">
@@ -122,7 +126,7 @@ export const BulkShipNowModal = () => {
                                 <div>Courier Name</div>
                             </div>
                         </div>
-                        <Accordion type="single" collapsible>
+                        {!isBulk && <Accordion type="single" collapsible>
                             {courierPartners?.orderIdWCharges ? Object?.keys(courierPartners?.orderIdWCharges)?.map((partner: any, i: number) => {
                                 return (
                                     <AccordionItem key={i} value={partner}>
@@ -180,11 +184,30 @@ export const BulkShipNowModal = () => {
                                     </AccordionItem>
                                 )
                             }) : <Loader2 className="w-6 h-6 animate-spin mx-auto" />}
-                        </Accordion>
+                        </Accordion>}
+                        {courierPartners?.orderIdWCharges && Object?.keys(courierPartners?.orderIdWCharges)?.map((partner: any, i: number) => {
+                            return (
+                                <div key={i} className="flex justify-between pr-10">
+                                    <Button variant={'ghost'} className="flex w-full items-center h-16 justify-between bg-muted px-4 py-3 text-sm font-medium">
+                                        <div className="flex items-center gap-3">
+                                            <Image className="mr-2 mix-blend-multiply"
+                                                src={getSvg(removeWhitespaceAndLowercase(partner))}
+                                                width={50} height={50} alt="logo" />
+                                            {partner}
+                                        </div>
+                                    </Button>
+                                    <Button
+                                        variant={'themeNavActiveBtn'}
+                                        // @ts-ignore
+                                        onClick={() => handleCreateBulkD2CShipmentV2(...courierPartners?.orderIdWCharges[partner])}
+                                    >Ship now</Button>
+                                </div>
+                            )
+                        })}
                     </div>
                 </ScrollArea>
 
-                <DialogFooter className="flex lg:justify-between">
+                {!isBulk && <DialogFooter className="flex lg:justify-between">
                     <Button variant={'outline'}>Selected order {selectedItems.length} out of {courierPartners?.groupedByRefId && Object?.keys(courierPartners?.groupedByRefId).length}</Button>
                     <div className="flex gap-2">
                         <Button variant={'outline'}>{formatCurrencyForIndia(calcTotalCharge())}</Button>
@@ -194,7 +217,7 @@ export const BulkShipNowModal = () => {
                             onClick={() => handleCreateBulkD2CShipment(selectedItems, calcTotalCharge())}
                         >Ship now</Button>
                     </div>
-                </DialogFooter>
+                </DialogFooter>}
 
             </DialogContent>
         </Dialog >

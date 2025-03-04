@@ -13,7 +13,7 @@ export default function Orders() {
     const { orders, pagination } = useSellerProvider()
 
     return (
-        <Card className="col-span-4">
+        <Card>
             <CardHeader>
                 <CardTitle className="md:flex justify-between">
                     <div className="mb-4 sm:mb-0">

@@ -76,7 +76,6 @@ export function OrderStatusTable({
   const [currentPage, setCurrentPage] = React.useState<number>(initialPageIndex)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const [lastFetchParams, setLastFetchParams] = React.useState<string>("")
-  const [tableData, setTableData] = React.useState<any[]>(data)
 
   const [pagination, setPagination] = React.useState({
     pageIndex: initialPageIndex,
@@ -87,42 +86,15 @@ export function OrderStatusTable({
   const defaultToDate = toDate ? parse(toDate, "MM/dd/yyyy", new Date()) : new Date()
   const defaultFromDate = fromDate
     ? parse(fromDate, "MM/dd/yyyy", new Date())
-    : new Date(new Date().setDate(new Date().getDate() - 10))
+    : new Date(new Date().setDate(new Date().getDate() - 7))
 
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: defaultFromDate,
     to: defaultToDate,
   })
 
-  // Update table data when data prop changes
-  React.useEffect(() => {
-    if (data && Array.isArray(data) && data.length > 0) {
-      setTableData(data)
-    }
-  }, [data])
-
-  // Filter data based on search and status filter
-  const filteredDataMemo = React.useMemo(() => {
-    if (!data || !Array.isArray(data)) {
-      return []
-    }
-
-    let filtered = filterData(data, debouncedFilter)
-
-    if (statusFilter?.value === "unassigned") {
-      filtered = filtered.filter((row: { awb: null }) => row.awb === "" || row.awb === null || row.awb === undefined)
-    } else if (statusFilter?.value === "assigned") {
-      filtered = filtered.filter(
-        (row: { awb: string | null }) => row.awb !== "" && row.awb !== null && row.awb !== undefined,
-      )
-    }
-
-    return filtered
-  }, [urlPageIndex, data, debouncedFilter, statusFilter?.value])
-
-  // Set up table
   const table = useReactTable({
-    data: tableData, // Use tableData instead of data
+    data, // Use tableData instead of data
     columns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -136,8 +108,8 @@ export function OrderStatusTable({
       globalFilter: debouncedFilter,
     },
     onGlobalFilterChange: setFiltering,
-    manualPagination: true, // Add this to indicate we're handling pagination manually
-    pageCount: paginationInfo?.totalPages || 0, // Add this to set the total page count
+    manualPagination: true,
+    pageCount: paginationInfo?.totalPages || 0,
   })
 
   const { onOpen } = useModal()
@@ -170,6 +142,10 @@ export function OrderStatusTable({
         current.delete("statusFilter")
       }
 
+      if (current.get("b2c_order_bulk_action") === "false") {
+        current.delete("b2c_order_bulk_action")
+      }
+
       const search = current.toString()
       const query = search ? `?${search}` : ""
       router.push(`${pathname}${query}`)
@@ -188,7 +164,6 @@ export function OrderStatusTable({
     )
   const allPickupOrders = allPickupStageOrders.map((row) => row.original)
 
-  // Handlers for bulk actions
   const handleMultiLableDownload = () => {
     onOpen("downloadLabels", { orders: selectedRows })
     router.push(`/print/invoices?page=${currentPage + 1}`)
@@ -199,7 +174,6 @@ export function OrderStatusTable({
     router.push(`/print/manifest?page=${currentPage + 1}`)
   }
 
-  // Handle page change
   const handlePageChange = (pageIndex: number) => {
     setCurrentPage(pageIndex)
     setPagination((prev) => ({
@@ -248,11 +222,11 @@ export function OrderStatusTable({
   ]
 
   const csvData = React.useMemo(() => {
-    if (!tableData || !Array.isArray(tableData)) {
+    if (!data || !Array.isArray(data)) {
       return []
     }
 
-    return tableData.map((row) => ({
+    return data.map((row) => ({
       order_creation_date: row?.createdAt && format(new Date(row?.createdAt), "dd MM yyyy | HH:mm a"),
       order_reference_id: row.order_reference_id,
       awb: row.awb,
@@ -266,7 +240,7 @@ export function OrderStatusTable({
       packageWeight: `${row.orderWeight || 0} ${row.orderWeightUnit || "kg"}`,
       status: row.bucket,
     }))
-  }, [tableData])
+  }, [data])
 
   // Fetch data when filters or page changes
   React.useEffect(() => {
@@ -276,10 +250,8 @@ export function OrderStatusTable({
     const toDateStr = formatDate(date.to.toString(), "MM/dd/yyyy")
     const currentStatus = status || "all"
 
-    // Create a unique key for this fetch to avoid duplicate requests
-    const fetchParamsKey = `${fromDateStr}-${toDateStr}-${currentStatus}-${currentPage}`
+    const fetchParamsKey = `${fromDateStr}-${toDateStr}-${currentStatus}-${currentPage}-${statusFilter?.value}-${urlFilter}`
 
-    // Only fetch if parameters have changed
     if (fetchParamsKey !== lastFetchParams) {
       setIsLoading(true)
 
@@ -288,6 +260,8 @@ export function OrderStatusTable({
         fromDate: fromDateStr,
         toDate: toDateStr,
         page: currentPage + 1, // Add 1 because API pagination is 1-indexed
+        statusFilter: statusFilter?.value,
+        filter: urlFilter || "",
         onSuccess: () => {
           // if (newData && Array.isArray(newData)) {
           //   setTableData(newData)
@@ -296,6 +270,7 @@ export function OrderStatusTable({
         },
       })
 
+      console.log(statusFilter, fetchParamsKey !== lastFetchParams)
       setLastFetchParams(fetchParamsKey)
 
       // Update URL with date parameters
@@ -306,7 +281,7 @@ export function OrderStatusTable({
         page: currentPage + 1,
       })
     }
-  }, [userToken, date, status, currentPage, getAllOrdersByStatus, updateURL, lastFetchParams])
+  }, [userToken, date, status, currentPage, getAllOrdersByStatus, updateURL, lastFetchParams, statusFilter])
 
   // Update URL when filter changes
   React.useEffect(() => {
@@ -359,6 +334,9 @@ export function OrderStatusTable({
           onMultiLabelDownload={handleMultiLableDownload}
           onMultiManifestDownload={handleMultiManifestDownload}
           onOpen={onOpen}
+          updateURL={updateURL}
+          pagination={paginationInfo}
+          date={date}
         />
       </div>
 

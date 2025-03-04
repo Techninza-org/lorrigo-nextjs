@@ -14,6 +14,7 @@ import KycProvider from "@/components/providers/KycProvider";
 import AdminProvider from "@/components/providers/AdminProvider";
 import AxiosProvider from "@/components/providers/AxiosProvider";
 import PaymentGatewayProvider from "@/components/providers/PaymentGatewayProvider";
+import { InvoiceProvider } from "@/components/providers/InvoiceProvider";
 
 const inter = IBM_Plex_Sans_Condensed({
   subsets: ["cyrillic-ext"],
@@ -39,14 +40,16 @@ export default function RootLayout({
               <PaymentGatewayProvider>
                 <SellerProvider>
                   <AdminProvider>
-                    <HubProvider>
-                      <KycProvider>
-                        <Toaster />
-                        <ModalProvider />
-                        <DrawerProvider />
-                        {children}
-                      </KycProvider>
-                    </HubProvider>
+                    <InvoiceProvider>
+                      <HubProvider>
+                        <KycProvider>
+                          <Toaster />
+                          <ModalProvider />
+                          <DrawerProvider />
+                          {children}
+                        </KycProvider>
+                      </HubProvider>
+                    </InvoiceProvider>
                   </AdminProvider>
                 </SellerProvider>
               </PaymentGatewayProvider>

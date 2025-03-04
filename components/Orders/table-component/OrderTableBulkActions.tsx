@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +10,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Table } from "@tanstack/react-table";
 import { B2COrderType } from "@/types/types";
+import { useSearchParams } from 'next/navigation';
+import { DateRange } from 'react-day-picker';
 
 interface OrderTableBulkActionsProps<TData> {
   table: Table<TData>;
@@ -19,6 +21,9 @@ interface OrderTableBulkActionsProps<TData> {
   onMultiLabelDownload: () => void;
   onMultiManifestDownload: () => void;
   onOpen: any;
+  updateURL: any;
+  pagination: any;
+  date: DateRange | undefined
 }
 
 export function OrderTableBulkActions<TData>({
@@ -28,23 +33,51 @@ export function OrderTableBulkActions<TData>({
   allPickupOrders,
   onMultiLabelDownload,
   onMultiManifestDownload,
-  onOpen
+  onOpen,
+  updateURL,
+  pagination,
+  date
 }: OrderTableBulkActionsProps<TData>) {
+  const searchParams = useSearchParams();
+  const isBulk = searchParams.get("b2c_order_bulk_action");
+
+  const toggleBulk = () => {
+    if (isBulk) {
+      table.toggleAllRowsSelected(false);
+      updateURL({
+        b2c_order_bulk_action: false
+      })
+    } else {
+      table.toggleAllRowsSelected(true);
+      updateURL({
+        b2c_order_bulk_action: true
+      })
+    }
+  };
+
+  useEffect(() => {
+    if (isBulk === "true") {
+      table.toggleAllRowsSelected(true);
+    } else {
+      table.toggleAllRowsSelected(false);
+    }
+  }, [isBulk, table])
+
   return (
     <div className="flex gap-2">
-      <Button 
-        variant="webPageBtn" 
-        size="sm" 
-        onClick={() => table.toggleAllRowsSelected()}
+      <Button
+        variant="webPageBtn"
+        size="sm"
+        onClick={toggleBulk}
       >
-        {table.getIsAllRowsSelected() ? "Deselect All" : "Select All"} (
-        {table.getSelectedRowModel().rows.length}/
-        {table.getRowModel().rows.length})
+        {Boolean(isBulk) ? "Deselect All" : "Select All"} (
+        {Boolean(isBulk) ? pagination.total : table.getSelectedRowModel().rows.length}/
+        {pagination.total})
       </Button>
-      
-      {selectedRows.length > 0 && (
+
+      {(Boolean(isBulk) || selectedRows.length > 0) && (
         <DropdownMenu>
-          <DropdownMenuTrigger 
+          <DropdownMenuTrigger
             className={cn("mr-3", buttonVariants({
               variant: "webPageBtn",
               size: "sm"
@@ -53,23 +86,23 @@ export function OrderTableBulkActions<TData>({
             Bulk Actions
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem 
-              onClick={() => onOpen("updateShopifyOrders", { 
-                orders: (newOrders as unknown as B2COrderType[]) 
+            <DropdownMenuItem
+              onClick={() => onOpen("updateShopifyOrders", {
+                orders: (newOrders as unknown as B2COrderType[])
               })}
             >
-              Update shopify orders ({newOrders.length})
+              Update shopify orders
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={() => onOpen("BulkPickupUpdate", { orders: selectedRows })}
             >
               Change pickup location
             </DropdownMenuItem>
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={() => onOpen("BulkShipNow", { orders: newOrders })}
             >
-              Bulk Ship Now ({newOrders.length})
+              Bulk Ship Now
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onMultiLabelDownload}>
               Download Label
@@ -78,13 +111,13 @@ export function OrderTableBulkActions<TData>({
               Download Manifest
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={() => onOpen("bulkPickupSchedule", { orders: allPickupOrders })}
             >
-              Bulk Pickup Schedule ({allPickupOrders.length})
+              Bulk Pickup Schedule
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               onClick={() => onOpen("cancelBulkOrder", { orders: selectedRows })}
             >
               Cancel

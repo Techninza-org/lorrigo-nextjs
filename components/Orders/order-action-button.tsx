@@ -14,6 +14,7 @@ import {
 import { MoreHorizontalIcon } from "lucide-react";
 import { useSellerProvider } from "../providers/SellerProvider";
 import { useRouter } from "next/navigation";
+import { useInvoices } from "../providers/InvoiceProvider";
 
 export const getBucketStatus = (bucket: number) => {
     switch (bucket) {
@@ -297,9 +298,10 @@ export const OrderEditButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }
 }
 
 export const DownloadLabelButton: React.FC<{ rowData: B2COrderType }> = ({ rowData }) => {
-    const { onOpen } = useModal();
+    const { downloadInvoices } = useInvoices();
     return (
-        <DropdownMenuItem onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</DropdownMenuItem>
+        // <DropdownMenuItem onClick={() => onOpen("downloadLabel", { order: rowData })}>Download Label</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => downloadInvoices()}>Download Label</DropdownMenuItem>
     );
 }
 
